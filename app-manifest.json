@@ -1,0 +1,72 @@
+{
+  "name": "Muttis Rezeptbuch",
+  "short_name": "Rezeptbuch",
+  "description": "Persönliches digitales Kochbuch mit KI-Unterstützung – vollständig offline, keine Anmeldung nötig",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f9f4ec",
+  "theme_color": "#8b5e3c",
+  "lang": "de",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {
+      "src": "icons/icon-book-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-book-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-book-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-book-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Neues Rezept",
+      "short_name": "Neu",
+      "description": "Rezept direkt hinzufügen",
+      "url": "./index.html#new",
+      "icons": [{ "src": "icons/icon-book-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

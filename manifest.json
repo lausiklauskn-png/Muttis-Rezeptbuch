@@ -1,0 +1,29 @@
+{
+  "name": "Muttis Rezeptbuch – Handbuch",
+  "short_name": "Handbuch",
+  "description": "Das vollständige Benutzerhandbuch für Muttis Rezeptbuch",
+  "start_url": "./handbuch.html",
+  "display": "standalone",
+  "background_color": "#f9f4ec",
+  "theme_color": "#7a5840",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icons/icon-book.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icons/icon-book-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-book-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
