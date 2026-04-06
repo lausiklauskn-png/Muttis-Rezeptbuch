@@ -4148,6 +4148,7 @@ function wkSlotDragStart(e,sid){
   if(e.target.closest('.wk-slot-del')||e.target.closest('.wk-slot-link')||e.target.closest('button')){e.preventDefault();return;}
   _dd={type:'wkslot',msid:sid,rid:null,iid:null,sid:null};
   e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',String(sid));
   setTimeout(()=>document.getElementById('wks'+sid)?.classList.add('wk-dragging'),0);
 }
 function wkSlotDragEnd(sid){
@@ -5299,7 +5300,7 @@ function renderWeek(){
     d+='<button class="wk-add" onclick="addDaySlot(\''+dateStr+'\')" title="Rezept hinzufügen">+</button>';d+='<button class="wk-day-reset" onclick="event.stopPropagation();resetDay(\''+dateStr+'\')" title="Tag leeren">✕</button></div>';
     MEALS.forEach(([mt,ico,tkey])=>{
       const mSlots=daySlots.filter(s=>s.mealType===mt);
-      d+='<div class="wk-meal" ondragover="wkMealDragOver(event,\''+dateStr+'\',\''+mt+'\')" ondragleave="wkMealDragLeave(event)" ondrop="wkMealDrop(event,\''+dateStr+'\',\''+mt+'\')">';
+      d+='<div class="wk-meal" data-date="'+dateStr+'" data-mt="'+mt+'" ondragover="wkMealDragOver(event,\''+dateStr+'\',\''+mt+'\')" ondragleave="wkMealDragLeave(event)" ondrop="wkMealDrop(event,\''+dateStr+'\',\''+mt+'\')">';
       d+='<div class="wk-meal-hdr" onclick="wkMealToggle(event,this)">';
       d+='<span class="wk-meal-chev">▾</span>';
       d+='<span class="wk-meal-name">'+ico+' '+T(tkey)+'</span>';
@@ -5310,7 +5311,7 @@ function renderWeek(){
           var r=slot.rid?R.find(function(x){return x.id===slot.rid;}):null;
           var filled=r&&r.name,isOth=slot.courseType==='oth',hasC=isOth&&slot.customText;
           d+='<div class="wk-slot'+(filled||hasC?' filled':'')+'" id="wks'+slot.id+'" draggable="true" ondragstart="wkSlotDragStart(event,'+slot.id+')" ondragend="wkSlotDragEnd('+slot.id+')" ondragover="wkSlotDragOver(event,'+slot.id+')" ondragleave="wkSlotDragLeave(event,'+slot.id+')" ondrop="wkSlotDrop(event,'+slot.id+')" onclick="editWkSlot('+slot.id+')">';
-          d+='<div class="wk-drag-hdl" title="Ziehen zum Verschieben">⠿</div>';
+          d+='<div class="wk-drag-hdl" data-hdl="wkslot" data-sid="'+slot.id+'" title="Ziehen zum Verschieben">⠿</div>';
           d+='<div class="wk-slot-ico">'+slot.ico+'</div><div class="wk-slot-info">';
           d+='<div class="wk-slot-course">'+h(slot.lbl)+'</div>';
           if(hasC)d+='<div class="wk-slot-name">'+h(slot.customText)+'</div>';
@@ -5330,6 +5331,7 @@ function renderWeek(){
   var cont=document.getElementById('wkDays');
   if(cont)cont.innerHTML=out;
   updateDayResetSelect();
+  setupWkTouchDrag();
 }
 function addMenuSlot(){addDaySlot(new Date().toISOString().slice(0,10));}
 function addDaySlot(dateStr){openAsl(dateStr,'');}
@@ -6532,6 +6534,14 @@ function saveStepEdit(rid,sid){
 }
 function cancelStepEdit(rid,sid){delete ES[`se-${rid}-${sid}`];render();}
 
+// ── Touch-Drag für Menüplaner-Slots (Mobile) ──────────
+function setupWkTouchDrag(){
+  document.querySelectorAll('.wk-drag-hdl[data-hdl]').forEach(hdl=>{
+    hdl.removeEventListener('touchstart',_tddStart);
+    hdl.addEventListener('touchstart',_tddStart,{passive:false});
+  });
+}
+
 // ── Touch-Drag für Zutaten & Schritte (Mobile) ────────
 function setupTouchDrag(){
   document.querySelectorAll('.ing-drag-hdl[data-hdl],.fld-drag-hdl[data-hdl],.drag-hdl[data-hdl]').forEach(hdl=>{
@@ -6570,7 +6580,7 @@ function _tddRowMove(e){
     const rect=row.getBoundingClientRect();
     const ghost=row.cloneNode(true);
     ghost.id='tdd-ghost';
-    ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);border-radius:6px;margin:0`;
+    ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
     document.body.appendChild(ghost);
     row.style.opacity='.3';
     _tdd={type:'fld',rid,id:rid,li:row,ghost,offsetY:t.clientY-rect.top};
@@ -6595,6 +6605,9 @@ function _tddStart(e){
   if(type==='fld'){
     li=hdl.closest('.fld-rrow');if(!li)return;
     rid=parseInt(hdl.dataset.rid);id=rid;
+  }else if(type==='wkslot'){
+    li=hdl.closest('.wk-slot');if(!li)return;
+    id=parseInt(hdl.dataset.sid);rid=id;
   }else if(type==='card'){
     li=hdl.closest('.rcard');if(!li)return;
     rid=parseInt(li.id.replace('c',''));id=rid;
@@ -6608,7 +6621,7 @@ function _tddStart(e){
   const ghostRect=ghostSrc.getBoundingClientRect();
   const ghost=ghostSrc.cloneNode(true);
   ghost.id='tdd-ghost';
-  ghost.style.cssText=`position:fixed;left:${ghostRect.left}px;top:${ghostRect.top}px;width:${ghostRect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);border-radius:6px;margin:0`;
+  ghost.style.cssText=`position:fixed;left:${ghostRect.left}px;top:${ghostRect.top}px;width:${ghostRect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
   document.body.appendChild(ghost);
   li.style.opacity='.3';
   _tdd={type,rid,id,li,ghost,offsetY:t.clientY-rect.top};
@@ -6641,6 +6654,22 @@ function _tddMove(e){
     }
     return;
   }
+  if(_tdd.type==='wkslot'){
+    document.querySelectorAll('.wk-slot').forEach(s=>s.classList.remove('wk-drop-before','wk-drop-after'));
+    document.querySelectorAll('.wk-meal').forEach(m=>m.classList.remove('wk-drop-target'));
+    const tslot=el?.closest('.wk-slot');
+    const tmeal=el?.closest('.wk-meal');
+    if(tslot&&tslot.id&&tslot.id!==_tdd.li.id){
+      const rect=tslot.getBoundingClientRect();
+      const pos=t.clientY<rect.top+rect.height/2?'before':'after';
+      tslot.classList.add('wk-drop-'+pos);
+      _tdd.over=tslot;_tdd.overPos=pos;_tdd.overType='slot';
+    }else if(tmeal){
+      tmeal.classList.add('wk-drop-target');
+      _tdd.over=tmeal;_tdd.overPos=null;_tdd.overType='meal';
+    }else{_tdd.over=null;_tdd.overPos=null;_tdd.overType=null;}
+    return;
+  }
   if(_tdd.type==='card'){
     document.querySelectorAll('.rcard').forEach(r=>r.classList.remove('rcard-drop-before','rcard-drop-after'));
     const tcard=el?.closest('.rcard');
@@ -6666,6 +6695,36 @@ function _tddEnd(){
   document.removeEventListener('touchcancel',_tddEnd);
   _tdd.ghost.remove();
   _tdd.li.style.opacity='';
+  if(_tdd.type==='wkslot'){
+    document.querySelectorAll('.wk-slot').forEach(s=>s.classList.remove('wk-drop-before','wk-drop-after'));
+    document.querySelectorAll('.wk-meal').forEach(m=>m.classList.remove('wk-drop-target'));
+    if(_tdd.over){
+      const fromSlot=MS.find(s=>s.id===_tdd.id);
+      if(fromSlot){
+        if(_tdd.overType==='slot'){
+          const toId=parseInt(_tdd.over.id.replace('wks',''));
+          const toSlot=MS.find(s=>s.id===toId);
+          if(toSlot){
+            fromSlot.date=toSlot.date;fromSlot.mealType=toSlot.mealType;
+            const fromIdx=MS.findIndex(s=>s.id===_tdd.id);
+            const toIdx=MS.findIndex(s=>s.id===toId);
+            if(fromIdx>=0&&toIdx>=0){
+              const[item]=MS.splice(fromIdx,1);
+              const adj=toIdx>fromIdx?toIdx-1:toIdx;
+              const ins=_tdd.overPos==='before'?adj:adj+1;
+              MS.splice(Math.max(0,ins),0,item);
+            }
+          }
+        }else if(_tdd.overType==='meal'){
+          const dateStr=_tdd.over.dataset.date;
+          const mt=_tdd.over.dataset.mt;
+          if(dateStr&&mt){fromSlot.date=dateStr;fromSlot.mealType=mt;}
+        }
+        svM();renderWeek();
+      }
+    }
+    _tdd=null;return;
+  }
   if(_tdd.type==='fld'){
     document.querySelectorAll('.fld-grp').forEach(g=>g.classList.remove('fld-drop-over'));
     document.querySelectorAll('.fld-rrow').forEach(r=>r.classList.remove('fld-drop-before','fld-drop-after'));
