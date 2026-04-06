@@ -1,8 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
   <defs>
     <filter id="shadow192" x="-8%" y="-8%" width="116%" height="116%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#3a2010" flood-opacity="0.30"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#100820" flood-opacity="0.38"/>
     </filter>
+    <!-- Spektralfarben des Lichts -->
+    <linearGradient id="spectrumCover192" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"    stop-color="#FF0000"/>
+      <stop offset="16.6%" stop-color="#FF7700"/>
+      <stop offset="33.3%" stop-color="#FFE500"/>
+      <stop offset="50%"   stop-color="#00CC00"/>
+      <stop offset="66.6%" stop-color="#00CCFF"/>
+      <stop offset="83.3%" stop-color="#0044FF"/>
+      <stop offset="100%"  stop-color="#8800FF"/>
+    </linearGradient>
+    <linearGradient id="spectrumSpine192" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"    stop-color="#FF0000"/>
+      <stop offset="25%"   stop-color="#FFE500"/>
+      <stop offset="50%"   stop-color="#00CC00"/>
+      <stop offset="75%"   stop-color="#0044FF"/>
+      <stop offset="100%"  stop-color="#8800FF"/>
+    </linearGradient>
     <linearGradient id="pageLeft192" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%"   stop-color="#e8ddd0"/>
       <stop offset="100%" stop-color="#f9f4ec"/>
@@ -11,16 +28,19 @@
       <stop offset="0%"   stop-color="#f9f4ec"/>
       <stop offset="100%" stop-color="#e8ddd0"/>
     </linearGradient>
-    <linearGradient id="spineGrad192" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#5c3d26"/>
-      <stop offset="50%"  stop-color="#b85535"/>
-      <stop offset="100%" stop-color="#5c3d26"/>
+    <linearGradient id="spectrumBar192" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"    stop-color="#FF0000"/>
+      <stop offset="20%"   stop-color="#FF7700"/>
+      <stop offset="40%"   stop-color="#FFE500"/>
+      <stop offset="60%"   stop-color="#00CC00"/>
+      <stop offset="80%"   stop-color="#0044FF"/>
+      <stop offset="100%"  stop-color="#8800FF"/>
     </linearGradient>
   </defs>
 
-  <!-- Outer cover -->
+  <!-- Outer cover – Spektralgradient -->
   <rect x="14" y="27" width="164" height="138" rx="7" ry="7"
-        fill="#7a5840" filter="url(#shadow192)"/>
+        fill="url(#spectrumCover192)" filter="url(#shadow192)"/>
 
   <!-- Left page -->
   <rect x="22" y="34" width="72" height="124" rx="2" ry="2"
@@ -32,41 +52,43 @@
 
   <!-- Spine -->
   <rect x="90" y="27" width="12" height="138"
-        fill="url(#spineGrad192)"/>
+        fill="url(#spectrumSpine192)"/>
   <rect x="95" y="27" width="1" height="138"
-        fill="#f9f4ec" opacity="0.25"/>
+        fill="#ffffff" opacity="0.30"/>
 
-  <!-- Text lines – left page -->
-  <g fill="#7a5840" opacity="0.45">
-    <rect x="30" y="52" width="56" height="3" rx="1.5"/>
-    <rect x="30" y="60" width="48" height="3" rx="1.5"/>
-    <rect x="30" y="68" width="56" height="3" rx="1.5"/>
-    <rect x="30" y="76" width="42" height="3" rx="1.5"/>
-    <rect x="30" y="84" width="56" height="3" rx="1.5"/>
-    <rect x="30" y="92" width="52" height="3" rx="1.5"/>
-    <rect x="30" y="104" width="56" height="3" rx="1.5"/>
-    <rect x="30" y="112" width="44" height="3" rx="1.5"/>
-    <rect x="30" y="120" width="56" height="3" rx="1.5"/>
-    <rect x="30" y="128" width="38" height="3" rx="1.5"/>
-    <rect x="30" y="136" width="56" height="3" rx="1.5"/>
+  <!-- Text lines – left page (spectral, subtle) -->
+  <g opacity="0.55">
+    <rect x="30" y="52" width="56" height="3" rx="1.5" fill="#FF2200"/>
+    <rect x="30" y="60" width="48" height="3" rx="1.5" fill="#FF7700"/>
+    <rect x="30" y="68" width="56" height="3" rx="1.5" fill="#FFE500"/>
+    <rect x="30" y="76" width="42" height="3" rx="1.5" fill="#00BB00"/>
+    <rect x="30" y="84" width="56" height="3" rx="1.5" fill="#00AAEE"/>
+    <rect x="30" y="92" width="52" height="3" rx="1.5" fill="#0044FF"/>
+    <rect x="30" y="104" width="56" height="3" rx="1.5" fill="#8800FF"/>
+    <rect x="30" y="112" width="44" height="3" rx="1.5" fill="#FF2200"/>
+    <rect x="30" y="120" width="56" height="3" rx="1.5" fill="#FF7700"/>
+    <rect x="30" y="128" width="38" height="3" rx="1.5" fill="#FFE500"/>
+    <rect x="30" y="136" width="56" height="3" rx="1.5" fill="#00BB00"/>
   </g>
 
   <!-- Text lines – right page -->
-  <g fill="#7a5840" opacity="0.45">
-    <rect x="106" y="52" width="56" height="3" rx="1.5"/>
-    <rect x="106" y="60" width="44" height="3" rx="1.5"/>
-    <rect x="106" y="68" width="56" height="3" rx="1.5"/>
-    <rect x="106" y="76" width="52" height="3" rx="1.5"/>
-    <rect x="106" y="84" width="56" height="3" rx="1.5"/>
-    <rect x="106" y="92" width="40" height="3" rx="1.5"/>
-    <rect x="106" y="104" width="56" height="3" rx="1.5"/>
-    <rect x="106" y="112" width="48" height="3" rx="1.5"/>
-    <rect x="106" y="120" width="56" height="3" rx="1.5"/>
-    <rect x="106" y="128" width="43" height="3" rx="1.5"/>
-    <rect x="106" y="136" width="56" height="3" rx="1.5"/>
+  <g opacity="0.55">
+    <rect x="106" y="52"  width="56" height="3" rx="1.5" fill="#00AAEE"/>
+    <rect x="106" y="60"  width="44" height="3" rx="1.5" fill="#0044FF"/>
+    <rect x="106" y="68"  width="56" height="3" rx="1.5" fill="#8800FF"/>
+    <rect x="106" y="76"  width="52" height="3" rx="1.5" fill="#FF2200"/>
+    <rect x="106" y="84"  width="56" height="3" rx="1.5" fill="#FF7700"/>
+    <rect x="106" y="92"  width="40" height="3" rx="1.5" fill="#FFE500"/>
+    <rect x="106" y="104" width="56" height="3" rx="1.5" fill="#00BB00"/>
+    <rect x="106" y="112" width="48" height="3" rx="1.5" fill="#00AAEE"/>
+    <rect x="106" y="120" width="56" height="3" rx="1.5" fill="#0044FF"/>
+    <rect x="106" y="128" width="43" height="3" rx="1.5" fill="#8800FF"/>
+    <rect x="106" y="136" width="56" height="3" rx="1.5" fill="#FF2200"/>
   </g>
 
-  <!-- Section header accents -->
-  <rect x="30"  y="42" width="30" height="5" rx="2.5" fill="#b85535" opacity="0.75"/>
-  <rect x="106" y="42" width="30" height="5" rx="2.5" fill="#b85535" opacity="0.75"/>
+  <!-- Section header accent bars – spectrum -->
+  <rect x="30"  y="42" width="56" height="5" rx="2.5"
+        fill="url(#spectrumBar192)" opacity="0.90"/>
+  <rect x="106" y="42" width="56" height="5" rx="2.5"
+        fill="url(#spectrumBar192)" opacity="0.90"/>
 </svg>

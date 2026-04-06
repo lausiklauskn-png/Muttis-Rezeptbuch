@@ -1,476 +1,867 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#284880">
-<title>Muttis Rezeptbuch – Einladung</title>
-<meta property="og:title" content="Muttis Rezeptbuch">
-<meta property="og:description" content="Rette Omas Rezepte – kostenlos, offline, mit KI. Kein Account nötig.">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
-:root{
-  --bg:#f3f5fa; --white:#fff;
-  --ink:#182038; --ink2:#3a4a68; --ink3:#6a7a98;
-  --blue:#284880; --blue2:#3e70a8; --blue3:#88aad0;
-  --red:#be2c1d; --reds:#fae8e6;
-  --grn:#228048; --grns:#d0f0e0;
-  --wa:#25D366;
-  --sh:rgba(24,32,56,.09); --sh2:rgba(24,32,56,.15);
-  --r:16px; --fh:'Playfair Display',Georgia,serif; --fb:'Inter',system-ui,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth;background:#b0b8cc}
-body{font-family:var(--fb);background:var(--bg);color:var(--ink);
-  max-width:440px;margin:0 auto;overflow-x:hidden;font-size:15px;line-height:1.6;
-  box-shadow:0 0 60px rgba(0,0,0,.2)}
-button{font-family:inherit;cursor:pointer;border:none}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0d1a">
+  <title>Mein Rezeptbuch – Einladung</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d0d1a;
+      --card: #13131f;
+      --white: #f0f0ff;
+      --ink: #f0f0ff;
+      --ink2: #c0c0d8;
+      --ink3: #8080a0;
+      --border: rgba(255,255,255,0.08);
+      --spec1: #FF0000;
+      --spec2: #FF7700;
+      --spec3: #FFE500;
+      --spec4: #00CC00;
+      --spec5: #00CCFF;
+      --spec6: #0044FF;
+      --spec7: #8800FF;
+      --rainbow: linear-gradient(90deg, #FF0000, #FF7700, #FFE500, #00CC00, #00CCFF, #0044FF, #8800FF);
+      --wa: #25D366;
+      --sh: rgba(0,0,0,0.4);
+      --r: 16px;
+      --fh: 'Playfair Display', Georgia, serif;
+      --fb: 'Inter', system-ui, sans-serif;
+    }
 
-/* DESKTOP */
-@media(min-width:900px){
-  html{background:linear-gradient(135deg,#1a2e58,#3e70a8)}
-  body{max-width:860px;font-size:16px;box-shadow:0 0 80px rgba(0,0,0,.35);
-    display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;
-    border-radius:20px;overflow-x:hidden;margin:40px auto}
-  .hero{grid-column:1/3;padding:52px 40px 64px}
-  .hero h1{font-size:2.6rem}
-  .features{grid-column:1/2;padding:28px 20px 20px}
-  .share-wrap{grid-column:2/3;padding:28px 20px 20px}
-  .install-wrap{grid-column:1/3;padding:16px 40px 32px;
-    display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-  .install-title{grid-column:1/3}
-  .itabs{grid-column:1/3}
-  .ipane.on{display:block}
-  .foot{grid-column:1/3}
-}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* HERO */
-.hero{
-  background:linear-gradient(155deg,#1a2e58 0%,#284880 55%,#3e70a8 100%);
-  padding:44px 20px 52px;text-align:center;position:relative;overflow:hidden}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 70% 30%, rgba(136,170,208,.15) 0%, transparent 60%);
-  pointer-events:none}
-.hero::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;height:36px;
-  background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%)}
-.hero-icon{
-  font-size:4.5rem;margin-bottom:10px;
-  filter:drop-shadow(0 8px 24px rgba(0,0,0,.3));
-  display:block;animation:bob 3s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.hero h1{
-  font-family:var(--fh);font-size:2rem;font-weight:900;color:#fff;
-  line-height:1.1;margin-bottom:5px}
-.hero h1 em{color:var(--blue3);font-style:italic}
-.hero-sub{color:rgba(200,215,240,.8);font-size:.82rem;margin-bottom:22px;
-  letter-spacing:.01em}
-.hero-cta{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--red);color:#fff;
-  padding:15px 32px;border-radius:14px;
-  font-size:1rem;font-weight:700;
-  box-shadow:0 6px 24px rgba(190,44,29,.45);
-  text-decoration:none;letter-spacing:.01em;transition:opacity .15s}
-.hero-cta:active{opacity:.82}
-.hero-cta-note{color:rgba(136,170,208,.7);font-size:.68rem;margin-top:10px}
+    html {
+      background: #070710;
+      min-height: 100%;
+    }
 
-/* FEATURES */
-.features{padding:28px 16px 8px;display:flex;flex-direction:column;gap:10px}
-.feat{
-  background:var(--white);border-radius:var(--r);
-  padding:14px 16px;display:flex;align-items:center;gap:14px;
-  box-shadow:0 3px 14px var(--sh);border:1.5px solid rgba(40,72,128,.06)}
-.feat-icon{font-size:2rem;flex-shrink:0;width:44px;text-align:center}
-.feat-text h3{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:1px}
-.feat-text p{font-size:.75rem;color:var(--ink3);line-height:1.4}
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--fb);
+      max-width: 440px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
 
-/* SHARE SECTION */
-.share-wrap{padding:20px 16px 8px}
-.share-title{
-  font-family:var(--fh);font-size:1.15rem;color:var(--blue);
-  margin-bottom:14px;text-align:center}
-.share-title span{font-size:.8rem;font-weight:400;color:var(--ink3);
-  font-family:var(--fb);display:block;margin-top:2px}
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      background:
+        radial-gradient(ellipse at 30% 0%, rgba(255,0,0,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 100%, rgba(136,0,255,0.15) 0%, transparent 50%),
+        linear-gradient(180deg, #0d0d1a 0%, #12082a 100%);
+      padding: 52px 28px 80px;
+      text-align: center;
+      overflow: hidden;
+    }
 
-.share-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.sbtn{
-  width:100%;padding:14px 16px;border-radius:12px;
-  font-size:.92rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  transition:opacity .15s}
-.sbtn:active{opacity:.8}
-.sbtn-wa{background:var(--wa);color:#fff;box-shadow:0 4px 18px rgba(37,211,102,.35)}
-.sbtn-copy{background:var(--white);color:var(--blue);
-  border:2px solid var(--blue);box-shadow:0 3px 12px var(--sh)}
-.sbtn-copy.ok{background:var(--grns);border-color:var(--grn);color:var(--grn)}
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: var(--bg);
+      clip-path: ellipse(56% 100% at 50% 100%);
+    }
 
-/* QR */
-.qr-box{
-  background:var(--white);border-radius:var(--r);
-  padding:18px 16px;text-align:center;
-  box-shadow:0 3px 14px var(--sh);border:1.5px solid rgba(40,72,128,.06)}
-.qr-box p{font-size:.72rem;color:var(--ink3);margin-bottom:12px}
-#qrcode{display:inline-block}
-#qrcode canvas,#qrcode img{border-radius:10px!important;box-shadow:0 2px 12px var(--sh2)!important}
-.qr-url{
-  margin-top:12px;font-size:.65rem;color:var(--ink3);
-  background:var(--bg);border-radius:8px;padding:6px 10px;
-  word-break:break-all;font-family:monospace}
+    @keyframes bob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
 
-/* INSTALL */
-.install-wrap{padding:16px 16px 24px}
-.install-title{
-  font-family:var(--fh);font-size:1.15rem;color:var(--blue);
-  margin-bottom:12px;text-align:center}
-.itabs{display:flex;gap:6px;margin-bottom:12px;justify-content:center}
-.itab{
-  padding:7px 16px;border-radius:20px;
-  border:1.5px solid rgba(40,72,128,.15);background:var(--bg);
-  font-size:.75rem;font-weight:700;color:var(--ink3);cursor:pointer}
-.itab.on{background:var(--blue);border-color:var(--blue);color:#fff}
-.ipane{display:none;background:var(--white);border-radius:var(--r);
-  padding:14px 16px;box-shadow:0 3px 14px var(--sh);
-  border:1.5px solid rgba(40,72,128,.06)}
-.ipane.on{display:block}
-.istep{display:flex;align-items:flex-start;gap:10px;padding:7px 0;
-  border-bottom:1px solid var(--bg);font-size:.78rem;color:var(--ink2);line-height:1.45}
-.istep:last-child{border-bottom:none}
-.isn{
-  width:22px;height:22px;border-radius:50%;
-  background:var(--blue);color:#fff;
-  font-size:.62rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+    .hero-icon {
+      display: inline-block;
+      animation: bob 3.6s ease-in-out infinite;
+      margin-bottom: 24px;
+    }
 
-/* HINT BOX */
-.hint-box{
-  margin:0 16px;padding:14px 16px;
-  background:#fffbea;border:1.5px solid #f0c030;border-radius:14px;
-  font-size:.78rem;line-height:1.55;color:#5a4200;
-  box-shadow:0 2px 10px rgba(200,160,0,.12)}
-.hint-box .hint-hd{font-weight:700;font-size:.86rem;margin-bottom:6px;
-  display:flex;align-items:center;gap:7px;color:#7a5500}
-.hint-box ul{padding-left:18px;margin-top:5px}
-.hint-box ul li{margin-bottom:3px}
+    .hero h1 {
+      font-family: var(--fh);
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
 
-/* REPAIR STEPS */
-.rstep{padding:12px 0;border-bottom:1px solid var(--bg)}
-.rstep:last-child{border-bottom:none}
-.rstep-hd{font-size:.82rem;font-weight:700;color:var(--red);margin-bottom:4px}
-.rstep-txt{font-size:.75rem;color:var(--ink3);margin-bottom:9px}
-.rbtn{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  width:100%;padding:11px 14px;border-radius:10px;
-  font-size:.82rem;font-weight:700;text-decoration:none;
-  border:none;cursor:pointer;text-align:center;transition:opacity .15s}
-.rbtn:active{opacity:.78}
-.rbtn-blue{background:var(--blue);color:#fff;box-shadow:0 3px 12px rgba(40,72,128,.28)}
-.rbtn-outline{background:var(--white);color:var(--blue);border:1.5px solid var(--blue)}
+    .hero h1 em {
+      font-style: normal;
+      background: var(--rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-/* FOOTER */
-.foot{
-  text-align:center;padding:14px 16px 28px;
-  font-size:.62rem;color:var(--ink3)}
-.foot a{color:var(--blue3);text-decoration:none}
+    .hero-sub {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--ink3);
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+    }
 
-/* PDF BUTTON */
-.pdf-wrap{padding:0 16px 20px;text-align:center}
-.pdf-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  background:var(--white);color:var(--ink2);
-  border:1.5px solid rgba(40,72,128,.18);
-  padding:11px 22px;border-radius:10px;
-  font-size:.82rem;font-weight:600;
-  box-shadow:0 2px 10px var(--sh);
-  transition:opacity .15s}
-.pdf-btn:active{opacity:.75}
-.pdf-note{font-size:.63rem;color:var(--ink3);margin-top:6px}
-@media(min-width:900px){.pdf-wrap{grid-column:1/3}}
+    .btn-cta {
+      display: inline-block;
+      background: var(--rainbow);
+      color: #fff;
+      font-family: var(--fb);
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(136,0,255,0.35), 0 2px 8px rgba(0,0,0,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
 
-/* PRINT / PDF – eine Seite */
-@media print{
-  @page{margin:8mm 10mm;size:A4}
-  html,body{background:#fff!important;box-shadow:none!important;
-    max-width:100%!important;display:block!important;
-    font-size:9pt;color:#182038}
-  .hero{background:#284880!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
-    padding:14px 20px 18px;border-radius:0;text-align:center}
-  .hero::after{display:none}
-  .hero-cta,.hero-cta-note{display:none}
-  .hero h1{font-size:1.3rem;color:#fff!important;margin-bottom:2px}
-  .hero-sub{color:rgba(200,215,240,.9)!important;font-size:.7rem;margin-bottom:0}
-  .hero-icon{font-size:2rem;margin-bottom:4px}
-  .hint-box{margin:6px 0;padding:7px 10px;font-size:.7rem;line-height:1.4}
-  .hint-box .hint-hd{font-size:.75rem;margin-bottom:3px}
-  .hint-box ul{margin-top:2px}
-  .hint-box ul li{margin-bottom:1px}
-  .features{padding:6px 0;display:grid;grid-template-columns:1fr 1fr;gap:4px}
-  .feat{box-shadow:none;border:1px solid #dde3f0;padding:5px 8px;break-inside:avoid}
-  .feat-icon{font-size:1.2rem;width:28px}
-  .feat-text h3{font-size:.75rem}
-  .feat-text p{font-size:.65rem}
-  .share-wrap{padding:6px 0 4px}
-  .share-title{text-align:center;font-size:.9rem;margin-bottom:6px}
-  .share-title span{font-size:.65rem}
-  .share-btns,.itabs,.install-wrap,.pdf-wrap,.sbtn-copy{display:none!important}
-  .sbtn-wa{display:none!important}
-  .qr-box{border:1px solid #dde3f0;box-shadow:none;padding:8px;text-align:center}
-  #qrcode canvas,#qrcode img{width:110px!important;height:110px!important;border-radius:6px!important;box-shadow:none!important}
-  .qr-url{font-size:.62rem;margin-top:6px}
-  .foot{font-size:.6rem;padding:6px 0 0;border-top:1px solid #dde3f0;margin-top:6px}
-  .foot a{color:#284880}
-}
-</style>
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(136,0,255,0.5), 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .btn-cta:active { transform: translateY(0); }
+
+    .install-note {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--ink3);
+    }
+
+    .ios-note {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--ink3);
+    }
+
+    .ios-note strong {
+      color: var(--ink2);
+    }
+
+    /* ── RAINBOW DIVIDER ── */
+    .rainbow-line {
+      height: 2px;
+      background: var(--rainbow);
+      opacity: 0.5;
+      margin: 0 28px;
+      border-radius: 2px;
+    }
+
+    /* ── HINT BOX ── */
+    .hint-box {
+      margin: 24px 20px 0;
+      background: var(--card);
+      border: 1px solid rgba(255,229,0,0.18);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      color: var(--ink2);
+      line-height: 1.55;
+    }
+
+    .hint-box strong {
+      color: #FFE500;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 32px 20px 8px;
+    }
+
+    .section-title {
+      font-family: var(--fh);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .section-sub {
+      font-size: 0.82rem;
+      color: var(--ink3);
+      margin-bottom: 20px;
+    }
+
+    /* ── FEATURE CARDS ── */
+    .features-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .feat-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      width: 40px;
+      text-align: center;
+      margin-top: 1px;
+    }
+
+    .feat-text strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+
+    .feat-text span {
+      font-size: 0.82rem;
+      color: var(--ink3);
+      line-height: 1.45;
+    }
+
+    /* ── SHARE ── */
+    .share-btns {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-wa {
+      flex: 1;
+      background: var(--wa);
+      color: #fff;
+      font-family: var(--fb);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 13px 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: opacity 0.15s;
+    }
+
+    .btn-wa:hover { opacity: 0.88; }
+
+    .btn-copy {
+      flex: 1;
+      background: var(--card);
+      color: var(--ink);
+      font-family: var(--fb);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 13px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.15s;
+    }
+
+    .btn-copy:hover { background: #1e1e30; }
+
+    .qr-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .qr-box p {
+      font-size: 0.78rem;
+      color: var(--ink3);
+      margin-top: 12px;
+    }
+
+    #qrcode {
+      display: inline-block;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #qrcode canvas, #qrcode img {
+      display: block;
+    }
+
+    /* ── INSTALL TABS ── */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 70px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--ink3);
+      font-family: var(--fb);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 9px 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--rainbow);
+      opacity: 0;
+      transition: opacity 0.2s;
+      border-radius: 9px;
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 12px rgba(136,0,255,0.3);
+    }
+
+    .tab-btn.active::before { opacity: 1; }
+
+    .tab-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .install-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+    }
+
+    .install-card h3 {
+      font-family: var(--fh);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--rainbow);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      box-shadow: 0 2px 8px rgba(136,0,255,0.3);
+    }
+
+    .step-text {
+      font-size: 0.85rem;
+      color: var(--ink2);
+      line-height: 1.5;
+      padding-top: 4px;
+    }
+
+    .step-text strong {
+      color: var(--ink);
+    }
+
+    .step-text .mono {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--ink2);
+    }
+
+    .btn-cache {
+      margin-top: 14px;
+      width: 100%;
+      background: rgba(255,229,0,0.1);
+      border: 1px solid rgba(255,229,0,0.25);
+      color: #FFE500;
+      font-family: var(--fb);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-cache:hover { background: rgba(255,229,0,0.15); }
+
+    .cache-help {
+      display: none;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--ink3);
+      line-height: 1.55;
+    }
+
+    .cache-help.visible { display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 20px 40px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--ink3);
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--ink3);
+      text-decoration: underline;
+    }
+
+    .footer-rainbow {
+      height: 1px;
+      background: var(--rainbow);
+      opacity: 0.2;
+      margin: 0 40px 24px;
+      border-radius: 1px;
+    }
+
+    /* ── COPY TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e1e30;
+      border: 1px solid rgba(136,0,255,0.3);
+      color: var(--ink);
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
 </head>
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <span class="hero-icon">📖</span>
-  <h1>Muttis <em>Rezeptbuch</em></h1>
-  <p class="hero-sub">Alte Rezepte retten · Neue Rezepte sammeln · Kostenlos · Kein Account</p>
-  <a class="hero-cta" href="https://lausiklauskn-png.github.io/mutti-rezeptbuch/" target="_blank">
-    ✨ App öffnen &amp; installieren
-  </a>
-  <p class="hero-cta-note" id="installNote">📲 Browser fragt automatisch nach Installation – einfach bestätigen</p>
-  <p class="hero-cta-note" id="iosNote" style="display:none">🍎 iPhone: Teilen-Symbol → „Zum Home-Bildschirm" antippen</p>
-</section>
-
-<!-- HINT BOX -->
-<div class="hint-box" style="margin-top:-18px;position:relative;z-index:1">
-  <div class="hint-hd">💡 Hebe diesen Link auf – er ist dein Rettungsanker!</div>
-  Du brauchst diesen Link um:
-  <ul>
-    <li><strong>Updates zu erhalten</strong> – die App lädt stets die neueste Version</li>
-    <li><strong>Die App weiterzugeben</strong> – einfach den Link verschicken oder QR-Code zeigen</li>
-    <li><strong>Die App zu reparieren</strong> – neu laden löst die meisten Probleme</li>
-    <li><strong>Auf Werkseinstellung zurückzusetzen</strong> – falls gar nichts mehr geht</li>
-  </ul>
-</div>
-
-<!-- FEATURES -->
-<section class="features">
-  <div class="feat">
-    <div class="feat-icon">📷</div>
-    <div class="feat-text">
-      <h3>KI-Foto &amp; Datei-Scan</h3>
-      <p>Rezepte abfotografieren oder als Datei einlesen – KI erkennt Zutaten &amp; Schritte automatisch</p>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="120" height="120" style="filter:drop-shadow(0 8px 32px rgba(136,0,255,0.4))">
+        <defs>
+          <linearGradient id="hSC" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF0000"/>
+            <stop offset="16.6%" stop-color="#FF7700"/>
+            <stop offset="33.3%" stop-color="#FFE500"/>
+            <stop offset="50%" stop-color="#00CC00"/>
+            <stop offset="66.6%" stop-color="#00CCFF"/>
+            <stop offset="83.3%" stop-color="#0044FF"/>
+            <stop offset="100%" stop-color="#8800FF"/>
+          </linearGradient>
+          <linearGradient id="hSS" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF0000"/>
+            <stop offset="25%" stop-color="#FFE500"/>
+            <stop offset="50%" stop-color="#00CC00"/>
+            <stop offset="75%" stop-color="#0044FF"/>
+            <stop offset="100%" stop-color="#8800FF"/>
+          </linearGradient>
+          <linearGradient id="hPL" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#e8ddd0"/>
+            <stop offset="100%" stop-color="#f9f4ec"/>
+          </linearGradient>
+          <linearGradient id="hPR" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#f9f4ec"/>
+            <stop offset="100%" stop-color="#e8ddd0"/>
+          </linearGradient>
+          <linearGradient id="hSB" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#FF0000"/>
+            <stop offset="20%" stop-color="#FF7700"/>
+            <stop offset="40%" stop-color="#FFE500"/>
+            <stop offset="60%" stop-color="#00CC00"/>
+            <stop offset="80%" stop-color="#0044FF"/>
+            <stop offset="100%" stop-color="#8800FF"/>
+          </linearGradient>
+        </defs>
+        <rect x="36" y="72" width="440" height="368" rx="18" ry="18" fill="url(#hSC)"/>
+        <rect x="60" y="90" width="192" height="332" rx="4" ry="4" fill="url(#hPL)"/>
+        <rect x="260" y="90" width="192" height="332" rx="4" ry="4" fill="url(#hPR)"/>
+        <rect x="240" y="72" width="32" height="368" fill="url(#hSS)"/>
+        <rect x="255" y="72" width="2" height="368" fill="#fff" opacity="0.3"/>
+        <g opacity="0.55">
+          <rect x="82" y="130" width="148" height="8" rx="4" fill="#FF2200"/>
+          <rect x="82" y="152" width="130" height="8" rx="4" fill="#FF7700"/>
+          <rect x="82" y="174" width="148" height="8" rx="4" fill="#FFE500"/>
+          <rect x="82" y="196" width="110" height="8" rx="4" fill="#00BB00"/>
+          <rect x="82" y="218" width="148" height="8" rx="4" fill="#00AAEE"/>
+          <rect x="82" y="240" width="138" height="8" rx="4" fill="#0044FF"/>
+          <rect x="82" y="270" width="148" height="8" rx="4" fill="#8800FF"/>
+          <rect x="82" y="292" width="120" height="8" rx="4" fill="#FF2200"/>
+          <rect x="82" y="314" width="148" height="8" rx="4" fill="#FF7700"/>
+          <rect x="82" y="336" width="100" height="8" rx="4" fill="#FFE500"/>
+          <rect x="82" y="358" width="148" height="8" rx="4" fill="#00BB00"/>
+        </g>
+        <g opacity="0.55">
+          <rect x="282" y="130" width="148" height="8" rx="4" fill="#00AAEE"/>
+          <rect x="282" y="152" width="120" height="8" rx="4" fill="#0044FF"/>
+          <rect x="282" y="174" width="148" height="8" rx="4" fill="#8800FF"/>
+          <rect x="282" y="196" width="138" height="8" rx="4" fill="#FF2200"/>
+          <rect x="282" y="218" width="148" height="8" rx="4" fill="#FF7700"/>
+          <rect x="282" y="240" width="108" height="8" rx="4" fill="#FFE500"/>
+          <rect x="282" y="270" width="148" height="8" rx="4" fill="#00BB00"/>
+          <rect x="282" y="292" width="130" height="8" rx="4" fill="#00AAEE"/>
+          <rect x="282" y="314" width="148" height="8" rx="4" fill="#0044FF"/>
+          <rect x="282" y="336" width="115" height="8" rx="4" fill="#8800FF"/>
+          <rect x="282" y="358" width="148" height="8" rx="4" fill="#FF2200"/>
+        </g>
+        <rect x="82" y="108" width="148" height="12" rx="6" fill="url(#hSB)" opacity="0.9"/>
+        <rect x="282" y="108" width="148" height="12" rx="6" fill="url(#hSB)" opacity="0.9"/>
+      </svg>
     </div>
-  </div>
-  <div class="feat">
-    <div class="feat-icon">🌐</div>
-    <div class="feat-text">
-      <h3>Web-Rezepte einlesen</h3>
-      <p>URL eingeben – Rezept wird direkt aus jeder Webseite importiert</p>
-    </div>
-  </div>
-  <div class="feat">
-    <div class="feat-icon">🌍</div>
-    <div class="feat-text">
-      <h3>8 Sprachen</h3>
-      <p>Rezepte übersetzen für die ganze Familie weltweit</p>
-    </div>
-  </div>
-  <div class="feat">
-    <div class="feat-icon">📵</div>
-    <div class="feat-text">
-      <h3>Offline &amp; privat</h3>
-      <p>Alles bleibt auf deinem Gerät – kein Account, kein Cloud-Zwang</p>
-    </div>
-  </div>
-  <div class="feat">
-    <div class="feat-icon">🛒</div>
-    <div class="feat-text">
-      <h3>Einkaufsliste &amp; Menüplan</h3>
-      <p>Automatisch aus deinen Rezepten erstellt</p>
-    </div>
-  </div>
-</section>
 
-<!-- SHARE -->
-<section class="share-wrap">
-  <h2 class="share-title">
-    Weiterempfehlen
-    <span>Teile die App mit Familie & Freunden</span>
-  </h2>
-  <div class="share-btns">
-    <button class="sbtn sbtn-wa" onclick="shareWA()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Via WhatsApp teilen
-    </button>
-    <button class="sbtn sbtn-copy" id="copyBtn" onclick="copyLink()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      <span id="copyTxt">Link kopieren</span>
-    </button>
+    <h1><em>Mein</em> Rezeptbuch</h1>
+    <p class="hero-sub">Rezepte sammeln · Kochen · Teilen · Kein Account · Offline</p>
+
+    <a href="https://lausiklauskn-png.github.io/Mein-Rezeptbuch/" class="btn-cta" target="_blank" rel="noopener">
+      App öffnen &amp; installieren
+    </a>
+
+    <p class="install-note">Kostenlos · Keine Registrierung · Funktioniert offline</p>
+    <p class="ios-note"><strong>iPhone/iPad:</strong> Öffne den Link in Safari für die beste Erfahrung</p>
   </div>
 
-  <div class="qr-box">
-    <p>📱 QR-Code scannen &amp; sofort loslegen</p>
-    <div id="qrcode"></div>
-    <div class="qr-url">lausiklauskn-png.github.io/mutti-rezeptbuch</div>
+  <!-- HINT BOX -->
+  <div class="hint-box">
+    <strong>Tipp:</strong> Diese App läuft direkt im Browser – kein App Store nötig. Über „Zum Home-Bildschirm hinzufügen" kannst du sie wie eine echte App installieren.
   </div>
-</section>
 
-<!-- INSTALL -->
-<section class="install-wrap">
-  <h2 class="install-title">App installieren</h2>
-  <div class="itabs">
-    <button class="itab on" onclick="tab(this,'ios')">🍎 iPhone</button>
-    <button class="itab" onclick="tab(this,'android')">🤖 Android</button>
-    <button class="itab" onclick="tab(this,'desktop')">💻 Desktop</button>
-    <button class="itab" onclick="tab(this,'repair')" style="border-color:rgba(190,44,29,.35);color:#be2c1d">🔧 Reparieren</button>
+  <!-- RAINBOW DIVIDER -->
+  <div style="margin-top: 28px;">
+    <div class="rainbow-line"></div>
   </div>
-  <div class="ipane on" id="pane-ios">
-    <div class="istep"><div class="isn">1</div><div>Safari öffnen und die App-URL eingeben</div></div>
-    <div class="istep"><div class="isn">2</div><div>Unten auf <strong>„Teilen"</strong> tippen (Kasten mit Pfeil)</div></div>
-    <div class="istep"><div class="isn">3</div><div><strong>„Zum Home-Bildschirm"</strong> antippen</div></div>
-    <div class="istep"><div class="isn">4</div><div>Namen bestätigen – fertig! 🎉</div></div>
-  </div>
-  <div class="ipane" id="pane-android">
-    <div class="istep"><div class="isn">1</div><div><strong>Microsoft Edge</strong> öffnen und die App-URL eingeben<br><small style="color:var(--ink3)">⚠️ Chrome funktioniert auf manchen Samsung-Geräten nicht</small></div></div>
-    <div class="istep"><div class="isn">2</div><div>Unten in der Leiste auf <strong>⋯ Menü</strong> tippen</div></div>
-    <div class="istep"><div class="isn">3</div><div><strong>„Zum Startbildschirm hinzufügen"</strong> oder <strong>„App installieren"</strong> tippen</div></div>
-    <div class="istep"><div class="isn">4</div><div>Namen bestätigen – fertig! 🎉</div></div>
-    <div style="background:var(--grns);border-radius:8px;padding:9px 11px;margin-top:8px;font-size:.73rem;color:#145028;line-height:1.45">
-      <strong>Tipp:</strong> Edge ist auf Samsung vorinstalliert und funktioniert zuverlässig für die App-Installation.
+
+  <!-- FEATURES -->
+  <section>
+    <p class="section-title">Was dich erwartet</p>
+    <p class="section-sub">Alles, was ein persönliches Rezeptbuch braucht</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📝</div>
+        <div class="feat-text">
+          <strong>Rezepte erfassen</strong>
+          <span>Eigene Rezepte eintippen oder per Link von Webseiten importieren – schnell und einfach.</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔍</div>
+        <div class="feat-text">
+          <strong>Suchen &amp; Filtern</strong>
+          <span>Rezepte nach Name, Zutat oder Kategorie finden. Favoriten mit einem Stern markieren.</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📤</div>
+        <div class="feat-text">
+          <strong>Teilen &amp; Exportieren</strong>
+          <span>Rezepte als PDF drucken, per Link teilen oder als JSON-Datei sichern und weitergeben.</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📶</div>
+        <div class="feat-text">
+          <strong>Offline verfügbar</strong>
+          <span>Alle Rezepte bleiben lokal gespeichert. Kein Internet nötig – auch beim Kochen in der Küche.</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-text">
+          <strong>Privat &amp; sicher</strong>
+          <span>Keine Registrierung, kein Server. Deine Daten bleiben auf deinem Gerät.</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌍</div>
+        <div class="feat-text">
+          <strong>8 Sprachen</strong>
+          <span>Deutsch, Englisch, Russisch, Chinesisch, Spanisch, Französisch, Italienisch, Portugiesisch.</span>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="ipane" id="pane-desktop">
-    <div class="istep"><div class="isn">1</div><div>Chrome oder Edge öffnen und die App-URL eingeben</div></div>
-    <div class="istep"><div class="isn">2</div><div>Rechts in der Adressleiste auf das <strong>⊕ Install-Icon</strong> klicken</div></div>
-    <div class="istep"><div class="isn">3</div><div><strong>„Installieren"</strong> bestätigen – fertig! 🎉</div></div>
-  </div>
-  <div class="ipane" id="pane-repair">
+  </section>
 
-    <div class="rstep">
-      <div class="rstep-hd">1 · App einfriert oder lädt nicht?</div>
-      <p class="rstep-txt">App neu öffnen – lädt automatisch die neueste Version</p>
-      <a class="rbtn rbtn-blue" href="https://lausiklauskn-png.github.io/mutti-rezeptbuch/" target="_blank">
-        🔄 App jetzt neu öffnen
+  <!-- RAINBOW DIVIDER -->
+  <div style="margin-top: 32px;">
+    <div class="rainbow-line"></div>
+  </div>
+
+  <!-- SHARE -->
+  <section>
+    <p class="section-title">Einladung teilen</p>
+    <p class="section-sub">Schick diese Seite an Familie und Freunde</p>
+    <div class="share-btns">
+      <button class="btn-wa" onclick="shareWA()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+      <button class="btn-copy" onclick="copyLink()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Link kopieren
+      </button>
+    </div>
+
+    <div class="qr-box">
+      <div id="qrcode"></div>
+      <p>QR-Code scannen zum Öffnen</p>
+    </div>
+  </section>
+
+  <!-- RAINBOW DIVIDER -->
+  <div style="margin-top: 32px;">
+    <div class="rainbow-line"></div>
+  </div>
+
+  <!-- INSTALL -->
+  <section>
+    <p class="section-title">App installieren</p>
+    <p class="section-sub">Als App auf dem Home-Bildschirm speichern</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('ios', this)"><span>🍎 iOS</span></button>
+      <button class="tab-btn" onclick="showTab('android', this)"><span>🤖 Android</span></button>
+      <button class="tab-btn" onclick="showTab('desktop', this)"><span>💻 Desktop</span></button>
+      <button class="tab-btn" onclick="showTab('repair', this)"><span>🔧 Reparieren</span></button>
+    </div>
+
+    <!-- iOS -->
+    <div class="tab-pane active" id="pane-ios">
+      <div class="install-card">
+        <h3>Installation auf iPhone / iPad</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Öffne den Link in <strong>Safari</strong> (nicht Chrome oder Firefox).</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Tippe auf das <strong>Teilen-Symbol</strong> <span class="mono">⎙</span> unten in der Menüleiste.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Wähle <strong>„Zum Home-Bildschirm"</strong> und bestätige mit <strong>„Hinzufügen"</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text">Die App erscheint als <strong>„Meine Rezepte"</strong> auf deinem Home-Bildschirm.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android -->
+    <div class="tab-pane" id="pane-android">
+      <div class="install-card">
+        <h3>Installation auf Android</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Öffne den Link in <strong>Chrome</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Tippe auf das <strong>Menü</strong> <span class="mono">⋮</span> oben rechts.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Wähle <strong>„App installieren"</strong> oder <strong>„Zum Startbildschirm hinzufügen"</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text">Bestätige die Installation. Die App <strong>„Meine Rezepte"</strong> ist bereit.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop -->
+    <div class="tab-pane" id="pane-desktop">
+      <div class="install-card">
+        <h3>Installation am Computer</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Öffne den Link in <strong>Chrome</strong> oder <strong>Edge</strong>.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Klicke auf das <strong>Installations-Symbol</strong> <span class="mono">⊕</span> in der Adressleiste (rechts).</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Klicke auf <strong>„Installieren"</strong> im Dialog.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text">Die App öffnet sich in einem eigenen Fenster und ist im Startmenü verfügbar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repair -->
+    <div class="tab-pane" id="pane-repair">
+      <div class="install-card">
+        <h3>App reparieren / zurücksetzen</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Falls die App nicht mehr lädt oder sich seltsam verhält, kann der Cache geleert werden.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>Achtung:</strong> Deine Rezepte sind im lokalen Speicher (localStorage) abgelegt – sie bleiben erhalten, auch wenn der Cache geleert wird.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Öffne die App und tippe unten auf den Button, um den Service Worker zurückzusetzen.</div>
+          </div>
+        </div>
+        <button class="btn-cache" onclick="showCacheHelp()">Cache leeren &amp; App neu laden</button>
+        <div class="cache-help" id="cacheHelp">
+          Öffne die App unter <strong style="color:var(--ink2)">lausiklauskn-png.github.io/Mein-Rezeptbuch</strong> direkt in deinem Browser. Dort findest du in den Einstellungen die Option „Cache leeren". Danach lädt die App die neueste Version.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-rainbow"></div>
+    <p><strong style="color:var(--ink2)">Mein Rezeptbuch</strong></p>
+    <p style="margin-top:6px;">Dein persönliches digitales Kochbuch</p>
+    <p style="margin-top:10px;">
+      <a href="https://lausiklauskn-png.github.io/Mein-Rezeptbuch/" target="_blank" rel="noopener">
+        lausiklauskn-png.github.io/Mein-Rezeptbuch
       </a>
-    </div>
+    </p>
+    <p style="margin-top:10px; font-size:0.7rem; opacity:0.5;">Keine Werbung · Keine Tracker · Open Source</p>
+  </footer>
 
-    <div class="rstep">
-      <div class="rstep-hd">2 · Rezepte sichern oder wiederherstellen</div>
-      <p class="rstep-txt">Öffne die App und tippe oben rechts auf das Symbol:</p>
-      <div style="display:flex;gap:8px">
-        <a class="rbtn rbtn-blue" style="flex:1" href="https://lausiklauskn-png.github.io/mutti-rezeptbuch/" target="_blank">
-          📤 Backup erstellen
-        </a>
-        <a class="rbtn rbtn-outline" style="flex:1" href="https://lausiklauskn-png.github.io/mutti-rezeptbuch/" target="_blank">
-          📥 Backup laden
-        </a>
-      </div>
-    </div>
+  <!-- TOAST -->
+  <div class="toast" id="toast">Link kopiert!</div>
 
-    <div class="rstep">
-      <div class="rstep-hd">3 · Nichts hilft? Cache leeren</div>
-      <p class="rstep-txt">Browserdaten löschen – dann App über diesen Link neu öffnen</p>
-      <button class="rbtn rbtn-outline" onclick="showCacheHelp()">
-        🧹 Anleitung anzeigen
-      </button>
-    </div>
+  <script>
+    const APP_URL = 'https://lausiklauskn-png.github.io/Mein-Rezeptbuch/';
+    const INVITE_URL = location.href;
 
-  </div>
+    // QR Code
+    new QRCode(document.getElementById('qrcode'), {
+      text: APP_URL,
+      width: 160,
+      height: 160,
+      colorDark: '#f0f0ff',
+      colorLight: '#13131f',
+      correctLevel: QRCode.CorrectLevel.M
+    });
 
-  <!-- Cache-Anleitung Popup -->
-  <div id="cacheHelp" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(20,32,56,.55);align-items:flex-end;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
-    <div style="background:#fff;width:min(440px,100%);border-radius:18px 18px 0 0;padding:22px 20px 32px;box-shadow:0 -6px 32px rgba(0,0,0,.2)">
-      <div style="font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--blue);margin-bottom:14px">🧹 Cache leeren – so geht's</div>
-      <div style="font-size:.8rem;color:var(--ink2);line-height:1.7">
-        <strong>🍎 iPhone / Safari:</strong><br>
-        Einstellungen → Safari → „Websitedaten löschen"<br><br>
-        <strong>🤖 Android / Edge:</strong><br>
-        Einstellungen → Apps → Edge → Speicher → Cache leeren<br><br>
-        <strong>🤖 Android / Chrome:</strong><br>
-        Chrome-Menü ⋮ → Einstellungen → Datenschutz → Browserdaten löschen<br><br>
-        <strong>💻 Desktop:</strong><br>
-        Strg+Shift+Entf → Cache auswählen → Löschen
-      </div>
-      <button onclick="document.getElementById('cacheHelp').style.display='none'"
-        style="margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer">
-        Verstanden ✓
-      </button>
-    </div>
-  </div>
-</section>
+    // Share WhatsApp
+    function shareWA() {
+      const msg = encodeURIComponent(
+        'Schau mal – das ist eine tolle App zum Rezepte sammeln: ' + INVITE_URL
+      );
+      window.open('https://wa.me/?text=' + msg, '_blank');
+    }
 
-<!-- PDF DOWNLOAD -->
-<div class="pdf-wrap">
-  <button class="pdf-btn" onclick="window.print()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-    Als PDF speichern
-  </button>
-  <p class="pdf-note">Browser-Dialog öffnet sich → „Als PDF speichern" wählen</p>
-</div>
+    // Copy link
+    function copyLink() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(INVITE_URL).then(showToast);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = INVITE_URL;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast();
+      }
+    }
 
-<!-- FOOTER -->
-<footer class="foot">
-  © 2026 Klaus Nitzsche · Alle Rechte vorbehalten<br>
-  Private Nutzung gestattet · <a href="https://lausiklauskn-png.github.io/mutti-rezeptbuch/">App öffnen</a>
-</footer>
+    function showToast() {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
 
-<script>
-const APP_URL = 'https://lausiklauskn-png.github.io/mutti-rezeptbuch/';
+    // Tabs
+    function showTab(id, btn) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('pane-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
 
-// QR Code
-new QRCode(document.getElementById('qrcode'), {
-  text: APP_URL,
-  width: 160, height: 160,
-  colorDark: '#182038', colorLight: '#ffffff',
-  correctLevel: QRCode.CorrectLevel.M
-});
+    // Cache help
+    function showCacheHelp() {
+      document.getElementById('cacheHelp').classList.toggle('visible');
+    }
 
-// WhatsApp share
-function shareWA() {
-  const txt = encodeURIComponent('📖 Muttis Rezeptbuch – Alte Rezepte digital retten!\nKostenlos, offline, kein Account:\n' + APP_URL);
-  window.open('https://wa.me/?text=' + txt, '_blank');
-}
-
-// Copy link
-function copyLink() {
-  const btn = document.getElementById('copyBtn');
-  const txt = document.getElementById('copyTxt');
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(APP_URL).then(() => success());
-  } else {
-    const el = document.createElement('textarea');
-    el.value = APP_URL; el.style.position = 'fixed'; el.style.opacity = '0';
-    document.body.appendChild(el); el.select();
-    document.execCommand('copy'); document.body.removeChild(el);
-    success();
-  }
-  function success() {
-    btn.classList.add('ok'); txt.textContent = '✓ Kopiert!';
-    setTimeout(() => { btn.classList.remove('ok'); txt.textContent = 'Link kopieren'; }, 2500);
-  }
-}
-
-// Cache help popup
-function showCacheHelp(){
-  const el=document.getElementById('cacheHelp');
-  el.style.display='flex';
-}
-
-// iOS detection → show correct install hint in hero
-(function(){
-  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if(ios){
-    document.getElementById('installNote').style.display='none';
-    document.getElementById('iosNote').style.display='';
-  }
-})();
-
-// Install tabs
-function tab(el, id) {
-  document.querySelectorAll('.itab').forEach(t => t.classList.remove('on'));
-  document.querySelectorAll('.ipane').forEach(p => p.classList.remove('on'));
-  el.classList.add('on');
-  document.getElementById('pane-' + id).classList.add('on');
-}
-</script>
+    // Auto-select tab based on device
+    (function() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (!isIOS && /android/i.test(navigator.userAgent)) {
+        showTab('android', document.querySelectorAll('.tab-btn')[1]);
+      }
+    })();
+  </script>
 </body>
 </html>
