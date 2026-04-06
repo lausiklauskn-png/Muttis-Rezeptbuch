@@ -83,6 +83,14 @@
 [data-theme=pastel]{--sand:#fff0f9;--sand2:#f0d0ea;--parch:#fff8fe;--ink:#2a1830;--br:#c050c8;--br2:#d878d4;--br3:#d4a8cc;--rust:#ff6090;--rusts:#ffe0eb;--grn:#4ec888;--grns:#d4f2e4;--teal:#38b8cc;--teals:#ccf0f6;--gold:#f5a020;--golds:#fff0d0}
 [data-theme=pastel] .top-hdr{background:linear-gradient(135deg,#c050c8,#ff6090);box-shadow:0 2px 12px rgba(192,80,200,.3)}
 [data-theme=pastel] #bnav{background:#fff8fe!important;border-top:1px solid #f0d0ea!important}
+
+/* ── Theme: Spektral (Echte Lichtspektralfarben) ── */
+[data-theme=spektral]{--sand:#080812;--sand2:#12102a;--parch:#0e0c1e;--ink:#f0eeff;--br:#9944ff;--br2:#7722cc;--br3:#bb77ff;--rust:#ff2255;--rusts:#2a0415;--grn:#00cc77;--grns:#002216;--teal:#00ccff;--teals:#001a24;--gold:#ffee00;--golds:#1a1600}
+[data-theme=spektral] .top-hdr{background:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF);box-shadow:0 2px 20px rgba(136,0,255,.45)}
+[data-theme=spektral] .logo{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+[data-theme=spektral] #bnav{background:#080812!important;border-top:2px solid transparent!important;border-image:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF) 1!important}
+[data-theme=spektral] .rcard{background:#0e0c1e;box-shadow:0 2px 12px rgba(136,0,255,.18)}
+[data-theme=spektral] .rcard:hover{box-shadow:0 8px 28px rgba(136,0,255,.35)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:system-ui,sans-serif;background:var(--sand);color:var(--ink);
@@ -3414,6 +3422,7 @@ const COURSES=[
   {id:'oth',ico:'📝',de:'Sonstiges',en:'Other',ru:'Другое',zh:'其他',es:'Otros',fr:'Autres',it:'Altro',pt:'Outros'},
 ];
 const THEMES=[
+  {id:'spektral',de:'Spektral',en:'Spectral',ru:'Спектр',zh:'光谱',es:'Espectral',fr:'Spectral',it:'Spettrale',pt:'Espectral',strips:['#FF0000','#FFE500','#00CC00','#8800FF']},
   {id:'default',de:'Landhaus',en:'Country',ru:'Деревенск.',zh:'乡村',es:'Rural',fr:'Campagne',it:'Campagna',pt:'Campo',strips:['#f9f4ec','#7a5840','#b85535','#4e7040']},
   {id:'spring',de:'Frühling',en:'Spring',ru:'Весна',zh:'春天',es:'Primavera',fr:'Printemps',it:'Primavera',pt:'Primavera',strips:['#f4f9f0','#437230','#c05858','#287858']},
   {id:'night',de:'Nacht',en:'Night',ru:'Ночь',zh:'夜晚',es:'Noche',fr:'Nuit',it:'Notte',pt:'Noite',strips:['#181410','#c8a480','#e07050','#68a848']},
