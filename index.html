@@ -574,6 +574,8 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .fld-grp.fld-drop-over .fld-hdr{background:var(--teals)}
 .fld-rrow.fld-drop-before{border-top:2.5px solid var(--teal)!important;background:var(--teals)}
 .fld-rrow.fld-drop-after{border-bottom:2.5px solid var(--teal)!important;background:var(--teals)}
+.rcard.rcard-drop-before{border-top:2.5px solid var(--teal)!important;background:var(--teals)}
+.rcard.rcard-drop-after{border-bottom:2.5px solid var(--teal)!important;background:var(--teals)}
 .ing-li.drag-over,.step-li.drag-over{background:var(--teals,#e0f2f1);border-radius:6px;outline:2px dashed var(--teal,#4caf9a)}
 .fld-rname{flex:1;font-size:.78rem;font-weight:600}
 .fld-rarr{color:var(--br2,#5a3e28);font-size:1rem;font-weight:700;opacity:.7}
@@ -6325,7 +6327,7 @@ function rndCard(r){
     ${r.img?(()=>{const cr=r.imgCrop||{x:50,y:50,scale:1};return`<div class="rcard-img-wrap" onclick="event.stopPropagation();openCrop(${r.id})" title="${T('cropTitle')}"><img class="rcard-img" src="${r.img}" alt="${h(r.name)}" loading="lazy" style="transform:scale(${cr.scale});transform-origin:${cr.x}% ${cr.y}%"/><div class="crop-hint"><div class="crop-hint-lbl">${T('cropHint')}</div></div></div>`;})():''}
     <div class="rcard-hd" onclick="${isBlank?'openInlineEdit('+r.id+')':'togCard('+r.id+')'}">
       <div class="stripe" style="background:${cc}"></div>
-      <span class="drag-hdl" data-tip="${T('dragTip')}" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
+      <span class="drag-hdl" data-tip="${T('dragTip')}" data-hdl="card" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
       <div class="rname ${isBlank?'em':''}" id="rname-${r.id}">${h(rName(r)||(r.ph||catName(r.cat)))}${rTr(r)?`<span style="font-size:.56rem;font-weight:700;background:var(--teals);color:var(--teal);border-radius:7px;padding:1px 5px;margin-left:5px;vertical-align:middle">🌐 ${CL.toUpperCase()}</span>`:''}</div>
       ${rTr(r)&&rName(r)!==r.name?`<div style="font-size:.59rem;color:var(--br3);margin-top:1px">${h(r.name)}</div>`:''}
       <div class="rmeta">${tot?`${tot} ${T('sIngr')} · ${dispTime?fmtPrepTime(dispTime):(r.steps||[]).length+' '+T('sSteps')}`:isBlank?`${catIco(r.cat)} ${catName(r.cat)}`:''}</div>
@@ -6512,7 +6514,7 @@ function cancelStepEdit(rid,sid){delete ES[`se-${rid}-${sid}`];render();}
 
 // ── Touch-Drag für Zutaten & Schritte (Mobile) ────────
 function setupTouchDrag(){
-  document.querySelectorAll('.ing-drag-hdl[data-hdl],.fld-drag-hdl[data-hdl]').forEach(hdl=>{
+  document.querySelectorAll('.ing-drag-hdl[data-hdl],.fld-drag-hdl[data-hdl],.drag-hdl[data-hdl]').forEach(hdl=>{
     hdl.removeEventListener('touchstart',_tddStart);
     hdl.addEventListener('touchstart',_tddStart,{passive:false});
   });
@@ -6573,15 +6575,20 @@ function _tddStart(e){
   if(type==='fld'){
     li=hdl.closest('.fld-rrow');if(!li)return;
     rid=parseInt(hdl.dataset.rid);id=rid;
+  }else if(type==='card'){
+    li=hdl.closest('.rcard');if(!li)return;
+    rid=parseInt(li.id.replace('c',''));id=rid;
   }else{
     li=hdl.closest('li');if(!li)return;
     rid=parseInt(li.dataset.rid);
     id=parseInt(type==='ing'?li.dataset.iid:li.dataset.sid);
   }
   const rect=li.getBoundingClientRect(),t=e.touches[0];
-  const ghost=li.cloneNode(true);
+  const ghostSrc=type==='card'?(li.querySelector('.rcard-hd')||li):li;
+  const ghostRect=ghostSrc.getBoundingClientRect();
+  const ghost=ghostSrc.cloneNode(true);
   ghost.id='tdd-ghost';
-  ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);border-radius:6px;margin:0`;
+  ghost.style.cssText=`position:fixed;left:${ghostRect.left}px;top:${ghostRect.top}px;width:${ghostRect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);border-radius:6px;margin:0`;
   document.body.appendChild(ghost);
   li.style.opacity='.3';
   _tdd={type,rid,id,li,ghost,offsetY:t.clientY-rect.top};
@@ -6612,6 +6619,17 @@ function _tddMove(e){
       if(tgrp){tgrp.classList.add('fld-drop-over');_tdd.over=tgrp;_tdd.overPos=null;}
       else{_tdd.over=null;_tdd.overPos=null;}
     }
+    return;
+  }
+  if(_tdd.type==='card'){
+    document.querySelectorAll('.rcard').forEach(r=>r.classList.remove('rcard-drop-before','rcard-drop-after'));
+    const tcard=el?.closest('.rcard');
+    if(tcard&&tcard.id&&tcard.id!==_tdd.li.id){
+      const rect=tcard.getBoundingClientRect();
+      const pos=t.clientY<rect.top+rect.height/2?'before':'after';
+      tcard.classList.add('rcard-drop-'+pos);
+      _tdd.over=tcard;_tdd.overPos=pos;
+    }else{_tdd.over=null;_tdd.overPos=null;}
     return;
   }
   const sel=_tdd.type==='ing'?'.ing-li':'.step-li';
@@ -6655,6 +6673,20 @@ function _tddEnd(){
           if(gid){if(gid.startsWith('cat_')){const catId=gid.slice(4);if(!(r.cat===catId&&!r.folder)){r.cat=catId;r.folder='';}}else if(gid.startsWith('cfd_')){const fid=gid.slice(4);if(r.cat!==('fld_'+fid)){r.cat='fld_'+fid;r.folder=String(fid);}}}
         }
         sv();render();renderFolders();
+      }
+    }
+    _tdd=null;return;
+  }
+  if(_tdd.type==='card'){
+    document.querySelectorAll('.rcard').forEach(r=>r.classList.remove('rcard-drop-before','rcard-drop-after'));
+    if(_tdd.over&&_tdd.over.id){
+      const targetRid=parseInt(_tdd.over.id.replace('c',''));
+      const fromIdx=R.findIndex(x=>x.id===_tdd.rid);
+      if(fromIdx>=0){
+        const[item]=R.splice(fromIdx,1);
+        let toIdx=R.findIndex(x=>x.id===targetRid);
+        if(toIdx>=0){if(_tdd.overPos==='after')toIdx++;R.splice(toIdx,0,item);sv();render();}
+        else R.splice(fromIdx,0,item);// rückgängig falls Ziel nicht gefunden
       }
     }
     _tdd=null;return;
