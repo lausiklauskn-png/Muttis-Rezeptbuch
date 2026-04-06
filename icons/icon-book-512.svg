@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Full-resolution 512×512 version – identical artwork to icon-book.svg
+       but saved as a standalone file for manifest "512x512" entry. -->
+  <defs>
+    <filter id="shadow512" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#3a2010" flood-opacity="0.30"/>
+    </filter>
+    <linearGradient id="pageLeft512" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#e8ddd0"/>
+      <stop offset="100%" stop-color="#f9f4ec"/>
+    </linearGradient>
+    <linearGradient id="pageRight512" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#f9f4ec"/>
+      <stop offset="100%" stop-color="#e8ddd0"/>
+    </linearGradient>
+    <linearGradient id="spineGrad512" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#5c3d26"/>
+      <stop offset="50%"  stop-color="#b85535"/>
+      <stop offset="100%" stop-color="#5c3d26"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer book cover -->
+  <rect x="36" y="72" width="440" height="368" rx="18" ry="18"
+        fill="#7a5840" filter="url(#shadow512)"/>
+
+  <!-- Left page -->
+  <rect x="60" y="90" width="192" height="332" rx="4" ry="4"
+        fill="url(#pageLeft512)"/>
+
+  <!-- Right page -->
+  <rect x="260" y="90" width="192" height="332" rx="4" ry="4"
+        fill="url(#pageRight512)"/>
+
+  <!-- Spine -->
+  <rect x="240" y="72" width="32" height="368"
+        fill="url(#spineGrad512)"/>
+  <rect x="255" y="72" width="2" height="368"
+        fill="#f9f4ec" opacity="0.25"/>
+
+  <!-- Text lines – left page -->
+  <g fill="#7a5840" opacity="0.45">
+    <rect x="82"  y="130" width="148" height="8"  rx="4"/>
+    <rect x="82"  y="152" width="130" height="8"  rx="4"/>
+    <rect x="82"  y="174" width="148" height="8"  rx="4"/>
+    <rect x="82"  y="196" width="110" height="8"  rx="4"/>
+    <rect x="82"  y="218" width="148" height="8"  rx="4"/>
+    <rect x="82"  y="240" width="138" height="8"  rx="4"/>
+    <rect x="82"  y="270" width="148" height="8"  rx="4"/>
+    <rect x="82"  y="292" width="120" height="8"  rx="4"/>
+    <rect x="82"  y="314" width="148" height="8"  rx="4"/>
+    <rect x="82"  y="336" width="100" height="8"  rx="4"/>
+    <rect x="82"  y="358" width="148" height="8"  rx="4"/>
+  </g>
+
+  <!-- Text lines – right page -->
+  <g fill="#7a5840" opacity="0.45">
+    <rect x="282" y="130" width="148" height="8"  rx="4"/>
+    <rect x="282" y="152" width="120" height="8"  rx="4"/>
+    <rect x="282" y="174" width="148" height="8"  rx="4"/>
+    <rect x="282" y="196" width="138" height="8"  rx="4"/>
+    <rect x="282" y="218" width="148" height="8"  rx="4"/>
+    <rect x="282" y="240" width="108" height="8"  rx="4"/>
+    <rect x="282" y="270" width="148" height="8"  rx="4"/>
+    <rect x="282" y="292" width="130" height="8"  rx="4"/>
+    <rect x="282" y="314" width="148" height="8"  rx="4"/>
+    <rect x="282" y="336" width="115" height="8"  rx="4"/>
+    <rect x="282" y="358" width="148" height="8"  rx="4"/>
+  </g>
+
+  <!-- Section header accents -->
+  <rect x="82"  y="108" width="80" height="12" rx="6" fill="#b85535" opacity="0.75"/>
+  <rect x="282" y="108" width="80" height="12" rx="6" fill="#b85535" opacity="0.75"/>
+
+  <!-- Page curl hint -->
+  <path d="M452 422 Q452 440 434 440 L452 440 Z"
+        fill="#c8b89e" opacity="0.5"/>
+</svg>
