@@ -7095,11 +7095,21 @@ function _initTooltips(){
       return el&&el.style.display&&el.style.display!=='none';
     });
   }
-  let tx=0,ty=0,locked=false;
+  function _doSwipe(dx){
+    const cur=document.querySelector('.sc.on')?.id?.replace('sc-','');
+    const idx=SC_ORDER.indexOf(cur);
+    if(idx<0)return;
+    if(dx<0&&idx<SC_ORDER.length-1)showSc(SC_ORDER[idx+1],'left');
+    else if(dx>0&&idx>0)showSc(SC_ORDER[idx-1],'right');
+  }
+  const SWIPE_DRAG_SEL='.drag-hdl,.ing-drag-hdl,.fld-drag-hdl,.wk-drag-hdl';
+  // Touch-Swipe (Finger / Stift)
+  let tx=0,ty=0,locked=false,_swTarget=null;
   document.addEventListener('touchstart',function(e){
     tx=e.touches[0].clientX;
     ty=e.touches[0].clientY;
     locked=false;
+    _swTarget=e.target;
   },{passive:true});
   document.addEventListener('touchmove',function(e){
     if(locked)return;
@@ -7111,18 +7121,53 @@ function _initTooltips(){
   document.addEventListener('touchend',function(e){
     if(locked)return;
     if(anyModalOpen())return;
+    // S6-Fix: Touch auf Drag-Handle nicht als Swipe werten
+    if(_swTarget&&_swTarget.closest(SWIPE_DRAG_SEL))return;
     const dx=e.changedTouches[0].clientX-tx;
     const dy=e.changedTouches[0].clientY-ty;
     // Mindest-Wischweite 55px, deutlich horizontaler als vertikal
     if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.5)return;
     // Nicht auf horizontalem Scroll-Element (z.B. Kategorie-Leiste)
-    const target=e.target;
-    if(target.closest('#catNav'))return;
-    const cur=document.querySelector('.sc.on')?.id?.replace('sc-','');
-    const idx=SC_ORDER.indexOf(cur);
-    if(idx<0)return;
-    if(dx<0&&idx<SC_ORDER.length-1)showSc(SC_ORDER[idx+1],'left');
-    else if(dx>0&&idx>0)showSc(SC_ORDER[idx-1],'right');
+    if(e.target.closest('#catNav'))return;
+    _doSwipe(dx);
+  },{passive:true});
+  // Maus-Swipe für DeX-Modus (Samsung DeX / Desktop)
+  let mx=0,my=0,mdown=false,mmoved=false;
+  document.addEventListener('mousedown',function(e){
+    if(e.button!==0)return;
+    if(e.target.closest(SWIPE_DRAG_SEL))return;
+    mx=e.clientX;my=e.clientY;mdown=true;mmoved=false;
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!mdown)return;
+    if(Math.abs(e.clientX-mx)>10||Math.abs(e.clientY-my)>10)mmoved=true;
+  });
+  document.addEventListener('mouseup',function(e){
+    if(!mdown)return;
+    const wasMoved=mmoved;
+    mdown=false;mmoved=false;
+    if(!wasMoved)return;
+    if(anyModalOpen())return;
+    const dx=e.clientX-mx,dy=e.clientY-my;
+    if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    if(e.target.closest('#catNav'))return;
+    _doSwipe(dx);
+  });
+  // Seitliches Scrollrad (Rapoo 9900M u.ä.) → Seiten wechseln
+  let _wAccX=0,_wTimer=null;
+  document.addEventListener('wheel',function(e){
+    // Nur horizontales Scrollen (deltaX dominiert)
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)*1.5)return;
+    if(Math.abs(e.deltaX)<5)return;
+    if(anyModalOpen())return;
+    if(e.target.closest('#catNav'))return;
+    _wAccX+=e.deltaX;
+    clearTimeout(_wTimer);
+    _wTimer=setTimeout(function(){
+      const dx=_wAccX;_wAccX=0;
+      if(Math.abs(dx)<60)return;
+      _doSwipe(-dx);
+    },150);
   },{passive:true});
 })();
 
