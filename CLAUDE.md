@@ -1,5 +1,21 @@
 # Projektregeln für Claude – Mein Rezeptbuch
 
+---
+
+## ⚠️ PFLICHT-CHECKLISTE NACH JEDER ÄNDERUNG
+
+Claude muss nach **jeder** Änderung an der QC-Datei folgende Punkte ausgeben und den Benutzer explizit darauf hinweisen:
+
+```
+✅ 1. QC-Datei geändert:   QC_MeinR_*.html  ← erledigt
+⏳ 2. index.html:          Muss vom Benutzer neu generiert/obfuskiert werden (nicht durch Claude)
+⏳ 3. mutti-rezeptbuch:    Gleiche Änderung dort auch vornehmen (andere Sitzung)
+```
+
+**Claude darf eine Aufgabe NICHT als erledigt melden, ohne diese Checkliste anzuzeigen.**
+
+---
+
 ## Projektübersicht
 
 ### Dieses Repo: `lausiklauskn-png/Mein-Rezeptbuch`
