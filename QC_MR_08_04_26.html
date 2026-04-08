@@ -3746,7 +3746,6 @@ function renderLangChips(){
     <div class="lang-chip ${CL===L.code?'on':''}" onclick="selectLang('${L.code}')">
       <span class="lang-flag">${L.flag}</span>
       <div class="lang-name">${L.name}</div>
-      <div class="lang-nat">${L.native}</div>
     </div>`).join('');
 }
 function renderLangGrid(){
@@ -3755,7 +3754,6 @@ function renderLangGrid(){
     <div class="lang-chip ${CL===L.code?'on':''}" onclick="selectLang('${L.code}')">
       <span class="lang-flag">${L.flag}</span>
       <div class="lang-name">${L.name}</div>
-      <div class="lang-nat">${L.native}</div>
     </div>`).join('');
 }
 function selectLang(code){applyLang(code);render();closeLang();toast(LANGS[code].flag+' '+LANGS[code].native);}
