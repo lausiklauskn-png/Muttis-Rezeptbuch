@@ -15,9 +15,9 @@ OUTPUT  = 'index.html'
 
 
 def find_qc_file():
-    files = sorted(glob.glob('QC_MeinR_*.html'))
+    files = sorted(glob.glob('QC_MR_*.html'))
     if not files:
-        raise FileNotFoundError('Keine QC_MeinR_*.html Datei gefunden')
+        raise FileNotFoundError('Keine QC_MR_*.html Datei gefunden')
     return files[-1]  # neueste (alphabetisch = chronologisch)
 
 

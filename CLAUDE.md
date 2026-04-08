@@ -7,7 +7,7 @@
 Claude muss nach **jeder** Änderung an der QC-Datei folgende Punkte ausgeben und den Benutzer explizit darauf hinweisen:
 
 ```
-✅ 1. QC-Datei geändert:   QC_MeinR_*.html       ← erledigt
+✅ 1. QC-Datei geändert:   QC_MR_*.html       ← erledigt
 ✅ 2. index.html:          Neu gebaut via build.py ← erledigt (Claude darf bauen)
 ```
 
@@ -34,7 +34,7 @@ Claude muss nach **jeder** Änderung an der QC-Datei folgende Punkte ausgeben un
 | Datei | Bedeutung |
 |---|---|
 | `index.html` | **Produktionsdatei** – enthält `_CR`-Wasserzeichen – NICHT direkt bearbeiten |
-| `QC_MeinR_07_04_26.html` | **Quelldatei (v9.2)** – saubere, lesbare Version ohne Sicherheitsblock – hier werden Änderungen gemacht |
+| `QC_MR_08_04_26.html` | **Quelldatei (v9.2)** – saubere, lesbare Version ohne Sicherheitsblock – hier werden Änderungen gemacht |
 | `build.py` | **Build-Skript** – baut `index.html` aus QC-Datei + `_cr_block.txt` |
 | `_cr_block.txt` | Gespeicherter _CR-Schutzblock (~111 KB, Einzeiler) |
 | `extract_cr.py` | Einmalig: extrahiert _CR-Block aus bestehender `index.html` |
@@ -46,7 +46,7 @@ Nach Änderungen an der QC-Datei einfach ausführen:
 ```bash
 python3 build.py
 ```
-Das Skript findet automatisch die neueste `QC_MeinR_*.html` und kombiniert sie mit `_cr_block.txt` → erzeugt `index.html`.
+Das Skript findet automatisch die neueste `QC_MR_*.html` und kombiniert sie mit `_cr_block.txt` → erzeugt `index.html`.
 
 ### QC-Datei aus index.html extrahieren (falls nötig)
 Der `_CR`-Block ist **eine einzige Zeile** (~113.000 Zeichen), die mit `const _CR=Object.freeze` beginnt.
@@ -67,7 +67,7 @@ for i, l in enumerate(lines):
 import datetime
 d = datetime.date.today().strftime('%d_%m_%y')
 output = lines[header_end:cr_line] + lines[cr_line+1:]
-filename = f'QC_MeinR_{d}.html'
+filename = f'QC_MR_{d}.html'
 open(filename, 'w', encoding='utf-8').writelines(output)
 print(f'Gespeichert: {filename}, {len(output)} Zeilen')
 "
@@ -86,7 +86,7 @@ print(f'Gespeichert: {filename}, {len(output)} Zeilen')
 ## Workflow-Regeln
 
 ### Entwicklung
-1. Änderungen **immer** in der QC-Datei (`QC_MeinR_*.html`) vornehmen
+1. Änderungen **immer** in der QC-Datei (`QC_MR_*.html`) vornehmen
 2. Nach Änderungen: `python3 build.py` ausführen → erzeugt neue `index.html`
 3. Commit-Nachrichten auf **Deutsch**
 
@@ -106,7 +106,7 @@ Wenn der Benutzer **"Hochladen"** schreibt:
 ## Häufige Aufgaben
 
 ### Neue Funktion hinzufügen
-1. In `QC_MeinR_*.html` implementieren
+1. In `QC_MR_*.html` implementieren
 2. `python3 build.py` ausführen
 3. Hochladen
 
