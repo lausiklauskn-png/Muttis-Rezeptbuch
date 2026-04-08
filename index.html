@@ -84,16 +84,23 @@
 [data-theme=pastel] .top-hdr{background:linear-gradient(135deg,#c050c8,#ff6090);box-shadow:0 2px 12px rgba(192,80,200,.3)}
 [data-theme=pastel] #bnav{background:#fff8fe!important;border-top:1px solid #f0d0ea!important}
 
-/* ── Theme: Spektral (Echte Lichtspektralfarben) ── */
-[data-theme=spektral]{--sand:#080812;--sand2:#12102a;--parch:#0e0c1e;--ink:#f0eeff;--br:#9944ff;--br2:#7722cc;--br3:#bb77ff;--rust:#ff2255;--rusts:#2a0415;--grn:#00cc77;--grns:#002216;--teal:#00ccff;--teals:#001a24;--gold:#ffee00;--golds:#1a1600}
-[data-theme=spektral] .top-hdr{background:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF);box-shadow:0 2px 20px rgba(136,0,255,.45)}
+/* ── Theme: Spektral (Echte Lichtspektralfarben – hell) ── */
+[data-theme=spektral]{--sand:#f2f0ff;--sand2:#ddd8f8;--parch:#f8f6ff;--ink:#160828;--br:#6600cc;--br2:#8833dd;--br3:#aa66ee;--rust:#cc1144;--rusts:#fde8ee;--grn:#007733;--grns:#d8ffe8;--teal:#006699;--teals:#d0eeff;--gold:#bb7700;--golds:#fff0cc}
+[data-theme=spektral] .top-hdr{background:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF);box-shadow:0 2px 20px rgba(136,0,255,.3)}
 [data-theme=spektral] .logo{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-[data-theme=spektral] #bnav{background:#080812!important;border-top:2px solid transparent!important;border-image:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF) 1!important}
-[data-theme=spektral] .rcard{background:#0e0c1e;box-shadow:0 2px 12px rgba(136,0,255,.18)}
-[data-theme=spektral] .rcard:hover{box-shadow:0 8px 28px rgba(136,0,255,.35)}
-[data-theme=spektral] .wk-slot.filled{background:#1e0f3a}
-[data-theme=spektral] .wk-day{background:#12102a;border-radius:10px}
-[data-theme=spektral] .bvault-new input{background:#12102a;color:#f0eeff;border-color:#3a2060}
+[data-theme=spektral] #bnav{background:linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF)!important;border-top:none!important;box-shadow:0 -2px 16px rgba(100,0,200,.25)}
+[data-theme=spektral] .bn{color:rgba(255,255,255,.82)}
+[data-theme=spektral] .bn.on{color:#fff}
+[data-theme=spektral] .bn.on::after{background:rgba(255,255,255,.92);box-shadow:0 0 6px rgba(255,255,255,.5)}
+[data-theme=spektral] .bn-lbl{text-shadow:0 1px 3px rgba(0,0,0,.6)}
+[data-theme=spektral] .bn-ico{text-shadow:0 1px 3px rgba(0,0,0,.45)}
+[data-theme=spektral] .nav-pull::before{background:rgba(255,255,255,.45)}
+[data-theme=spektral] .sc.on{background:linear-gradient(180deg,rgba(120,0,255,.07) 0,rgba(0,100,255,.04) 60px,transparent 160px)}
+[data-theme=spektral] .rcard{background:#f8f6ff;box-shadow:0 2px 12px rgba(100,0,200,.1)}
+[data-theme=spektral] .rcard:hover{box-shadow:0 8px 28px rgba(100,0,200,.2)}
+[data-theme=spektral] .wk-slot.filled{background:#ede8ff}
+[data-theme=spektral] .wk-day{background:#eeeaff;border-radius:10px}
+[data-theme=spektral] .bvault-new input{background:#f2f0ff;color:#160828;border-color:#ddd8f8}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:system-ui,sans-serif;background:var(--sand);color:var(--ink);
@@ -928,9 +935,11 @@ html.a11y-hc .toast{background:#1a0800 !important;color:#fffff0 !important}
 /* ── Hoher Kontrast: Spektral-Navbar beibehalten ── */
 html.a11y-hc body[data-theme=spektral] .top-hdr{background:linear-gradient(90deg,#CC0000,#CC5500,#CCB800,#009900,#009999,#003399,#660099) !important}
 html.a11y-hc body[data-theme=spektral] .top-hdr *{color:#fff !important;text-shadow:0 1px 3px rgba(0,0,0,.8) !important}
-html.a11y-hc body[data-theme=spektral] .bnav,html.a11y-hc body[data-theme=spektral] #bnav{background:#080812 !important;border-top:2px solid transparent !important;border-image:linear-gradient(90deg,#CC0000,#CC5500,#CCB800,#009900,#009999,#003399,#660099) 1 !important}
-html.a11y-hc body[data-theme=spektral] .bn-lbl{color:#f0eeff !important;font-weight:700 !important}
-html.a11y-hc body[data-theme=spektral] .bn-ico{color:#f0eeff !important}
+html.a11y-hc body[data-theme=spektral] .bnav,html.a11y-hc body[data-theme=spektral] #bnav{background:linear-gradient(90deg,#CC0000,#CC5500,#CCB800,#009900,#009999,#003399,#660099) !important;border-top:none !important;box-shadow:none !important}
+html.a11y-hc body[data-theme=spektral] .bn{color:rgba(255,255,255,.9) !important}
+html.a11y-hc body[data-theme=spektral] .bn.on{color:#fff !important}
+html.a11y-hc body[data-theme=spektral] .bn-lbl{color:#fff !important;font-weight:700 !important;text-shadow:0 1px 4px rgba(0,0,0,.85) !important}
+html.a11y-hc body[data-theme=spektral] .bn-ico{color:#fff !important;text-shadow:0 1px 4px rgba(0,0,0,.75) !important}
 
 /* ── Wochenplan Reset Buttons ── */
 .wk-reset-bar{display:flex;gap:6px;padding:0 12px 10px;flex-wrap:wrap;align-items:center}
