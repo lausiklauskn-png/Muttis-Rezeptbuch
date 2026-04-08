@@ -13,25 +13,11 @@ import os
 CR_FILE = '_cr_block.txt'
 OUTPUT  = 'index.html'
 
-HEADER_TEMPLATE = """\
-<!--
-  ╔═════════════════════════════════════════════════════════════════╗
-  ║  Mein Rezeptbuch  v9.2  ©  2026  Klaus Nitzsche              ║
-  ║  klaus-nitzsche@t-online.de                                     ║
-  ║  Alle Rechte vorbehalten. Unautorisierte Vervielfaeltigung,     ║
-  ║  Verbreitung oder Bearbeitung ist untersagt.                    ║
-  ║  All rights reserved. Unauthorized reproduction prohibited.     ║
-  ║  https://github.com/lausiklauskn-png/Mein-Rezeptbuch           ║
-  \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-  \u2551  Mein Rezeptbuch  v9.2  \u00a9  2026  Klaus Nitzsche              \u2551
-  \u2551  🔒 Protected. Source: {qc_name}
--->
-"""
 
 def find_qc_file():
-    files = sorted(glob.glob('QC_MeinR_*.html'))
+    files = sorted(glob.glob('QC_MR_*.html'))
     if not files:
-        raise FileNotFoundError('Keine QC_MeinR_*.html Datei gefunden')
+        raise FileNotFoundError('Keine QC_MR_*.html Datei gefunden')
     return files[-1]  # neueste (alphabetisch = chronologisch)
 
 
@@ -67,12 +53,12 @@ def build():
     header = (
         '<!--\n'
         '  ╔═════════════════════════════════════════════════════════════════╗\n'
-        '  ║  Mein Rezeptbuch  v9.2  ©  2026  Klaus Nitzsche              ║\n'
+        '  ║  Muttis Rezeptbuch  v9.2  ©  2026  Klaus Nitzsche            ║\n'
         '  ║  klaus-nitzsche@t-online.de                                     ║\n'
         '  ║  Alle Rechte vorbehalten. Unautorisierte Vervielfaeltigung,     ║\n'
         '  ║  Verbreitung oder Bearbeitung ist untersagt.                    ║\n'
         '  ║  All rights reserved. Unauthorized reproduction prohibited.     ║\n'
-        f'  ║  https://github.com/lausiklauskn-png/Mein-Rezeptbuch           ║\n'
+        f'  ║  https://github.com/lausiklauskn-png/Muttis-Rezeptbuch         ║\n'
         '  ╚═════════════════════════════════════════════════════════════════╝\n'
         f'  🔒 Protected. Source: {qc_file}\n'
         '-->\n'
