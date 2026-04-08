@@ -1,7 +1,7 @@
 {
-  "name": "Mein Rezeptbuch",
-  "short_name": "Mein Rezeptbuch",
-  "description": "Persönliches digitales Kochbuch mit KI-Unterstützung – vollständig offline, keine Anmeldung nötig",
+  "name": "Muttis Rezeptbuch",
+  "short_name": "Muttis Rezeptbuch",
+  "description": "Muttis persönliches digitales Kochbuch mit KI-Unterstützung – vollständig offline, keine Anmeldung nötig",
   "start_url": "./index.html",
   "scope": "./",
   "id": "./index.html",
