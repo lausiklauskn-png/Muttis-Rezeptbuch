@@ -9818,8 +9818,71 @@ function helpAction(type){
     <button class="fov-back" onclick="event.stopPropagation();closeApiKeyFaq()" title="Zurück">←</button>
     <div class="fov-title" id="af_afqTitle">❓ API-Key – Hilfe &amp; Antworten</div>
   </div>
-  <div class="fov-body">
-
+  <div class="fov-body" style="padding:0">
+    <div class="afq-intro">
+      <div class="afq-intro-head" id="af_afqWhatQ">🔑 Was ist ein API-Key?</div>
+      <div class="afq-intro-body" id="af_afqWhatA">Ein persönlicher Zugangscode für Anthropics KI (Claude), der das automatische Erkennen von Rezepten ermöglicht. Er wird ausschließlich auf diesem Gerät gespeichert und nie weitergegeben.</div>
+    </div>
+    <div class="afq-steps">
+      <div class="afq-steps-title" id="af_afqStepsTitle">So erhältst du deinen Schlüssel</div>
+      <div class="afq-step">
+        <div class="afq-num">1</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS1T">Konto erstellen</div>
+          <div class="afq-step-d"><a href="https://console.anthropic.com" target="_blank" rel="noopener" class="afq-link" id="af_afqS1Link">console.anthropic.com öffnen</a> <span id="af_afqS1D">→ kostenlos registrieren</span></div>
+        </div>
+      </div>
+      <div class="afq-step">
+        <div class="afq-num">2</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS2T">E-Mail bestätigen</div>
+          <div class="afq-step-d" id="af_afqS2D">Bestätigungs-Link in der Registrierungs-Mail anklicken.</div>
+        </div>
+      </div>
+      <div class="afq-step">
+        <div class="afq-num">3</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS3T">API-Key erstellen</div>
+          <div class="afq-step-d" id="af_afqS3D">Menü: API Keys → Create Key → Namen vergeben → bestätigen.</div>
+        </div>
+      </div>
+      <div class="afq-step">
+        <div class="afq-num">4</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS4T">Schlüssel einfügen</div>
+          <div class="afq-step-d" id="af_afqS4D">Key kopieren (beginnt mit <code>sk-ant-…</code>) und hier einfügen.</div>
+        </div>
+      </div>
+    </div>
+    <div class="afq-faq-title" id="af_afqFaqTitle">Häufige Fragen</div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ1">Kostet das etwas?</div>
+      <span class="afq-qb" id="af_afqA1">Jedes neue Konto erhält <b>~5 $ Startguthaben</b> gratis. Ein Scan kostet ~0,003 $ — das reicht für ca. 1.600 Scans. Danach Guthaben jederzeit aufladen.</span>
+    </div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ2">Wo finde ich meinen Key wieder?</div>
+      <span class="afq-qb" id="af_afqA2">Der Key ist <b>nur lokal</b> auf diesem Gerät gespeichert. Bei neuem Gerät: Anthropic-Konto öffnen → neuen Key anlegen → hier einfügen.</span>
+    </div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ3">„Create Key"-Schaltfläche fehlt</div>
+      <span class="afq-qb" id="af_afqA3">Zuerst die <b>E-Mail-Adresse bestätigen</b> — danach erscheint die Schaltfläche automatisch.</span>
+    </div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ4">Code wird als ungültig abgelehnt</div>
+      <span class="afq-qb" id="af_afqA4">Den Schlüssel <b>vollständig kopieren</b> — beginnt mit <code>sk-ant-</code>, ist sehr lang. Stets den Kopier-Button der Anthropic-Website nutzen.</span>
+    </div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ5">Fehlermeldung: kein Guthaben</div>
+      <span class="afq-qb" id="af_afqA5">Startguthaben aufgebraucht. Aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (ab 5 $) oder neues Konto mit anderer E-Mail anlegen.</span>
+    </div>
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ6">Zugangscode löschen</div>
+      <span class="afq-qb" id="af_afqA6">Einstellungen ⚙️ → KI-Zugangscode → Tab <b>KI-Scan</b> → <b>ändern</b> → Feld leeren → Speichern.</span>
+    </div>
+    <div class="afq-btns">
+      <button class="afq-btn-key" id="af_afqBtnKey" onclick="closeApiKeyFaq();obOpenWizard(3)">🔑 Jetzt Key eingeben</button>
+      <button class="afq-btn-cl" id="af_afqBtnBack" onclick="closeApiKeyFaq()">← Zurück</button>
+    </div>
   </div>
 </div>
 </body>
