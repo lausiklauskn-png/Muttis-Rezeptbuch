@@ -1280,16 +1280,26 @@ h4.man-sub{font-family:Georgia,serif;font-size:.81rem;font-weight:700;color:var(
 
 /* ── API-Key FAQ Full Page ── */
 #apifaq-ov{z-index:9820}
-.afq-intro{padding:13px 16px;font-size:.80rem;color:var(--br2);line-height:1.55;background:var(--parch);border-bottom:1px solid var(--sand2)}
-.afq-intro b{color:var(--ink)}
-.afq-steps{padding:10px 16px 6px;background:var(--parch);border-bottom:1px solid var(--sand2)}
-.afq-step{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:.79rem;color:var(--br2);line-height:1.45}
-.afq-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--br);color:#fff;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
-.afq-q{border-bottom:1px solid var(--sand2);padding:9px 16px}
+.afq-intro{padding:14px 16px;background:var(--parch);border-bottom:1px solid var(--sand2)}
+.afq-intro-head{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:5px}
+.afq-intro-body{font-size:.76rem;color:var(--br2);line-height:1.55}
+.afq-steps{padding:12px 16px 10px;background:var(--sand);border-bottom:1px solid var(--sand2)}
+.afq-steps-title{font-size:.68rem;font-weight:700;color:var(--br);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase}
+.afq-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.afq-step:last-child{margin-bottom:0}
+.afq-step-inner{flex:1}
+.afq-step-t{font-size:.77rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.afq-step-d{font-size:.72rem;color:var(--br2);line-height:1.45}
+.afq-step-d code{font-size:.7rem;background:var(--sand2);padding:1px 4px;border-radius:4px;color:var(--ink)}
+.afq-num{width:21px;height:21px;min-width:21px;border-radius:50%;background:var(--br);color:#fff;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.afq-faq-title{padding:10px 16px 5px;font-size:.68rem;font-weight:700;color:var(--br);letter-spacing:.06em;text-transform:uppercase;background:var(--parch)}
+.afq-q{border-bottom:1px solid var(--sand2);padding:9px 16px;background:var(--parch)}
 .afq-qh{font-size:.79rem;font-weight:700;color:var(--ink);margin-bottom:3px}
-.afq-qb{font-size:.75rem;color:var(--br2);line-height:1.5;display:block}
-.afq-chev{display:none}
-.afq-btns{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.afq-qb{font-size:.74rem;color:var(--br2);line-height:1.5;display:block}
+.afq-qb b{font-weight:700;color:var(--br2)}
+.afq-qb code{font-size:.7rem;background:var(--sand2);padding:1px 4px;border-radius:4px;color:var(--ink)}
+.afq-link{color:var(--br);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.afq-btns{padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:var(--parch)}
 .afq-btn-key{width:100%;padding:13px;background:var(--br);color:#fff;border:none;border-radius:11px;font-size:.86rem;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none}
 .afq-btn-cl{width:100%;padding:10px;background:transparent;border:1.5px solid var(--sand2);border-radius:11px;font-size:.82rem;color:var(--br2);cursor:pointer;-webkit-appearance:none;appearance:none}
 
@@ -2412,6 +2422,34 @@ const LANGS={
     ,a11ySize:'Schriftgröße'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'Hoher Kontrast'
+    ,afqTitle:'❓ API-Key – Hilfe & Antworten'
+    ,afqWhatQ:'🔑 Was ist ein API-Key?'
+    ,afqWhatA:'Ein persönlicher Zugangscode für Anthropics KI (Claude), der das automatische Erkennen von Rezepten ermöglicht. Er wird ausschließlich auf diesem Gerät gespeichert und nie weitergegeben.'
+    ,afqStepsTitle:'So erhältst du deinen Schlüssel'
+    ,afqS1T:'Konto erstellen'
+    ,afqS1Link:'console.anthropic.com öffnen'
+    ,afqS1D:'→ kostenlos registrieren'
+    ,afqS2T:'E-Mail bestätigen'
+    ,afqS2D:'Bestätigungs-Link in der Registrierungs-Mail anklicken.'
+    ,afqS3T:'API-Key erstellen'
+    ,afqS3D:'Menü: API Keys → Create Key → Namen vergeben → bestätigen.'
+    ,afqS4T:'Schlüssel einfügen'
+    ,afqS4D:'Key kopieren (beginnt mit <code>sk-ant-…</code>) und hier einfügen.'
+    ,afqFaqTitle:'Häufige Fragen'
+    ,afqQ1:'Kostet das etwas?'
+    ,afqA1:'Jedes neue Konto erhält <b>~5 $ Startguthaben</b> gratis. Ein Scan kostet ~0,003 $ — das reicht für ca. 1.600 Scans. Danach Guthaben jederzeit aufladen.'
+    ,afqQ2:'Wo finde ich meinen Key wieder?'
+    ,afqA2:'Der Key ist <b>nur lokal</b> auf diesem Gerät gespeichert. Bei neuem Gerät: Anthropic-Konto öffnen → neuen Key anlegen → hier einfügen.'
+    ,afqQ3:'„Create Key"-Schaltfläche fehlt'
+    ,afqA3:'Zuerst die <b>E-Mail-Adresse bestätigen</b> — danach erscheint die Schaltfläche automatisch.'
+    ,afqQ4:'Code wird als ungültig abgelehnt'
+    ,afqA4:'Den Schlüssel <b>vollständig kopieren</b> — beginnt mit <code>sk-ant-</code>, ist sehr lang. Stets den Kopier-Button der Anthropic-Website nutzen.'
+    ,afqQ5:'Fehlermeldung: kein Guthaben'
+    ,afqA5:'Startguthaben aufgebraucht. Aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (ab 5 $) oder neues Konto mit anderer E-Mail anlegen.'
+    ,afqQ6:'Zugangscode löschen'
+    ,afqA6:'Einstellungen ⚙️ → KI-Zugangscode → Tab <b>KI-Scan</b> → <b>ändern</b> → Feld leeren → Speichern.'
+    ,afqBtnKey:'🔑 Jetzt Key eingeben'
+    ,afqBtnBack:'← Zurück'
     
     
     
@@ -2507,7 +2545,35 @@ const LANGS={
     ,a11ySize:'Font size'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'High contrast'
-    
+    ,afqTitle:'❓ API Key – Help & Answers'
+    ,afqWhatQ:'🔑 What is an API Key?'
+    ,afqWhatA:'A personal access code for Anthropic\'s AI (Claude) that enables automatic recipe recognition. It is stored exclusively on this device and never shared.'
+    ,afqStepsTitle:'How to get your key'
+    ,afqS1T:'Create account'
+    ,afqS1Link:'Open console.anthropic.com'
+    ,afqS1D:'→ sign up for free'
+    ,afqS2T:'Verify your email'
+    ,afqS2D:'Click the confirmation link in the registration email.'
+    ,afqS3T:'Create API key'
+    ,afqS3D:'Menu: API Keys → Create Key → enter a name → confirm.'
+    ,afqS4T:'Paste your key'
+    ,afqS4D:'Copy the key (starts with <code>sk-ant-…</code>) and paste it here.'
+    ,afqFaqTitle:'Frequently asked questions'
+    ,afqQ1:'Does it cost anything?'
+    ,afqA1:'Every new account receives <b>~$5 in free credit</b>. A scan costs ~$0.003 — enough for about 1,600 scans. You can top up at any time.'
+    ,afqQ2:'Where do I find my key again?'
+    ,afqA2:'The key is stored <b>only locally</b> on this device. On a new device: open your Anthropic account → create a new key → paste it here.'
+    ,afqQ3:'"Create Key" button is missing'
+    ,afqA3:'First <b>verify your email address</b> — the button will appear automatically afterwards.'
+    ,afqQ4:'Code is rejected as invalid'
+    ,afqA4:'Copy the key <b>completely</b> — it starts with <code>sk-ant-</code> and is very long. Always use the copy button on the Anthropic website.'
+    ,afqQ5:'Error: no credit'
+    ,afqA5:'Free credit is used up. Top up at <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (from $5) or create a new account.'
+    ,afqQ6:'Delete access code'
+    ,afqA6:'Settings ⚙️ → AI Access Code → tab <b>AI Scan</b> → <b>change</b> → clear field → Save.'
+    ,afqBtnKey:'🔑 Enter key now'
+    ,afqBtnBack:'← Back'
+
     
     
     ,appRateTitle:'Did you enjoy this recipe?'
@@ -2601,8 +2667,36 @@ const LANGS={
     ,a11ySize:'Размер шрифта'
     ,a11ySm:'А',a11yMd:'А',a11yLg:'А'
     ,a11yContrast:'Высокий контраст'
-    
-    
+    ,afqTitle:'❓ API-ключ – Справка и ответы'
+    ,afqWhatQ:'🔑 Что такое API-ключ?'
+    ,afqWhatA:'Личный код доступа к ИИ Anthropic (Claude), позволяющий автоматически распознавать рецепты. Хранится только на этом устройстве и никогда не передаётся третьим лицам.'
+    ,afqStepsTitle:'Как получить ключ'
+    ,afqS1T:'Создать аккаунт'
+    ,afqS1Link:'Открыть console.anthropic.com'
+    ,afqS1D:'→ зарегистрироваться бесплатно'
+    ,afqS2T:'Подтвердить e-mail'
+    ,afqS2D:'Нажать ссылку подтверждения в письме.'
+    ,afqS3T:'Создать API-ключ'
+    ,afqS3D:'Меню: API Keys → Create Key → ввести имя → подтвердить.'
+    ,afqS4T:'Вставить ключ'
+    ,afqS4D:'Скопировать ключ (начинается с <code>sk-ant-…</code>) и вставить здесь.'
+    ,afqFaqTitle:'Частые вопросы'
+    ,afqQ1:'Это платно?'
+    ,afqA1:'Каждый новый аккаунт получает <b>~5 $ стартового баланса</b> бесплатно. Один скан — ~0,003 $ (ок. 1 600 сканов). Баланс можно пополнять в любое время.'
+    ,afqQ2:'Где найти мой ключ снова?'
+    ,afqA2:'Ключ хранится <b>только локально</b> на этом устройстве. На новом устройстве: открыть аккаунт Anthropic → создать новый ключ → вставить здесь.'
+    ,afqQ3:'Кнопка «Create Key» не отображается'
+    ,afqA3:'Сначала необходимо <b>подтвердить e-mail</b> — после этого кнопка появится автоматически.'
+    ,afqQ4:'Код отклоняется как недействительный'
+    ,afqA4:'Скопировать ключ <b>полностью</b> — он начинается с <code>sk-ant-</code> и очень длинный. Использовать кнопку копирования на сайте Anthropic.'
+    ,afqQ5:'Ошибка: нет баланса'
+    ,afqA5:'Стартовый баланс исчерпан. Пополнить на <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (от 5 $) или создать новый аккаунт.'
+    ,afqQ6:'Удалить код доступа'
+    ,afqA6:'Настройки ⚙️ → Код ИИ → вкладка <b>ИИ-Скан</b> → <b>изменить</b> → очистить поле → Сохранить.'
+    ,afqBtnKey:'🔑 Ввести ключ'
+    ,afqBtnBack:'← Назад'
+
+
     
     ,appRateTitle:'Понравился рецепт?'
     ,appRateMsg:'Ваша оценка помогает нам улучшать приложение.'
@@ -2695,8 +2789,36 @@ const LANGS={
     ,a11ySize:'字体大小'
     ,a11ySm:'小',a11yMd:'中',a11yLg:'大'
     ,a11yContrast:'高对比度'
-    
-    
+    ,afqTitle:'❓ API密钥 – 帮助与解答'
+    ,afqWhatQ:'🔑 什么是API密钥？'
+    ,afqWhatA:'这是访问Anthropic人工智能（Claude）的个人代码，可自动识别食谱。密钥仅存储在本设备上，绝不外传。'
+    ,afqStepsTitle:'如何获取密钥'
+    ,afqS1T:'创建账户'
+    ,afqS1Link:'打开 console.anthropic.com'
+    ,afqS1D:'→ 免费注册'
+    ,afqS2T:'验证邮箱'
+    ,afqS2D:'点击注册邮件中的确认链接。'
+    ,afqS3T:'创建API密钥'
+    ,afqS3D:'菜单：API Keys → Create Key → 输入名称 → 确认。'
+    ,afqS4T:'粘贴密钥'
+    ,afqS4D:'复制密钥（以 <code>sk-ant-…</code> 开头）并粘贴到此处。'
+    ,afqFaqTitle:'常见问题'
+    ,afqQ1:'需要付费吗？'
+    ,afqA1:'每个新账户获得 <b>约5美元免费额度</b>。每次扫描约0.003美元，约1,600次扫描。之后可随时充值。'
+    ,afqQ2:'在哪里找回我的密钥？'
+    ,afqA2:'密钥<b>仅在本地</b>存储于此设备。更换设备时：登录Anthropic账户 → 创建新密钥 → 粘贴到此处。'
+    ,afqQ3:'找不到"Create Key"按钮'
+    ,afqA3:'请先<b>验证邮箱地址</b>——验证后按钮会自动出现。'
+    ,afqQ4:'代码被拒绝为无效'
+    ,afqA4:'请<b>完整复制</b>密钥——以 <code>sk-ant-</code> 开头，非常长。请始终使用Anthropic网站的复制按钮。'
+    ,afqQ5:'错误：余额不足'
+    ,afqA5:'免费额度已用完。在 <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> 充值（最低5美元）或创建新账户。'
+    ,afqQ6:'删除访问码'
+    ,afqA6:'设置 ⚙️ → AI访问码 → 标签 <b>AI扫描</b> → <b>更改</b> → 清空字段 → 保存。'
+    ,afqBtnKey:'🔑 立即输入密钥'
+    ,afqBtnBack:'← 返回'
+
+
     
     ,appRateTitle:'喜欢这个食谱吗？'
     ,appRateMsg:'您的评分帮助我们改进应用。'
@@ -2789,9 +2911,35 @@ const LANGS={
     ,a11ySize:'Tamaño fuente'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'Alto contraste'
-    
-    
-    
+    ,afqTitle:'❓ Clave API – Ayuda y respuestas'
+    ,afqWhatQ:'🔑 ¿Qué es una clave API?'
+    ,afqWhatA:'Un código de acceso personal para la IA de Anthropic (Claude) que permite reconocer recetas automáticamente. Se almacena exclusivamente en este dispositivo y nunca se comparte.'
+    ,afqStepsTitle:'Cómo obtener tu clave'
+    ,afqS1T:'Crear cuenta'
+    ,afqS1Link:'Abrir console.anthropic.com'
+    ,afqS1D:'→ registrarse gratis'
+    ,afqS2T:'Verificar e-mail'
+    ,afqS2D:'Hacer clic en el enlace de confirmación del correo.'
+    ,afqS3T:'Crear clave API'
+    ,afqS3D:'Menú: API Keys → Create Key → introducir nombre → confirmar.'
+    ,afqS4T:'Pegar clave'
+    ,afqS4D:'Copiar la clave (empieza con <code>sk-ant-…</code>) y pegarla aquí.'
+    ,afqFaqTitle:'Preguntas frecuentes'
+    ,afqQ1:'¿Tiene algún coste?'
+    ,afqA1:'Cada cuenta nueva recibe <b>~5 $ de crédito gratuito</b>. Un escaneo cuesta ~0,003 $ — suficiente para unos 1.600 escaneos. Recargable en cualquier momento.'
+    ,afqQ2:'¿Dónde encuentro mi clave?'
+    ,afqA2:'La clave se almacena <b>solo localmente</b> en este dispositivo. Con un dispositivo nuevo: abrir cuenta Anthropic → crear nueva clave → pegarla aquí.'
+    ,afqQ3:'Falta el botón "Create Key"'
+    ,afqA3:'Primero <b>verificar el e-mail</b> — el botón aparecerá automáticamente.'
+    ,afqQ4:'El código se rechaza como inválido'
+    ,afqA4:'Copiar la clave <b>completa</b> — empieza con <code>sk-ant-</code> y es muy larga. Usar siempre el botón de copiar del sitio Anthropic.'
+    ,afqQ5:'Error: sin saldo'
+    ,afqA5:'El crédito gratuito se ha agotado. Recargar en <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (desde 5 $) o crear una cuenta nueva.'
+    ,afqQ6:'Eliminar código de acceso'
+    ,afqA6:'Ajustes ⚙️ → Código de IA → pestaña <b>Scan IA</b> → <b>cambiar</b> → vaciar campo → Guardar.'
+    ,afqBtnKey:'🔑 Introducir clave ahora'
+    ,afqBtnBack:'← Volver'
+
     ,appRateTitle:'¿Te gustó la receta?'
     ,appRateMsg:'Tu valoración nos ayuda a mejorar la app.'
     ,appRateBtn:'Valorar en Play Store'
@@ -2992,9 +3140,35 @@ const LANGS={
     ,a11ySize:'Taille police'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'Contraste élevé'
-    
-    
-    
+    ,afqTitle:'❓ Clé API – Aide & réponses'
+    ,afqWhatQ:'🔑 Qu\'est-ce qu\'une clé API ?'
+    ,afqWhatA:'Un code d\'accès personnel à l\'IA Anthropic (Claude) permettant de reconnaître automatiquement les recettes. Il est stocké exclusivement sur cet appareil et n\'est jamais partagé.'
+    ,afqStepsTitle:'Comment obtenir ta clé'
+    ,afqS1T:'Créer un compte'
+    ,afqS1Link:'Ouvrir console.anthropic.com'
+    ,afqS1D:'→ s\'inscrire gratuitement'
+    ,afqS2T:'Confirmer l\'e-mail'
+    ,afqS2D:'Cliquer sur le lien de confirmation dans l\'e-mail.'
+    ,afqS3T:'Créer une clé API'
+    ,afqS3D:'Menu : API Keys → Create Key → saisir un nom → confirmer.'
+    ,afqS4T:'Coller la clé'
+    ,afqS4D:'Copier la clé (commence par <code>sk-ant-…</code>) et la coller ici.'
+    ,afqFaqTitle:'Questions fréquentes'
+    ,afqQ1:'Est-ce payant ?'
+    ,afqA1:'Chaque nouveau compte reçoit <b>~5 $ de crédit gratuit</b>. Un scan coûte ~0,003 $ — soit env. 1 600 scans. Rechargeable à tout moment.'
+    ,afqQ2:'Où retrouver ma clé ?'
+    ,afqA2:'La clé est stockée <b>uniquement en local</b> sur cet appareil. Sur un nouvel appareil : ouvrir son compte Anthropic → créer une nouvelle clé → la coller ici.'
+    ,afqQ3:'Bouton « Create Key » introuvable'
+    ,afqA3:'D\'abord <b>confirmer l\'adresse e-mail</b> — le bouton apparaîtra ensuite automatiquement.'
+    ,afqQ4:'Le code est rejeté comme invalide'
+    ,afqA4:'Copier la clé <b>intégralement</b> — elle commence par <code>sk-ant-</code> et est très longue. Toujours utiliser le bouton de copie du site Anthropic.'
+    ,afqQ5:'Erreur : pas de crédit'
+    ,afqA5:'Le crédit gratuit est épuisé. Recharger sur <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (à partir de 5 $) ou créer un nouveau compte.'
+    ,afqQ6:'Supprimer le code d\'accès'
+    ,afqA6:'Paramètres ⚙️ → Code IA → onglet <b>Scan IA</b> → <b>modifier</b> → vider le champ → Enregistrer.'
+    ,afqBtnKey:'🔑 Saisir la clé maintenant'
+    ,afqBtnBack:'← Retour'
+
     ,appRateTitle:'La recette vous a plu?'
     ,appRateMsg:'Votre avis nous aide à améliorer l\'application.'
     ,appRateBtn:'Noter sur Play Store'
@@ -3195,9 +3369,35 @@ const LANGS={
     ,a11ySize:'Dimensione testo'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'Alto contrasto'
-    
-    
-    
+    ,afqTitle:'❓ Chiave API – Guida e risposte'
+    ,afqWhatQ:'🔑 Che cos\'è una chiave API?'
+    ,afqWhatA:'Un codice d\'accesso personale all\'IA di Anthropic (Claude) che consente il riconoscimento automatico delle ricette. Memorizzato esclusivamente su questo dispositivo, mai condiviso.'
+    ,afqStepsTitle:'Come ottenere la tua chiave'
+    ,afqS1T:'Creare un account'
+    ,afqS1Link:'Aprire console.anthropic.com'
+    ,afqS1D:'→ registrarsi gratuitamente'
+    ,afqS2T:'Verificare l\'e-mail'
+    ,afqS2D:'Cliccare sul link di conferma nell\'e-mail di registrazione.'
+    ,afqS3T:'Creare la chiave API'
+    ,afqS3D:'Menu: API Keys → Create Key → inserire un nome → confermare.'
+    ,afqS4T:'Incollare la chiave'
+    ,afqS4D:'Copiare la chiave (inizia con <code>sk-ant-…</code>) e incollarla qui.'
+    ,afqFaqTitle:'Domande frequenti'
+    ,afqQ1:'Ha un costo?'
+    ,afqA1:'Ogni nuovo account riceve <b>~5 $ di credito gratuito</b>. Una scansione costa ~0,003 $ — circa 1.600 scansioni. Ricaricabile in qualsiasi momento.'
+    ,afqQ2:'Dove ritrovo la mia chiave?'
+    ,afqA2:'La chiave è memorizzata <b>solo localmente</b> su questo dispositivo. Con un nuovo dispositivo: aprire l\'account Anthropic → creare una nuova chiave → incollarla qui.'
+    ,afqQ3:'Il pulsante "Create Key" non compare'
+    ,afqA3:'Prima <b>confermare l\'indirizzo e-mail</b> — il pulsante apparirà automaticamente.'
+    ,afqQ4:'Il codice viene rifiutato come non valido'
+    ,afqA4:'Copiare la chiave <b>per intero</b> — inizia con <code>sk-ant-</code> ed è molto lunga. Usare sempre il pulsante di copia del sito Anthropic.'
+    ,afqQ5:'Errore: credito esaurito'
+    ,afqA5:'Il credito gratuito è terminato. Ricaricare su <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (da 5 $) o creare un nuovo account.'
+    ,afqQ6:'Eliminare il codice di accesso'
+    ,afqA6:'Impostazioni ⚙️ → Codice IA → scheda <b>Scansione IA</b> → <b>modifica</b> → svuotare il campo → Salva.'
+    ,afqBtnKey:'🔑 Inserisci la chiave ora'
+    ,afqBtnBack:'← Indietro'
+
     ,appRateTitle:'Ti è piaciuta la ricetta?'
     ,appRateMsg:'La tua valutazione ci aiuta a migliorare l\'app.'
     ,appRateBtn:'Valuta su Play Store'
@@ -3398,9 +3598,35 @@ const LANGS={
     ,a11ySize:'Tamanho letra'
     ,a11ySm:'A',a11yMd:'A',a11yLg:'A'
     ,a11yContrast:'Alto contraste'
-    
-    
-    
+    ,afqTitle:'❓ Chave API – Ajuda e respostas'
+    ,afqWhatQ:'🔑 O que é uma chave API?'
+    ,afqWhatA:'Um código de acesso pessoal à IA da Anthropic (Claude) que permite reconhecer receitas automaticamente. É armazenado exclusivamente neste dispositivo e nunca partilhado.'
+    ,afqStepsTitle:'Como obter a tua chave'
+    ,afqS1T:'Criar conta'
+    ,afqS1Link:'Abrir console.anthropic.com'
+    ,afqS1D:'→ registar-se gratuitamente'
+    ,afqS2T:'Confirmar e-mail'
+    ,afqS2D:'Clicar no link de confirmação no e-mail de registo.'
+    ,afqS3T:'Criar chave API'
+    ,afqS3D:'Menu: API Keys → Create Key → introduzir nome → confirmar.'
+    ,afqS4T:'Colar a chave'
+    ,afqS4D:'Copiar a chave (começa com <code>sk-ant-…</code>) e colá-la aqui.'
+    ,afqFaqTitle:'Perguntas frequentes'
+    ,afqQ1:'Tem algum custo?'
+    ,afqA1:'Cada conta nova recebe <b>~5 $ de crédito grátis</b>. Uma digitalização custa ~0,003 $ — cerca de 1.600 digitalizações. Recarregável a qualquer momento.'
+    ,afqQ2:'Onde encontro a minha chave?'
+    ,afqA2:'A chave é guardada <b>apenas localmente</b> neste dispositivo. Num novo dispositivo: abrir conta Anthropic → criar nova chave → colá-la aqui.'
+    ,afqQ3:'Botão "Create Key" não aparece'
+    ,afqA3:'Primeiro <b>confirmar o endereço de e-mail</b> — depois o botão aparecerá automaticamente.'
+    ,afqQ4:'Código rejeitado como inválido'
+    ,afqA4:'Copiar a chave <b>na íntegra</b> — começa com <code>sk-ant-</code> e é muito longa. Usar sempre o botão de copiar do site Anthropic.'
+    ,afqQ5:'Erro: sem saldo'
+    ,afqA5:'O crédito grátis esgotou-se. Recarregar em <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (a partir de 5 $) ou criar nova conta.'
+    ,afqQ6:'Eliminar código de acesso'
+    ,afqA6:'Definições ⚙️ → Código IA → separador <b>Scan IA</b> → <b>alterar</b> → limpar campo → Guardar.'
+    ,afqBtnKey:'🔑 Introduzir chave agora'
+    ,afqBtnBack:'← Voltar'
+
     ,appRateTitle:'Gostou da receita?'
     ,appRateMsg:'A sua avaliação ajuda-nos a melhorar a app.'
     ,appRateBtn:'Avaliar no Play Store'
@@ -9547,7 +9773,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 function openHelp(){document.getElementById('helpOv').style.display='flex';}
 function closeHelpOv(){document.getElementById('helpOv').style.display='none';}
-function openApiKeyFaq(){localStorage.setItem('mr_faq_seen','1');document.getElementById('apifaq-ov').style.display='flex';}
+function applyLangToApiFaq(){
+  // Plain-text elements
+  ['afqTitle','afqWhatQ','afqWhatA','afqStepsTitle',
+   'afqS1T','afqS1Link','afqS1D','afqS2T','afqS2D','afqS3T','afqS3D','afqS4T',
+   'afqFaqTitle','afqQ1','afqQ2','afqQ3','afqQ4','afqQ5','afqQ6',
+   'afqBtnKey','afqBtnBack'].forEach(function(k){
+    var el=document.getElementById('af_'+k);if(el)el.textContent=T(k);
+  });
+  // Rich-text elements (bold, code, links already in string)
+  ['afqS4D','afqA1','afqA2','afqA3','afqA4','afqA5','afqA6'].forEach(function(k){
+    var el=document.getElementById('af_'+k);if(el)el.innerHTML=T(k);
+  });
+}
+function openApiKeyFaq(){localStorage.setItem('mr_faq_seen','1');document.getElementById('apifaq-ov').style.display='flex';applyLangToApiFaq();}
 function closeApiKeyFaq(){document.getElementById('apifaq-ov').style.display='none';}
 function helpAction(type){
   closeHelpOv();
@@ -9574,42 +9813,94 @@ function helpAction(type){
 <div class="fov" id="apifaq-ov" style="display:none">
   <div class="fov-hdr" onclick="closeApiKeyFaq()">
     <button class="fov-back" onclick="event.stopPropagation();closeApiKeyFaq()" title="Zurück">←</button>
-    <div class="fov-title">❓ API-Key – Hilfe &amp; Antworten</div>
+    <div class="fov-title" id="af_afqTitle">❓ API-Key – Hilfe &amp; Antworten</div>
   </div>
-  <div class="fov-body">
-    <div class="afq-intro" style="margin:-11px -11px 0 -11px">
-      <b>Was ist ein API-Key?</b><br>
-      Ein persönlicher Zugangscode für Anthropics KI (Claude). Er ermöglicht der App, Rezepte automatisch aus Fotos, Texten und Webseiten zu erkennen. Der Schlüssel wird <b>nur lokal auf diesem Gerät</b> gespeichert und nie weitergegeben.
+  <div class="fov-body" style="padding:0">
+
+    <!-- ① Was ist ein API-Key? -->
+    <div class="afq-intro">
+      <div class="afq-intro-head" id="af_afqWhatQ">🔑 Was ist ein API-Key?</div>
+      <div class="afq-intro-body" id="af_afqWhatA">Ein persönlicher Zugangscode für Anthropics KI (Claude), der das automatische Erkennen von Rezepten ermöglicht. Er wird ausschließlich auf diesem Gerät gespeichert und nie weitergegeben.</div>
     </div>
-    <div class="afq-steps" style="margin:0 -11px">
-      <div style="font-size:.72rem;font-weight:700;color:var(--br);margin-bottom:8px;letter-spacing:.04em">SO ERHÄLTST DU DEINEN KEY:</div>
-      <div class="afq-step"><div class="afq-num">1</div><div>Öffne <b>console.anthropic.com</b> im Browser und erstelle ein kostenloses Konto.</div></div>
-      <div class="afq-step"><div class="afq-num">2</div><div>Bestätige deine <b>E-Mail-Adresse</b> (Link kommt per Mail).</div></div>
-      <div class="afq-step"><div class="afq-num">3</div><div>Links im Menü: <b>API Keys</b> → <b>Create Key</b> → Namen eingeben → bestätigen.</div></div>
-      <div class="afq-step"><div class="afq-num">4</div><div>Schlüssel <b>kopieren</b> (beginnt mit <code>sk-ant-…</code>) und hier einfügen.</div></div>
+
+    <!-- ② Schritt-für-Schritt -->
+    <div class="afq-steps">
+      <div class="afq-steps-title" id="af_afqStepsTitle">So erhältst du deinen Schlüssel</div>
+
+      <div class="afq-step">
+        <div class="afq-num">1</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS1T">Konto erstellen</div>
+          <div class="afq-step-d">
+            <a href="https://console.anthropic.com" target="_blank" rel="noopener" class="afq-link" id="af_afqS1Link">console.anthropic.com öffnen</a>
+            <span id="af_afqS1D"> → kostenlos registrieren</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="afq-step">
+        <div class="afq-num">2</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS2T">E-Mail bestätigen</div>
+          <div class="afq-step-d" id="af_afqS2D">Bestätigungs-Link in der Registrierungs-Mail anklicken.</div>
+        </div>
+      </div>
+
+      <div class="afq-step">
+        <div class="afq-num">3</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS3T">API-Key erstellen</div>
+          <div class="afq-step-d" id="af_afqS3D">Menü: API Keys → Create Key → Namen vergeben → bestätigen.</div>
+        </div>
+      </div>
+
+      <div class="afq-step">
+        <div class="afq-num">4</div>
+        <div class="afq-step-inner">
+          <div class="afq-step-t" id="af_afqS4T">Schlüssel einfügen</div>
+          <div class="afq-step-d" id="af_afqS4D">Key kopieren (beginnt mit <code>sk-ant-…</code>) und hier einfügen.</div>
+        </div>
+      </div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Wo finde ich meinen Key wieder?</div>
-      <div class="afq-qb">Der Key ist <b>nur auf diesem Gerät</b> gespeichert (in den App-Einstellungen). Falls du ein neues Gerät nutzt oder der Key verloren gegangen ist:<br><br>→ Öffne <b>console.anthropic.com</b> und melde dich an<br>→ Links im Menü: <b>API Keys</b><br>→ Erstelle einen <b>neuen Key</b> (alte Keys können nach der Erstellung nicht mehr eingesehen werden)<br>→ Kopiere den neuen Key (beginnt mit <code>sk-ant-…</code>) und füge ihn unter <b>Einstellungen → KI-Zugangscode</b> ein.</div>
+
+    <!-- ③ Häufige Fragen -->
+    <div class="afq-faq-title" id="af_afqFaqTitle">Häufige Fragen</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ1">Kostet das etwas?</div>
+      <div class="afq-qb" id="af_afqA1">Jedes neue Konto erhält <b>~5 $ Startguthaben</b> gratis. Ein Scan kostet ~0,003 $ — das reicht für ca. 1.600 Scans. Danach Guthaben jederzeit aufladen.</div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Kostet das etwas?</div>
-      <div class="afq-qb">Neue Konten erhalten ein <b>kostenloses Startguthaben</b> von Anthropic (ca. 5 $). Das reicht für viele hundert Rezept-Scans. Danach kostet ein Scan nur wenige Zehntel Cent — bei gelegentlicher Nutzung kommt man damit sehr lange aus.</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ2">Wo finde ich meinen Key wieder?</div>
+      <div class="afq-qb" id="af_afqA2">Der Key ist <b>nur lokal</b> auf diesem Gerät gespeichert. Bei neuem Gerät: Anthropic-Konto öffnen → neuen Key anlegen → hier einfügen.</div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Ich sehe keinen „Create Key"-Button</div>
-      <div class="afq-qb">Zuerst die <b>E-Mail-Adresse bestätigen</b> — ohne Bestätigung ist der Bereich gesperrt. Dann: <b>console.anthropic.com</b> → links „API Keys" → „+ Create Key".</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ3">„Create Key"-Schaltfläche fehlt</div>
+      <div class="afq-qb" id="af_afqA3">Zuerst die <b>E-Mail-Adresse bestätigen</b> — danach erscheint die Schaltfläche automatisch.</div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Der Code wird als ungültig abgelehnt</div>
-      <div class="afq-qb">Den <b>vollständigen Schlüssel</b> kopieren — er beginnt immer mit <code>sk-ant-api03…</code> und ist sehr lang. Keine Leerzeichen am Anfang oder Ende. Schlüssel direkt per Kopieren-Button von der Anthropic-Seite holen.</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ4">Code wird als ungültig abgelehnt</div>
+      <div class="afq-qb" id="af_afqA4">Den Schlüssel <b>vollständig kopieren</b> — beginnt mit <code>sk-ant-</code>, ist sehr lang. Stets den Kopier-Button der Anthropic-Website nutzen.</div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Fehlermeldung: kein Guthaben</div>
-      <div class="afq-qb">Das kostenlose Startguthaben ist aufgebraucht. Gehe zu <b>console.anthropic.com</b> → „Billing" → Guthaben aufladen (ab 5 $). Alternativ: neues Konto mit anderer E-Mail erstellen.</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ5">Fehlermeldung: kein Guthaben</div>
+      <div class="afq-qb" id="af_afqA5">Startguthaben aufgebraucht. Aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="afq-link">Billing</a> (ab 5 $) oder neues Konto mit anderer E-Mail anlegen.</div>
     </div>
-    <div class="afq-q"><div class="afq-qh">Ich möchte meinen Code löschen</div>
-      <div class="afq-qb">Einstellungen (⚙️ unten) → <b>KI-ZUGANGSCODE</b> → Import öffnet sich → im KI-Scan Tab auf <b>„ändern"</b> tippen → Feld leeren → Speichern.</div>
+
+    <div class="afq-q">
+      <div class="afq-qh" id="af_afqQ6">Zugangscode löschen</div>
+      <div class="afq-qb" id="af_afqA6">Einstellungen ⚙️ → KI-Zugangscode → Tab <b>KI-Scan</b> → <b>ändern</b> → Feld leeren → Speichern.</div>
     </div>
+
     <div class="afq-btns">
-      <button class="afq-btn-key" onclick="closeApiKeyFaq();openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">🔑 Key jetzt eingeben</button>
-      <button class="afq-btn-cl" onclick="closeApiKeyFaq()">← Zurück</button>
+      <button class="afq-btn-key" id="af_afqBtnKey" onclick="closeApiKeyFaq();openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">🔑 Jetzt Key eingeben</button>
+      <button class="afq-btn-cl" id="af_afqBtnBack" onclick="closeApiKeyFaq()">← Zurück</button>
     </div>
+
   </div>
 </div>
 </body>
