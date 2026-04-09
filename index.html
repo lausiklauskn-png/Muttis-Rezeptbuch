@@ -1457,23 +1457,15 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
       Du wurdest gebeten, den API-Key für diese App einzurichten. Folge den Schritten unten.
     </div>
     <div class="ob-wiz-hdr">
-      <div class="ob-wiz-title" id="ob-wiz-title">Was ist ein API-Key?</div>
-      <div class="ob-wiz-step-ind">
-        <div class="ob-wiz-dot on" id="ob-dot-1"></div>
-        <div class="ob-wiz-dot" id="ob-dot-2"></div>
-        <div class="ob-wiz-dot" id="ob-dot-3"></div>
-      </div>
+      <div class="ob-wiz-title" id="ob-wiz-title">API-Key einrichten</div>
     </div>
     <div class="ob-wiz-body">
-      <!-- Step 1 -->
+      <!-- Erklärung -->
       <div class="ob-wiz-step on" id="ob-step-1">
-        <div class="ob-wiz-h2">Was ist ein API-Key?</div>
-        <p class="ob-wiz-p">Ein API-Key ist wie ein persönliches Passwort für einen KI-Dienst. Du erstellst ihn einmal kostenlos — danach funktioniert das Scannen automatisch. Das Scannen eines Rezepts kostet ca. 1–5 Cent.</p>
-        <button class="ob-wiz-btn" onclick="obWizGoStep(2)">Weiter →</button>
-        <button class="ob-wiz-link" onclick="obCloseWizard()">Abbrechen</button>
+        <p class="ob-wiz-p">Ein API-Key ist wie ein persönliches Passwort für einen KI-Dienst. Du erstellst ihn einmal kostenlos — danach funktioniert das Scannen automatisch.</p>
       </div>
-      <!-- Step 2 -->
-      <div class="ob-wiz-step" id="ob-step-2">
+      <!-- Anleitung -->
+      <div class="ob-wiz-step on" id="ob-step-2">
         <div class="ob-wiz-h2">Key erstellen (5 Minuten)</div>
         <ol class="ob-wiz-ol">
           <li>Öffne: <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com/settings/keys</a></li>
@@ -1481,11 +1473,9 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
           <li>Klicke auf „Create Key"</li>
           <li>Kopiere den angezeigten Key</li>
         </ol>
-        <button class="ob-wiz-btn" onclick="obWizGoStep(3)">Ich habe meinen Key →</button>
-        <button class="ob-wiz-link" onclick="obOpenHelper();obCloseWizard()">Jemanden fragen</button>
       </div>
-      <!-- Step 3 -->
-      <div class="ob-wiz-step" id="ob-step-3">
+      <!-- Eingabe -->
+      <div class="ob-wiz-step on" id="ob-step-3">
         <div class="ob-wiz-h2">Key eingeben</div>
         <div class="ob-key-wrap">
           <input class="ob-key-in" id="ob-key-in" type="password" placeholder="sk-ant-…" autocomplete="off"/>
@@ -1493,7 +1483,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         </div>
         <div class="ob-wiz-status" id="ob-wiz-status"></div>
         <button class="ob-wiz-btn" id="ob-wiz-save-btn" onclick="obSaveAndTest()">Testen &amp; Speichern</button>
-        <button class="ob-wiz-link" onclick="obOpenHelper();obCloseWizard()">Jemanden fragen</button>
+        <button class="ob-wiz-btn" style="background:var(--sand);color:var(--ink);border:1.5px solid var(--sand2);margin-top:8px" onclick="openApiKeyFaq();obCloseWizard()">❓ Häufige Fragen zum API-Key</button>
       </div>
     </div>
   </div>
