@@ -527,7 +527,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .share-box-title{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:3px}
 .share-box-sub{font-size:.71rem;color:var(--br3);margin-bottom:14px;line-height:1.4}
 .share-qr-wrap{display:flex;justify-content:center;margin-bottom:14px}
-.share-qr-wrap svg{border-radius:8px;background:#fff;padding:6px}
+.share-qr-wrap svg{border-radius:8px;background:#fff;padding:6px;width:180px!important;height:180px!important}
 .share-btn-p{width:100%;background:var(--grn);color:#fff;border:none;border-radius:9px;padding:11px;font-size:.83rem;font-weight:700;cursor:pointer;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:7px}
 .share-btn-s{width:100%;background:transparent;border:1.5px solid var(--sand2);border-radius:9px;padding:10px;font-size:.8rem;color:var(--br2);cursor:pointer;margin-bottom:6px}
 .share-btn-cl{width:100%;background:transparent;border:none;font-size:.75rem;color:var(--br3);cursor:pointer;padding:4px}
@@ -4716,7 +4716,7 @@ function _showShareModal(name){
   const ov=document.createElement('div');
   ov.id='shareOv';ov.className='share-ov';
   ov.innerHTML=`<div class="share-box">
-    <div class="share-qr-wrap" id="shareQrBox"><div style="width:150px;height:150px;background:var(--sand2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--br3)">…</div></div>
+    <div class="share-qr-wrap" id="shareQrBox"><div style="width:180px;height:180px;background:var(--sand2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--br3)">…</div></div>
     <div class="share-box-btns">
       <div class="share-box-title">📤 ${h(name)} ${T('shareTtl')}</div>
       <div class="share-box-sub">${T('shareSub')}</div>
