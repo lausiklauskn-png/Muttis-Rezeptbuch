@@ -243,7 +243,10 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .crop-cancel:active{background:rgba(255,255,255,.1)}
 .crop-reset{padding:13px 13px;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;font-size:.84rem;color:rgba(255,255,255,.45);background:none;cursor:pointer}
 .crop-reset:active{background:rgba(255,255,255,.08)}
-.rcard-hd{padding:10px 10px 7px 14px;position:relative;cursor:pointer;background:var(--parch)}
+.rcard-hd{padding:10px 10px 7px 14px;position:relative;cursor:pointer;background:var(--parch);display:flex;align-items:flex-start;gap:6px}
+.rcard-hd-content{flex:1;min-width:0}
+.rcard-hd-right{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;padding-top:2px}
+.rcard-hd-right .drag-hdl::after{left:auto;right:0}
 .stripe{width:3px;position:absolute;left:0;top:0;bottom:0}
 .rcard-acts{display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:3px 0 1px 0}
 .ra{height:26px;padding:0 7px;border-radius:13px;border:none;font-size:.61rem;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
@@ -261,7 +264,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .rmeta{font-size:.61rem;color:var(--br3);letter-spacing:.04em;text-transform:uppercase;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mnbadge{display:inline-flex;align-items:center;gap:2px;background:var(--golds);border:1px solid var(--gold);
   border-radius:8px;padding:1px 5px;font-size:.59rem;color:var(--gold);font-weight:700;margin-top:2px}
-.chint{font-size:.52rem;color:var(--br2,#5a3e28);margin-top:3px;opacity:.8;font-weight:600}
+.chint{font-size:.52rem;color:var(--br2,#5a3e28);opacity:.8;font-weight:600;text-align:center}
 .rbody.shut{display:none}
 .imgbar{width:100%;padding:7px;background:var(--sand);border:none;border-bottom:1px solid var(--sand2);
   font-size:.68rem;color:var(--br3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
@@ -6404,22 +6407,26 @@ function rndCard(r){
     ${r.img?(()=>{const cr=r.imgCrop||{x:50,y:50,scale:1};return`<div class="rcard-img-wrap" onclick="event.stopPropagation();openCrop(${r.id})" title="${T('cropTitle')}"><img class="rcard-img" src="${r.img}" alt="${h(r.name)}" loading="lazy" style="transform:scale(${cr.scale});transform-origin:${cr.x}% ${cr.y}%"/><div class="crop-hint"><div class="crop-hint-lbl">${T('cropHint')}</div></div></div>`;})():''}
     <div class="rcard-hd" onclick="${isBlank?'openInlineEdit('+r.id+')':'togCard('+r.id+')'}">
       <div class="stripe" style="background:${cc}"></div>
-      <span class="drag-hdl" data-tip="${T('dragTip')}" data-hdl="card" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
-      <div class="rname ${isBlank?'em':''}" id="rname-${r.id}">${h(rName(r)||(r.ph||catName(r.cat)))}${rTr(r)?`<span style="font-size:.56rem;font-weight:700;background:var(--teals);color:var(--teal);border-radius:7px;padding:1px 5px;margin-left:5px;vertical-align:middle">🌐 ${CL.toUpperCase()}</span>`:''}</div>
-      ${rTr(r)&&rName(r)!==r.name?`<div style="font-size:.59rem;color:var(--br3);margin-top:1px">${h(r.name)}</div>`:''}
-      <div class="rmeta">${tot?`${tot} ${T('sIngr')} · ${dispTime?fmtPrepTime(dispTime):(r.steps||[]).length+' '+T('sSteps')}`:isBlank?`${catIco(r.cat)} ${catName(r.cat)}`:''}</div>
-      ${r.name?`<div class="rcard-acts" onclick="event.stopPropagation()">
-        ${r.name?`<button class="ra ren" onclick="event.stopPropagation();startRename(${r.id})" title="${T('ttlRename')}">✏️</button>`:''}
-        ${r.name?`<button class="ra imgr" onclick="pickImgForCard(${r.id})" title="${T('addImg')}">🖼️</button>`:''}
-        ${r.name?`<button class="ra ${inMenu?'gld':'out'}" onclick="event.stopPropagation();${inMenu?`removeFromMenu(${r.id})`:`openCSheet(${r.id})`}" title="${inMenu?T('inMenuRm'):T('addToMenu')}">${inMenu?mSlot.ico+' ✓':T('addToMenu')}</button>`:''}
-        ${r.name?`<button class="ra ren" onclick="event.stopPropagation();spellCheckCard(${r.id})" title="${T('ttlSpell')}" style="background:var(--golds);border-color:var(--gold);color:var(--gold)">✨</button>`:''}
-        ${r.name?`<button class="ra ren" onclick="event.stopPropagation();shareRecipeQR(${r.id})" title="${T('shareTtl')}" style="background:var(--teals);border-color:var(--teal);color:var(--teal)">📤</button>`:''}
-        ${r.name?`<button class="ra ren" onclick="event.stopPropagation();showNutrition(${r.id})" title="${T('nutrTtl')}" style="background:var(--grns);border-color:var(--grn);color:var(--grn)">🥗</button>`:''}
-        <button class="ra del" onclick="delRecipe(${r.id})" title="${T('ttlDelRec')}">🗑</button>
-      </div>`:''}
-      ${inMenu?`<span class="mnbadge">${mSlot.ico} ${mSlot.lbl}</span>`:''}
-      ${isBlank?`<div style="font-size:.68rem;color:var(--br3);margin-top:3px;font-style:italic">👆 Tippen um Namen einzugeben</div>`:``}
-      ${isBlank?'':`<div class="chint">${r.shut?'▼ aufklappen':'▲ einklappen'}</div>`}
+      <div class="rcard-hd-content">
+        <div class="rname ${isBlank?'em':''}" id="rname-${r.id}">${h(rName(r)||(r.ph||catName(r.cat)))}${rTr(r)?`<span style="font-size:.56rem;font-weight:700;background:var(--teals);color:var(--teal);border-radius:7px;padding:1px 5px;margin-left:5px;vertical-align:middle">🌐 ${CL.toUpperCase()}</span>`:''}</div>
+        ${rTr(r)&&rName(r)!==r.name?`<div style="font-size:.59rem;color:var(--br3);margin-top:1px">${h(r.name)}</div>`:''}
+        <div class="rmeta">${tot?`${tot} ${T('sIngr')} · ${dispTime?fmtPrepTime(dispTime):(r.steps||[]).length+' '+T('sSteps')}`:isBlank?`${catIco(r.cat)} ${catName(r.cat)}`:''}</div>
+        ${r.name?`<div class="rcard-acts" onclick="event.stopPropagation()">
+          ${r.name?`<button class="ra ren" onclick="event.stopPropagation();startRename(${r.id})" title="${T('ttlRename')}">✏️</button>`:''}
+          ${r.name?`<button class="ra imgr" onclick="pickImgForCard(${r.id})" title="${T('addImg')}">🖼️</button>`:''}
+          ${r.name?`<button class="ra ${inMenu?'gld':'out'}" onclick="event.stopPropagation();${inMenu?`removeFromMenu(${r.id})`:`openCSheet(${r.id})`}" title="${inMenu?T('inMenuRm'):T('addToMenu')}">${inMenu?mSlot.ico+' ✓':T('addToMenu')}</button>`:''}
+          ${r.name?`<button class="ra ren" onclick="event.stopPropagation();spellCheckCard(${r.id})" title="${T('ttlSpell')}" style="background:var(--golds);border-color:var(--gold);color:var(--gold)">✨</button>`:''}
+          ${r.name?`<button class="ra ren" onclick="event.stopPropagation();shareRecipeQR(${r.id})" title="${T('shareTtl')}" style="background:var(--teals);border-color:var(--teal);color:var(--teal)">📤</button>`:''}
+          ${r.name?`<button class="ra ren" onclick="event.stopPropagation();showNutrition(${r.id})" title="${T('nutrTtl')}" style="background:var(--grns);border-color:var(--grn);color:var(--grn)">🥗</button>`:''}
+          <button class="ra del" onclick="delRecipe(${r.id})" title="${T('ttlDelRec')}">🗑</button>
+        </div>`:''}
+        ${inMenu?`<span class="mnbadge">${mSlot.ico} ${mSlot.lbl}</span>`:''}
+        ${isBlank?`<div style="font-size:.68rem;color:var(--br3);margin-top:3px;font-style:italic">👆 Tippen um Namen einzugeben</div>`:``}
+      </div>
+      ${isBlank?'':`<div class="rcard-hd-right">
+        <span class="drag-hdl" data-tip="${T('dragTip')}" data-hdl="card" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
+        <div class="chint">${r.shut?'▼ aufklappen':'▲ einklappen'}</div>
+      </div>`}
     </div>
     ${r.name&&!r.img?`<button class="imgbar" style="${r.shut?'display:none':''}" onclick="pickImgForCard(${r.id})">🖼️ ${T('addImg')}</button>`:r.img?`<div style="display:${r.shut?'none':'flex'};border-bottom:1px solid var(--sand2)"><button class="imgbar" style="flex:1" onclick="pickImgForCard(${r.id})">🖼️ ${T('addImg')}</button><button class="imgbar" style="flex:1;border-left:1px solid var(--sand2)" onclick="openCrop(${r.id})">✂️ ${T('cropBtn')}</button></div>`:''}
     ${r.name&&!isBlank?'':''}
