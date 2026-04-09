@@ -6511,11 +6511,15 @@ function delRecipe(id){
   if(r){r.name='';r.blank=true;r.shut=true;r.ings=[];r.steps=[];r.flavors=[];r.img='';r.rating={stars:0,comment:'',imps:[]};}
   MS=MS.filter(s=>s.rid!==id);sv();svM();badge();render();
 }
+let _svShutTimer=null;
 function togCard(id){
   const r=R.find(rec=>rec.id===id);
   if(!r)return;
   r.shut=!r.shut;
-  sv();
+  // Debounce: erst 800 ms nach dem letzten Klick speichern, damit
+  // wiederholtes Auf-/Zuklappen nicht jedes Mal MB-große Daten blockierend schreibt
+  clearTimeout(_svShutTimer);
+  _svShutTimer=setTimeout(sv,800);
   const card=document.getElementById('c'+id);
   if(!card)return;
   const body=card.querySelector('.rbody');
