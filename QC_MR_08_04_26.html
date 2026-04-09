@@ -1277,6 +1277,28 @@ h4.man-sub{font-family:Georgia,serif;font-size:.81rem;font-weight:700;color:var(
 .hbtn-gear:active{background:rgba(255,255,255,.25)}
 /* === ONBOARDING END === */
 
+/* ── API-Key FAQ Overlay ── */
+#apifaq-ov{position:fixed;inset:0;z-index:9820;background:rgba(46,31,16,.55);display:flex;align-items:flex-end;justify-content:center}
+#apifaq-box{background:var(--parch);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:86vh;overflow-y:auto;padding-bottom:calc(16px + var(--sb));animation:shUp .22s cubic-bezier(.34,1.1,.64,1)}
+.afq-hdr{position:sticky;top:0;background:var(--parch);padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--sand2);z-index:1}
+.afq-title{font-family:Georgia,serif;font-size:.98rem;font-weight:700;color:var(--ink)}
+.afq-close{background:none;border:none;font-size:1.2rem;color:var(--br3);cursor:pointer;padding:4px 8px;-webkit-appearance:none;appearance:none}
+.afq-intro{padding:13px 16px;font-size:.80rem;color:var(--ink);line-height:1.55;background:var(--grns);border-bottom:1px solid var(--sand2)}
+.afq-intro b{color:var(--grn)}
+.afq-steps{padding:10px 16px 6px;background:var(--sand);border-bottom:1px solid var(--sand2)}
+.afq-step{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:.79rem;color:var(--ink);line-height:1.45}
+.afq-num{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--br);color:#fff;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.afq-q{border-bottom:1px solid var(--sand2)}
+.afq-qh{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--ink);gap:8px}
+.afq-qh:active{background:var(--sand)}
+.afq-qb{padding:0 16px 12px;font-size:.78rem;color:var(--br2);line-height:1.55;display:none}
+.afq-q.open .afq-qb{display:block}
+.afq-chev{font-size:.7rem;color:var(--br3);transition:transform .15s;flex-shrink:0}
+.afq-q.open .afq-chev{transform:rotate(180deg)}
+.afq-btns{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.afq-btn-key{width:100%;padding:13px;background:var(--br);color:#fff;border:none;border-radius:11px;font-size:.86rem;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none}
+.afq-btn-cl{width:100%;padding:10px;background:transparent;border:1.5px solid var(--sand2);border-radius:11px;font-size:.82rem;color:var(--br2);cursor:pointer;-webkit-appearance:none;appearance:none}
+
 /* ── Boot-Ladebildschirm ── */
 #boot-splash{position:fixed;inset:0;z-index:99999;background:var(--sand,#f5efe8);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
@@ -1387,8 +1409,8 @@ button:active{transform:scale(0.97)}
     <button class="hbtn" onclick="openImport()" title="Importieren">📥</button>
     <button class="hbtn" onclick="openExport()" title="Exportieren">📤</button>
     <button class="hbtn" onclick="openHelp()" title="Hilfe · Teilen · Reparatur" id="helpHdrBtn">ℹ️</button>
+    <button class="hbtn" onclick="openApiKeyFaq()" title="Fragen und Hilfe zum API Key" style="font-size:.78rem;font-weight:800">?</button>
     <!-- === ONBOARDING START === -->
-    <button class="hbtn-gear" onclick="obOpenSettings()" title="API-Key Einstellungen">⚙️</button>
     <!-- === ONBOARDING END === -->
     <button class="hbtn add" onclick="openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
   </div>
@@ -1704,7 +1726,7 @@ button:active{transform:scale(0.97)}
     </div>
     <div class="sett-sec">
       <div class="sett-head">🔑 KI-ZUGANGSCODE</div>
-      <div class="sett-row" onclick="openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'));showKeySetup()">
+      <div class="sett-row" onclick="openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">
         <div class="sett-ico">🤖</div>
         <div class="sett-body"><div class="sett-lbl" id="sApiKeyLbl">Claude API-Schlüssel</div>
           <div class="sett-sub" id="sApiKeySub">Zugangscode verwalten</div></div>
@@ -9552,6 +9574,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     obShowBanner();
     obCheckSetupParam();
     obPatchScan();
+    // Erstinstallation: FAQ automatisch öffnen wenn noch kein Key hinterlegt
+    if(!localStorage.getItem(OB_KEY)&&!localStorage.getItem('mr_faq_seen')){
+      setTimeout(function(){if(typeof openApiKeyFaq==='function')openApiKeyFaq();},900);
+    }
   }
 
   if(document.readyState==='loading'){
@@ -9565,6 +9591,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 function openHelp(){document.getElementById('helpOv').style.display='flex';}
 function closeHelpOv(){document.getElementById('helpOv').style.display='none';}
+function openApiKeyFaq(){localStorage.setItem('mr_faq_seen','1');document.getElementById('apifaq-ov').style.display='flex';}
+function closeApiKeyFaq(){document.getElementById('apifaq-ov').style.display='none';}
 function helpAction(type){
   closeHelpOv();
   setTimeout(function(){
@@ -9585,5 +9613,35 @@ function helpAction(type){
   }, 150);
 }
 </script>
+
+<!-- ── API-Key FAQ Overlay ── -->
+<div id="apifaq-ov" style="display:none" onclick="if(event.target===this)closeApiKeyFaq()">
+  <div id="apifaq-box">
+    <div class="afq-hdr">
+      <div class="afq-title">❓ Fragen &amp; Hilfe zum API-Key</div>
+      <button class="afq-close" onclick="closeApiKeyFaq()">✕</button>
+    </div>
+    <div class="afq-intro">
+      <b>Was ist ein API-Key?</b><br>
+      Ein persönlicher Zugangscode für Anthropics KI (Claude). Er ermöglicht der App, Rezepte automatisch aus Fotos, Texten und Webseiten zu erkennen. Der Schlüssel wird <b>nur lokal auf diesem Gerät</b> gespeichert und nie weitergegeben.
+    </div>
+    <div class="afq-steps">
+      <div style="font-size:.72rem;font-weight:700;color:var(--br);margin-bottom:8px;letter-spacing:.04em">SO ERHÄLTST DU DEINEN KEY:</div>
+      <div class="afq-step"><div class="afq-num">1</div><div>Öffne <b>console.anthropic.com</b> im Browser und erstelle ein kostenloses Konto.</div></div>
+      <div class="afq-step"><div class="afq-num">2</div><div>Bestätige deine <b>E-Mail-Adresse</b> (Link kommt per Mail).</div></div>
+      <div class="afq-step"><div class="afq-num">3</div><div>Links im Menü: <b>API Keys</b> → <b>Create Key</b> → Namen eingeben → bestätigen.</div></div>
+      <div class="afq-step"><div class="afq-num">4</div><div>Schlüssel <b>kopieren</b> (beginnt mit <code>sk-ant-…</code>) und hier einfügen.</div></div>
+    </div>
+    <div class="afq-q"><div class="afq-qh" onclick="this.closest('.afq-q').classList.toggle('open')"><span>Kostet das etwas?</span><span class="afq-chev">▼</span></div><div class="afq-qb">Neue Konten erhalten ein <b>kostenloses Startguthaben</b> von Anthropic. Danach kostet ein Rezept-Scan ca. 1–3 Cent. Für gelegentliche Nutzung reicht das Guthaben sehr lange.</div></div>
+    <div class="afq-q"><div class="afq-qh" onclick="this.closest('.afq-q').classList.toggle('open')"><span>Ich sehe keinen „Create Key"-Button</span><span class="afq-chev">▼</span></div><div class="afq-qb">Zuerst die <b>E-Mail-Adresse bestätigen</b> — ohne Bestätigung ist der Bereich gesperrt. Dann: <b>console.anthropic.com</b> → links „API Keys" → „+ Create Key".</div></div>
+    <div class="afq-q"><div class="afq-qh" onclick="this.closest('.afq-q').classList.toggle('open')"><span>Der Code wird als ungültig abgelehnt</span><span class="afq-chev">▼</span></div><div class="afq-qb">Den <b>vollständigen Schlüssel</b> kopieren — er beginnt immer mit <code>sk-ant-api03…</code> und ist sehr lang. Keine Leerzeichen am Anfang oder Ende. Schlüssel direkt per Kopieren-Button von der Anthropic-Seite holen.</div></div>
+    <div class="afq-q"><div class="afq-qh" onclick="this.closest('.afq-q').classList.toggle('open')"><span>Fehlermeldung: kein Guthaben</span><span class="afq-chev">▼</span></div><div class="afq-qb">Das kostenlose Startguthaben ist aufgebraucht. Gehe zu <b>console.anthropic.com</b> → „Billing" → Guthaben aufladen (ab 5 USD). Alternativ: neues Konto mit anderer E-Mail erstellen.</div></div>
+    <div class="afq-q"><div class="afq-qh" onclick="this.closest('.afq-q').classList.toggle('open')"><span>Ich möchte meinen Code löschen</span><span class="afq-chev">▼</span></div><div class="afq-qb">Einstellungen (⚙️ unten) → <b>KI-ZUGANGSCODE</b> → Import öffnet sich → im KI-Scan Tab auf <b>„ändern"</b> tippen → Feld leeren → Speichern.</div></div>
+    <div class="afq-btns">
+      <button class="afq-btn-key" onclick="closeApiKeyFaq();openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">🔑 Key jetzt eingeben</button>
+      <button class="afq-btn-cl" onclick="closeApiKeyFaq()">Schließen</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
