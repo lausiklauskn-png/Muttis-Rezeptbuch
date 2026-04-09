@@ -591,7 +591,9 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 /* settings */
 .sett-wrap{padding:9px}
 .sett-sec{background:var(--parch);border-radius:10px;border:1px solid var(--sand2);overflow:hidden;margin-bottom:10px}
-.sett-head{padding:8px 11px;font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--br3);border-bottom:1px solid var(--sand2);background:var(--sand)}
+.sett-head{padding:8px 11px;font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--br3);border-bottom:1px solid var(--sand2);background:var(--sand);display:flex;align-items:center;justify-content:space-between}
+.sett-help-btn{background:var(--teal);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:.75rem;font-weight:700;cursor:pointer;padding:0;line-height:1;flex-shrink:0;letter-spacing:0;text-transform:none}
+.sett-help-btn:active{opacity:.75}
 .sett-row{display:flex;align-items:center;gap:8px;padding:10px 11px;border-bottom:1px solid var(--sand2);min-height:44px;cursor:pointer}
 .sett-row:last-child{border-bottom:none}
 .sett-row:active{background:var(--sand)}
@@ -1661,7 +1663,7 @@ button:active{transform:scale(0.97)}
       <div id="settManBody" style="padding:0 4px 4px"></div>
     </div>
     <div class="sett-sec">
-      <div class="sett-head">🔑 KI-ZUGANGSCODE</div>
+      <div class="sett-head">🔑 KI-ZUGANGSCODE<button class="sett-help-btn" onclick="openApiKeyHelp()" title="Fragen und Hilfe zum API-Key">?</button></div>
       <div class="sett-row" onclick="openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">
         <div class="sett-ico">🤖</div>
         <div class="sett-body"><div class="sett-lbl" id="sApiKeyLbl">Claude API-Schlüssel</div>
@@ -8883,6 +8885,17 @@ function toggleSettingsManual(){
     el.style.display='none';
     if(arr)arr.textContent='›';
   }
+}
+function openApiKeyHelp(){
+  const el=document.getElementById('settManualExpand');
+  if(!el)return;
+  if(el.style.display==='none'){
+    el.style.display='block';
+    renderManualInline();
+    const arr=document.getElementById('sManualArr');
+    if(arr)arr.textContent='˅';
+  }
+  setTimeout(()=>settManScrollTo('smans-6'),100);
 }
 function renderManualInline(){
   const secs=buildManualSections();
