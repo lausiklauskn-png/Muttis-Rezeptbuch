@@ -520,14 +520,6 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .scan-faq{margin-top:6px;margin-bottom:4px}
 .scan-faq-toggle{width:100%;background:none;border:1.5px solid var(--sand2);border-radius:9px;padding:10px 13px;text-align:left;color:var(--br2);font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:7px}
 .scan-faq-toggle:active{background:var(--sand2)}
-.scan-faq-body{display:none;background:var(--parch);border:1.5px solid var(--sand2);border-top:none;border-radius:0 0 9px 9px;padding:0;overflow:hidden}
-.scan-faq-body.open{display:block}
-.scan-faq-q{font-size:.79rem;font-weight:700;color:var(--ink);padding:11px 13px 4px;border-top:1px solid var(--sand2)}
-.scan-faq-q:first-child{border-top:none;padding-top:12px}
-.scan-faq-a{font-size:.74rem;color:var(--br2);line-height:1.55;padding:0 13px 13px}
-.scan-faq-a strong{font-weight:700;color:var(--br2)}
-.scan-faq-a code{font-size:.7rem;background:var(--sand2);padding:1px 4px;border-radius:4px;color:var(--ink)}
-.scan-faq-a a.sfq-link{color:var(--br);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .share-ov{position:fixed;inset:0;z-index:9700;display:flex;align-items:center;justify-content:center;background:rgba(46,31,16,.55)}
 .share-box{background:var(--parch);border-radius:16px;padding:22px 18px;max-width:290px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.22)}
 .share-box-title{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:3px}
@@ -1273,12 +1265,6 @@ h4.man-sub{font-family:Georgia,serif;font-size:.81rem;font-weight:700;color:var(
   cursor:pointer;text-decoration:underline;padding:6px;background:none;border:none;
   font-family:inherit;width:100%}
 
-/* ── Settings gear button in header ── */
-.hbtn-gear{height:30px;width:30px;padding:0;border-radius:50%;border:none;
-  font-size:.95rem;background:transparent;color:#f0e6d8;
-  -webkit-appearance:none;appearance:none;box-shadow:none;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.hbtn-gear:active{background:rgba(255,255,255,.25)}
 /* === ONBOARDING END === */
 
 /* ── API-Key FAQ Full Page ── */
@@ -1933,26 +1919,10 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
       </div>
 
       <div class="scan-faq">
-        <button class="scan-faq-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
-          ❓ Ich brauche Hilfe — häufige Fragen
-          <span style="margin-left:auto;font-size:.7rem">▼</span>
+        <button class="scan-faq-toggle" onclick="openApiKeyFaq()" id="scanFaqBtn">
+          ❓ <span id="scanFaqLbl">Ich brauche Hilfe — häufige Fragen</span>
+          <span style="margin-left:auto;font-size:.7rem">›</span>
         </button>
-        <div class="scan-faq-body">
-          <div class="scan-faq-q">Kostet das etwas?</div>
-          <div class="scan-faq-a">Anthropic gibt neuen Accounts ca. <strong>5 $ Startguthaben</strong> gratis. Ein Scan kostet ~0,003 $ — das reicht für ~1.600 Scans. Danach kannst du Guthaben aufladen (Kreditkarte).</div>
-
-          <div class="scan-faq-q">Ich sehe keinen „Create Key"-Button</div>
-          <div class="scan-faq-a">Auf der Anthropic-Website muss zuerst eine <strong>Zahlungsmethode</strong> hinterlegt werden (auch wenn man nur kostenloses Guthaben nutzt). Gehe zu: Einstellungen → Billing → Zahlungsmethode hinzufügen.</div>
-
-          <div class="scan-faq-q">Der Code wird als „ungültig" abgelehnt</div>
-          <div class="scan-faq-a">Bitte den Code <strong>vollständig kopieren</strong> — er beginnt mit <code>sk-ant-</code> und ist sehr lang. Tippe nicht manuell, sondern benutze den 📋-Button auf der Anthropic-Seite.</div>
-
-          <div class="scan-faq-q">Fehlermeldung: „Kein Guthaben"</div>
-          <div class="scan-faq-a">Dein Anthropic-Guthaben ist aufgebraucht. Guthaben aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="sfq-link">console.anthropic.com → Billing</a> (Minimum 5 $).</div>
-
-          <div class="scan-faq-q">Ich möchte meinen Code löschen</div>
-          <div class="scan-faq-a">Wenn die KI aktiv ist, tippe oben auf <strong>„ändern"</strong>. Der Code ist nur auf deinem Gerät gespeichert — er wird niemals an uns übertragen.</div>
-        </div>
       </div>
 
 
@@ -2416,7 +2386,7 @@ const LANGS={
     mvNone:'Noch keine Rezepte im Menü.',cookHint:'Schritt antippen = erledigt ✓',
     cropTitle:'Bildausschnitt anpassen',cropBtn:'Ausschnitt',cpCenter:'⬛ Mitte',cpTop:'⬆ Oben',cpBottom:'⬇ Unten',cpLeft:'◀ Links',cpRight:'▶ Rechts',cropSave:'✓ Speichern',cropCancel:'Abbrechen',cropReset:'↺ Zurücksetzen',cropHint:'✂️ Ausschnitt anpassen',
     printBtn:'🖨️ Rezept drucken / als PDF',printSub:'Zutatenliste & Zubereitung',srvLabel:'Portionen',srvBase:'Basis',srvFor:'für',srvPers:'Pers.',srvCustom:'eigene Zahl',srvReset:'Zurücksetzen',prepTimeLabel:'⏱ Zubereitungszeit',prepTimeMin:'Min.',prepTimeHr:'Std.',prepTimePh:'min',prepTimeAuto:'automatisch erkannt',
-    scanReadyLbl:'KI-Erkennung aktiv',scanReadySub:'Zugangscode gespeichert',scanChangeLbl:'ändern',scanBtnLbl:'Rezept automatisch erkennen',scanRetry:'Nochmal scannen',
+    scanReadyLbl:'KI-Erkennung aktiv',scanReadySub:'Zugangscode gespeichert',scanChangeLbl:'ändern',scanBtnLbl:'Rezept automatisch erkennen',scanRetry:'Nochmal scannen',scanFaqLbl:'Ich brauche Hilfe — häufige Fragen',
     sc1T:'Website öffnen & kostenlosen Account anlegen',sc1D:'Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.',sc2T:'Zugangscode erstellen & kopieren',sc2D:'Auf der Website auf „Create Key" klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code kopieren (📋 Button).',sc3T:'Code hier einfügen — fertig!',sc3D:'Speichern & KI aktivieren',apiKeyLbl:'Zugangscode einfügen',apiHint:'Bleibt nur auf deinem Gerät — wird niemals weitergegeben',pasteBtnLbl:'📋 Einfügen',scanOpenLink:'Zur Anthropic-Website →',
     wkBf:'Frühstück',wkLu:'Mittagessen',wkDi:'Abendessen',wkPickMeal:'Mahlzeit wählen',wkPickCourse:'Gang wählen',wkOther:'Sonstiges',wkOtherPh:'z.B. Getränk, Brot …',wkPrev:'‹ Vorwoche',wkNext:'Nächste Woche ›',wkCurr:'Diese Woche',wkKw:'KW',wkAiTitle:'✨ KI-Wochenplan',wkAiStep1:'Prompt kopieren',wkAiStep2:'In Claude einfügen und Wochenplan generieren',wkAiStep3:'KI-Antwort (JSON) hier einfügen und importieren',wkAiCopy:'📋 Prompt kopieren',wkAiCopied:'✅ Kopiert!',wkAiLink:'Claude öffnen →',wkAiImportBtn:'✨ Wochenplan importieren',wkAiOk:'✅ Wochenplan importiert!',wkAiErr:'❌ Ungültiges Format',wkAiClose:'Schließen',wkAiPh:'JSON hier einfügen …',wkAiPromptTitle:'Beispiel-Prompt:',wkAiPersons:'Personen'
     ,sRating:'⭐ Bewerte Deinen Fortschritt'
@@ -2539,7 +2509,7 @@ const LANGS={
     mvNone:'No recipes in menu yet.',cookHint:'Tap a step to mark done ✓',
     cropTitle:'Adjust image crop',cropBtn:'Crop',cpCenter:'⬛ Centre',cpTop:'⬆ Top',cpBottom:'⬇ Bottom',cpLeft:'◀ Left',cpRight:'▶ Right',cropSave:'✓ Save',cropCancel:'Cancel',cropReset:'↺ Reset',cropHint:'✂️ Adjust crop',
     printBtn:'🖨️ Print recipe / save PDF',printSub:'Ingredients & preparation',srvLabel:'Servings',srvBase:'Base',srvFor:'for',srvPers:'pers.',srvCustom:'custom',srvReset:'Reset',prepTimeLabel:'⏱ Prep time',prepTimeMin:'min.',prepTimeHr:'hr.',prepTimePh:'min',prepTimeAuto:'auto-detected',
-    scanReadyLbl:'AI recognition active',scanReadySub:'Access code saved',scanChangeLbl:'change',scanBtnLbl:'Recognise recipe automatically',scanRetry:'Scan again',
+    scanReadyLbl:'AI recognition active',scanReadySub:'Access code saved',scanChangeLbl:'change',scanBtnLbl:'Recognise recipe automatically',scanRetry:'Scan again',scanFaqLbl:'Need help — frequently asked questions',
     sc1T:'Open website & create free account',sc1D:'Tap the blue button — it opens the website. Sign up for free with your email address.',sc2T:'Create & copy access code',sc2D:'On the website click "Create Key", enter a name (e.g. "Recipe Book"), then copy the long code (📋 button).',sc3T:'Paste code here — done!',sc3D:'Save & activate AI',apiKeyLbl:'Paste access code',apiHint:'Stays on your device only — never shared',pasteBtnLbl:'📋 Paste',scanOpenLink:'Go to Anthropic website →',
     wkBf:'Breakfast',wkLu:'Lunch',wkDi:'Dinner',wkPickMeal:'Choose meal',wkPickCourse:'Choose course',wkOther:'Other',wkOtherPh:'e.g. drinks, bread …',wkPrev:'‹ Prev week',wkNext:'Next week ›',wkCurr:'This week',wkKw:'CW',wkAiTitle:'✨ AI Week Plan',wkAiStep1:'Copy prompt',wkAiStep2:'Paste into Claude and generate a week plan',wkAiStep3:'Paste AI response (JSON) here and import',wkAiCopy:'📋 Copy prompt',wkAiCopied:'✅ Copied!',wkAiLink:'Open Claude →',wkAiImportBtn:'✨ Import week plan',wkAiOk:'✅ Week plan imported!',wkAiErr:'❌ Invalid format',wkAiClose:'Close',wkAiPh:'Paste JSON here …',wkAiPromptTitle:'Example prompt:',wkAiPersons:'persons'
     ,sRating:'⭐ Rate Your Progress'
@@ -2661,7 +2631,7 @@ const LANGS={
     mvNone:'В меню пока нет рецептов.',cookHint:'Нажмите на шаг чтобы отметить ✓',
     cropTitle:'Настроить кадрирование',cropBtn:'Кадр',cpCenter:'⬛ Центр',cpTop:'⬆ Вверх',cpBottom:'⬇ Вниз',cpLeft:'◀ Влево',cpRight:'▶ Вправо',cropSave:'✓ Сохранить',cropCancel:'Отмена',cropReset:'↺ Сброс',cropHint:'✂️ Изменить кадр',
     printBtn:'🖨️ Распечатать рецепт / PDF',printSub:'Состав и приготовление',srvLabel:'Порции',srvBase:'Основа',srvFor:'на',srvPers:'чел.',srvCustom:'другое',srvReset:'Сброс',prepTimeLabel:'⏱ Время готовки',prepTimeMin:'мин.',prepTimeHr:'ч.',prepTimePh:'мин',prepTimeAuto:'авто',
-    scanReadyLbl:'ИИ-распознавание активно',scanReadySub:'Код доступа сохранён',scanChangeLbl:'изменить',scanBtnLbl:'Распознать рецепт автоматически',scanRetry:'Ещё раз',
+    scanReadyLbl:'ИИ-распознавание активно',scanReadySub:'Код доступа сохранён',scanChangeLbl:'изменить',scanBtnLbl:'Распознать рецепт автоматически',scanRetry:'Ещё раз',scanFaqLbl:'Нужна помощь — частые вопросы',
     sc1T:'Открыть сайт и создать бесплатный аккаунт',sc1D:'Нажмите синюю кнопку — она откроет сайт. Зарегистрируйтесь бесплатно с помощью email.',sc2T:'Создать и скопировать код доступа',sc2D:'На сайте нажмите «Create Key», введите имя (например «Книга рецептов»), затем скопируйте длинный код (кнопка 📋).',sc3T:'Вставьте код здесь — готово!',sc3D:'Сохранить и активировать ИИ',apiKeyLbl:'Вставьте код доступа',apiHint:'Хранится только на вашем устройстве — никуда не передаётся',pasteBtnLbl:'📋 Вставить',scanOpenLink:'Открыть сайт Anthropic →',
     wkBf:'Завтрак',wkLu:'Обед',wkDi:'Ужин',wkPickMeal:'Выбор приёма пищи',wkPickCourse:'Выбор блюда',wkOther:'Прочее',wkOtherPh:'напр. напитки, хлеб …',wkPrev:'‹ Пред. неделя',wkNext:'Следующая неделя ›',wkCurr:'Эта неделя',wkKw:'КН',wkAiTitle:'✨ ИИ-план недели',wkAiStep1:'Скопировать запрос',wkAiStep2:'Вставить в Claude и создать план',wkAiStep3:'Вставить ответ ИИ (JSON) и импортировать',wkAiCopy:'📋 Скопировать',wkAiCopied:'✅ Скопировано!',wkAiLink:'Открыть Claude →',wkAiImportBtn:'✨ Импортировать план',wkAiOk:'✅ План импортирован!',wkAiErr:'❌ Неверный формат',wkAiClose:'Закрыть',wkAiPh:'Вставить JSON …',wkAiPromptTitle:'Пример запроса:',wkAiPersons:'персон'
     ,sRating:'⭐ Оцени свой прогресс'
@@ -2783,7 +2753,7 @@ const LANGS={
     mvNone:'菜单中暂无食谱。',cookHint:'点击步骤标记完成 ✓',
     cropTitle:'调整图片裁剪',cropBtn:'裁剪',cpCenter:'⬛ 居中',cpTop:'⬆ 上方',cpBottom:'⬇ 下方',cpLeft:'◀ 左侧',cpRight:'▶ 右侧',cropSave:'✓ 保存',cropCancel:'取消',cropReset:'↺ 重置',cropHint:'✂️ 调整裁剪',
     printBtn:'🖨️ 打印食谱 / 保存PDF',printSub:'配料和制作步骤',srvLabel:'份量',srvBase:'基础',srvFor:'供',srvPers:'人',srvCustom:'自定义',srvReset:'重置',prepTimeLabel:'⏱ 准备时间',prepTimeMin:'分',prepTimeHr:'时',prepTimePh:'分钟',prepTimeAuto:'自动',
-    scanReadyLbl:'AI识别已激活',scanReadySub:'访问码已保存',scanChangeLbl:'更改',scanBtnLbl:'自动识别食谱',scanRetry:'重新扫描',
+    scanReadyLbl:'AI识别已激活',scanReadySub:'访问码已保存',scanChangeLbl:'更改',scanBtnLbl:'自动识别食谱',scanRetry:'重新扫描',scanFaqLbl:'需要帮助 — 常见问题',
     sc1T:'打开网站并创建免费账户',sc1D:'点击蓝色按钮——它将打开网站。用您的电子邮件免费注册。',sc2T:'创建并复制访问码',sc2D:'在网站上点击「Create Key」，输入名称（如「食谱书」），然后复制长码（📋按钮）。',sc3T:'在此粘贴代码——完成！',sc3D:'保存并激活AI',apiKeyLbl:'粘贴访问码',apiHint:'仅存储在您的设备上——从不共享',pasteBtnLbl:'📋 粘贴',scanOpenLink:'前往Anthropic网站 →',
     wkBf:'早餐',wkLu:'午餐',wkDi:'晚餐',wkPickMeal:'选择餐次',wkPickCourse:'选择菜类',wkOther:'其他',wkOtherPh:'如饮料、面包…',wkPrev:'‹ 上周',wkNext:'下周 ›',wkCurr:'本周',wkKw:'周',wkAiTitle:'✨ AI周计划',wkAiStep1:'复制提示',wkAiStep2:'粘贴到Claude并生成周计划',wkAiStep3:'粘贴AI回复(JSON)并导入',wkAiCopy:'📋 复制提示',wkAiCopied:'✅ 已复制!',wkAiLink:'打开Claude →',wkAiImportBtn:'✨ 导入周计划',wkAiOk:'✅ 周计划已导入!',wkAiErr:'❌ 格式无效',wkAiClose:'关闭',wkAiPh:'在此粘贴JSON…',wkAiPromptTitle:'示例提示:',wkAiPersons:'人'
     ,sRating:'⭐ 评价你的进步'
@@ -2905,7 +2875,7 @@ const LANGS={
     mvNone:'Aún no hay recetas en el menú.',cookHint:'Tocar paso = hecho ✓',
     cropTitle:'Ajustar recorte',cropBtn:'Recorte',cpCenter:'⬛ Centro',cpTop:'⬆ Arriba',cpBottom:'⬇ Abajo',cpLeft:'◀ Izquierda',cpRight:'▶ Derecha',cropSave:'✓ Guardar',cropCancel:'Cancelar',cropReset:'↺ Restablecer',cropHint:'✂️ Ajustar recorte',
     printBtn:'🖨️ Imprimir receta / PDF',printSub:'Lista de ingredientes y preparación',srvLabel:'Porciones',srvBase:'Base',srvFor:'para',srvPers:'pers.',srvCustom:'número propio',srvReset:'Restablecer',prepTimeLabel:'⏱ Tiempo prep.',prepTimeMin:'min.',prepTimeHr:'h.',prepTimePh:'min',prepTimeAuto:'auto',
-    scanReadyLbl:'Reconocimiento IA activo',scanReadySub:'Código guardado',scanChangeLbl:'cambiar',scanBtnLbl:'Reconocer receta automáticamente',scanRetry:'Escanear de nuevo',
+    scanReadyLbl:'Reconocimiento IA activo',scanReadySub:'Código guardado',scanChangeLbl:'cambiar',scanBtnLbl:'Reconocer receta automáticamente',scanRetry:'Escanear de nuevo',scanFaqLbl:'Necesito ayuda — preguntas frecuentes',
     sc1T:'Abrir web y crear cuenta gratuita',sc1D:'Toca el botón azul — abre la web. Regístrate gratis con tu correo.',sc2T:'Crear y copiar código de acceso',sc2D:'En la web clic en "Create Key", introducir nombre, luego copiar el código.',sc3T:'Pegar código aquí — ¡listo!',sc3D:'Guardar y activar IA',apiKeyLbl:'Pegar código de acceso',apiHint:'Solo en tu dispositivo — nunca se comparte',pasteBtnLbl:'📋 Pegar',scanOpenLink:'Ir a la web de Anthropic →',
     wkBf:'Desayuno',wkLu:'Almuerzo',wkDi:'Cena',wkPickMeal:'Elegir comida',wkPickCourse:'Elegir plato',wkOther:'Otros',wkOtherPh:'p.ej. bebidas, pan …',wkPrev:'‹ Semana ant.',wkNext:'Semana sig. ›',wkCurr:'Esta semana',wkKw:'SC',wkAiTitle:'✨ Plan IA semana',wkAiStep1:'Copiar prompt',wkAiStep2:'Pegar en Claude y generar plan',wkAiStep3:'Pegar respuesta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ ¡Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plan',wkAiOk:'✅ ¡Plan importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Cerrar',wkAiPh:'Pegar JSON aquí …',wkAiPromptTitle:'Ejemplo de prompt:',wkAiPersons:'personas'
     ,sRating:'⭐ Valora tu progreso'
@@ -3134,6 +3104,7 @@ const LANGS={
     scanChangeLbl:'modifier',
     scanBtnLbl:'Reconnaître automatiquement',
     scanRetry:'Scanner à nouveau',
+    scanFaqLbl:'Besoin d\'aide — questions fréquentes',
     pasteBtnLbl:'📋 Coller',
     scanOpenLink:'Site Anthropic',
     wkBf:'Petit-déjeuner',wkLu:'Déjeuner',wkDi:'Dîner',wkPickMeal:'Choisir repas',wkPickCourse:'Choisir plat',wkOther:'Autres',wkOtherPh:'p.ex. boissons, pain …',wkPrev:'‹ Semaine préc.',wkNext:'Semaine suiv. ›',wkCurr:'Cette semaine',wkKw:'SC',wkAiTitle:'✨ Plan IA semaine',wkAiStep1:'Copier le prompt',wkAiStep2:'Coller dans Claude et générer le plan',wkAiStep3:'Coller la réponse IA (JSON) et importer',wkAiCopy:'📋 Copier prompt',wkAiCopied:'✅ Copié!',wkAiLink:'Ouvrir Claude →',wkAiImportBtn:'✨ Importer le plan',wkAiOk:'✅ Plan importé!',wkAiErr:'❌ Format invalide',wkAiClose:'Fermer',wkAiPh:'Coller JSON ici …',wkAiPromptTitle:'Exemple de prompt:',wkAiPersons:'personnes'
@@ -3363,6 +3334,7 @@ const LANGS={
     scanChangeLbl:'modifica',
     scanBtnLbl:'Riconosci automaticamente',
     scanRetry:'Scansiona di nuovo',
+    scanFaqLbl:'Ho bisogno di aiuto — domande frequenti',
     pasteBtnLbl:'📋 Incolla',
     scanOpenLink:'Sito Anthropic',
     wkBf:'Colazione',wkLu:'Pranzo',wkDi:'Cena',wkPickMeal:'Scegli pasto',wkPickCourse:'Scegli portata',wkOther:'Altro',wkOtherPh:'es. bevande, pane …',wkPrev:'‹ Settimana prec.',wkNext:'Settimana succ. ›',wkCurr:'Questa settimana',wkKw:'SS',wkAiTitle:'✨ Piano IA settimana',wkAiStep1:'Copia il prompt',wkAiStep2:'Incolla in Claude e genera il piano',wkAiStep3:'Incolla la risposta IA (JSON) e importa',wkAiCopy:'📋 Copia prompt',wkAiCopied:'✅ Copiato!',wkAiLink:'Apri Claude →',wkAiImportBtn:'✨ Importa piano',wkAiOk:'✅ Piano importato!',wkAiErr:'❌ Formato non valido',wkAiClose:'Chiudi',wkAiPh:'Incolla JSON qui …',wkAiPromptTitle:'Esempio di prompt:',wkAiPersons:'persone'
@@ -3592,6 +3564,7 @@ const LANGS={
     scanChangeLbl:'alterar',
     scanBtnLbl:'Reconhecer automaticamente',
     scanRetry:'Digitalizar novamente',
+    scanFaqLbl:'Preciso de ajuda — perguntas frequentes',
     pasteBtnLbl:'📋 Colar',
     scanOpenLink:'Site Anthropic',
     wkBf:'Pequeno-almoço',wkLu:'Almoço',wkDi:'Jantar',wkPickMeal:'Escolher refeição',wkPickCourse:'Escolher prato',wkOther:'Outros',wkOtherPh:'ex. bebidas, pão …',wkPrev:'‹ Semana ant.',wkNext:'Próx. semana ›',wkCurr:'Esta semana',wkKw:'SS',wkAiTitle:'✨ Plano IA semana',wkAiStep1:'Copiar prompt',wkAiStep2:'Colar no Claude e gerar plano',wkAiStep3:'Colar resposta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plano',wkAiOk:'✅ Plano importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Fechar',wkAiPh:'Colar JSON aqui …',wkAiPromptTitle:'Exemplo de prompt:',wkAiPersons:'pessoas'
@@ -3987,7 +3960,7 @@ function applyLang(code){
     'txtTitleEl','txtDescEl','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
     'txtSc1T','txtSc1D','txtWebLbl','txtSc2T','txtSc3T',
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
-    'scanOpenLink','scanReadyLbl','scanChangeLbl','scanBtnLbl','pasteBtnLbl',
+    'scanOpenLink','scanReadyLbl','scanChangeLbl','scanBtnLbl','pasteBtnLbl','scanFaqLbl',
     'cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight',
     'bakTitle','bakDesc','bakBtn',
     'expTitle','expPdfT','expPdfD','expPdfBtn','expFlipT','expFlipD','expFlipBtn',
