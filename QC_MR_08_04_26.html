@@ -509,11 +509,14 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .scan-faq{margin-top:6px;margin-bottom:4px}
 .scan-faq-toggle{width:100%;background:none;border:1.5px solid var(--sand2);border-radius:9px;padding:10px 13px;text-align:left;color:var(--br2);font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:7px}
 .scan-faq-toggle:active{background:var(--sand2)}
-.scan-faq-body{display:none;background:var(--parch);border:1.5px solid var(--sand2);border-top:none;border-radius:0 0 9px 9px;padding:11px 13px}
+.scan-faq-body{display:none;background:var(--parch);border:1.5px solid var(--sand2);border-top:none;border-radius:0 0 9px 9px;padding:0;overflow:hidden}
 .scan-faq-body.open{display:block}
-.scan-faq-q{font-size:.76rem;font-weight:700;color:var(--ink);margin-top:9px;margin-bottom:2px}
-.scan-faq-q:first-child{margin-top:0}
-.scan-faq-a{font-size:.73rem;color:var(--br2);line-height:1.5}
+.scan-faq-q{font-size:.79rem;font-weight:700;color:var(--ink);padding:11px 13px 4px;border-top:1px solid var(--sand2)}
+.scan-faq-q:first-child{border-top:none;padding-top:12px}
+.scan-faq-a{font-size:.74rem;color:var(--br2);line-height:1.55;padding:0 13px 13px}
+.scan-faq-a strong{font-weight:700;color:var(--br2)}
+.scan-faq-a code{font-size:.7rem;background:var(--sand2);padding:1px 4px;border-radius:4px;color:var(--ink)}
+.scan-faq-a a.sfq-link{color:var(--br);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .share-ov{position:fixed;inset:0;z-index:9700;display:flex;align-items:center;justify-content:center;background:rgba(46,31,16,.55)}
 .share-box{background:var(--parch);border-radius:16px;padding:22px 18px;max-width:290px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.22)}
 .share-box-title{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:3px}
@@ -1932,8 +1935,8 @@ button:active{transform:scale(0.97)}
           <div class="scan-faq-q">Der Code wird als „ungültig" abgelehnt</div>
           <div class="scan-faq-a">Bitte den Code <strong>vollständig kopieren</strong> — er beginnt mit <code>sk-ant-</code> und ist sehr lang. Tippe nicht manuell, sondern benutze den 📋-Button auf der Anthropic-Seite.</div>
 
-          <div class="scan-faq-q">Fehlermeldung: „Keine Guthaben"</div>
-          <div class="scan-faq-a">Dein Anthropic-Guthaben ist aufgebraucht. Gehe auf <strong>console.anthropic.com → Billing</strong> und lade Guthaben nach (Minimum 5 $).</div>
+          <div class="scan-faq-q">Fehlermeldung: „Kein Guthaben"</div>
+          <div class="scan-faq-a">Dein Anthropic-Guthaben ist aufgebraucht. Guthaben aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" class="sfq-link">console.anthropic.com → Billing</a> (Minimum 5 $).</div>
 
           <div class="scan-faq-q">Ich möchte meinen Code löschen</div>
           <div class="scan-faq-a">Wenn die KI aktiv ist, tippe oben auf <strong>„ändern"</strong>. Der Code ist nur auf deinem Gerät gespeichert — er wird niemals an uns übertragen.</div>
