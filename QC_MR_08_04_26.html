@@ -1273,6 +1273,16 @@ h4.man-sub{font-family:Georgia,serif;font-size:.81rem;font-weight:700;color:var(
 .hbtn-gear:active{background:rgba(255,255,255,.25)}
 /* === ONBOARDING END === */
 
+/* ── Boot-Ladebildschirm ── */
+#boot-splash{position:fixed;inset:0;z-index:99999;background:var(--sand,#f5efe8);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  transition:opacity .45s ease}
+#boot-splash.bs-done{opacity:0;pointer-events:none}
+#boot-splash .bs-ico{font-size:2.6rem}
+#boot-splash .bs-lbl{font-size:.72rem;color:var(--br3,#a08060);min-height:1em}
+#bs-wrap{width:190px;height:5px;background:var(--sand2,#e8dccf);border-radius:3px;overflow:hidden}
+#bs-bar{height:100%;width:5%;background:var(--br,#6a4c36);border-radius:3px;transition:width .35s ease}
+
 /* ═══════════════════════════════════════════════════
    UI/UX REFACTOR v9.2 — Micro-Animations & States
    ═══════════════════════════════════════════════════ */
@@ -1359,6 +1369,12 @@ button:active{transform:scale(0.97)}
 </head>
 <body>
 <script>(function(){var t=localStorage.getItem('mtheme9');if(t&&t!=='default')document.body.setAttribute('data-theme',t);})();</script>
+
+<div id="boot-splash">
+  <div class="bs-ico">📖</div>
+  <div id="bs-wrap"><div id="bs-bar"></div></div>
+  <div class="bs-lbl" id="bs-lbl">Wird geladen…</div>
+</div>
 
 <div class="top-hdr">
   <div class="logo" id="appLogo">Mein <em>Rezeptbuch</em></div><span id="appVersion" style="font-size:.55rem;font-weight:700;color:var(--br3,#a08060);background:var(--br1,#f5efe8);border:1px solid var(--br2,#c4a07a);border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.04em">v9.2</span>
@@ -3576,9 +3592,24 @@ function _showIosExportReminder(){
 }
 
 // ═══════════════════════════════════════════════════════
+// BOOT PROGRESS
+// ═══════════════════════════════════════════════════════
+function _bootProg(p,t){
+  const b=document.getElementById('bs-bar'),l=document.getElementById('bs-lbl');
+  if(b)b.style.width=p+'%';
+  if(l&&t)l.textContent=t;
+}
+function _bootDone(){
+  const s=document.getElementById('boot-splash');if(!s)return;
+  _bootProg(100);
+  setTimeout(()=>{s.classList.add('bs-done');setTimeout(()=>s.remove(),500);},200);
+}
+
+// ═══════════════════════════════════════════════════════
 // BOOT / SEED
 // ═══════════════════════════════════════════════════════
 async function boot(){
+  _bootProg(8,'Daten laden…');
   applyA11y();
   const _iosDevice=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   // Load from localStorage — if empty or iOS mismatch, try IndexedDB restore
@@ -3602,6 +3633,7 @@ async function boot(){
   }
   if(!rawM){const bM=await _idbGet('mms9');if(bM){rawM=bM;localStorage.setItem('mms9',bM);}}
   if(!rawFD){const bFD=await _idbGet('mfd9');if(bFD){rawFD=bFD;localStorage.setItem('mfd9',bFD);}}
+  _bootProg(38,'Rezepte verarbeiten…');
 
   R=JSON.parse(rawR||'null')||[];
   MS=JSON.parse(rawM||'null')||[];
@@ -3657,6 +3689,7 @@ async function boot(){
     });
   }
   if(!MS.length){MS=[{id:Date.now(),lbl:courseName('main'),ico:'🍲',rid:0}];svM();}
+  _bootProg(65,'Sprache & Thema…');
   // Apply theme
   const th=localStorage.getItem('mtheme9')||'spektral';
   if(th!=='default')document.body.setAttribute('data-theme',th);
@@ -3664,8 +3697,10 @@ async function boot(){
   const key=localStorage.getItem('claudeKey9');
   // Key is managed by initScanPane — not pre-filled visually for security
   applyLang(CL);
+  _bootProg(82,'Oberfläche aufbauen…');
   render();
   badge();
+  _bootProg(96,'Fast fertig…');
   // ── Startup: Vault-Backup anbieten wenn localStorage weniger Rezepte hat ──
   // Kein Restore-Dialog wenn gerade ein geteiltes Rezept geöffnet wird
   if(!location.hash.startsWith('#share=')){
@@ -3700,6 +3735,7 @@ async function boot(){
   try{_checkShareUrl();}catch(e){}
   // Globale Tooltips für alle icon-only Buttons
   _initTooltips();
+  _bootDone();
 }
 
 // ═══════════════════════════════════════════════════════
