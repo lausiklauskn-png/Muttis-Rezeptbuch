@@ -485,7 +485,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 
 /* overlay */
 .fov{position:fixed;inset:0;z-index:620;display:flex;flex-direction:column;background:var(--sand);padding-top:var(--st);animation:fup .17s ease}
-.fov-hdr{background:var(--br);padding:10px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fov-hdr{background:var(--br);padding:10px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
 .fov-back{background:none;border:none;color:rgba(255,255,255,.56);font-size:1.2rem;cursor:pointer;padding:3px 5px}
 .fov-title{font-family:Georgia,serif;color:#fff;font-size:.98rem;flex:1}
 .fov-tabs{background:var(--br);border-top:1px solid rgba(255,255,255,.08);display:flex;flex-shrink:0}
@@ -1804,8 +1804,8 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 
 <div class="fov" id="importOv" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="closeImport()" title="Zurück">←</button>
+  <div class="fov-hdr" onclick="closeImport()">
+    <button class="fov-back" onclick="event.stopPropagation();closeImport()" title="Zurück">←</button>
     <div class="fov-title" id="impTitle">📥 Importieren</div>
   </div>
   <div class="fov-tabs">
@@ -2187,8 +2187,8 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 
 <div class="fov" id="exportOv" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="closeExport()" title="Zurück">←</button>
+  <div class="fov-hdr" onclick="closeExport()">
+    <button class="fov-back" onclick="event.stopPropagation();closeExport()" title="Zurück">←</button>
     <div class="fov-title" id="expTitle">💾 Sichern & Exportieren</div>
   </div>
   <div class="fov-body">
@@ -2224,8 +2224,8 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 
 <div class="fov" id="langOv" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="closeLang()" title="Sprache wählen – Zurück">←</button>
+  <div class="fov-hdr" onclick="closeLang()">
+    <button class="fov-back" onclick="event.stopPropagation();closeLang()" title="Sprache wählen – Zurück">←</button>
     <div class="fov-title">🌐 Sprache / Language</div>
   </div>
   <div class="fov-body">
@@ -9288,8 +9288,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <!-- HELP MODAL -->
 <!-- HILFE PANEL – gleicher Stil wie Export -->
 <div class="fov" id="helpOv" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="closeHelpOv()" title="Zurück">←</button>
+  <div class="fov-hdr" onclick="closeHelpOv()">
+    <button class="fov-back" onclick="event.stopPropagation();closeHelpOv()" title="Zurück">←</button>
     <div class="fov-title" id="hlpTitleEl">ℹ️ Hilfe · Teilen · Reparatur</div>
   </div>
   <div class="fov-body">
@@ -9344,8 +9344,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 <!-- CACHE-ANLEITUNG (einfaches Panel) -->
 <div class="fov" id="cacheOv" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="document.getElementById('cacheOv').style.display='none'" title="Zurück">←</button>
+  <div class="fov-hdr" onclick="document.getElementById('cacheOv').style.display='none'">
+    <button class="fov-back" onclick="event.stopPropagation();document.getElementById('cacheOv').style.display='none'" title="Zurück">←</button>
     <div class="fov-title" id="hlpCacheTitleEl">🧹 Cache leeren – so geht's</div>
   </div>
   <div class="fov-body">
@@ -9572,8 +9572,8 @@ function helpAction(type){
 
 <!-- ── API-Key FAQ Full-Page ── -->
 <div class="fov" id="apifaq-ov" style="display:none">
-  <div class="fov-hdr">
-    <button class="fov-back" onclick="closeApiKeyFaq()" title="Zurück">←</button>
+  <div class="fov-hdr" onclick="closeApiKeyFaq()">
+    <button class="fov-back" onclick="event.stopPropagation();closeApiKeyFaq()" title="Zurück">←</button>
     <div class="fov-title">❓ API-Key – Hilfe &amp; Antworten</div>
   </div>
   <div class="fov-body">
