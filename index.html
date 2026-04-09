@@ -3925,6 +3925,7 @@ function switchFovTab(ovId,tab,el){
   el.classList.add('on');
   document.getElementById('imp-'+tab)?.classList.add('on');
   if(tab==='scan')initScanPane();
+  if(tab==='txt')initTxtPane();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -4366,6 +4367,7 @@ async function saveAndStartScan(){
     localStorage.setItem('claudeKey9',v);
     document.getElementById('stepDone3').textContent='✅';
     switchToScanMain();
+    initTxtPane();
     toast('🚀 '+T('scanReadyLbl')+'!');
     if(scanData)triggerScan();
   }catch(err){
@@ -7683,6 +7685,7 @@ function saveTxtKey() {
   if (!v || v.length < 10) { toast('⚠️ Zugangscode einfügen'); return; }
   localStorage.setItem('claudeKey9', v);
   initTxtPane();
+  initScanPane();
   toast('🚀 Text-KI aktiv!');
 }
 
