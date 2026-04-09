@@ -97,6 +97,20 @@ Wenn der Benutzer **"Hochladen"** schreibt:
 3. PR erstellen via `mcp__github__create_pull_request` → nach `main`
 4. PR-URL mitteilen
 
+### Pflicht-Prüfung bei "Hochladen" oder "Mergen"
+**Immer** alle offenen Branches und PRs prüfen – nicht nur den aktuellen Branch:
+
+| Schritt | Primär (MCP) | Fallback (git) |
+|---|---|---|
+| Offene PRs prüfen | `mcp__github__list_pull_requests` (state: open) | entfällt |
+| Alle Branches prüfen | `mcp__github__list_branches` | `git fetch --all` |
+| Branches ahead of main | — | `git log origin/main..origin/<branch> --oneline` für jeden Branch |
+
+**Wenn MCP-Tools nicht verfügbar:**
+- Explizit melden: *"GitHub-PRs können gerade nicht geprüft werden (MCP nicht verfügbar)"*
+- git-Fallback verwenden: alle Remote-Branches auf ungemergede Commits prüfen
+- NIEMALS "nichts offen" sagen ohne zu prüfen, was tatsächlich geprüft wurde
+
 ### Branch-Konvention
 - Feature-Branches werden automatisch angelegt (Format: `claude/<beschreibung>-<id>`)
 - Immer auf dem zugewiesenen Branch arbeiten (steht oben in der Session-Konfiguration)
