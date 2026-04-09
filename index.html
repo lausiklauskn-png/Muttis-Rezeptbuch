@@ -4855,7 +4855,14 @@ function acceptScan(){
 // ═══════════════════════════════════════════════════════
 // JSON EXPORT/IMPORT
 // ═══════════════════════════════════════════════════════
+function _collapseAll(){
+  R.forEach(r=>r.shut=true);
+  document.querySelectorAll('.rbody').forEach(b=>b.classList.add('shut'));
+  document.querySelectorAll('.chint').forEach(h=>h.textContent='▼ aufklappen');
+  document.querySelectorAll('.imgbar,.imgbar-wrap').forEach(b=>b.style.display='none');
+}
 function exportData(){
+  _collapseAll(); sv();
   const dt=new Date().toISOString().slice(0,16).replace('T','-').replace(':','h');
   dlBlob(new Blob([JSON.stringify({version:9,exported:new Date().toISOString(),recipes:R,menu:MS,folders:FD},null,2)],
     {type:'application/json'}),`muttis-rezeptbuch-${dt}.json`);
@@ -4895,7 +4902,7 @@ function importData(e){
         ()=>{
           // Ersetzen
           R=imported;MS=d.menu||MS;FD=d.folders||FD;
-          _normalizeRecs(R);sv();svM();svFD();badge();render();
+          _normalizeRecs(R);R.forEach(r=>r.shut=true);sv();svM();svFD();badge();render();
           setUpSt(`✅ ${R.filter(r=>r.name).length} ${T('uploadOK')}`,'ok');
         },
         ()=>{
@@ -4905,7 +4912,7 @@ function importData(e){
           const maxId=R.reduce((m,r)=>Math.max(m,r.id||0),0);
           newRecs.forEach((r,i)=>{r.id=maxId+i+1;});
           _normalizeRecs(newRecs);
-          R.unshift(...newRecs);sv();badge();render();
+          R.unshift(...newRecs);R.forEach(r=>r.shut=true);sv();badge();render();
           setUpSt(`✅ ${newRecs.length} neue Rezepte hinzugefügt`,'ok');
         }
       );
