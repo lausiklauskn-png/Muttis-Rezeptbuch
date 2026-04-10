@@ -1385,6 +1385,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
   <div class="hbtns">
     <button class="hbtn" onclick="openLang()" id="langBtn" title="Sprache wählen">🌐 DE</button>
     <button class="hbtn" onclick="openImport()" title="Importieren">📥</button>
+    <button class="hbtn" onclick="openApiKeyOv()" title="Was ist ein API-Key?">🔑 ?</button>
     <button class="hbtn" onclick="openExport()" title="Exportieren">📤</button>
     <button class="hbtn" onclick="openHelp()" title="Hilfe · Teilen · Reparatur" id="helpHdrBtn">ℹ️</button>
 <!-- === ONBOARDING START === -->
@@ -2169,6 +2170,76 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
   </div>
 </div>
 
+
+<div class="fov" id="apikeyOv" style="display:none">
+  <div class="fov-hdr" onclick="closeApiKeyOv()">
+    <button class="fov-back" onclick="event.stopPropagation();closeApiKeyOv()" title="Zurück">←</button>
+    <div class="fov-title">🔑 Was ist ein API-Key?</div>
+  </div>
+  <div class="fov-body">
+    <div class="fov-pane on" style="padding:16px">
+      <p style="font-size:.82rem;color:var(--br3);line-height:1.6;margin-bottom:14px">Ein persönlicher Zugangscode für Anthropics KI (Claude), der das automatische Erkennen von Rezepten ermöglicht. Er wird ausschließlich auf diesem Gerät gespeichert und nie weitergegeben.</p>
+
+      <div style="font-size:.72rem;font-weight:700;color:var(--br3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">So erhältst du deinen Schlüssel</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">1</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">Konto erstellen</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--teal);font-weight:600">console.anthropic.com öffnen</a> → kostenlos registrieren</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">2</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">E-Mail bestätigen</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Bestätigungs-Link in der Registrierungs-Mail anklicken.</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">3</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">API-Key erstellen</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Menü: API Keys → <strong>Create Key</strong> → Namen vergeben → bestätigen.</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">4</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">Schlüssel einfügen</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Key kopieren (beginnt mit <code style="background:var(--sand2);padding:1px 4px;border-radius:3px;font-size:.7rem">sk-ant-…</code>) und hier einfügen.</div></div>
+        </div>
+      </div>
+
+      <div style="font-size:.72rem;font-weight:700;color:var(--br3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Häufige Fragen</div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">Kostet das etwas?</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Jedes neue Konto erhält <strong>~5 $ Startguthaben</strong> gratis. Ein Scan kostet ~0,003 $ — das reicht für ca. 1.600 Scans. Danach Guthaben jederzeit aufladen.</div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">Wo finde ich meinen Key wieder?</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Der Key ist <strong>nur lokal</strong> auf diesem Gerät gespeichert. Bei neuem Gerät: Anthropic-Konto öffnen → neuen Key anlegen → hier einfügen.</div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">„Create Key"-Schaltfläche fehlt</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Zuerst die <strong>E-Mail-Adresse bestätigen</strong> — danach erscheint die Schaltfläche automatisch.</div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">Code wird als ungültig abgelehnt</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Den Schlüssel <strong>vollständig kopieren</strong> — beginnt mit sk-ant-, ist sehr lang. Stets den Kopier-Button der Anthropic-Website nutzen.</div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">Fehlermeldung: kein Guthaben</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Startguthaben aufgebraucht. Aufladen unter <a href="https://console.anthropic.com/settings/billing" target="_blank" style="color:var(--teal);font-weight:600">Billing</a> (ab 5 $) oder neues Konto mit anderer E-Mail anlegen.</div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:3px">Zugangscode löschen</div>
+          <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Einstellungen ⚙️ → KI-Zugangscode → Tab KI-Scan → <strong>ändern</strong> → Feld leeren → Speichern.</div>
+        </div>
+      </div>
+
+      <button class="api-key-row-btn" style="width:100%;justify-content:center;background:var(--teal);color:#fff;border-color:var(--teal);font-size:.88rem;padding:12px 0" onclick="closeApiKeyOv();openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">
+        🔑 Jetzt Key eingeben →
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="fov" id="exportOv" style="display:none">
   <div class="fov-hdr" onclick="closeExport()">
@@ -3886,6 +3957,8 @@ function matchSQ(r){
 // ═══════════════════════════════════════════════════════
 // OVERLAYS
 // ═══════════════════════════════════════════════════════
+function openApiKeyOv(){document.getElementById('apikeyOv').style.display='flex';}
+function closeApiKeyOv(){document.getElementById('apikeyOv').style.display='none';}
 function openImport(){
   document.getElementById('importOv').style.display='flex';
   initScanPane();
@@ -7123,7 +7196,7 @@ function _initTooltips(){
 (function(){
   const SC_ORDER=['recipes','folders','menu','backup','settings'];
   // IDs von Overlays/Modals — bei offenen Panels kein Seitenwechsel
-  const MODAL_IDS=['mv','importOv','exportOv','courseSheet','spellModal',
+  const MODAL_IDS=['mv','importOv','exportOv','apikeyOv','courseSheet','spellModal',
     'aip','aslBg','ob-wizard-bg','ob-helper-bg','ob-settings-bg','ob-scan-ov',
     'manualOv','bvaultModal'];
   function anyModalOpen(){
