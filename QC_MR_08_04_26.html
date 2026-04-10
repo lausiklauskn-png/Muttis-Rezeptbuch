@@ -926,13 +926,35 @@ html.a11y-hc p,html.a11y-hc span,html.a11y-hc li,html.a11y-hc div,html.a11y-hc l
 html.a11y-hc h1,html.a11y-hc h2,html.a11y-hc h3,html.a11y-hc h4 { color:#2a0e00 !important;font-weight:900 !important }
 html.a11y-hc .top-hdr{background:#1a0800 !important}
 html.a11y-hc .top-hdr *{color:#f5e8d0 !important}
-html.a11y-hc .bnav{background:#1a0800 !important;border-top:3px solid #8b5e3c !important}
+html.a11y-hc .bnav,html.a11y-hc #bnav{background:#1a0800 !important;border-top:3px solid #8b5e3c !important}
 html.a11y-hc .bn-lbl{color:#f5e8d0 !important;font-weight:700 !important}
 html.a11y-hc .rcard{border:2px solid #3a1e00 !important;background:#fffff5 !important}
 html.a11y-hc .sett-sec{background:#fff !important;border:1.5px solid #3a1e00 !important}
 html.a11y-hc .sett-head{background:#f5f5dc !important;color:#2a0e00 !important}
 html.a11y-hc input,html.a11y-hc textarea{border:2px solid #2a0e00 !important;background:#fff !important;color:#000 !important}
 html.a11y-hc .toast{background:#1a0800 !important;color:#fffff0 !important}
+/* ── Hoher Kontrast: Tooltip – heller Text auf dunklem Hintergrund ── */
+html.a11y-hc #_qtip,html.a11y-hc #_jstip{color:#f5edd8 !important;border:1px solid #8b5e3c !important}
+/* ── Hoher Kontrast: Overlay-Header und Tabs ── */
+html.a11y-hc .fov-hdr,html.a11y-hc .fov-hdr *{color:#f5e8d0 !important}
+html.a11y-hc .fovtab{color:rgba(245,232,208,.75) !important}
+html.a11y-hc .fovtab.on{color:#fff !important;border-bottom-color:#ffd080 !important}
+html.a11y-hc .mv-hdr,html.a11y-hc .mv-hdr *{color:#f5e8d0 !important}
+html.a11y-hc .mvtab{color:rgba(240,230,216,.55) !important}
+html.a11y-hc .mvtab.on{color:#f0e6d8 !important;border-bottom-color:#ffd080 !important}
+html.a11y-hc .mv-cbadge{color:#f0c880 !important}
+/* ── Hoher Kontrast: Sprach-Chips (aktiver Zustand) ── */
+html.a11y-hc .lang-chip.on,html.a11y-hc .lang-chip.on *{color:#fff !important}
+/* ── Hoher Kontrast: KI-Assistent-Header ── */
+html.a11y-hc .aip-hdr,html.a11y-hc .aip-hdr *{color:#f5e8d0 !important}
+/* ── Hoher Kontrast: Nummerierte Kreise, Badges und dunkle Schaltflächen ── */
+html.a11y-hc .aip-step-n,html.a11y-hc .mv-snum,html.a11y-hc .scan-numball,
+html.a11y-hc .stp-bubble,html.a11y-hc .ck-snum{color:#fff !important}
+html.a11y-hc .ck-title{color:#fff !important}
+html.a11y-hc .bn-badge{color:#fff !important}
+html.a11y-hc .bvault-json-btn{color:#fff !important}
+/* ── Hoher Kontrast: Aktiver Tab-Indikator sichtbar ── */
+html.a11y-hc .bn.on::after{background:#c4a07a !important;box-shadow:none !important}
 
 /* ── Hoher Kontrast: Spektral-Navbar beibehalten ── */
 html.a11y-hc body[data-theme=spektral] .top-hdr{background:linear-gradient(90deg,#CC0000,#CC5500,#CCB800,#009900,#009999,#003399,#660099) !important}
@@ -2173,22 +2195,22 @@ button:active{transform:scale(0.97)}
 
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
         <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">1</div>
+          <div class="stp-bubble" style="background:var(--teal);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">1</div>
           <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">Konto erstellen</div>
           <div style="font-size:.76rem;color:var(--br3);line-height:1.5"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--teal);font-weight:600">console.anthropic.com öffnen</a> → kostenlos registrieren</div></div>
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">2</div>
+          <div class="stp-bubble" style="background:var(--teal);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">2</div>
           <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">E-Mail bestätigen</div>
           <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Bestätigungs-Link in der Registrierungs-Mail anklicken.</div></div>
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">3</div>
+          <div class="stp-bubble" style="background:var(--teal);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">3</div>
           <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">API-Key erstellen</div>
           <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Menü: API Keys → <strong>Create Key</strong> → Namen vergeben → bestätigen.</div></div>
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="background:var(--teal);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">4</div>
+          <div class="stp-bubble" style="background:var(--teal);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px">4</div>
           <div><div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px">Schlüssel einfügen</div>
           <div style="font-size:.76rem;color:var(--br3);line-height:1.5">Key kopieren (beginnt mit <code style="background:var(--sand2);padding:1px 4px;border-radius:3px;font-size:.7rem">sk-ant-…</code>) und hier einfügen.</div></div>
         </div>
@@ -7150,6 +7172,7 @@ var _A11Y_MAP = ['sm','md','lg'];
 // ─── GLOBAL TOOLTIP ──────────────────────────────────────────────────────
 function _initTooltips(){
   const tip=document.createElement('div');
+  tip.id='_jstip';
   tip.style.cssText='position:fixed;background:rgba(20,12,5,.83);color:#fff;font-size:.67rem;font-weight:700;padding:4px 10px;border-radius:12px;white-space:nowrap;pointer-events:none;z-index:99999;box-shadow:0 2px 8px rgba(0,0,0,.32);display:none';
   document.body.appendChild(tip);
   let _hov=null;
