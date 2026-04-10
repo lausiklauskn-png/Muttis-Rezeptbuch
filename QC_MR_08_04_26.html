@@ -705,6 +705,16 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .scan-key-btn{background:var(--grn);color:#fff;border:none;border-radius:9px;width:100%;padding:12px;font-size:.86rem;font-weight:700;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:7px}
 .scan-key-btn:active{opacity:.8}
 .scan-key-note{font-size:.64rem;color:var(--br3);margin-top:7px;display:flex;align-items:center;gap:4px;justify-content:center}
+.scan-faq{margin-top:8px;margin-bottom:4px}
+.scan-faq-toggle{width:100%;background:none;border:1.5px solid var(--sand2);border-radius:9px;padding:10px 13px;text-align:left;color:var(--br2);font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit}
+.scan-faq-toggle:active{background:var(--sand2)}
+.scan-faq-body{display:none;padding:10px 12px;background:var(--parch);border:1.5px solid var(--sand2);border-top:none;border-radius:0 0 9px 9px}
+.scan-faq-body.open{display:block}
+.scan-faq-item{margin-bottom:10px}
+.scan-faq-item:last-child{margin-bottom:0}
+.scan-faq-q{font-size:.76rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.scan-faq-a{font-size:.72rem;color:var(--br3);line-height:1.5}
+.scan-faq-a strong{color:var(--rust)}
 /* Ready state */
 .scan-ready-bar{background:var(--grns);border:1.5px solid var(--grn);border-radius:10px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .scan-ready-ico{font-size:1.5rem;flex-shrink:0}
@@ -1872,6 +1882,35 @@ button:active{transform:scale(0.97)}
               <div class="scan-key-note">
                 🔒 <span id="apiHint">Bleibt nur auf deinem Gerät — wird niemals weitergegeben</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scan-faq">
+          <button class="scan-faq-toggle" onclick="toggleScanFaq()" id="scanFaqBtn">
+            ❓ <span id="scanFaqLbl">Ich brauche Hilfe — häufige Fragen</span>
+            <span id="scanFaqArrow" style="margin-left:auto;font-size:.7rem">›</span>
+          </button>
+          <div class="scan-faq-body" id="scanFaqBody">
+            <div class="scan-faq-item">
+              <div class="scan-faq-q">Kostet das etwas?</div>
+              <div class="scan-faq-a">Anthropic gibt neuen Accounts ca. <strong>5 $ Startguthaben</strong> gratis. Ein Scan kostet ~0,003 $ — das reicht für ~1.600 Scans. Danach kannst du Guthaben aufladen (Kreditkarte).</div>
+            </div>
+            <div class="scan-faq-item">
+              <div class="scan-faq-q">Ich sehe keinen „Create Key"-Button</div>
+              <div class="scan-faq-a">Auf der Anthropic-Website muss zuerst eine <strong>Zahlungsmethode</strong> hinterlegt werden (auch wenn man nur kostenloses Guthaben nutzt). Gehe zu: Einstellungen → Billing → Zahlungsmethode hinzufügen.</div>
+            </div>
+            <div class="scan-faq-item">
+              <div class="scan-faq-q">Der Code wird als „ungültig" abgelehnt</div>
+              <div class="scan-faq-a">Bitte den Code <strong>vollständig kopieren</strong> — er beginnt mit sk-ant- und ist sehr lang. Tippe nicht manuell, sondern benutze den 📋-Button auf der Anthropic-Seite.</div>
+            </div>
+            <div class="scan-faq-item">
+              <div class="scan-faq-q">Fehlermeldung: „Keine Guthaben"</div>
+              <div class="scan-faq-a">Dein Anthropic-Guthaben ist aufgebraucht. Gehe auf <strong>console.anthropic.com → Billing</strong> und lade Guthaben nach (Minimum 5 $).</div>
+            </div>
+            <div class="scan-faq-item">
+              <div class="scan-faq-q">Ich möchte meinen Code löschen</div>
+              <div class="scan-faq-a">Wenn die KI aktiv ist, tippe oben auf <strong>„ändern"</strong>. Der Code ist nur auf deinem Gerät gespeichert — er wird niemals an uns übertragen.</div>
             </div>
           </div>
         </div>
@@ -8885,6 +8924,13 @@ function toggleSettingsManual(){
     el.style.display='none';
     if(arr)arr.textContent='›';
   }
+}
+function toggleScanFaq(){
+  const body=document.getElementById('scanFaqBody');
+  const arrow=document.getElementById('scanFaqArrow');
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(arrow)arrow.textContent=open?'˅':'›';
 }
 function openApiKeyHelp(){
   const el=document.getElementById('settManualExpand');
