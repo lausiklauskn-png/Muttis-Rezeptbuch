@@ -3772,7 +3772,7 @@ async function boot(){
   // iOS: proaktiver Export-Reminder beim App-Start
   if(_iosDevice){try{_showIosExportReminder();}catch(e){}}
   // Geteiltes Rezept aus URL-Hash importieren
-  try{_checkShareUrl();}catch(e){}
+  _checkShareUrl().catch(()=>{});
   // Globale Tooltips für alle icon-only Buttons
   _initTooltips();
   _bootDone();
@@ -4699,17 +4699,40 @@ function _b64enc(str){
 function _b64dec(b64){
   return decodeURIComponent(atob(b64).split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
 }
+async function _compressB64(str){
+  try{
+    const cs=new CompressionStream('deflate-raw');
+    const w=cs.writable.getWriter();
+    w.write(new TextEncoder().encode(str));w.close();
+    const buf=await new Response(cs.readable).arrayBuffer();
+    return 'z'+btoa(String.fromCharCode(...new Uint8Array(buf)));
+  }catch(e){return _b64enc(str);}
+}
+async function _decompressB64(data){
+  if(data[0]==='z'){
+    try{
+      const bytes=Uint8Array.from(atob(data.slice(1)),c=>c.charCodeAt(0));
+      const ds=new DecompressionStream('deflate-raw');
+      const w=ds.writable.getWriter();
+      w.write(bytes);w.close();
+      const buf=await new Response(ds.readable).arrayBuffer();
+      return new TextDecoder().decode(buf);
+    }catch(e){return null;}
+  }
+  return _b64dec(data);
+}
 
-function shareRecipeQR(rid){
+async function shareRecipeQR(rid){
   const r=R.find(x=>x.id===rid);
   if(!r||!r.name)return;
-  const data={v:1,n:r.name,c:r.cat,s:r.servings||4,
+  const data={v:2,n:r.name,c:r.cat,s:r.servings||4,
     fl:r.flavors||[],
     i:(r.ings||[]).map(x=>({a:x.amt,u:x.unit,n:x.name})),
     st:(r.steps||[]).map(x=>x.txt)};
   const json=JSON.stringify(data);
-  if(json.length>2500){toast(T('shareTooBig'));return;}
-  _shareUrl=location.origin+location.pathname+'#share='+_b64enc(json);
+  if(json.length>8000){toast(T('shareTooBig'));return;}
+  const encoded=await _compressB64(json);
+  _shareUrl=location.origin+location.pathname+'#share='+encoded;
   _showShareModal(r.name);
 }
 
@@ -4801,7 +4824,7 @@ function _showShareModal(name){
   document.body.appendChild(ov);
   setTimeout(()=>{
     try{
-      const qr=qrcode(0,'M');
+      const qr=qrcode(0,'L');
       qr.addData(_shareUrl);
       qr.make();
       const box=document.getElementById('shareQrBox');
@@ -4823,12 +4846,14 @@ function _copyShareLink(){
   }else{toast(_shareUrl.slice(0,60)+'…');}
 }
 
-function _checkShareUrl(){
+async function _checkShareUrl(){
   const hash=location.hash;
   if(!hash.startsWith('#share='))return;
   history.replaceState(null,'',location.pathname);
   try{
-    const data=JSON.parse(_b64dec(hash.slice(7)));
+    const raw=await _decompressB64(hash.slice(7));
+    if(!raw)return;
+    const data=JSON.parse(raw);
     if(!data.n)return;
     _pendingShare=data;
     const ov=document.createElement('div');
