@@ -127,6 +127,7 @@ input::placeholder,textarea::placeholder{color:var(--br3);font-style:italic}
   background:rgba(255,255,255,.13);color:#f0e6d8;display:flex;align-items:center;gap:3px;white-space:nowrap}
 .hbtn:active{background:rgba(255,255,255,.25)}
 .hbtn.add{background:var(--rust);color:#fff}
+@media(max-width:420px){.hbtns{gap:2px}.hbtn{padding:0 6px;font-size:.62rem}}
 
 /* search */
 .srch-bar{padding:7px 11px 0;background:var(--parch);border-bottom:1px solid var(--sand2);
@@ -1385,7 +1386,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
   <div class="hbtns">
     <button class="hbtn" onclick="openLang()" id="langBtn" title="Sprache wählen">🌐 DE</button>
     <button class="hbtn" onclick="openImport()" title="Importieren">📥</button>
-    <button class="hbtn" onclick="openApiKeyOv()" title="Was ist ein API-Key?">🔑 ?</button>
+    <button class="hbtn" onclick="openApiKeyOv()" title="Was ist ein API-Key?">?</button>
     <button class="hbtn" onclick="openExport()" title="Exportieren">📤</button>
     <button class="hbtn" onclick="openHelp()" title="Hilfe · Teilen · Reparatur" id="helpHdrBtn">ℹ️</button>
 <!-- === ONBOARDING START === -->
