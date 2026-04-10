@@ -4720,7 +4720,7 @@ function shareRecipeQR(rid){
     i:(r.ings||[]).map(x=>({a:x.amt,u:x.unit,n:x.name})),
     st:(r.steps||[]).map(x=>x.txt)};
   const json=JSON.stringify(data);
-  if(json.length>2500){toast(T('shareTooBig'));return;}
+  if(json.length>2000){toast(T('shareTooBig'));return;}
   _shareUrl=location.origin+location.pathname+'#share='+_b64enc(json);
   _showShareModal(r.name);
 }
@@ -4813,7 +4813,7 @@ function _showShareModal(name){
   document.body.appendChild(ov);
   setTimeout(()=>{
     try{
-      const qr=qrcode(0,'M');
+      const qr=qrcode(0,'L');
       qr.addData(_shareUrl);
       qr.make();
       const box=document.getElementById('shareQrBox');
