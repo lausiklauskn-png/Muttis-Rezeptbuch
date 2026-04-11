@@ -6797,39 +6797,54 @@ function _sliRowStart(e){
   const rid=parseInt(li.dataset.rid),sid=parseInt(li.dataset.sid);
   if(!rid||!sid)return;
   const t=e.touches[0];
-  _sliPending={li,rid,sid,startX:t.clientX,startY:t.clientY};
-  document.addEventListener('touchmove',_sliRowMove,{passive:false});
+  const timer=setTimeout(()=>{
+    if(!_sliPending)return;
+    _sliPending.ready=true;
+    li.style.transition='box-shadow .12s';
+    li.style.boxShadow='inset 0 0 0 2px var(--teal,#36706a)';
+    document.removeEventListener('touchmove',_sliRowCheck);
+    document.addEventListener('touchmove',_sliRowDrag,{passive:false});
+  },350);
+  _sliPending={li,rid,sid,startX:t.clientX,startY:t.clientY,timer,ready:false};
+  document.addEventListener('touchmove',_sliRowCheck,{passive:true});
   document.addEventListener('touchend',_sliRowEnd,{passive:true});
   document.addEventListener('touchcancel',_sliRowEnd,{passive:true});
 }
-function _sliRowMove(e){
+function _sliRowCheck(e){
+  if(!_sliPending||_sliPending.ready)return;
+  const t=e.touches[0];
+  if(Math.abs(t.clientX-_sliPending.startX)>8||Math.abs(t.clientY-_sliPending.startY)>8)_sliRowEnd();
+}
+function _sliRowDrag(e){
   if(!_sliPending)return;
   const t=e.touches[0];
-  const dx=t.clientX-_sliPending.startX,dy=t.clientY-_sliPending.startY;
-  if(Math.abs(dx)>12){_sliRowEnd();return;}// horizontal → Wisch-Navigation läuft
-  if(Math.abs(dy)>10){
-    e.preventDefault();
-    const{li,rid,sid}=_sliPending;
-    document.removeEventListener('touchmove',_sliRowMove);
-    document.removeEventListener('touchend',_sliRowEnd);
-    document.removeEventListener('touchcancel',_sliRowEnd);
-    _sliPending=null;
-    if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
-    const rect=li.getBoundingClientRect();
-    const ghost=li.cloneNode(true);
-    ghost.id='tdd-ghost';
-    ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
-    document.body.appendChild(ghost);
-    li.style.opacity='.3';
-    _tdd={type:'step',rid,id:sid,li,ghost,offsetY:t.clientY-rect.top};
-    document.addEventListener('touchmove',_tddMove,{passive:false});
-    document.addEventListener('touchend',_tddEnd,{passive:true});
-    document.addEventListener('touchcancel',_tddEnd,{passive:true});
-  }
+  if(Math.abs(t.clientX-_sliPending.startX)>14){_sliRowEnd();return;}
+  e.preventDefault();
+  const{li,rid,sid}=_sliPending;
+  li.style.boxShadow='';li.style.transition='';
+  document.removeEventListener('touchmove',_sliRowDrag);
+  document.removeEventListener('touchend',_sliRowEnd);
+  document.removeEventListener('touchcancel',_sliRowEnd);
+  _sliPending=null;
+  if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
+  const rect=li.getBoundingClientRect();
+  const ghost=li.cloneNode(true);
+  ghost.id='tdd-ghost';
+  ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
+  document.body.appendChild(ghost);
+  li.style.opacity='.3';
+  _tdd={type:'step',rid,id:sid,li,ghost,offsetY:t.clientY-rect.top};
+  document.addEventListener('touchmove',_tddMove,{passive:false});
+  document.addEventListener('touchend',_tddEnd,{passive:true});
+  document.addEventListener('touchcancel',_tddEnd,{passive:true});
 }
 function _sliRowEnd(){
   if(!_sliPending)return;
-  document.removeEventListener('touchmove',_sliRowMove);
+  clearTimeout(_sliPending.timer);
+  const{li}=_sliPending;
+  if(li){li.style.boxShadow='';li.style.transition='';}
+  document.removeEventListener('touchmove',_sliRowCheck);
+  document.removeEventListener('touchmove',_sliRowDrag);
   document.removeEventListener('touchend',_sliRowEnd);
   document.removeEventListener('touchcancel',_sliRowEnd);
   _sliPending=null;
