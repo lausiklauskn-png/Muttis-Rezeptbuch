@@ -2051,7 +2051,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         <div style="font-family:Georgia,serif;font-size:.94rem;margin-bottom:5px" id="bakTitle">💾 Datensicherung laden</div>
         <p style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5" id="bakDesc">
           Eine exportierte <code style="background:var(--sand2);padding:1px 4px;border-radius:3px">.json</code>-Datei laden.
-          <strong>Achtung: Aktuelle Daten werden überschrieben.</strong></p>
+          <strong>Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.</strong></p>
         <button class="bigbtn grn" onclick="document.getElementById('jsonFileIn').click()" id="bakBtn" title="JSON-Backup-Datei auswählen">📂 Datei auswählen</button>
         <input type="file" id="jsonFileIn" accept=".json" style="display:none" onchange="importData(event)"/>
         <div id="upStatus" class="upst"></div>
@@ -2409,7 +2409,7 @@ const LANGS={
     scanDropLbl:'Rezept-Bild auswählen',apiKeyLbl:'Claude API-Schlüssel',
     apiHint:'Nur lokal gespeichert.',scanBtn:'✨ Scannen',
     bakTitle:'💾 Datensicherung laden',
-    bakDesc:'Exportierte .json-Datei laden. Achtung: Aktuelle Daten werden überschrieben.',
+    bakDesc:'Exportierte .json-Datei laden. Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.',
     bakBtn:'📂 Datei auswählen',
     expTitle:'💾 Sichern & Exportieren',
     expEpubT:'E-Book (EPUB 3)',expEpubD:'Alle Rezepte als EPUB 3 — für Google Play Books, Moon+ Reader, iBooks.',expEpubBtn:'📥 EPUB erstellen',epubProg:'Erstelle EPUB …',epubDone:'✅ EPUB erstellt!',
