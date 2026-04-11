@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muttis Rezeptbuch – Warum diese App einzigartig ist</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+    :root {
+      --ink:    #111827;
+      --ink2:   #374151;
+      --ink3:   #6b7280;
+      --border: #e5e7eb;
+      --bg2:    #f9fafb;
+      --purple: #7c3aed;
+      --green:  #059669;
+      --red:    #dc2626;
+      --gold:   #b45309;
+      --blue:   #1d4ed8;
+      --rainbow: linear-gradient(90deg,#FF0000,#FF7700,#FFE500,#00CC00,#00CCFF,#0044FF,#8800FF);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 15px; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #fff;
+      color: var(--ink);
+      line-height: 1.65;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 32px 60px;
+    }
+
+    /* ── Download-Button (nur am Bildschirm) ── */
+    .download-bar {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .download-bar p { font-size: 0.85rem; color: #166534; flex: 1; }
+    .btn-pdf {
+      background: #16a34a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-pdf:hover { background: #15803d; }
+    @media print { .download-bar { display: none; } }
+
+    /* ── Kopf ── */
+    .doc-head {
+      text-align: center;
+      padding-bottom: 32px;
+      border-bottom: 4px solid transparent;
+      border-image: var(--rainbow) 1;
+      margin-bottom: 38px;
+    }
+    .doc-head .app-icon { font-size: 3.2rem; display: block; margin-bottom: 10px; }
+    .doc-head h1 {
+      font-size: 1.85rem;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .doc-head h1 em {
+      font-style: normal;
+      background: var(--rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .doc-head .tagline {
+      font-size: 1rem;
+      color: var(--ink3);
+      font-weight: 600;
+    }
+
+    /* ── Leitfrage-Box ── */
+    .lead {
+      border-left: 5px solid var(--purple);
+      background: #faf5ff;
+      border-radius: 0 12px 12px 0;
+      padding: 18px 22px;
+      margin-bottom: 40px;
+      font-size: 0.93rem;
+      color: var(--ink2);
+      line-height: 1.75;
+    }
+    .lead strong { color: var(--ink); }
+
+    /* ── Abschnitt ── */
+    .section { margin-bottom: 44px; }
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-right: 10px;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+    .section h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── Erklärungs-Box ── */
+    .explain {
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      color: var(--ink2);
+      line-height: 1.7;
+    }
+    .explain strong { color: var(--ink); }
+
+    /* ── Warum-Kästen ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .why-card {
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    .why-card h3 { font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; }
+    .why-card.cant  { background: #fef2f2; border: 1px solid #fecaca; }
+    .why-card.cant  h3 { color: var(--red); }
+    .why-card.can   { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .why-card.can   h3 { color: var(--green); }
+
+    /* ── Pfeil-Trenner ── */
+    .vs-row {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .vs-arrow {
+      text-align: center;
+      font-size: 1.3rem;
+      color: var(--ink3);
+    }
+    .vs-box {
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    .vs-box.bad  { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+    .vs-box.good { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+    .vs-box h3   { font-size: 0.82rem; font-weight: 800; margin-bottom: 4px; }
+
+    /* ── Ketten-Diagramm ── */
+    .chain {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 16px 0;
+    }
+    .chain-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .chain-item.c1 { background: #1d4ed8; }
+    .chain-item.c2 { background: #6d28d9; }
+    .chain-item.c3 { background: #b45309; }
+    .chain-item.c4 { background: #dc2626; }
+    .chain-item .ci { font-size: 1.2rem; }
+    .chain-arrow {
+      text-align: center;
+      color: var(--ink3);
+      font-size: 1.1rem;
+      padding: 2px 0;
+    }
+    .chain-end {
+      margin-top: 4px;
+      padding: 12px 16px;
+      background: #fff7ed;
+      border: 2px solid #f97316;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: #9a3412;
+      text-align: center;
+    }
+
+    /* ── Highlight-Box ── */
+    .highlight {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 14px;
+    }
+    .highlight h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: var(--rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .highlight p {
+      font-size: 0.85rem;
+      color: #d1d5db;
+      line-height: 1.7;
+    }
+    .highlight p strong { color: #fff; }
+
+    /* ── Fazit ── */
+    .fazit {
+      border: 2px solid var(--purple);
+      border-radius: 16px;
+      padding: 26px 28px;
+      margin-bottom: 40px;
+    }
+    .fazit h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 14px;
+    }
+    .fazit ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fazit ul li {
+      font-size: 0.88rem;
+      color: var(--ink2);
+      padding-left: 26px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .fazit ul li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .fazit ul li strong { color: var(--ink); }
+
+    /* ── Fußzeile ── */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--ink3);
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    /* ── Drucken ── */
+    @media print {
+      body { padding: 10px 16px 30px; font-size: 13px; max-width: none; }
+      .section { break-inside: avoid; }
+      .why-grid { break-inside: avoid; }
+      .fazit { break-inside: avoid; }
+      .highlight { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Download-Button -->
+<div class="download-bar">
+  <p>📄 <strong>Als PDF speichern:</strong> Klicke den Button oder drücke Strg+P (Win) / Cmd+P (Mac) → „Als PDF speichern"</p>
+  <button class="btn-pdf" onclick="window.print()">⬇ PDF herunterladen</button>
+</div>
+
+<!-- Kopf -->
+<div class="doc-head">
+  <span class="app-icon">📖</span>
+  <h1>Warum <em>Muttis Rezeptbuch</em><br>wirklich einzigartig ist</h1>
+  <div class="tagline">Eine ehrliche Erklärung – ohne Werbung</div>
+</div>
+
+<!-- Leitfrage -->
+<div class="lead">
+  <strong>Die Frage, die ich mir stelle:</strong> Könnte eine andere App nicht einfach dieselben
+  Funktionen anbieten? Kein Konto, kostenlos, offline, KI-Import – das klingt machbar.
+  Warum tun es andere dann nicht?<br><br>
+  Die Antwort liegt nicht in der Technik – sondern im <strong>Geschäftsmodell</strong>.
+  Große App-Anbieter <em>können</em> es gar nicht, ohne ihr eigenes Geschäftsmodell zu zerstören.
+</div>
+
+
+<!-- ─────────── ABSCHNITT 1 ─────────── -->
+<div class="section">
+  <h2><span class="section-num">1</span>Das Grundproblem: Wer zahlt für einen Server?</h2>
+
+  <div class="explain">
+    Jede App, die deine Rezepte <strong>in der Cloud speichert</strong>, betreibt Server.
+    Server kosten monatlich Geld – für Hardware, Strom, Sicherheit, Backups, Mitarbeiter.
+    Das muss irgendwie finanziert werden. Es gibt nur wenige Möglichkeiten:
+  </div>
+
+  <div class="chain">
+    <div class="chain-item c1"><span class="ci">☁️</span> App speichert Daten in der Cloud</div>
+    <div class="chain-arrow">↓</div>
+    <div class="chain-item c2"><span class="ci">💶</span> Server kosten jeden Monat Geld</div>
+    <div class="chain-arrow">↓</div>
+    <div class="chain-item c3"><span class="ci">💳</span> Nutzer zahlen Abo <em>oder</em> App verkauft ihre Daten</div>
+    <div class="chain-arrow">↓</div>
+    <div class="chain-item c4"><span class="ci">🔒</span> Account wird Pflicht (zum Abrechnen oder Tracken)</div>
+    <div class="chain-arrow">↓</div>
+    <div class="chain-end">❌ Kein Konto + kostenlos + offline ist strukturell unmöglich</div>
+  </div>
+
+  <div class="highlight">
+    <h3>Muttis Rezeptbuch bricht diesen Kreislauf</h3>
+    <p>
+      Die App hat <strong>keinen Server</strong>. Alle Daten liegen auf deinem Gerät.
+      Es gibt keine Infrastruktur zu finanzieren – also kein Abo, kein Konto, keine Werbung.
+      Das ist kein Marketingversprechen, sondern eine <strong>technische Tatsache</strong>:
+      ohne Server keine Serverkosten.
+    </p>
+  </div>
+</div>
+
+
+<!-- ─────────── ABSCHNITT 2 ─────────── -->
+<div class="section">
+  <h2><span class="section-num">2</span>Warum große Anbieter <em>nicht</em> wechseln können</h2>
+
+  <div class="explain">
+    Man könnte denken: „Wenn es so einfach ist, macht Samsung oder Google das doch einfach auch."
+    Das ist der entscheidende Punkt – sie <strong>dürfen es nicht</strong>,
+    ohne ihr eigenes Geschäftsmodell zu gefährden:
+  </div>
+
+  <div class="why-grid">
+    <div class="why-card cant">
+      <h3>❌ Samsung Food / Google Rezepte</h3>
+      Google und Samsung verdienen Geld durch <strong>Nutzerdaten</strong>.
+      Wenn deine Rezepte lokal gespeichert wären, könnten sie keine
+      Essgewohnheiten analysieren oder gezielte Werbung schalten.
+      Offline bedeutet für sie: kein Einblick, kein Geld.
+    </div>
+    <div class="why-card cant">
+      <h3>❌ Paprika, Mealime &amp; Co.</h3>
+      Diese Apps sind Firmen mit Mitarbeitern, Büros und Investoren.
+      Sie <em>müssen</em> monatlich Einnahmen erzielen. Ein echtes
+      „komplett kostenlos"-Modell würde das Unternehmen in kurzer Zeit
+      ruinieren. Das Abo ist keine Gier – es ist ihre Existenzgrundlage.
+    </div>
+    <div class="why-card cant">
+      <h3>❌ App Store-Apps (iOS &amp; Android)</h3>
+      Apple und Google nehmen <strong>30 % jedes Verkaufs</strong> und
+      jedes Abos. Wer über den App Store verteilt, muss diesen Aufschlag
+      irgendwo einpreisen – entweder beim Kaufpreis oder beim Abo.
+      Echte Kostenlosigkeit ist so kaum möglich.
+    </div>
+    <div class="why-card can">
+      <h3>✓ Muttis Rezeptbuch</h3>
+      Als <strong>Progressive Web App (PWA)</strong> wird die App
+      direkt über den Browser installiert – kein App Store, kein
+      30-%-Aufschlag, keine Genehmigung nötig. Das erlaubt echte
+      Kostenlosigkeit, die kein großer Anbieter so anbieten kann.
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────── ABSCHNITT 3 ─────────── -->
+<div class="section">
+  <h2><span class="section-num">3</span>KI-Funktionen ohne monatliche Kosten – wie geht das?</h2>
+
+  <div class="explain">
+    Künstliche Intelligenz gilt als teuer. ChatGPT, Gemini und Co. kosten
+    monatlich Geld für die Server, die die KI betreiben. Wie kann die App
+    KI-Funktionen kostenlos anbieten?
+  </div>
+
+  <div class="vs-row">
+    <div class="vs-box bad">
+      <h3>Kommerzielle Apps</h3>
+      Betreiben eigene KI-Server oder zahlen pro Anfrage an OpenAI/Google.
+      Diese Kosten werden 1:1 auf Nutzer umgelegt → Abo-Pflicht für KI-Funktionen.
+    </div>
+    <div class="vs-arrow">→</div>
+    <div class="vs-box good">
+      <h3>Muttis Rezeptbuch</h3>
+      Nutzt die KI-Schnittstelle, die du bereits bezahlst
+      (z. B. über deinen Google-Account oder direkt). Kein eigener
+      KI-Server → keine extra Kosten → KI bleibt kostenlos.
+    </div>
+  </div>
+
+  <div class="explain">
+    Das Ergebnis: Du bekommst <strong>KI-Import per Foto, KI-Wochenplan und
+    Nährwertberechnung</strong> – Funktionen, für die andere Apps 5–10 € pro Monat verlangen –
+    ohne Aufpreis.
+  </div>
+</div>
+
+
+<!-- ─────────── ABSCHNITT 4 ─────────── -->
+<div class="section">
+  <h2><span class="section-num">4</span>Offline + Datenschutz: ein echtes Versprechen, kein Zufall</h2>
+
+  <div class="explain">
+    Viele Apps sagen „wir schützen deine Daten". Aber solange deine Rezepte
+    auf einem fremden Server liegen, hängt das an einem Versprechen.
+    Bei <em>Muttis Rezeptbuch</em> ist Datenschutz <strong>technisch erzwungen</strong>:
+  </div>
+
+  <div class="vs-row">
+    <div class="vs-box bad">
+      <h3>Cloud-App: Versprechen</h3>
+      „Wir geben deine Daten nicht weiter." – Aber du kannst es nicht
+      prüfen. Firmenfusionen, Datenlecks, geänderte AGBs oder
+      Insolvenz können das Versprechen jederzeit brechen.
+    </div>
+    <div class="vs-arrow">→</div>
+    <div class="vs-box good">
+      <h3>Muttis Rezeptbuch: Tatsache</h3>
+      Deine Rezepte verlassen dein Gerät nie – weil es technisch
+      gar nicht möglich ist. Es gibt keinen Server, der sie empfangen
+      könnte. Datenschutz durch Design, nicht durch Versprechen.
+    </div>
+  </div>
+
+  <div class="why-grid" style="margin-top:12px">
+    <div class="why-card can">
+      <h3>✓ Funktioniert ohne Internet</h3>
+      Urlaub, Berghütte, Flugzeug, schwaches Netz – die App
+      läuft immer. Keine Fehlermeldung „Verbindung unterbrochen".
+    </div>
+    <div class="why-card can">
+      <h3>✓ Kein Datenverlust bei Pleite</h3>
+      Wenn der Anbieter aufhört zu existieren, sind deine
+      Rezepte trotzdem noch da – auf deinem Gerät.
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────── ABSCHNITT 5 ─────────── -->
+<div class="section">
+  <h2><span class="section-num">5</span>QR-Teilen ohne Cloud – warum das andere nicht können</h2>
+
+  <div class="explain">
+    Du kannst ein Rezept als QR-Code auf dem Bildschirm zeigen und ein anderes
+    Gerät scannt es – <strong>ohne Internet, ohne gemeinsamen Account, ohne Cloud-Sync</strong>.
+    Warum machen das andere Apps nicht?
+  </div>
+
+  <div class="explain">
+    Weil es ihr Geschäftsmodell untergräbt: Wenn Nutzer Rezepte direkt teilen können,
+    brauchen sie keinen gemeinsamen Account, kein „Family Sharing"-Abo, keine
+    Cloud-Synchronisierung. Für kommerzielle Apps wäre das eine Funktion,
+    die ihnen zahlende Kunden kostet. Für <em>Muttis Rezeptbuch</em>
+    – ohne Abo-Modell – ist es einfach die beste technische Lösung.
+  </div>
+
+  <div class="highlight">
+    <h3>Das Prinzip dahinter</h3>
+    <p>
+      Wenn ein Unternehmen <strong>kein Interesse daran hat, dich abhängig zu machen</strong>,
+      kann es Funktionen bauen, die dir wirklich nützen – auch wenn sie den
+      Bedarf nach einem Konto oder Abo überflüssig machen.
+      <strong>Muttis Rezeptbuch hat kein Interesse daran, dich zu binden.</strong>
+      Es gibt nichts zu verkaufen.
+    </p>
+  </div>
+</div>
+
+
+<!-- ─────────── FAZIT ─────────── -->
+<div class="fazit">
+  <h2>Zusammenfassung: Das ist das wirkliche Alleinstellungsmerkmal</h2>
+  <ul>
+    <li>
+      <strong>Kein Server = keine Kosten = kein Abo:</strong>
+      Das ist nicht ein Feature – es ist das Fundament, auf dem alle anderen Features aufbauen.
+    </li>
+    <li>
+      <strong>Große Anbieter können das nicht kopieren,</strong>
+      ohne ihr Geschäftsmodell aufzugeben. Sie brauchen Accounts für Abrechnung oder Werbung.
+    </li>
+    <li>
+      <strong>Kein App Store = kein 30-%-Aufschlag:</strong>
+      Als PWA direkt im Browser installierbar – das erlaubt echte Kostenlosigkeit.
+    </li>
+    <li>
+      <strong>Offline + Datenschutz ist technisch garantiert,</strong>
+      nicht nur versprochen – weil es keinen Server gibt, zu dem Daten könnten.
+    </li>
+    <li>
+      <strong>KI ohne Abo</strong> durch clevere Nutzung vorhandener Schnittstellen –
+      kein eigener KI-Server, keine extra Kosten.
+    </li>
+    <li>
+      <strong>QR-Teilen ohne Internet</strong> – weil die App keine Abhängigkeit
+      braucht und du nicht zum Abonnieren eines Familienplans gedrängt werden sollst.
+    </li>
+  </ul>
+</div>
+
+
+<footer>
+  <strong>Muttis Rezeptbuch</strong> · Version 9.2 · April 2026 ·
+  lausiklauskn-png.github.io/Muttis-Rezeptbuch
+</footer>
+
+<script>
+  // Automatisch Druckdialog beim Laden? Nein – nur auf Button-Klick.
+  // Button ist oben eingebaut.
+</script>
+</body>
+</html>
