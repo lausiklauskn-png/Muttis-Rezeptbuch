@@ -2214,7 +2214,7 @@ Vielen Dank für deine Unterstützung.</div>
             oninput="_txtUpdateUI(this)"
             onfocus="document.getElementById('txtDropZone').style.borderColor='var(--teal)';document.getElementById('txtDropZone').style.background='#fff'"
             onblur="document.getElementById('txtDropZone').style.borderColor='';document.getElementById('txtDropZone').style.background=''"
-            placeholder="Gulasch für 4: 800g Rindfleisch, 3 Zwiebeln, Paprika …&#10;Fleisch würfeln und anbraten, 2 Std. köcheln …"></textarea>
+            ></textarea>
         </div>
 
         <div id="txtStatus" class="scan-status"></div>
@@ -2486,6 +2486,10 @@ const LANGS={
     ,appRateBtn:'App im Play Store bewerten'
     ,appRateLater:'Vielleicht später'
     ,appRateNote:'Nur ★★★★+ Bewertungen werden gesammelt. Bitte beachte die AGB.'
+    ,backExit:'Nochmal drücken zum Beenden'
+    ,undoEmpty:'Nichts zum Rückgängigmachen'
+    ,undoDone:'Rückgängig gemacht'
+    ,undoTtl:'Rückgängig'
     ,txtTitle:'📋 Rezeptzettel einfach einfügen'
     ,txtDesc:'Omas handgeschriebene Notizen, kopierte Texte oder getippte Rezepte — die KI erkennt Zutaten, Mengen und Schritte automatisch und trägt alles ins Rezeptbuch ein.'
     ,txtReadyLbl:'Text-KI aktiv'
@@ -2592,6 +2596,10 @@ const LANGS={
     ,appRateBtn:'Rate app on Play Store'
     ,appRateLater:'Maybe later'
     ,appRateNote:'Only ★★★★+ ratings are collected. See terms.'
+    ,backExit:'Press again to exit'
+    ,undoEmpty:'Nothing to undo'
+    ,undoDone:'Undone'
+    ,undoTtl:'Undo'
     ,txtTitle:'📋 Paste any recipe text'
     ,txtDesc:'Handwritten notes, copied recipes or typed text — the AI automatically recognises ingredients, quantities and steps and adds everything to your recipe book.'
     ,txtReadyLbl:'Text AI active'
@@ -2698,6 +2706,10 @@ const LANGS={
     ,appRateBtn:'Оценить в Play Store'
     ,appRateLater:'Позже'
     ,appRateNote:'Учитываются оценки ★★★★+. См. условия.'
+    ,backExit:'Нажмите ещё раз для выхода'
+    ,undoEmpty:'Нечего отменять'
+    ,undoDone:'Отменено'
+    ,undoTtl:'Отмена'
     ,txtTitle:'📋 Вставьте текст рецепта'
     ,txtDesc:'Рукописные записи, скопированные тексты или напечатанные рецепты — ИИ автоматически распознаёт ингредиенты, количества и шаги и вносит всё в книгу рецептов.'
     ,txtReadyLbl:'Текстовый ИИ активен'
@@ -2804,6 +2816,10 @@ const LANGS={
     ,appRateBtn:'在Play Store评分'
     ,appRateLater:'稍后'
     ,appRateNote:'仅收集4星及以上评分。详见条款。'
+    ,backExit:'再按一次退出'
+    ,undoEmpty:'没有可撤销的操作'
+    ,undoDone:'已撤销'
+    ,undoTtl:'撤销'
     ,txtTitle:'📋 粘贴任何食谱文字'
     ,txtDesc:'手写笔记、复制的文字或输入的食谱 — AI 自动识别食材、用量和步骤，并将所有内容添加到食谱书中。'
     ,txtReadyLbl:'文字AI已激活'
@@ -2908,6 +2924,10 @@ const LANGS={
     ,appRateBtn:'Valorar en Play Store'
     ,appRateLater:'Quizás más tarde'
     ,appRateNote:'Solo se recogen valoraciones de ★★★★+. Ver condiciones.'
+    ,backExit:'Pulsa otra vez para salir'
+    ,undoEmpty:'Nada que deshacer'
+    ,undoDone:'Deshecho'
+    ,undoTtl:'Deshacer'
     ,txtTitle:'📋 Pega cualquier texto de receta'
     ,txtDesc:'Notas escritas a mano, textos copiados o recetas escritas — la IA reconoce automáticamente ingredientes, cantidades y pasos y lo añade todo al recetario.'
     ,txtReadyLbl:'IA de texto activa'
@@ -3123,6 +3143,10 @@ const LANGS={
     ,appRateBtn:'Noter sur Play Store'
     ,appRateLater:'Peut-être plus tard'
     ,appRateNote:'Seules les notes ★★★★+ sont retenues. Voir CGU.'
+    ,backExit:'Appuyez encore pour quitter'
+    ,undoEmpty:'Rien à annuler'
+    ,undoDone:'Annulé'
+    ,undoTtl:'Annuler'
     ,txtTitle:'📋 Collez n\'importe quel texte de recette'
     ,txtDesc:'Notes manuscrites, textes copiés ou recettes tapées — l\'IA reconnaît automatiquement ingrédients, quantités et étapes et les ajoute au livre de recettes.'
     ,txtReadyLbl:'IA texte active'
@@ -3338,6 +3362,10 @@ const LANGS={
     ,appRateBtn:'Valuta su Play Store'
     ,appRateLater:'Forse più tardi'
     ,appRateNote:'Vengono considerate solo valutazioni ★★★★+. Vedi T&C.'
+    ,backExit:'Premi ancora per uscire'
+    ,undoEmpty:'Niente da annullare'
+    ,undoDone:'Annullato'
+    ,undoTtl:'Annulla'
     ,txtTitle:'📋 Incolla qualsiasi testo di ricetta'
     ,txtDesc:'Note scritte a mano, testi copiati o ricette digitate — l\'IA riconosce automaticamente ingredienti, quantità e passaggi e aggiunge tutto al ricettario.'
     ,txtReadyLbl:'IA testo attiva'
@@ -3553,6 +3581,10 @@ const LANGS={
     ,appRateBtn:'Avaliar no Play Store'
     ,appRateLater:'Talvez mais tarde'
     ,appRateNote:'Apenas avaliações ★★★★+ são consideradas. Ver T&C.'
+    ,backExit:'Prima novamente para sair'
+    ,undoEmpty:'Nada para desfazer'
+    ,undoDone:'Desfeito'
+    ,undoTtl:'Desfazer'
     ,txtTitle:'📋 Colar qualquer texto de receita'
     ,txtDesc:'Notas manuscritas, textos copiados ou receitas digitadas — a IA reconhece automaticamente ingredientes, quantidades e passos e adiciona tudo ao livro de receitas.'
     ,txtReadyLbl:'IA de texto ativa'
@@ -3670,6 +3702,26 @@ function _idbGet(k){
   })).catch(()=>null);
 }
 
+// ── Undo-System (Rezept-Editor, max. 10 Schritte) ────────
+var _undoStack={};
+var _lastEditRid=null;
+function _pushUndo(rid){
+  if(!_undoStack[rid])_undoStack[rid]=[];
+  const r=R.find(r=>r.id===rid);if(!r)return;
+  _undoStack[rid].push(JSON.parse(JSON.stringify(r)));
+  if(_undoStack[rid].length>10)_undoStack[rid].shift();
+  _lastEditRid=rid;
+}
+function undoRec(rid){
+  rid=rid||_lastEditRid;if(!rid)return;
+  const stack=_undoStack[rid];
+  if(!stack||!stack.length){toast('↩ '+T('undoEmpty'));return;}
+  const snap=stack.pop();
+  const idx=R.findIndex(r=>r.id===rid);if(idx<0)return;
+  R[idx]=snap;sv();render();
+  toast('↩ '+T('undoDone'));
+}
+// ─────────────────────────────────────────────────────────
 function sv(){
   const data=JSON.stringify(R.filter(r=>!r.blank));
   try{
@@ -6660,6 +6712,7 @@ function rndCard(r){
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();shareRecipeQR(${r.id})" title="${T('shareTtl')}" style="background:var(--teals);border-color:var(--teal);color:var(--teal)">📤</button>`:''}
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();showNutrition(${r.id})" title="${T('nutrTtl')}" style="background:var(--grns);border-color:var(--grn);color:var(--grn)">🥗</button>`:''}
           <button class="ra del" onclick="delRecipe(${r.id})" title="${T('ttlDelRec')}">🗑</button>
+          ${(_undoStack[r.id]||[]).length>0?`<button class="ra" onclick="event.stopPropagation();undoRec(${r.id})" title="${T('undoTtl')}" style="background:var(--sand);border:1.5px solid var(--sand2);color:var(--br2)">↩ ${(_undoStack[r.id]||[]).length}</button>`:''}
         </div>`:''}
         ${inMenu?`<span class="mnbadge">${mSlot.ico} ${mSlot.lbl}</span>`:''}
         ${isBlank?`<div style="font-size:.68rem;color:var(--br3);margin-top:3px;font-style:italic">👆 Tippen um Namen einzugeben</div>`:``}
@@ -6797,16 +6850,17 @@ function togCard(id){
   // imgbar auch verstecken wenn zugeklappt
   if(imgbar){imgbar.style.display=r.shut?'none':'';}
 }
-function addFl(id){const el=document.getElementById('fi-'+id),v=el?.value.trim();if(!v)return;R.find(r=>r.id===id)?.flavors.push(v);el.value='';sv();render();setTimeout(()=>document.getElementById('fi-'+id)?.focus(),20);}
-function delFl(id,i){R.find(r=>r.id===id)?.flavors.splice(i,1);sv();render();}
+function addFl(id){const el=document.getElementById('fi-'+id),v=el?.value.trim();if(!v)return;_pushUndo(id);R.find(r=>r.id===id)?.flavors.push(v);el.value='';sv();render();setTimeout(()=>document.getElementById('fi-'+id)?.focus(),20);}
+function delFl(id,i){_pushUndo(id);R.find(r=>r.id===id)?.flavors.splice(i,1);sv();render();}
 function addIng(id){
   const a=document.getElementById('ia-'+id)?.value.trim();
   const u=document.getElementById('iu-'+id)?.value.trim();
   const n=document.getElementById('in-'+id)?.value.trim();if(!n)return;
+  _pushUndo(id);
   R.find(r=>r.id===id)?.ings.push({id:Date.now(),amt:a||'',unit:u||'',name:n,ck:false,note:''});
   sv();render();setTimeout(()=>document.getElementById('ia-'+id)?.focus(),20);
 }
-function delIng(rid,iid){const r=R.find(r=>r.id===rid);if(r)r.ings=r.ings.filter(i=>i.id!==iid);sv();render();}
+function delIng(rid,iid){_pushUndo(rid);const r=R.find(r=>r.id===rid);if(r)r.ings=r.ings.filter(i=>i.id!==iid);sv();render();}
 function togIng(rid,iid){const r=R.find(r=>r.id===rid);if(r){const i=r.ings.find(i=>i.id===iid);if(i)i.ck=!i.ck;}sv();render();}
 function togIngLocal(el,rid,iid){
   const r=R.find(r=>r.id===rid);if(!r)return;
@@ -6816,14 +6870,15 @@ function togIngLocal(el,rid,iid){
   if(li)li.classList.toggle('ck',i.ck);
 }
 function rstCk(id){R.find(r=>r.id===id)?.ings.forEach(i=>i.ck=false);sv();render();}
-function addStep(id){const ta=document.getElementById('sti-'+id),txt=ta?.value.trim();if(!txt)return;R.find(r=>r.id===id)?.steps.push({id:Date.now(),txt,note:''});ta.value='';sv();render();setTimeout(()=>document.getElementById('sti-'+id)?.focus(),20);}
-function delStep(rid,sid){const r=R.find(r=>r.id===rid);if(r)r.steps=r.steps.filter(s=>s.id!==sid);sv();render();}
+function addStep(id){const ta=document.getElementById('sti-'+id),txt=ta?.value.trim();if(!txt)return;_pushUndo(id);R.find(r=>r.id===id)?.steps.push({id:Date.now(),txt,note:''});ta.value='';sv();render();setTimeout(()=>document.getElementById('sti-'+id)?.focus(),20);}
+function delStep(rid,sid){_pushUndo(rid);const r=R.find(r=>r.id===rid);if(r)r.steps=r.steps.filter(s=>s.id!==sid);sv();render();}
 
 // ── Inline-Edit Zutat ──────────────────────────────────
 function openIngEdit(rid,iid){EI[`ie-${rid}-${iid}`]=true;render();setTimeout(()=>document.getElementById(`ie-name-${rid}-${iid}`)?.focus(),30);}
 function saveIngEdit(rid,iid){
   const r=R.find(r=>r.id===rid);if(!r)return;
   const i=r.ings.find(i=>i.id===iid);if(!i)return;
+  _pushUndo(rid);
   i.amt=document.getElementById(`ie-amt-${rid}-${iid}`)?.value.trim()||'';
   i.unit=document.getElementById(`ie-unit-${rid}-${iid}`)?.value.trim()||'';
   const n=document.getElementById(`ie-name-${rid}-${iid}`)?.value.trim();if(n)i.name=n;
@@ -6836,6 +6891,7 @@ function openStepEdit(rid,sid){ES[`se-${rid}-${sid}`]=true;render();setTimeout((
 function saveStepEdit(rid,sid){
   const r=R.find(r=>r.id===rid);if(!r)return;
   const s=r.steps.find(s=>s.id===sid);if(!s)return;
+  _pushUndo(rid);
   const t=document.getElementById(`se-txt-${rid}-${sid}`)?.value.trim();if(t)s.txt=t;
   delete ES[`se-${rid}-${sid}`];sv();render();
 }
@@ -7458,6 +7514,7 @@ document.addEventListener('keydown',e=>{
   if(meta&&e.key==='k'){e.preventDefault();showSc('recipes');setTimeout(()=>document.getElementById('srchIn')?.focus(),50);}
   if(meta&&e.key==='n'){e.preventDefault();openNewPanel();}
   if(meta&&e.key==='m'){e.preventDefault();showSc('menu');}
+  if(meta&&e.key==='z'&&!e.shiftKey){e.preventDefault();undoRec(_lastEditRid||(R.find(r=>!r.shut)||{}).id);}
   if(e.key==='Escape'){if(document.getElementById('cropOv')?.style.display!=='none'){closeCrop();return;}closeImport();closeExport();closeLang();closeMV();
     document.getElementById('courseSheet').style.display='none';
     document.getElementById('folderSheet').style.display='none';
@@ -7595,6 +7652,63 @@ function _initTooltips(){
 })();
 
 boot();
+
+// ── ZURÜCK-TASTE (Android-Hardware + Maus-Zurück) ────────
+(function(){
+  var OVERLAY_MAP=[
+    {id:'cropOv',         close:function(){closeCrop();}},
+    {id:'ob-scan-ov',     close:function(){obCloseIntercept();}},
+    {id:'ob-wizard-bg',   close:function(){obCloseWizard();}},
+    {id:'ob-helper-bg',   close:function(){obCloseHelper();}},
+    {id:'ob-settings-bg', close:function(){obCloseSettings();}},
+    {id:'spellModal',     close:function(){closeSpellModal();}},
+    {id:'appRateModal',   close:function(){closeAppRate();}},
+    {id:'manualOv',       close:function(){var e=document.getElementById('manualOv');if(e)e.style.display='none';}},
+    {id:'helpOv',         close:function(){closeHelpOv();}},
+    {id:'aip',            close:function(){closeAiPanel();}},
+    {id:'aslBg',          close:function(){closeAsl(null);}},
+    {id:'bvaultModal',    close:function(){var e=document.getElementById('bvaultModal');if(e)e.style.display='none';}},
+    {id:'importOv',       close:function(){closeImport();}},
+    {id:'exportOv',       close:function(){closeExport();}},
+    {id:'apikeyOv',       close:function(){closeApiKeyOv();}},
+    {id:'courseSheet',    close:function(){closeCSheet();}},
+    {id:'folderSheet',    close:function(){closeFolderSheet();}},
+    {id:'mv',             close:function(){closeMV();}},
+    {id:'langOv',         close:function(){closeLang();}},
+  ];
+  function _vis(id){var e=document.getElementById(id);return!!(e&&e.style.display&&e.style.display!=='none');}
+  function _doBack(){
+    var np=document.getElementById('newPanel');
+    if(np&&np.classList.contains('open')){closeNewPanel();return true;}
+    for(var i=0;i<OVERLAY_MAP.length;i++){if(_vis(OVERLAY_MAP[i].id)){OVERLAY_MAP[i].close();return true;}}
+    return false;
+  }
+  // Screen-History-Stack: merkt sich den jeweils vorigen Screen
+  var _scStack=[];
+  var _origShowSc=window.showSc;
+  window.showSc=function(n,dir){
+    var cur=(document.querySelector('.sc.on')||{}).id;
+    if(cur)cur=cur.replace('sc-','');
+    if(cur&&cur!==n&&(_scStack.length===0||_scStack[_scStack.length-1]!==cur)){
+      _scStack.push(cur);
+      if(_scStack.length>4)_scStack.shift();
+    }
+    _origShowSc(n,dir);
+  };
+  history.replaceState({app:'mr'},document.title);
+  history.pushState({app:'mr'},document.title);
+  var _lastBack=0;
+  window.addEventListener('popstate',function(){
+    if(_doBack()){history.pushState({app:'mr'},document.title);return;}
+    var prev=_scStack.pop();
+    if(prev){history.pushState({app:'mr'},document.title);_origShowSc(prev);return;}
+    var now=Date.now();
+    if(now-_lastBack<2200)return; // zweites Drücken → App beendet sich natürlich
+    _lastBack=now;
+    history.pushState({app:'mr'},document.title);
+    toast('← '+T('backExit'));
+  });
+})();
 
 // Globaler dragover für Auto-Scroll auch außerhalb von fld-grp-Bereichen
 document.addEventListener('dragover',function(e){
