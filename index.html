@@ -349,7 +349,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .ie-name{flex:1}
 .ebtn{background:none;border:none;cursor:pointer;font-size:.68rem;color:var(--br3);padding:4px 3px;opacity:.45;flex-shrink:0;line-height:1}
 .ebtn:active{opacity:1;color:var(--teal)}
-.ing-drag-hdl,.drag-hdl,.fld-drag-hdl{position:relative;cursor:grab;color:var(--br3);font-size:.9rem;padding:2px 4px;user-select:none;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
+.ing-drag-hdl,.drag-hdl,.fld-drag-hdl{position:relative;cursor:grab;color:var(--br3);font-size:.9rem;padding:2px 4px;user-select:none;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;touch-action:none}
 .ing-drag-hdl:active,.drag-hdl:active,.fld-drag-hdl:active{cursor:grabbing}
 .ing-drag-hdl::after,.drag-hdl::after,.fld-drag-hdl::after{content:attr(data-tip);position:absolute;left:0;transform:none;bottom:calc(100% + 6px);background:rgba(50,40,30,.88);color:#fff;font-size:.65rem;font-weight:600;white-space:nowrap;padding:4px 8px;border-radius:5px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
 .ing-drag-hdl:hover::after,.drag-hdl:hover::after,.fld-drag-hdl:hover::after{opacity:1}
@@ -4082,7 +4082,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ═══════════════════════════════════════════════════════
 // DRAG & DROP — Karten, Zutaten, Schritte
 // ═══════════════════════════════════════════════════════
-let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddRowPending=null,_autoScroll=null;
+let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddRowPending=null,_sliPending=null,_autoScroll=null;
 
 function _startAutoScroll(clientY){
   const zone=80,h=window.innerHeight;
@@ -6724,6 +6724,10 @@ function setupTouchDrag(){
     row.removeEventListener('touchstart',_tddRowStart);
     row.addEventListener('touchstart',_tddRowStart,{passive:true});
   });
+  document.querySelectorAll('.step-li[data-sid]').forEach(li=>{
+    li.removeEventListener('touchstart',_sliRowStart);
+    li.addEventListener('touchstart',_sliRowStart,{passive:true});
+  });
 }
 function _tddRowStart(e){
   if(_tdd||_tddRowPending)return;
@@ -6767,6 +6771,51 @@ function _tddRowEnd(){
   document.removeEventListener('touchend',_tddRowEnd);
   document.removeEventListener('touchcancel',_tddRowEnd);
   _tddRowPending=null;
+}
+// ── Ganze step-li Zeile als Drag-Quelle (nicht nur Handle-Icon) ──
+function _sliRowStart(e){
+  if(_tdd||_sliPending)return;
+  if(e.target.closest('.ing-drag-hdl,.xbtn,.nadd,.nedit,.nsave,.ncancel,.nta'))return;
+  const li=e.currentTarget;
+  const rid=parseInt(li.dataset.rid),sid=parseInt(li.dataset.sid);
+  if(!rid||!sid)return;
+  const t=e.touches[0];
+  _sliPending={li,rid,sid,startX:t.clientX,startY:t.clientY};
+  document.addEventListener('touchmove',_sliRowMove,{passive:false});
+  document.addEventListener('touchend',_sliRowEnd,{passive:true});
+  document.addEventListener('touchcancel',_sliRowEnd,{passive:true});
+}
+function _sliRowMove(e){
+  if(!_sliPending)return;
+  const t=e.touches[0];
+  const dx=t.clientX-_sliPending.startX,dy=t.clientY-_sliPending.startY;
+  if(Math.abs(dx)>12){_sliRowEnd();return;}// horizontal → Wisch-Navigation läuft
+  if(Math.abs(dy)>10){
+    e.preventDefault();
+    const{li,rid,sid}=_sliPending;
+    document.removeEventListener('touchmove',_sliRowMove);
+    document.removeEventListener('touchend',_sliRowEnd);
+    document.removeEventListener('touchcancel',_sliRowEnd);
+    _sliPending=null;
+    if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
+    const rect=li.getBoundingClientRect();
+    const ghost=li.cloneNode(true);
+    ghost.id='tdd-ghost';
+    ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
+    document.body.appendChild(ghost);
+    li.style.opacity='.3';
+    _tdd={type:'step',rid,id:sid,li,ghost,offsetY:t.clientY-rect.top};
+    document.addEventListener('touchmove',_tddMove,{passive:false});
+    document.addEventListener('touchend',_tddEnd,{passive:true});
+    document.addEventListener('touchcancel',_tddEnd,{passive:true});
+  }
+}
+function _sliRowEnd(){
+  if(!_sliPending)return;
+  document.removeEventListener('touchmove',_sliRowMove);
+  document.removeEventListener('touchend',_sliRowEnd);
+  document.removeEventListener('touchcancel',_sliRowEnd);
+  _sliPending=null;
 }
 function _tddStart(e){
   // Aufräumen falls vorheriger Drag nicht sauber beendet wurde
