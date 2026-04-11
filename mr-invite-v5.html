@@ -6,6 +6,15 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0d0d1a">
   <title>Muttis Rezeptbuch – Einladung</title>
+  <script>
+    // Wenn als lokale Datei geöffnet → zur sicheren HTTPS-URL weiterleiten
+    (function(){
+      var p = location.protocol;
+      if(p === 'file:' || p === 'content:'){
+        location.replace('https://lausiklauskn-png.github.io/Muttis-Rezeptbuch/mr-invite-v5.html');
+      }
+    })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="icons/icon-book.svg">
   <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-book-192.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
