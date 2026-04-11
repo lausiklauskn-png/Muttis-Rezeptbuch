@@ -259,10 +259,13 @@
     /* ── Drucken ── */
     @media print {
       body { padding: 20px 24px 40px; font-size: 13px; max-width: none; }
-      .usp-grid { break-inside: avoid; }
-      .usp-card { break-inside: avoid; }
-      .summary-box { break-inside: avoid; }
-      .compare-wrap { break-inside: avoid; }
+      .usp-grid { break-inside: avoid; page-break-inside: avoid; }
+      .usp-card { break-inside: avoid; page-break-inside: avoid; }
+      .summary-box { break-inside: avoid; page-break-inside: avoid; }
+      .compare-wrap { break-inside: avoid; page-break-inside: avoid; }
+      .audience-grid { break-inside: avoid; page-break-inside: avoid; }
+      .audience-card { break-inside: avoid; page-break-inside: avoid; }
+      .section-title { break-after: avoid; page-break-after: avoid; }
       .no-print { display: none; }
     }
 
@@ -451,9 +454,9 @@
 
 <!-- KI-Kosten Erklärung -->
 <div class="section-title">Wie funktionieren die KI-Kosten?</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px;break-inside:avoid;page-break-inside:avoid">
 
-  <div style="background:#fef3c7;border-radius:14px;padding:18px 20px;border:1px solid #fde68a">
+  <div style="background:#fef3c7;border-radius:14px;padding:18px 20px;border:1px solid #fde68a;break-inside:avoid;page-break-inside:avoid">
     <div style="font-size:1.8rem;margin-bottom:8px">❌</div>
     <h3 style="font-size:0.9rem;font-weight:800;color:#92400e;margin-bottom:6px">So machen es andere Apps</h3>
     <p style="font-size:0.82rem;color:#78350f;line-height:1.6">
@@ -463,7 +466,7 @@
     </p>
   </div>
 
-  <div style="background:#d1fae5;border-radius:14px;padding:18px 20px;border:1px solid #6ee7b7">
+  <div style="background:#d1fae5;border-radius:14px;padding:18px 20px;border:1px solid #6ee7b7;break-inside:avoid;page-break-inside:avoid">
     <div style="font-size:1.8rem;margin-bottom:8px">✅</div>
     <h3 style="font-size:0.9rem;font-weight:800;color:#065f46;margin-bottom:6px">So funktioniert es hier</h3>
     <p style="font-size:0.82rem;color:#064e3b;line-height:1.6">
