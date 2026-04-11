@@ -479,7 +479,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .fov-back{background:none;border:none;color:rgba(255,255,255,.56);font-size:1.2rem;cursor:pointer;padding:3px 5px}
 .fov-title{font-family:Georgia,serif;color:#fff;font-size:.98rem;flex:1}
 .fov-tabs{background:var(--br);border-top:1px solid rgba(255,255,255,.08);display:flex;flex-shrink:0}
-.fovtab{flex:1;padding:7px 4px;text-align:center;font-size:.62rem;font-weight:700;color:rgba(255,255,255,.80);cursor:pointer;border-bottom:2.5px solid transparent}
+.fovtab{flex:1;padding:9px 4px;text-align:center;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.80);cursor:pointer;border-bottom:2.5px solid transparent}
 .fovtab.on{color:#fff;border-bottom-color:var(--gold)}
 .fov-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:11px}
 .fov-pane{display:none}.fov-pane.on{display:block}
@@ -2389,7 +2389,7 @@ const LANGS={
     mvTitle:'Mein Menü',mvTabTl:'🗓️ Ablauf',mvTabSh:'🛒 Einkaufen',mvTabCk:'👩‍🍳 Kochen',mvTabAl:'📋 Gesamt',
     mvPrint:'🖨️ Drucken / PDF',mvClose:'Schließen',
     bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
-    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
+    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
     sc1T:'Rezept-Foto auswählen',sc1D:'Foto aus Galerie, Kamera oder Ordner.',
     sc2T:'KI liest das Rezept (Internet nötig)',sc2D:'Claude erkennt Zutaten, Mengen & Schritte.',
@@ -2488,7 +2488,7 @@ const LANGS={
     mvTitle:'My Menu',mvTabTl:'🗓️ Overview',mvTabSh:'🛒 Shopping',mvTabCk:'👩‍🍳 Cooking',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Print / PDF',mvClose:'Close',
     bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
-    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabScan:'📄 AI Scan',impTabJson:'💾 Backup',
+    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
     imgDropLbl:'Select images or drag here',
     sc1T:'Select recipe photo',sc1D:'Photo of a recipe from gallery, camera or folder.',
     sc2T:'AI reads the recipe (internet required)',sc2D:'Claude recognizes ingredients, quantities & steps.',
@@ -2587,7 +2587,7 @@ const LANGS={
     mvTitle:'Моё меню',mvTabTl:'🗓️ Обзор',mvTabSh:'🛒 Покупки',mvTabCk:'👩‍🍳 Готовка',mvTabAl:'📋 Итого',
     mvPrint:'🖨️ Печать / PDF',mvClose:'Закрыть',
     bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
-    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabScan:'📄 ИИ-скан',impTabJson:'💾 Резерв',
+    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'💾 Резерв',
     imgDropLbl:'Выбрать фото или перетащить',
     sc1T:'Выбрать фото рецепта',sc1D:'Фото рукописного или печатного рецепта.',
     sc2T:'ИИ читает рецепт (нужен интернет)',sc2D:'Claude распознаёт ингредиенты и шаги.',
@@ -2685,7 +2685,7 @@ const LANGS={
     mvTitle:'我的菜单',mvTabTl:'🗓️ 概览',mvTabSh:'🛒 购物',mvTabCk:'👩‍🍳 烹饪',mvTabAl:'📋 汇总',
     mvPrint:'🖨️ 打印 / PDF',mvClose:'关闭',
     bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
-    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabScan:'📄 AI扫描',impTabJson:'💾 备份',
+    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'💾 备份',
     imgDropLbl:'选择或拖拽图片至此',
     sc1T:'选择食谱照片',sc1D:'从相册、相机或文件夹选择食谱照片。',
     sc2T:'AI识别食谱（需要网络）',sc2D:'Claude自动识别食材、用量和步骤。',
@@ -2783,7 +2783,7 @@ const LANGS={
     mvTitle:'Mi menú',mvTabTl:'🗓️ Orden',mvTabSh:'🛒 Comprar',mvTabCk:'👩‍🍳 Cocinar',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimir / PDF',mvClose:'Cerrar',
     bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
-    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabScan:'📄 Scan IA',impTabJson:'💾 Copia',
+    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'💾 Copia',
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
     sc1T:'Seleccionar foto de receta',sc1D:'Foto de galería, cámara o carpeta.',
     sc2T:'La IA lee la receta (Internet necesario)',sc2D:'Claude reconoce ingredientes, cantidades y pasos.',
@@ -2904,7 +2904,9 @@ const LANGS={
     bnBv:'Coffre',
     impTitle:'📥 Importer',
     impTabImg:'🖼️ Images',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Texte',
     impTabJson:'💾 Sauvegarde',
     imgDropLbl:'Sélectionner des images',
     sc1T:'Sélectionner photo',
@@ -3109,7 +3111,9 @@ const LANGS={
     bnBv:'Archivio',
     impTitle:'📥 Importa',
     impTabImg:'🖼️ Immagini',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Testo',
     impTabJson:'💾 Backup',
     imgDropLbl:'Seleziona immagini',
     sc1T:'Seleziona foto ricetta',
@@ -3314,7 +3318,9 @@ const LANGS={
     bnBv:'Cofre',
     impTitle:'📥 Importar',
     impTabImg:'🖼️ Imagens',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Texto',
     impTabJson:'💾 Cópia',
     imgDropLbl:'Selecionar imagens',
     sc1T:'Selecionar foto receita',
@@ -3813,7 +3819,7 @@ function applyLang(code){
   const ids=['pTitle','lName','lCat','lFolder','lFlavor','btnCreate','btnCancel',
     'menuTitle','mActAdd','mActView','mvTitle','mvTabTl','mvTabSh','mvTabCk','mvTabAl','mvPrintBtn','mvCloseBtn',
     'bnRec','bnFld','bnMen','bnSet','bnBv',
-    'impTitle','impTabImg','impTabScan','impTabTxt','impTabJson','imgDropLbl',
+    'impTitle','impTabImg','impTabWeb','impTabScan','impTabTxt','impTabJson','imgDropLbl',
     'txtTitleEl','txtDescEl','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
     'txtSc1T','txtSc1D','txtWebLbl','txtSc2T','txtSc3T',
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
