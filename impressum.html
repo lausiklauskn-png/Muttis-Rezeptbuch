@@ -13,115 +13,357 @@ body {
     line-height: 1.6;
     color: #222;
 }
-h1, h2 {
-    color: #000;
+h1, h2 { color: #000; }
+h3 { color: #333; margin-top: 1.2em; }
+.section { margin-bottom: 40px; }
+ul { padding-left: 1.4em; }
+.lang-bar {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 28px;
 }
-.section {
-    margin-bottom: 40px;
+.lang-btn {
+    padding: 4px 10px; border: 1px solid #bbb;
+    border-radius: 6px; cursor: pointer;
+    background: #f5f5f5; font-size: .82rem;
+    font-family: inherit;
 }
+.lang-btn.active { background: #333; color: #fff; border-color: #333; }
+.note { font-size: .82rem; color: #666; border-left: 3px solid #ccc;
+        padding-left: 10px; margin-top: 6px; }
 </style>
 </head>
 <body>
+<div class="lang-bar" id="langBar"></div>
+<div id="content"></div>
 
-<h1>Impressum & Datenschutzerklärung</h1>
-
-<div class="section">
-<h2>Impressum</h2>
-<p><strong>Angaben gemäß § 5 TMG</strong></p>
-
-<p>
-Klaus Nitzsche<br>
-Märchenweg 14<br>
-21077 Hamburg<br>
-Deutschland
-</p>
-
-<p>
-E-Mail: klaus-nitzsche@t-online.de
-</p>
-
-<p>
-Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br>
-Klaus Nitzsche (Adresse wie oben)
-</p>
-</div>
-
-<div class="section">
-<h2>Datenschutzerklärung</h2>
-
+<script>
+const LANGS = {
+  de: {
+    title: 'Impressum & Datenschutzerklärung',
+    imp_h: 'Impressum',
+    imp: `<p><strong>Angaben gemäß § 5 TMG</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Deutschland</p>
+<p>E-Mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br>Klaus Nitzsche (Adresse wie oben)</p>`,
+    priv_h: 'Datenschutzerklärung',
+    priv: `
 <h3>1. Verantwortlicher</h3>
-<p>
-Klaus Nitzsche<br>
-Märchenweg 14<br>
-21077 Hamburg<br>
-E-Mail: klaus-nitzsche@t-online.de
-</p>
-
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-Mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
 <h3>2. Bereitstellung der App (Hosting)</h3>
-<p>
-Diese Anwendung wird über GitHub Pages bereitgestellt. Beim Aufruf der App werden technische Daten (z. B. IP-Adresse, Browserinformationen) an GitHub übertragen, um die Inhalte der App auszuliefern.
-</p>
-
+<p>Diese Anwendung wird über GitHub Pages bereitgestellt. Beim Aufruf der App werden technische Daten (z. B. IP-Adresse, Browserinformationen) an GitHub übertragen, um die Inhalte der App auszuliefern.</p>
 <h3>3. Lokale Datenverarbeitung</h3>
-<p>
-Alle vom Nutzer eingegebenen Inhalte (z. B. Rezepte) werden ausschließlich lokal im Browser gespeichert (z. B. LocalStorage oder IndexedDB).
-Es erfolgt keine Speicherung dieser Daten auf Servern des Betreibers.
-</p>
-
+<p>Alle vom Nutzer eingegebenen Inhalte (z. B. Rezepte) werden ausschließlich lokal im Browser gespeichert (z. B. LocalStorage oder IndexedDB). Es erfolgt keine Speicherung dieser Daten auf Servern des Betreibers.</p>
 <h3>4. Nutzung von KI-Diensten</h3>
-<p>
-Für die Funktion „KI-Scan" werden Inhalte (z. B. Bilder oder Texte) an externe KI-Dienste übermittelt, insbesondere an Anthropic (Claude).
-</p>
-
-<p>
-Dabei gilt:
-<ul>
-<li>Die Übertragung erfolgt verschlüsselt</li>
-<li>Die Daten werden ausschließlich zur Verarbeitung der Anfrage genutzt</li>
-<li>Es erfolgt keine Speicherung durch den Betreiber</li>
-</ul>
-</p>
-
-<p>
-Hinweis: Die Verarbeitung erfolgt durch externe Anbieter. Es kann nicht ausgeschlossen werden, dass Daten im Rahmen der technischen Bereitstellung kurzfristig verarbeitet oder gespeichert werden.
-</p>
-
+<p>Für die Funktion „KI-Scan" werden Inhalte (z. B. Bilder oder Texte) an externe KI-Dienste übermittelt, insbesondere an Anthropic (Claude).</p>
+<p>Dabei gilt:</p>
+<ul><li>Die Übertragung erfolgt verschlüsselt</li><li>Die Daten werden ausschließlich zur Verarbeitung der Anfrage genutzt</li><li>Es erfolgt keine Speicherung durch den Betreiber</li></ul>
+<p>Hinweis: Die Verarbeitung erfolgt durch externe Anbieter. Es kann nicht ausgeschlossen werden, dass Daten im Rahmen der technischen Bereitstellung kurzfristig verarbeitet oder gespeichert werden.</p>
 <h3>5. API-Schlüssel</h3>
-<p>
-Der vom Nutzer eingegebene API-Schlüssel wird ausschließlich lokal im Browser gespeichert und nicht an den Betreiber der App übertragen.
-</p>
-
+<p>Der vom Nutzer eingegebene API-Schlüssel wird ausschließlich lokal im Browser gespeichert und nicht an den Betreiber der App übertragen.</p>
 <h3>6. Weitergabe durch den Nutzer</h3>
-<p>
-Wenn Inhalte exportiert oder geteilt werden (z. B. als PDF, JSON oder über Messenger-Dienste), erfolgt dies ausschließlich auf Initiative des Nutzers.
-</p>
-
+<p>Wenn Inhalte exportiert oder geteilt werden (z. B. als PDF, JSON oder über Messenger-Dienste), erfolgt dies ausschließlich auf Initiative des Nutzers.</p>
 <h3>7. Zahlungsabwicklung</h3>
-<p>
-Freiwillige Unterstützungszahlungen erfolgen über PayPal. Dabei werden Daten direkt an den Zahlungsanbieter übertragen. Es gelten die Datenschutzbestimmungen von PayPal.
-</p>
-
+<p>Freiwillige Unterstützungszahlungen erfolgen über PayPal. Dabei werden Daten direkt an den Zahlungsanbieter übertragen. Es gelten die Datenschutzbestimmungen von PayPal.</p>
 <h3>8. Speicherdauer</h3>
-<p>
-Da keine zentrale Datenspeicherung erfolgt, bestimmt der Nutzer selbst die Speicherdauer seiner Daten auf seinem Gerät.
-</p>
-
+<p>Da keine zentrale Datenspeicherung erfolgt, bestimmt der Nutzer selbst die Speicherdauer seiner Daten auf seinem Gerät.</p>
 <h3>9. Rechte der Nutzer</h3>
-<p>
-Nutzer haben im Rahmen der gesetzlichen Bestimmungen das Recht auf Auskunft, Berichtigung und Löschung ihrer Daten.
-</p>
-
+<p>Nutzer haben im Rahmen der gesetzlichen Bestimmungen das Recht auf Auskunft, Berichtigung und Löschung ihrer Daten.</p>
 <h3>10. Einwilligung</h3>
-<p>
-Mit der Nutzung der App erklärt sich der Nutzer mit dieser Datenschutzerklärung einverstanden.
-</p>
-
+<p>Mit der Nutzung der App erklärt sich der Nutzer mit dieser Datenschutzerklärung einverstanden.</p>
 <h3>11. Änderungen</h3>
-<p>
-Diese Datenschutzerklärung kann bei technischen Änderungen angepasst werden.
-</p>
+<p>Diese Datenschutzerklärung kann bei technischen Änderungen angepasst werden.</p>`
+  },
 
-</div>
+  en: {
+    title: 'Imprint & Privacy Policy',
+    imp_h: 'Legal Notice',
+    imp: `<p><strong>Information pursuant to § 5 TMG (German Telemedia Act)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Germany</p>
+<p>E-Mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Responsible for content pursuant to § 55 para. 2 RStV:<br>Klaus Nitzsche (address as above)</p>`,
+    priv_h: 'Privacy Policy',
+    priv: `
+<h3>1. Controller</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-Mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Provision of the App (Hosting)</h3>
+<p>This application is hosted via GitHub Pages. When accessing the app, technical data (e.g. IP address, browser information) is transmitted to GitHub in order to deliver the app content.</p>
+<h3>3. Local Data Processing</h3>
+<p>All content entered by the user (e.g. recipes) is stored exclusively locally in the browser (e.g. LocalStorage or IndexedDB). No such data is stored on servers operated by the developer.</p>
+<h3>4. Use of AI Services</h3>
+<p>The "AI Scan" feature transmits content (e.g. images or text) to external AI services, in particular to Anthropic (Claude).</p>
+<p>The following applies:</p>
+<ul><li>Transmission is encrypted</li><li>Data is used solely to process the request</li><li>No storage by the developer takes place</li></ul>
+<p>Note: Processing is carried out by external providers. It cannot be ruled out that data may be temporarily processed or stored as part of the technical delivery.</p>
+<h3>5. API Key</h3>
+<p>The API key entered by the user is stored exclusively locally in the browser and is not transmitted to the developer.</p>
+<h3>6. Data Sharing by the User</h3>
+<p>When content is exported or shared (e.g. as PDF, JSON or via messaging services), this is done exclusively at the initiative of the user.</p>
+<h3>7. Payment Processing</h3>
+<p>Voluntary support payments are processed via PayPal. Data is transmitted directly to the payment provider. PayPal's privacy policy applies.</p>
+<h3>8. Storage Duration</h3>
+<p>Since no central data storage takes place, users determine the storage duration of their data on their own device.</p>
+<h3>9. User Rights</h3>
+<p>Users have the right to access, correct and delete their data in accordance with applicable law.</p>
+<h3>10. Consent</h3>
+<p>By using the app, the user agrees to this privacy policy.</p>
+<h3>11. Changes</h3>
+<p>This privacy policy may be updated in the event of technical changes.</p>`
+  },
 
+  ru: {
+    title: 'Выходные данные & Политика конфиденциальности',
+    imp_h: 'Выходные данные',
+    imp: `<p><strong>Сведения согласно § 5 TMG (Закон о телемедиа Германии)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Германия</p>
+<p>Эл. почта: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Ответственный за содержание согласно § 55 Abs. 2 RStV:<br>Klaus Nitzsche (адрес как выше)</p>`,
+    priv_h: 'Политика конфиденциальности',
+    priv: `
+<h3>1. Ответственное лицо</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Эл. почта: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Предоставление приложения (хостинг)</h3>
+<p>Данное приложение размещено на GitHub Pages. При открытии приложения технические данные (например, IP-адрес, информация о браузере) передаются на серверы GitHub для доставки содержимого приложения.</p>
+<h3>3. Локальная обработка данных</h3>
+<p>Весь контент, введённый пользователем (например, рецепты), хранится исключительно локально в браузере (например, в LocalStorage или IndexedDB). Эти данные не сохраняются на серверах разработчика.</p>
+<h3>4. Использование сервисов ИИ</h3>
+<p>Функция «Сканирование через ИИ» передаёт контент (например, изображения или тексты) внешним сервисам ИИ, в частности Anthropic (Claude).</p>
+<p>При этом:</p>
+<ul><li>Передача данных зашифрована</li><li>Данные используются исключительно для обработки запроса</li><li>Разработчик не хранит эти данные</li></ul>
+<p>Примечание: Обработка осуществляется внешними поставщиками. Не исключено, что данные могут кратковременно обрабатываться или храниться в рамках технической доставки.</p>
+<h3>5. API-ключ</h3>
+<p>Введённый пользователем API-ключ хранится исключительно локально в браузере и не передаётся разработчику приложения.</p>
+<h3>6. Передача данных пользователем</h3>
+<p>Если пользователь экспортирует или передаёт контент (например, в формате PDF, JSON или через мессенджеры), это происходит исключительно по инициативе пользователя.</p>
+<h3>7. Обработка платежей</h3>
+<p>Добровольные пожертвования осуществляются через PayPal. Данные передаются непосредственно платёжному сервису. Применяется политика конфиденциальности PayPal.</p>
+<h3>8. Срок хранения данных</h3>
+<p>Поскольку централизованное хранение данных не осуществляется, пользователь самостоятельно определяет срок хранения своих данных на своём устройстве.</p>
+<h3>9. Права пользователей</h3>
+<p>Пользователи имеют право на доступ, исправление и удаление своих данных в соответствии с действующим законодательством.</p>
+<h3>10. Согласие</h3>
+<p>Используя приложение, пользователь соглашается с настоящей политикой конфиденциальности.</p>
+<h3>11. Изменения</h3>
+<p>Настоящая политика конфиденциальности может быть обновлена в случае технических изменений.</p>`
+  },
+
+  zh: {
+    title: '法律声明 & 隐私政策',
+    imp_h: '法律声明',
+    imp: `<p><strong>根据德国《电信媒体法》第 5 条（§ 5 TMG）的信息披露</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>德国</p>
+<p>电子邮件：<a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>根据 § 55 第 2 款 RStV 对内容负责：<br>Klaus Nitzsche（地址同上）</p>`,
+    priv_h: '隐私政策',
+    priv: `
+<h3>1. 数据控制者</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>电子邮件：<a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. 应用托管</h3>
+<p>本应用通过 GitHub Pages 托管。访问应用时，技术数据（如 IP 地址、浏览器信息）将传输至 GitHub 服务器以提供应用内容。</p>
+<h3>3. 本地数据处理</h3>
+<p>用户输入的所有内容（如食谱）仅在浏览器本地存储（如 LocalStorage 或 IndexedDB）。开发者服务器上不存储任何此类数据。</p>
+<h3>4. 使用 AI 服务</h3>
+<p>「AI 扫描」功能会将内容（如图片或文本）传输至外部 AI 服务，特别是 Anthropic（Claude）。</p>
+<p>相关说明：</p>
+<ul><li>传输经过加密</li><li>数据仅用于处理请求</li><li>开发者不存储这些数据</li></ul>
+<p>注意：处理由外部服务提供商执行。不排除数据在技术传输过程中被短暂处理或存储的可能性。</p>
+<h3>5. API 密钥</h3>
+<p>用户输入的 API 密钥仅在浏览器本地存储，不会传输给应用开发者。</p>
+<h3>6. 用户分享数据</h3>
+<p>当内容被导出或分享（如 PDF、JSON 或通过即时通讯服务）时，完全由用户主动发起。</p>
+<h3>7. 支付处理</h3>
+<p>自愿支持付款通过 PayPal 处理。数据直接传输至支付服务提供商，适用 PayPal 的隐私政策。</p>
+<h3>8. 存储期限</h3>
+<p>由于不进行集中数据存储，用户自行决定其数据在设备上的存储期限。</p>
+<h3>9. 用户权利</h3>
+<p>用户依法享有查阅、更正和删除其数据的权利。</p>
+<h3>10. 同意</h3>
+<p>使用本应用即表示用户同意本隐私政策。</p>
+<h3>11. 变更</h3>
+<p>本隐私政策可能因技术变更而更新。</p>`
+  },
+
+  es: {
+    title: 'Aviso Legal & Política de Privacidad',
+    imp_h: 'Aviso Legal',
+    imp: `<p><strong>Información conforme al § 5 TMG (Ley alemana de Medios Telemáticos)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Alemania</p>
+<p>Correo electrónico: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Responsable del contenido conforme al § 55 párr. 2 RStV:<br>Klaus Nitzsche (dirección como arriba)</p>`,
+    priv_h: 'Política de Privacidad',
+    priv: `
+<h3>1. Responsable</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Correo: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Provisión de la app (alojamiento)</h3>
+<p>Esta aplicación está alojada en GitHub Pages. Al acceder a la app, se transmiten datos técnicos (p. ej. dirección IP, información del navegador) a GitHub para entregar el contenido de la app.</p>
+<h3>3. Procesamiento local de datos</h3>
+<p>Todo el contenido introducido por el usuario (p. ej. recetas) se almacena exclusivamente de forma local en el navegador (p. ej. LocalStorage o IndexedDB). El desarrollador no almacena estos datos en ningún servidor.</p>
+<h3>4. Uso de servicios de IA</h3>
+<p>La función «Escaneo con IA» transmite contenido (p. ej. imágenes o textos) a servicios de IA externos, en particular a Anthropic (Claude).</p>
+<p>Al respecto:</p>
+<ul><li>La transmisión está cifrada</li><li>Los datos se usan únicamente para procesar la solicitud</li><li>El desarrollador no almacena estos datos</li></ul>
+<p>Nota: El procesamiento lo realizan proveedores externos. No puede descartarse que los datos sean procesados o almacenados brevemente en el marco de la entrega técnica.</p>
+<h3>5. Clave API</h3>
+<p>La clave API introducida por el usuario se almacena exclusivamente de forma local en el navegador y no se transmite al desarrollador.</p>
+<h3>6. Compartición de datos por el usuario</h3>
+<p>Cuando el usuario exporta o comparte contenido (p. ej. como PDF, JSON o a través de servicios de mensajería), esto ocurre exclusivamente por iniciativa del usuario.</p>
+<h3>7. Procesamiento de pagos</h3>
+<p>Los pagos de apoyo voluntarios se procesan a través de PayPal. Los datos se transmiten directamente al proveedor de pagos. Se aplica la política de privacidad de PayPal.</p>
+<h3>8. Duración del almacenamiento</h3>
+<p>Dado que no existe almacenamiento central de datos, el usuario determina por sí mismo la duración del almacenamiento de sus datos en su dispositivo.</p>
+<h3>9. Derechos del usuario</h3>
+<p>Los usuarios tienen derecho de acceso, rectificación y supresión de sus datos conforme a la legislación aplicable.</p>
+<h3>10. Consentimiento</h3>
+<p>Al usar la app, el usuario acepta esta política de privacidad.</p>
+<h3>11. Cambios</h3>
+<p>Esta política de privacidad puede actualizarse en caso de cambios técnicos.</p>`
+  },
+
+  fr: {
+    title: 'Mentions légales & Politique de confidentialité',
+    imp_h: 'Mentions légales',
+    imp: `<p><strong>Informations conformément au § 5 TMG (loi allemande sur les médias télémédia)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Allemagne</p>
+<p>Courriel : <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Responsable du contenu conformément au § 55 al. 2 RStV :<br>Klaus Nitzsche (adresse comme ci-dessus)</p>`,
+    priv_h: 'Politique de confidentialité',
+    priv: `
+<h3>1. Responsable du traitement</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Courriel : <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Mise à disposition de l'application (hébergement)</h3>
+<p>Cette application est hébergée via GitHub Pages. Lors de l'accès à l'application, des données techniques (p. ex. adresse IP, informations sur le navigateur) sont transmises à GitHub pour livrer le contenu de l'application.</p>
+<h3>3. Traitement local des données</h3>
+<p>Tout le contenu saisi par l'utilisateur (p. ex. des recettes) est stocké exclusivement en local dans le navigateur (p. ex. LocalStorage ou IndexedDB). Ces données ne sont pas stockées sur des serveurs du développeur.</p>
+<h3>4. Utilisation de services d'IA</h3>
+<p>La fonctionnalité « Scan IA » transmet des contenus (p. ex. images ou textes) à des services d'IA externes, notamment à Anthropic (Claude).</p>
+<p>À ce propos :</p>
+<ul><li>La transmission est chiffrée</li><li>Les données sont utilisées uniquement pour traiter la demande</li><li>Aucun stockage n'est effectué par le développeur</li></ul>
+<p>Remarque : le traitement est effectué par des prestataires externes. Il ne peut être exclu que des données soient brièvement traitées ou stockées dans le cadre de la fourniture technique.</p>
+<h3>5. Clé API</h3>
+<p>La clé API saisie par l'utilisateur est stockée exclusivement en local dans le navigateur et n'est pas transmise au développeur de l'application.</p>
+<h3>6. Partage de données par l'utilisateur</h3>
+<p>Lorsque des contenus sont exportés ou partagés (p. ex. en PDF, JSON ou via des services de messagerie), cela se fait exclusivement à l'initiative de l'utilisateur.</p>
+<h3>7. Traitement des paiements</h3>
+<p>Les paiements de soutien volontaires sont effectués via PayPal. Les données sont transmises directement au prestataire de paiement. La politique de confidentialité de PayPal s'applique.</p>
+<h3>8. Durée de conservation</h3>
+<p>Comme il n'y a pas de stockage centralisé des données, l'utilisateur détermine lui-même la durée de conservation de ses données sur son appareil.</p>
+<h3>9. Droits des utilisateurs</h3>
+<p>Les utilisateurs ont le droit d'accéder à leurs données, de les corriger et de les supprimer conformément aux dispositions légales en vigueur.</p>
+<h3>10. Consentement</h3>
+<p>En utilisant l'application, l'utilisateur accepte la présente politique de confidentialité.</p>
+<h3>11. Modifications</h3>
+<p>Cette politique de confidentialité peut être mise à jour en cas de modifications techniques.</p>`
+  },
+
+  it: {
+    title: 'Note Legali & Informativa sulla Privacy',
+    imp_h: 'Note Legali',
+    imp: `<p><strong>Informazioni ai sensi del § 5 TMG (Legge tedesca sui media telematici)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Germania</p>
+<p>E-mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Responsabile dei contenuti ai sensi del § 55 comma 2 RStV:<br>Klaus Nitzsche (indirizzo come sopra)</p>`,
+    priv_h: 'Informativa sulla Privacy',
+    priv: `
+<h3>1. Titolare del trattamento</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Fornitura dell'app (hosting)</h3>
+<p>Questa applicazione è ospitata tramite GitHub Pages. Quando si accede all'app, dati tecnici (ad es. indirizzo IP, informazioni sul browser) vengono trasmessi a GitHub per fornire i contenuti dell'app.</p>
+<h3>3. Elaborazione locale dei dati</h3>
+<p>Tutti i contenuti inseriti dall'utente (ad es. ricette) vengono archiviati esclusivamente in locale nel browser (ad es. LocalStorage o IndexedDB). Questi dati non vengono archiviati sui server dello sviluppatore.</p>
+<h3>4. Utilizzo di servizi di IA</h3>
+<p>La funzionalità «Scansione IA» trasmette contenuti (ad es. immagini o testi) a servizi di IA esterni, in particolare ad Anthropic (Claude).</p>
+<p>In proposito:</p>
+<ul><li>La trasmissione è cifrata</li><li>I dati vengono utilizzati esclusivamente per elaborare la richiesta</li><li>Nessuna archiviazione da parte dello sviluppatore</li></ul>
+<p>Nota: l'elaborazione è effettuata da fornitori esterni. Non si può escludere che i dati vengano brevemente elaborati o archiviati nell'ambito della fornitura tecnica.</p>
+<h3>5. Chiave API</h3>
+<p>La chiave API inserita dall'utente è archiviata esclusivamente in locale nel browser e non viene trasmessa allo sviluppatore dell'app.</p>
+<h3>6. Condivisione dei dati da parte dell'utente</h3>
+<p>Quando i contenuti vengono esportati o condivisi (ad es. come PDF, JSON o tramite servizi di messaggistica), ciò avviene esclusivamente su iniziativa dell'utente.</p>
+<h3>7. Elaborazione dei pagamenti</h3>
+<p>I pagamenti di supporto volontari vengono elaborati tramite PayPal. I dati vengono trasmessi direttamente al provider di pagamento. Si applicano le norme sulla privacy di PayPal.</p>
+<h3>8. Durata della conservazione</h3>
+<p>Non essendoci una conservazione centralizzata dei dati, l'utente determina autonomamente la durata della conservazione dei propri dati sul proprio dispositivo.</p>
+<h3>9. Diritti degli utenti</h3>
+<p>Gli utenti hanno il diritto di accedere, correggere e cancellare i propri dati in conformità alle disposizioni di legge applicabili.</p>
+<h3>10. Consenso</h3>
+<p>Utilizzando l'app, l'utente accetta la presente informativa sulla privacy.</p>
+<h3>11. Modifiche</h3>
+<p>La presente informativa sulla privacy può essere aggiornata in caso di modifiche tecniche.</p>`
+  },
+
+  pt: {
+    title: 'Aviso Legal & Política de Privacidade',
+    imp_h: 'Aviso Legal',
+    imp: `<p><strong>Informações nos termos do § 5 TMG (Lei alemã dos Meios Telemáticos)</strong></p>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Alemanha</p>
+<p>E-mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<p>Responsável pelo conteúdo nos termos do § 55 n.º 2 RStV:<br>Klaus Nitzsche (morada como acima)</p>`,
+    priv_h: 'Política de Privacidade',
+    priv: `
+<h3>1. Responsável pelo tratamento</h3>
+<p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-mail: <a href="mailto:klaus-nitzsche@t-online.de">klaus-nitzsche@t-online.de</a></p>
+<h3>2. Disponibilização da app (alojamento)</h3>
+<p>Esta aplicação é alojada através do GitHub Pages. Ao aceder à app, são transmitidos dados técnicos (p. ex. endereço IP, informações do navegador) para o GitHub para disponibilizar o conteúdo da app.</p>
+<h3>3. Processamento local de dados</h3>
+<p>Todo o conteúdo introduzido pelo utilizador (p. ex. receitas) é armazenado exclusivamente de forma local no navegador (p. ex. LocalStorage ou IndexedDB). Estes dados não são armazenados em servidores do programador.</p>
+<h3>4. Utilização de serviços de IA</h3>
+<p>A funcionalidade «Digitalização IA» transmite conteúdo (p. ex. imagens ou textos) a serviços de IA externos, nomeadamente à Anthropic (Claude).</p>
+<p>A este respeito:</p>
+<ul><li>A transmissão é cifrada</li><li>Os dados são utilizados exclusivamente para processar o pedido</li><li>O programador não armazena estes dados</li></ul>
+<p>Nota: o processamento é efetuado por fornecedores externos. Não se pode excluir que os dados sejam brevemente processados ou armazenados no âmbito da disponibilização técnica.</p>
+<h3>5. Chave API</h3>
+<p>A chave API introduzida pelo utilizador é armazenada exclusivamente de forma local no navegador e não é transmitida ao programador da app.</p>
+<h3>6. Partilha de dados pelo utilizador</h3>
+<p>Quando o conteúdo é exportado ou partilhado (p. ex. como PDF, JSON ou através de serviços de mensagens), tal ocorre exclusivamente por iniciativa do utilizador.</p>
+<h3>7. Processamento de pagamentos</h3>
+<p>Os pagamentos de apoio voluntários são processados através do PayPal. Os dados são transmitidos diretamente ao fornecedor de pagamento. Aplica-se a política de privacidade do PayPal.</p>
+<h3>8. Duração do armazenamento</h3>
+<p>Uma vez que não existe armazenamento central de dados, o utilizador determina por si próprio a duração do armazenamento dos seus dados no seu dispositivo.</p>
+<h3>9. Direitos dos utilizadores</h3>
+<p>Os utilizadores têm o direito de aceder, corrigir e eliminar os seus dados nos termos das disposições legais aplicáveis.</p>
+<h3>10. Consentimento</h3>
+<p>Ao utilizar a app, o utilizador aceita a presente política de privacidade.</p>
+<h3>11. Alterações</h3>
+<p>Esta política de privacidade pode ser atualizada em caso de alterações técnicas.</p>`
+  }
+};
+
+const LABELS = {
+  de:'DE 🇩🇪', en:'EN 🇬🇧', ru:'RU 🇷🇺', zh:'ZH 🇨🇳',
+  es:'ES 🇪🇸', fr:'FR 🇫🇷', it:'IT 🇮🇹', pt:'PT 🇵🇹'
+};
+
+function getLang() {
+  try { return localStorage.getItem('mlang9') || 'de'; } catch(e) { return 'de'; }
+}
+
+function render(lang) {
+  if (!LANGS[lang]) lang = 'de';
+  const L = LANGS[lang];
+  document.documentElement.lang = lang;
+  document.title = L.title;
+  document.getElementById('content').innerHTML =
+    '<h1>' + L.title + '</h1>' +
+    '<div class="section"><h2>' + L.imp_h + '</h2>' + L.imp + '</div>' +
+    '<div class="section"><h2>' + L.priv_h + '</h2>' + L.priv + '</div>';
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+}
+
+function buildBar() {
+  const bar = document.getElementById('langBar');
+  Object.keys(LABELS).forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'lang-btn';
+    btn.dataset.lang = l;
+    btn.textContent = LABELS[l];
+    btn.onclick = () => render(l);
+    bar.appendChild(btn);
+  });
+}
+
+buildBar();
+render(getLang());
+</script>
 </body>
 </html>
