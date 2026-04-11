@@ -7634,14 +7634,25 @@ boot();
     for(var i=0;i<OVERLAY_MAP.length;i++){if(_vis(OVERLAY_MAP[i].id)){OVERLAY_MAP[i].close();return true;}}
     return false;
   }
+  // Screen-History-Stack: merkt sich den jeweils vorigen Screen
+  var _scStack=[];
+  var _origShowSc=window.showSc;
+  window.showSc=function(n,dir){
+    var cur=(document.querySelector('.sc.on')||{}).id;
+    if(cur)cur=cur.replace('sc-','');
+    if(cur&&cur!==n&&(_scStack.length===0||_scStack[_scStack.length-1]!==cur)){
+      _scStack.push(cur);
+      if(_scStack.length>30)_scStack.shift();
+    }
+    _origShowSc(n,dir);
+  };
   history.replaceState({app:'mr'},document.title);
   history.pushState({app:'mr'},document.title);
   var _lastBack=0;
   window.addEventListener('popstate',function(){
     if(_doBack()){history.pushState({app:'mr'},document.title);return;}
-    var cur=(document.querySelector('.sc.on')||{}).id;
-    if(cur)cur=cur.replace('sc-','');
-    if(cur&&cur!=='recipes'){history.pushState({app:'mr'},document.title);showSc('recipes');return;}
+    var prev=_scStack.pop();
+    if(prev){history.pushState({app:'mr'},document.title);_origShowSc(prev);return;}
     var now=Date.now();
     if(now-_lastBack<2200)return; // zweites Drücken → App beendet sich natürlich
     _lastBack=now;
