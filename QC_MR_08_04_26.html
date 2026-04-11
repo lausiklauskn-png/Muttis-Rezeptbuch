@@ -1780,11 +1780,12 @@ button:active{transform:scale(0.97)}
         <div class="sett-arr">›</div>
       </div>
       <div class="sett-row ntap" style="flex-direction:column;align-items:center;padding:13px 11px;text-align:center;gap:0;border-bottom:1px solid var(--sand2)">
-        <div style="font-size:.7rem;color:var(--br3);line-height:1.45;margin-bottom:9px">Diese App ist kostenlos.<br>Wenn sie dir gefällt, kannst du das Projekt freiwillig unterstützen.</div>
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=kaus-nitzsche@t-online.de&amp;currency_code=EUR"
-           target="_blank" rel="noopener"
+        <div id="sDonateText" style="font-size:.7rem;color:var(--br3);line-height:1.45;margin-bottom:9px;white-space:pre-line">Diese App ist kostenlos.
+Wenn sie dir gefällt, kannst du das Projekt freiwillig unterstützen.</div>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=Klaus-nitzsche@t-online.de&amp;currency_code=EUR"
+           target="_blank" rel="noopener" id="sDonateBtn"
            style="display:inline-block;padding:9px 20px;background:#0070ba;color:#fff;text-decoration:none;border-radius:8px;font-size:.8rem;font-weight:700;letter-spacing:.02em">☕ Unterstützen</a>
-        <div style="font-size:.62rem;color:var(--br3);margin-top:7px">Freiwillig · Keine Gegenleistung</div>
+        <div id="sDonateNote" style="font-size:.62rem;color:var(--br3);margin-top:7px">Freiwillig · Keine Gegenleistung</div>
       </div>
       <div class="sett-row ntap">
         <div class="sett-ico">💾</div>
@@ -2444,7 +2445,7 @@ const LANGS={
     scanLoading:'⏳ Claude liest das Rezept …',noPend:'Noch keine Bilder ausgewählt.',
     assignBtn:'✅ Zuordnung speichern',assignOK:'Bilder zugewiesen',
     uploadOK:'Rezepte importiert',uploadErr:'Fehler beim Import',
-    pwaText:'Als App installieren — offline nutzen',pwaBtn:'Installieren',updText:'🔄 Update verfügbar! Neue Version bereit.',updBtn:'Jetzt laden',sUpdLbl:'Auf Updates prüfen',sUpdSub:'Aktuelle Version: ',sUpdCheck:'⏳ Prüfe …',sUpdOk:'✅ Bereits aktuell',sUpdAvail:'Update verfügbar!',sUpdInfo:'Deine Rezepte bleiben erhalten.\nDie neue App-Datei wird heruntergeladen.',sUpdDl:'⬇️ Jetzt aktualisieren',sUpdLater:'Später',sUpdDone:'✅ Download gestartet — alte Datei durch neue ersetzen',
+    pwaText:'Als App installieren — offline nutzen',pwaBtn:'Installieren',updText:'🔄 Update verfügbar! Neue Version bereit.',updBtn:'Jetzt laden',sUpdLbl:'Auf Updates prüfen',sUpdSub:'Aktuelle Version: ',sUpdCheck:'⏳ Prüfe …',sUpdOk:'✅ Bereits aktuell',sUpdAvail:'Update verfügbar!',sUpdInfo:'Deine Rezepte bleiben erhalten.\nDie neue App-Datei wird heruntergeladen.',sUpdDl:'⬇️ Jetzt aktualisieren',sUpdLater:'Später',sUpdDone:'✅ Download gestartet — alte Datei durch neue ersetzen',sDonateText:'Diese App ist kostenlos.\nWenn sie dir gefällt, kannst du das Projekt freiwillig unterstützen.',sDonateBtn:'☕ Unterstützen',sDonateNote:'Freiwillig · Keine Gegenleistung',
     resetShop:'Zurücksetzen',recPickerTitle:'Rezept wählen',noFolder:'— keiner —',
     thDefault:'Landhaus',thSpring:'Frühling',thNight:'Nacht',thModern:'Modern',thColor:'Bunt',thNeon:'Neon',thPastel:'Pastell',
     noRecipes:'Noch keine Rezepte',emptyStateDesc:'Füge dein erstes Rezept hinzu — per Foto, Weblink oder manuell.',emptyStateAdd:'hinzufügen',clearConfirm:'ALLE Daten wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
@@ -2550,7 +2551,7 @@ const LANGS={
     scanLoading:'⏳ Claude is reading the recipe …',noPend:'No images selected yet.',
     assignBtn:'✅ Save assignment',assignOK:'Images assigned',
     uploadOK:'Recipes imported',uploadErr:'Import error',
-    pwaText:'Install as app — use offline',pwaBtn:'Install',updText:'🔄 Update available! New version ready.',updBtn:'Reload now',sUpdLbl:'Check for updates',sUpdSub:'Current version: ',sUpdCheck:'⏳ Checking…',sUpdOk:'✅ Already up to date',sUpdAvail:'Update available!',sUpdInfo:'Your recipes are safe.\nThe new app file will be downloaded.',sUpdDl:'⬇️ Update now',sUpdLater:'Later',sUpdDone:'✅ Download started — replace the old file with the new one',
+    pwaText:'Install as app — use offline',pwaBtn:'Install',updText:'🔄 Update available! New version ready.',updBtn:'Reload now',sUpdLbl:'Check for updates',sUpdSub:'Current version: ',sUpdCheck:'⏳ Checking…',sUpdOk:'✅ Already up to date',sUpdAvail:'Update available!',sUpdInfo:'Your recipes are safe.\nThe new app file will be downloaded.',sUpdDl:'⬇️ Update now',sUpdLater:'Later',sUpdDone:'✅ Download started — replace the old file with the new one',sDonateText:'This app is free.\nIf you like it, you can support the project voluntarily.',sDonateBtn:'☕ Support',sDonateNote:'Voluntary · No obligation',
     resetShop:'Reset',recPickerTitle:'Choose recipe',noFolder:'— none —',
     thDefault:'Country',thSpring:'Spring',thNight:'Night',thModern:'Modern',thColor:'Colorful',thNeon:'Neon',thPastel:'Pastel',
     noRecipes:'No recipes yet',emptyStateDesc:'Add your first recipe — by photo, web link, or manually.',emptyStateAdd:'add',clearConfirm:'Really delete ALL data? This cannot be undone.',
@@ -2656,7 +2657,7 @@ const LANGS={
     scanLoading:'⏳ Claude читает рецепт …',noPend:'Фото ещё не выбраны.',
     assignBtn:'✅ Сохранить назначения',assignOK:'Фото назначены',
     uploadOK:'Рецепты импортированы',uploadErr:'Ошибка импорта',
-    pwaText:'Установить как приложение — офлайн',pwaBtn:'Установить',updText:'🔄 Обновление доступно!',updBtn:'Обновить',sUpdLbl:'Проверить обновления',sUpdSub:'Текущая версия: ',sUpdCheck:'⏳ Проверяю …',sUpdOk:'✅ Уже актуально',sUpdAvail:'Доступно обновление!',sUpdInfo:'Ваши рецепты сохранятся.\nНовый файл приложения будет загружен.',sUpdDl:'⬇️ Обновить сейчас',sUpdLater:'Позже',sUpdDone:'✅ Загрузка начата — замените старый файл новым',
+    pwaText:'Установить как приложение — офлайн',pwaBtn:'Установить',updText:'🔄 Обновление доступно!',updBtn:'Обновить',sUpdLbl:'Проверить обновления',sUpdSub:'Текущая версия: ',sUpdCheck:'⏳ Проверяю …',sUpdOk:'✅ Уже актуально',sUpdAvail:'Доступно обновление!',sUpdInfo:'Ваши рецепты сохранятся.\nНовый файл приложения будет загружен.',sUpdDl:'⬇️ Обновить сейчас',sUpdLater:'Позже',sUpdDone:'✅ Загрузка начата — замените старый файл новым',sDonateText:'Это приложение бесплатное.\nЕсли оно вам нравится, вы можете добровольно поддержать проект.',sDonateBtn:'☕ Поддержать',sDonateNote:'Добровольно · Без обязательств',
     resetShop:'Сбросить',recPickerTitle:'Выбрать рецепт',noFolder:'— нет —',
     thDefault:'Деревенский',thSpring:'Весна',thNight:'Ночь',thModern:'Модерн',thColor:'Яркий',thNeon:'Неон',thPastel:'Пастель',
     noRecipes:'Рецептов пока нет',emptyStateDesc:'Добавьте первый рецепт — по фото, ссылке или вручную.',emptyStateAdd:'добавить',clearConfirm:'Действительно удалить ВСЕ данные?',
@@ -2762,7 +2763,7 @@ const LANGS={
     scanLoading:'⏳ Claude正在识别食谱 …',noPend:'尚未选择图片。',
     assignBtn:'✅ 保存分配',assignOK:'图片已分配',
     uploadOK:'食谱已导入',uploadErr:'导入错误',
-    pwaText:'安装为应用 — 离线使用',pwaBtn:'安装',updText:'🔄 有新版本可用！',updBtn:'立即更新',sUpdLbl:'检查更新',sUpdSub:'当前版本：',sUpdCheck:'⏳ 检查中…',sUpdOk:'✅ 已是最新版本',sUpdAvail:'有新版本！',sUpdInfo:'您的食谱将保留。\n新版应用文件即将下载。',sUpdDl:'⬇️ 立即更新',sUpdLater:'稍后',sUpdDone:'✅ 下载已开始 — 用新文件替换旧文件',
+    pwaText:'安装为应用 — 离线使用',pwaBtn:'安装',updText:'🔄 有新版本可用！',updBtn:'立即更新',sUpdLbl:'检查更新',sUpdSub:'当前版本：',sUpdCheck:'⏳ 检查中…',sUpdOk:'✅ 已是最新版本',sUpdAvail:'有新版本！',sUpdInfo:'您的食谱将保留。\n新版应用文件即将下载。',sUpdDl:'⬇️ 立即更新',sUpdLater:'稍后',sUpdDone:'✅ 下载已开始 — 用新文件替换旧文件',sDonateText:'本应用完全免费。\n如果您喜欢它，可以自愿支持该项目。',sDonateBtn:'☕ 支持',sDonateNote:'自愿 · 无需回报',
     resetShop:'重置',recPickerTitle:'选择食谱',noFolder:'— 无 —',
     thDefault:'乡村',thSpring:'春天',thNight:'夜晚',thModern:'现代',thColor:'多彩',thNeon:'霓虹',thPastel:'粉彩',
     noRecipes:'暂无食谱',emptyStateDesc:'添加您的第一个食谱 — 通过照片、网址或手动输入。',emptyStateAdd:'添加',clearConfirm:'真的要删除所有数据吗？',
@@ -2868,7 +2869,7 @@ const LANGS={
     scanLoading:'⏳ Claude lee la receta …',noPend:'Aún no hay imágenes seleccionadas.',
     assignBtn:'✅ Guardar asignación',assignOK:'Imágenes asignadas',
     uploadOK:'Recetas importadas',uploadErr:'Error al importar',
-    pwaText:'Instalar como app — usar sin conexión',pwaBtn:'Instalar',updText:'🔄 ¡Actualización disponible!',updBtn:'Actualizar',sUpdLbl:'Buscar actualizaciones',sUpdSub:'Versión actual: ',sUpdCheck:'⏳ Comprobando…',sUpdOk:'✅ Ya está actualizado',sUpdAvail:'¡Actualización disponible!',sUpdInfo:'Tus recetas se conservarán.\nSe descargará el nuevo archivo de la app.',sUpdDl:'⬇️ Actualizar ahora',sUpdLater:'Más tarde',sUpdDone:'✅ Descarga iniciada — reemplaza el archivo antiguo por el nuevo',
+    pwaText:'Instalar como app — usar sin conexión',pwaBtn:'Instalar',updText:'🔄 ¡Actualización disponible!',updBtn:'Actualizar',sUpdLbl:'Buscar actualizaciones',sUpdSub:'Versión actual: ',sUpdCheck:'⏳ Comprobando…',sUpdOk:'✅ Ya está actualizado',sUpdAvail:'¡Actualización disponible!',sUpdInfo:'Tus recetas se conservarán.\nSe descargará el nuevo archivo de la app.',sUpdDl:'⬇️ Actualizar ahora',sUpdLater:'Más tarde',sUpdDone:'✅ Descarga iniciada — reemplaza el archivo antiguo por el nuevo',sDonateText:'Esta app es gratuita.\nSi te gusta, puedes apoyar el proyecto voluntariamente.',sDonateBtn:'☕ Apoyar',sDonateNote:'Voluntario · Sin compromiso',
     resetShop:'Restablecer',recPickerTitle:'Elegir receta',noFolder:'— ninguna —',
     thDefault:'Rural',thSpring:'Primavera',thNight:'Noche',thModern:'Moderno',thColor:'Colorido',thNeon:'Neón',thPastel:'Pastel',
     noRecipes:'Aún no hay recetas',emptyStateDesc:'Añade tu primera receta — por foto, enlace web o manualmente.',emptyStateAdd:'añadir',clearConfirm:'¿Borrar TODOS los datos? Esto no se puede deshacer.',
@@ -3052,7 +3053,7 @@ const LANGS={
     uploadOK:'Recettes importées',
     uploadErr:'Erreur import',
     pwaText:'Installer comme app',
-    pwaBtn:'Installer',updText:'🔄 Mise à jour disponible !',updBtn:'Mettre à jour',sUpdLbl:'Vérifier les mises à jour',sUpdSub:'Version actuelle : ',sUpdCheck:'⏳ Vérification…',sUpdOk:'✅ Déjà à jour',sUpdAvail:'Mise à jour disponible !',sUpdInfo:'Vos recettes seront conservées.\nLe nouveau fichier sera téléchargé.',sUpdDl:'⬇️ Mettre à jour',sUpdLater:'Plus tard',sUpdDone:'✅ Téléchargement lancé — remplacez l\'ancien fichier par le nouveau',
+    pwaBtn:'Installer',updText:'🔄 Mise à jour disponible !',updBtn:'Mettre à jour',sUpdLbl:'Vérifier les mises à jour',sUpdSub:'Version actuelle : ',sUpdCheck:'⏳ Vérification…',sUpdOk:'✅ Déjà à jour',sUpdAvail:'Mise à jour disponible !',sUpdInfo:'Vos recettes seront conservées.\nLe nouveau fichier sera téléchargé.',sUpdDl:'⬇️ Mettre à jour',sUpdLater:'Plus tard',sUpdDone:'✅ Téléchargement lancé — remplacez l\'ancien fichier par le nouveau',sDonateText:'Cette app est gratuite.\nSi elle vous plaît, vous pouvez soutenir le projet.',sDonateBtn:'☕ Soutenir',sDonateNote:'Volontaire · Aucune contrepartie',
     resetShop:'Réinitialiser',
     recPickerTitle:'Choisir recette',
     noFolder:'aucun',
@@ -3267,7 +3268,7 @@ const LANGS={
     uploadOK:'Ricette importate',
     uploadErr:'Errore import',
     pwaText:'Installa come app',
-    pwaBtn:'Installa',updText:'🔄 Aggiornamento disponibile!',updBtn:'Aggiorna',sUpdLbl:'Controlla aggiornamenti',sUpdSub:'Versione attuale: ',sUpdCheck:'⏳ Controllo…',sUpdOk:'✅ Già aggiornato',sUpdAvail:'Aggiornamento disponibile!',sUpdInfo:'Le tue ricette rimarranno al sicuro.\nIl nuovo file dell\'app verrà scaricato.',sUpdDl:'⬇️ Aggiorna ora',sUpdLater:'Più tardi',sUpdDone:'✅ Download avviato — sostituisci il vecchio file con il nuovo',
+    pwaBtn:'Installa',updText:'🔄 Aggiornamento disponibile!',updBtn:'Aggiorna',sUpdLbl:'Controlla aggiornamenti',sUpdSub:'Versione attuale: ',sUpdCheck:'⏳ Controllo…',sUpdOk:'✅ Già aggiornato',sUpdAvail:'Aggiornamento disponibile!',sUpdInfo:'Le tue ricette rimarranno al sicuro.\nIl nuovo file dell\'app verrà scaricato.',sUpdDl:'⬇️ Aggiorna ora',sUpdLater:'Più tardi',sUpdDone:'✅ Download avviato — sostituisci il vecchio file con il nuovo',sDonateText:'Questa app è gratuita.\nSe ti piace, puoi supportare il progetto volontariamente.',sDonateBtn:'☕ Supporta',sDonateNote:'Volontario · Nessun obbligo',
     resetShop:'Reimposta',
     recPickerTitle:'Scegli ricetta',
     noFolder:'nessuna',
@@ -3482,7 +3483,7 @@ const LANGS={
     uploadOK:'Receitas importadas',
     uploadErr:'Erro ao importar',
     pwaText:'Instalar como app',
-    pwaBtn:'Instalar',updText:'🔄 Atualização disponível!',updBtn:'Atualizar',sUpdLbl:'Verificar atualizações',sUpdSub:'Versão atual: ',sUpdCheck:'⏳ A verificar…',sUpdOk:'✅ Já está atualizado',sUpdAvail:'Atualização disponível!',sUpdInfo:'As suas receitas serão mantidas.\nO novo ficheiro da app será descarregado.',sUpdDl:'⬇️ Atualizar agora',sUpdLater:'Mais tarde',sUpdDone:'✅ Download iniciado — substitua o ficheiro antigo pelo novo',
+    pwaBtn:'Instalar',updText:'🔄 Atualização disponível!',updBtn:'Atualizar',sUpdLbl:'Verificar atualizações',sUpdSub:'Versão atual: ',sUpdCheck:'⏳ A verificar…',sUpdOk:'✅ Já está atualizado',sUpdAvail:'Atualização disponível!',sUpdInfo:'As suas receitas serão mantidas.\nO novo ficheiro da app será descarregado.',sUpdDl:'⬇️ Atualizar agora',sUpdLater:'Mais tarde',sUpdDone:'✅ Download iniciado — substitua o ficheiro antigo pelo novo',sDonateText:'Esta app é gratuita.\nSe gostar, pode apoiar o projeto voluntariamente.',sDonateBtn:'☕ Apoiar',sDonateNote:'Voluntário · Sem compromisso',
     resetShop:'Repor',
     recPickerTitle:'Escolher receita',
     noFolder:'nenhuma',
@@ -3902,7 +3903,7 @@ function applyLang(code){
     'sInfo','sStore','sClear','sClearSub',
     'sManualHead','sManualLbl','sManualSub','manOvTitle','manPdfLbl',
     'fldTitle','fldSearch','fldNew','fldShTitle','fldNameLbl','fldIconLbl','fldCancel','fldSave',
-    'cshTitle','csCancel','csConfirm','pwaText','pwaBtn','updText','updBtn','sUpdLbl',
+    'cshTitle','csCancel','csConfirm','pwaText','pwaBtn','updText','updBtn','sUpdLbl','sDonateText','sDonateBtn','sDonateNote',
     'hAddLbl',
     'hlpTitle','hlpShare','hlpShareSub','hlpExport','hlpExportSub',
     'hlpImport','hlpImportSub','hlpCache','hlpCacheSub',
