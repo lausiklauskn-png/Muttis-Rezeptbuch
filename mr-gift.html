@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0d1a">
+  <title>Du hast ein Geschenk bekommen!</title>
+  <link rel="icon" type="image/svg+xml" href="icons/icon-book.svg">
+  <style>
+    :root {
+      --bg: #0d0d1a;
+      --card: #13131f;
+      --ink: #f0f0ff;
+      --ink2: #c0c0d8;
+      --ink3: #8080a0;
+      --rainbow: linear-gradient(135deg, #FF0000, #FF7700, #FFE500, #00CC00, #00CCFF, #0044FF, #8800FF);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Sternchen-Hintergrund ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle var(--d) var(--delay) infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: var(--op); }
+    }
+
+    /* ── Hauptbühne ── */
+    .stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+      text-align: center;
+      gap: 0;
+      z-index: 1;
+    }
+
+    /* ── Absender/Empfänger ── */
+    .to-from {
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp .7s .2s forwards;
+    }
+    .to-label {
+      font-size: 0.72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 4px;
+    }
+    .to-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .from-line {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--ink3);
+    }
+    .from-line span { color: var(--ink2); font-weight: 600; }
+
+    /* ── Geschenk-Box ── */
+    .gift-wrap {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0;
+      animation: fadeUp .7s .5s forwards;
+      margin-bottom: 32px;
+    }
+    .gift-wrap:active { transform: scale(0.95); }
+
+    .gift-box {
+      width: 180px;
+      height: 160px;
+      position: relative;
+      filter: drop-shadow(0 20px 40px rgba(136,0,255,0.35)) drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+      animation: bob 3s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+
+    /* Deckel */
+    .gift-lid {
+      position: absolute;
+      top: 0; left: -8px;
+      width: 196px;
+      height: 52px;
+      background: linear-gradient(135deg, #cc0055, #aa0044);
+      border-radius: 8px;
+      transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+      transform-origin: center top;
+      z-index: 2;
+    }
+    .gift-lid::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
+      border-radius: 8px;
+    }
+
+    /* Schleife oben auf dem Deckel */
+    .bow {
+      position: absolute;
+      top: -22px; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 44px;
+      z-index: 3;
+    }
+    .bow-left, .bow-right {
+      position: absolute;
+      bottom: 4px;
+      width: 34px; height: 34px;
+      border-radius: 50% 50% 50% 0;
+      background: linear-gradient(135deg, #FFE500, #FF7700);
+      transform-origin: bottom right;
+    }
+    .bow-left { left: 4px; transform: rotate(-45deg); }
+    .bow-right { right: 4px; border-radius: 50% 50% 0 50%; transform-origin: bottom left; transform: rotate(45deg); }
+    .bow-center {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 14px; height: 14px;
+      background: #FFE500;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    /* Schleifenband über Deckel */
+    .lid-ribbon-h {
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 14px;
+      background: linear-gradient(180deg, #FFE500, #FF7700);
+      transform: translateY(-50%);
+    }
+    .lid-ribbon-v {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 14px;
+      background: linear-gradient(90deg, #FFE500, #FF7700);
+      transform: translateX(-50%);
+    }
+
+    /* Karton-Körper */
+    .gift-body {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 180px;
+      height: 118px;
+      background: linear-gradient(135deg, #cc0044, #990033);
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+    }
+    .gift-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 40%);
+    }
+    /* Band über Körper */
+    .body-ribbon-v {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 14px;
+      background: linear-gradient(90deg, rgba(255,229,0,.9), rgba(255,119,0,.9));
+      transform: translateX(-50%);
+    }
+    /* Glanzstreifen */
+    .body-shine {
+      position: absolute;
+      top: 8px; left: 12px;
+      width: 20px; height: 60px;
+      background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 100%);
+      border-radius: 10px;
+      transform: rotate(-15deg);
+    }
+
+    /* Konfetti-Punkte auf der Box */
+    .box-dots {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,229,0,.6) 2px, transparent 2px),
+        radial-gradient(circle, rgba(255,255,255,.3) 1.5px, transparent 1.5px);
+      background-size: 28px 28px, 14px 14px;
+      background-position: 4px 8px, 11px 18px;
+    }
+
+    /* ── Öffnen-Animation ── */
+    .gift-wrap.opening .gift-lid {
+      transform: translateY(-80px) rotate(-15deg);
+      opacity: 0;
+    }
+    .gift-wrap.opening .gift-box {
+      animation: shake .4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-3deg); }
+      40% { transform: translateX(8px) rotate(3deg); }
+      60% { transform: translateX(-5px) rotate(-2deg); }
+      80% { transform: translateX(5px) rotate(2deg); }
+    }
+
+    /* ── Konfetti ── */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: 40%;
+      left: 50%;
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    /* ── Hinweis-Text ── */
+    .hint {
+      font-size: 0.82rem;
+      color: var(--ink3);
+      opacity: 0;
+      animation: fadeUp .7s .8s forwards;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .hint-pulse {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,229,0,.3); }
+      50% { transform: scale(1.1); box-shadow: 0 0 0 12px rgba(255,229,0,.0); }
+    }
+
+    /* ── Erfolgs-Overlay ── */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .5s;
+      z-index: 100;
+    }
+    .success-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .success-emoji {
+      font-size: 4rem;
+      animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+    .success-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: var(--rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+    .success-sub {
+      font-size: 0.85rem;
+      color: var(--ink3);
+      line-height: 1.6;
+      max-width: 300px;
+    }
+    .btn-open {
+      display: inline-block;
+      padding: 16px 36px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--rainbow);
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(136,0,255,.35);
+      animation: bob 3s ease-in-out infinite;
+      transition: transform .15s;
+    }
+    .btn-open:active { transform: scale(.96); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sterne -->
+<div class="stars" id="stars"></div>
+
+<!-- Haupt-Bühne -->
+<div class="stage" id="stage">
+
+  <div class="to-from" id="toFrom">
+    <div class="to-label">Für</div>
+    <div class="to-name" id="toName">Dich</div>
+    <div class="from-line" id="fromLine" style="display:none">Von <span id="fromName"></span></div>
+  </div>
+
+  <div class="gift-wrap" id="giftWrap" onclick="openGift()">
+    <div class="gift-box">
+      <!-- Deckel -->
+      <div class="gift-lid">
+        <div class="lid-ribbon-h"></div>
+        <div class="lid-ribbon-v"></div>
+        <!-- Schleife -->
+        <div class="bow">
+          <div class="bow-left"></div>
+          <div class="bow-right"></div>
+          <div class="bow-center"></div>
+        </div>
+      </div>
+      <!-- Körper -->
+      <div class="gift-body">
+        <div class="body-ribbon-v"></div>
+        <div class="box-dots"></div>
+        <div class="body-shine"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">
+    <div class="hint-pulse">👆</div>
+    <span>Tippe auf das Päckchen</span>
+  </div>
+
+</div>
+
+<!-- Erfolgs-Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-emoji">🎁</div>
+  <div class="success-title">Muttis Rezeptbuch<br>gehört dir!</div>
+  <div class="success-sub" id="successSub">Ein persönliches Rezeptbuch – kostenlos, offline, kein Account nötig.</div>
+  <a class="btn-open" id="btnOpen" href="mr-invite-v5.html">Geschenk öffnen ✨</a>
+</div>
+
+<script>
+  // ── Sterne generieren ──
+  (function(){
+    const c = document.getElementById('stars');
+    for(let i = 0; i < 80; i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s;--op:${.2+Math.random()*.7}`;
+      c.appendChild(s);
+    }
+  })();
+
+  // ── URL-Parameter auslesen ──
+  (function(){
+    const p = new URLSearchParams(location.search);
+    const fuer = p.get('fuer') || p.get('für') || p.get('to');
+    const von  = p.get('von') || p.get('from');
+    if(fuer){
+      document.getElementById('toName').textContent = fuer;
+    }
+    if(von){
+      document.getElementById('fromLine').style.display = '';
+      document.getElementById('fromName').textContent = von;
+    }
+    // Absender in Erfolgstext übernehmen
+    if(von){
+      document.getElementById('successSub').textContent =
+        von + ' schenkt dir ein persönliches Rezeptbuch – kostenlos, offline, kein Account nötig.';
+    }
+  })();
+
+  // ── Konfetti ──
+  function spawnConfetti(){
+    const colors = ['#FF0000','#FF7700','#FFE500','#00CC00','#00CCFF','#0044FF','#8800FF','#fff'];
+    for(let i = 0; i < 60; i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        background:${colors[i%colors.length]};
+        border-radius:${Math.random()>.5?'50%':'2px'};
+        width:${6+Math.random()*8}px;
+        height:${6+Math.random()*8}px;
+      `;
+      document.body.appendChild(el);
+      const angle = (Math.random()*360) * Math.PI/180;
+      const dist  = 80 + Math.random()*220;
+      const tx = Math.cos(angle)*dist;
+      const ty = Math.sin(angle)*dist - 80;
+      el.animate([
+        {transform:'translate(0,0) rotate(0deg)', opacity:1},
+        {transform:`translate(${tx}px,${ty}px) rotate(${Math.random()*720}deg)`, opacity:0}
+      ], {
+        duration: 800 + Math.random()*600,
+        delay: Math.random()*200,
+        easing: 'cubic-bezier(.25,.46,.45,.94)',
+        fill: 'forwards'
+      });
+      setTimeout(()=>el.remove(), 1600);
+    }
+  }
+
+  // ── Geschenk öffnen ──
+  var _opened = false;
+  function openGift(){
+    if(_opened) return;
+    _opened = true;
+    const wrap = document.getElementById('giftWrap');
+    const hint = document.getElementById('hint');
+    wrap.classList.add('opening');
+    hint.style.opacity = '0';
+    spawnConfetti();
+    setTimeout(function(){
+      document.getElementById('successOverlay').classList.add('show');
+    }, 600);
+  }
+
+  // ── HTTPS-Redirect wenn lokal geöffnet ──
+  (function(){
+    var p = location.protocol;
+    if(p === 'file:' || p === 'content:'){
+      location.replace('https://lausiklauskn-png.github.io/Muttis-Rezeptbuch/mr-gift.html' + location.search);
+    }
+  })();
+</script>
+
+</body>
+</html>
