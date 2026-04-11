@@ -86,65 +86,14 @@
       background: var(--rainbow);
     }
 
-    /* ── Schleifenband ── */
+    /* ── Schleife ── */
     .ribbon-wrap {
       display: flex;
       justify-content: center;
-      padding: 28px 24px 0;
+      padding: 24px 24px 0;
+      font-size: 3.2rem;
+      line-height: 1;
     }
-    .ribbon {
-      position: relative;
-      width: 90px;
-      height: 52px;
-    }
-    /* Schleifenhälften */
-    .rib-left, .rib-right {
-      position: absolute;
-      bottom: 4px;
-      width: 38px; height: 38px;
-      border-radius: 50%;
-    }
-    .rib-left {
-      left: 0;
-      background: linear-gradient(135deg, #FFE500, #FF7700);
-      clip-path: polygon(50% 50%, 0 0, 0 100%);
-      transform: rotate(15deg);
-      transform-origin: right bottom;
-    }
-    .rib-right {
-      right: 0;
-      background: linear-gradient(135deg, #FF7700, #FFE500);
-      clip-path: polygon(50% 50%, 100% 0, 100% 100%);
-      transform: rotate(-15deg);
-      transform-origin: left bottom;
-    }
-    .rib-center {
-      position: absolute;
-      bottom: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #FFE500, #FF9900);
-      z-index: 1;
-      box-shadow: 0 2px 8px rgba(255,200,0,.4);
-    }
-    /* Bänder nach unten */
-    .rib-tail {
-      position: absolute;
-      bottom: -28px; left: 50%;
-      width: 3px;
-      transform: translateX(-50%);
-    }
-    .rib-tail-left, .rib-tail-right {
-      position: absolute;
-      bottom: -36px;
-      width: 3px;
-      height: 36px;
-      background: linear-gradient(180deg, #FFE500, transparent);
-      border-radius: 2px;
-    }
-    .rib-tail-left  { left: calc(50% - 1px); transform: rotate(-8deg); transform-origin: top center; }
-    .rib-tail-right { left: calc(50% - 1px); transform: rotate(8deg); transform-origin: top center; }
 
     /* ── Inhalt ── */
     .card-body {
@@ -276,15 +225,7 @@
 <div class="card">
   <div class="card-top-bar"></div>
 
-  <div class="ribbon-wrap">
-    <div class="ribbon">
-      <div class="rib-left"></div>
-      <div class="rib-right"></div>
-      <div class="rib-center"></div>
-      <div class="rib-tail-left"></div>
-      <div class="rib-tail-right"></div>
-    </div>
-  </div>
+  <div class="ribbon-wrap">🎀</div>
 
   <div class="card-body">
 
