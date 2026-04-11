@@ -490,7 +490,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .fov-back{background:none;border:none;color:rgba(255,255,255,.56);font-size:1.2rem;cursor:pointer;padding:3px 5px}
 .fov-title{font-family:Georgia,serif;color:#fff;font-size:.98rem;flex:1}
 .fov-tabs{background:var(--br);border-top:1px solid rgba(255,255,255,.08);display:flex;flex-shrink:0}
-.fovtab{flex:1;padding:7px 4px;text-align:center;font-size:.62rem;font-weight:700;color:rgba(255,255,255,.80);cursor:pointer;border-bottom:2.5px solid transparent}
+.fovtab{flex:1;padding:9px 4px;text-align:center;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.80);cursor:pointer;border-bottom:2.5px solid transparent}
 .fovtab.on{color:#fff;border-bottom-color:var(--gold)}
 .fov-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:11px}
 .fov-pane{display:none}.fov-pane.on{display:block}
@@ -2051,7 +2051,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         <div style="font-family:Georgia,serif;font-size:.94rem;margin-bottom:5px" id="bakTitle">💾 Datensicherung laden</div>
         <p style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5" id="bakDesc">
           Eine exportierte <code style="background:var(--sand2);padding:1px 4px;border-radius:3px">.json</code>-Datei laden.
-          <strong>Achtung: Aktuelle Daten werden überschrieben.</strong></p>
+          <strong>Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.</strong></p>
         <button class="bigbtn grn" onclick="document.getElementById('jsonFileIn').click()" id="bakBtn" title="JSON-Backup-Datei auswählen">📂 Datei auswählen</button>
         <input type="file" id="jsonFileIn" accept=".json" style="display:none" onchange="importData(event)"/>
         <div id="upStatus" class="upst"></div>
@@ -2401,7 +2401,7 @@ const LANGS={
     mvTitle:'Mein Menü',mvTabTl:'🗓️ Ablauf',mvTabSh:'🛒 Einkaufen',mvTabCk:'👩‍🍳 Kochen',mvTabAl:'📋 Gesamt',
     mvPrint:'🖨️ Drucken / PDF',mvClose:'Schließen',
     bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
-    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
+    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
     sc1T:'Rezept-Foto auswählen',sc1D:'Foto aus Galerie, Kamera oder Ordner.',
     sc2T:'KI liest das Rezept (Internet nötig)',sc2D:'Claude erkennt Zutaten, Mengen & Schritte.',
@@ -2409,8 +2409,15 @@ const LANGS={
     scanDropLbl:'Rezept-Bild auswählen',apiKeyLbl:'Claude API-Schlüssel',
     apiHint:'Nur lokal gespeichert.',scanBtn:'✨ Scannen',
     bakTitle:'💾 Datensicherung laden',
-    bakDesc:'Exportierte .json-Datei laden. Achtung: Aktuelle Daten werden überschrieben.',
+    bakDesc:'Exportierte .json-Datei laden. Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.',
     bakBtn:'📂 Datei auswählen',
+    sBvScreenTitle:'Backup-Tresor',sBvLbl:'Backup-Tresor',sBvSub:'Mehrere Sicherungen verwalten',
+    bvJsonT:'JSON-Backup aus Downloads laden',bvJsonD:'Gespeicherte .json-Datei vom Gerät laden',bvJsonBtn:'📂 Datei auswählen',
+    bvIosWarn:'⚠️ <strong>iOS-Hinweis:</strong> Safari/Edge kann Daten löschen. Exportiere regelmäßig als JSON.',bvIosLast:'Letzter Export:',bvIosNone:'Noch kein Export.',
+    bvNamePH:'Name (z.B. Vor dem Urlaub)',bvSaveBtn:'💾 Sichern',
+    bvRec:'Rezept',bvRecs:'Rezepte',
+    bvSecManual:'📌 Eigene Backups',bvSecAuto:'🔄 Automatische Backups (letzte {n})',bvEmpty:'Noch keine Backups. Erstelle jetzt dein erstes Backup.',
+    bvBtnLoad:'Backup laden',bvBtnExp:'Als JSON exportieren',bvBtnDel:'Löschen',
     expTitle:'💾 Sichern & Exportieren',
     expEpubT:'E-Book (EPUB 3)',expEpubD:'Alle Rezepte als EPUB 3 — für Google Play Books, Moon+ Reader, iBooks.',expEpubBtn:'📥 EPUB erstellen',epubProg:'Erstelle EPUB …',epubDone:'✅ EPUB erstellt!',
     expFlipT:'Blätterbuch (HTML)',expFlipD:'Interaktives Blätterbuch als HTML-Datei — offline in jedem Browser.',expFlipBtn:'📥 Blätterbuch erstellen',flipProg:'Erstelle …',flipDone:'✅ Blätterbuch erstellt!',
@@ -2446,7 +2453,7 @@ const LANGS={
     resetShop:'Zurücksetzen',recPickerTitle:'Rezept wählen',noFolder:'— keiner —',
     thDefault:'Landhaus',thSpring:'Frühling',thNight:'Nacht',thModern:'Modern',thColor:'Bunt',thNeon:'Neon',thPastel:'Pastell',
     noRecipes:'Noch keine Rezepte',emptyStateDesc:'Füge dein erstes Rezept hinzu — per Foto, Weblink oder manuell.',emptyStateAdd:'hinzufügen',clearConfirm:'ALLE Daten wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
-    hlpTitle:'ℹ️ Hilfe · Teilen · Reparatur',hlpShare:'🆘 Hilfe & Notfall-Link',hlpShareSub:'Einladungslink – auch wenn die App kaputt ist · Reparieren · Teilen',hlpExport:'Rezepte sichern (Backup)',hlpExportSub:'JSON-Datei exportieren und sicher speichern',hlpImport:'Backup wiederherstellen',hlpImportSub:'JSON-Backup laden und Rezepte zurückholen',hlpCache:'Cache leeren – Anleitung',hlpCacheSub:'Wenn die App nicht richtig lädt',hlpReset:'App zurücksetzen',hlpResetSub:'Alle Daten löschen – erst Backup erstellen!',hlpCacheTitle:'🧹 Cache leeren – so geht\'s',hlpCacheOk:'Verstanden ✓',hlpResetMsg:'⚠️ Alle Rezepte und Einstellungen werden gelöscht.\n\nHast du ein Backup erstellt?\n\nFortsetzen und alle Daten löschen?',
+    hlpTitle:'ℹ️ Hilfe · Teilen · Reparatur',hlpShare:'🆘 Hilfe & Notfall-Link',hlpShareSub:'Einladungslink – auch wenn die App kaputt ist · Reparieren · Teilen',hlpExport:'Rezepte sichern (Backup)',hlpExportSub:'JSON-Datei exportieren und sicher speichern',hlpImport:'Backup wiederherstellen',hlpImportSub:'JSON-Backup laden und Rezepte zurückholen',hlpCache:'Cache leeren – Anleitung',hlpCacheSub:'Wenn die App nicht richtig lädt',hlpReset:'App zurücksetzen',hlpResetSub:'Alle Daten löschen – erst Backup erstellen!',hlpCacheTitle:'🧹 Cache leeren – so geht\'s',hlpCacheOk:'Verstanden ✓',hlpShareBtn:'🆘 Notfall-Link öffnen',hlpExportBtn:'📤 Backup erstellen',hlpImportBtn:'📥 Backup laden',hlpCacheBtn:'🧹 Anleitung anzeigen',hlpResetBtn:'⚠️ Zurücksetzen',hlpResetMsg:'⚠️ Alle Rezepte und Einstellungen werden gelöscht.\n\nHast du ein Backup erstellt?\n\nFortsetzen und alle Daten löschen?',
     mvNone:'Noch keine Rezepte im Menü.',cookHint:'Schritt antippen = erledigt ✓',
     cropTitle:'Bildausschnitt anpassen',cropBtn:'Ausschnitt',cpCenter:'⬛ Mitte',cpTop:'⬆ Oben',cpBottom:'⬇ Unten',cpLeft:'◀ Links',cpRight:'▶ Rechts',cropSave:'✓ Speichern',cropCancel:'Abbrechen',cropReset:'↺ Zurücksetzen',cropHint:'✂️ Ausschnitt anpassen',
     printBtn:'🖨️ Rezept drucken / als PDF',printSub:'Zutatenliste & Zubereitung',srvLabel:'Portionen',srvBase:'Basis',srvFor:'für',srvPers:'Pers.',srvCustom:'eigene Zahl',srvReset:'Zurücksetzen',prepTimeLabel:'⏱ Zubereitungszeit',prepTimeMin:'Min.',prepTimeHr:'Std.',prepTimePh:'min',prepTimeAuto:'automatisch erkannt',
@@ -2500,7 +2507,7 @@ const LANGS={
     mvTitle:'My Menu',mvTabTl:'🗓️ Overview',mvTabSh:'🛒 Shopping',mvTabCk:'👩‍🍳 Cooking',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Print / PDF',mvClose:'Close',
     bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
-    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabScan:'📄 AI Scan',impTabJson:'💾 Backup',
+    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
     imgDropLbl:'Select images or drag here',
     sc1T:'Select recipe photo',sc1D:'Photo of a recipe from gallery, camera or folder.',
     sc2T:'AI reads the recipe (internet required)',sc2D:'Claude recognizes ingredients, quantities & steps.',
@@ -2508,8 +2515,15 @@ const LANGS={
     scanDropLbl:'Select recipe image',apiKeyLbl:'Claude API Key',
     apiHint:'Stored locally only.',scanBtn:'✨ Scan',
     bakTitle:'💾 Load backup',
-    bakDesc:'Load a previously exported .json file. Warning: current data will be overwritten.',
+    bakDesc:'Load a previously exported .json file. Warning: current data will be overwritten or added.',
     bakBtn:'📂 Select file',
+    sBvScreenTitle:'Backup Vault',sBvLbl:'Backup Vault',sBvSub:'Manage multiple backups',
+    bvJsonT:'Load JSON backup from downloads',bvJsonD:'Select a saved .json file from your device',bvJsonBtn:'📂 Select file',
+    bvIosWarn:'⚠️ <strong>iOS note:</strong> Safari/Edge may delete data. Export regularly as JSON.',bvIosLast:'Last export:',bvIosNone:'No export yet.',
+    bvNamePH:'Name (e.g. Before vacation)',bvSaveBtn:'💾 Save',
+    bvRec:'recipe',bvRecs:'recipes',
+    bvSecManual:'📌 My backups',bvSecAuto:'🔄 Automatic backups (last {n})',bvEmpty:'No backups yet. Create your first backup now.',
+    bvBtnLoad:'Load backup',bvBtnExp:'Export as JSON',bvBtnDel:'Delete',
     expTitle:'💾 Save & Export',
     expEpubT:'E-Book (EPUB 3)',expEpubD:'All recipes as EPUB 3 — for Google Play Books, Moon+ Reader, iBooks.',expEpubBtn:'📥 Create EPUB',epubProg:'Creating EPUB …',epubDone:'✅ EPUB created!',
     expFlipT:'Flipbook (HTML)',expFlipD:'Interactive flipbook as HTML file — works offline in any browser.',expFlipBtn:'📥 Create flipbook',flipProg:'Creating …',flipDone:'✅ Flipbook created!',
@@ -2545,7 +2559,7 @@ const LANGS={
     resetShop:'Reset',recPickerTitle:'Choose recipe',noFolder:'— none —',
     thDefault:'Country',thSpring:'Spring',thNight:'Night',thModern:'Modern',thColor:'Colorful',thNeon:'Neon',thPastel:'Pastel',
     noRecipes:'No recipes yet',emptyStateDesc:'Add your first recipe — by photo, web link, or manually.',emptyStateAdd:'add',clearConfirm:'Really delete ALL data? This cannot be undone.',
-    hlpTitle:'ℹ️ Help · Share · Repair',hlpShare:'🆘 Help & Emergency Link',hlpShareSub:'Invite link – works even if the app is broken · Repair · Share',hlpExport:'Back up recipes',hlpExportSub:'Export JSON file and keep it safe',hlpImport:'Restore backup',hlpImportSub:'Load JSON backup file and recover recipes',hlpCache:'Clear cache – instructions',hlpCacheSub:'If the app does not load correctly',hlpReset:'Reset app',hlpResetSub:'Delete all data – create backup first!',hlpCacheTitle:'🧹 How to clear the cache',hlpCacheOk:'Got it ✓',hlpResetMsg:'⚠️ All recipes and settings will be deleted.\n\nDid you create a backup?\n\nContinue and delete all data?',
+    hlpTitle:'ℹ️ Help · Share · Repair',hlpShare:'🆘 Help & Emergency Link',hlpShareSub:'Invite link – works even if the app is broken · Repair · Share',hlpExport:'Back up recipes',hlpExportSub:'Export JSON file and keep it safe',hlpImport:'Restore backup',hlpImportSub:'Load JSON backup file and recover recipes',hlpCache:'Clear cache – instructions',hlpCacheSub:'If the app does not load correctly',hlpReset:'Reset app',hlpResetSub:'Delete all data – create backup first!',hlpCacheTitle:'🧹 How to clear the cache',hlpCacheOk:'Got it ✓',hlpShareBtn:'🆘 Open emergency link',hlpExportBtn:'📤 Create backup',hlpImportBtn:'📥 Load backup',hlpCacheBtn:'🧹 Show instructions',hlpResetBtn:'⚠️ Reset',hlpResetMsg:'⚠️ All recipes and settings will be deleted.\n\nDid you create a backup?\n\nContinue and delete all data?',
     mvNone:'No recipes in menu yet.',cookHint:'Tap a step to mark done ✓',
     cropTitle:'Adjust image crop',cropBtn:'Crop',cpCenter:'⬛ Centre',cpTop:'⬆ Top',cpBottom:'⬇ Bottom',cpLeft:'◀ Left',cpRight:'▶ Right',cropSave:'✓ Save',cropCancel:'Cancel',cropReset:'↺ Reset',cropHint:'✂️ Adjust crop',
     printBtn:'🖨️ Print recipe / save PDF',printSub:'Ingredients & preparation',srvLabel:'Servings',srvBase:'Base',srvFor:'for',srvPers:'pers.',srvCustom:'custom',srvReset:'Reset',prepTimeLabel:'⏱ Prep time',prepTimeMin:'min.',prepTimeHr:'hr.',prepTimePh:'min',prepTimeAuto:'auto-detected',
@@ -2599,7 +2613,7 @@ const LANGS={
     mvTitle:'Моё меню',mvTabTl:'🗓️ Обзор',mvTabSh:'🛒 Покупки',mvTabCk:'👩‍🍳 Готовка',mvTabAl:'📋 Итого',
     mvPrint:'🖨️ Печать / PDF',mvClose:'Закрыть',
     bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
-    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabScan:'📄 ИИ-скан',impTabJson:'💾 Резерв',
+    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'💾 Резерв',
     imgDropLbl:'Выбрать фото или перетащить',
     sc1T:'Выбрать фото рецепта',sc1D:'Фото рукописного или печатного рецепта.',
     sc2T:'ИИ читает рецепт (нужен интернет)',sc2D:'Claude распознаёт ингредиенты и шаги.',
@@ -2607,11 +2621,19 @@ const LANGS={
     scanDropLbl:'Выбрать фото рецепта',apiKeyLbl:'Ключ API Claude',
     apiHint:'Хранится только локально.',scanBtn:'✨ Сканировать',
     bakTitle:'💾 Загрузить резервную копию',
-    bakDesc:'Загрузите ранее экспортированный .json-файл. Внимание: текущие данные будут перезаписаны.',
+    bakDesc:'Загрузите ранее экспортированный .json-файл. Внимание: текущие данные будут перезаписаны или дополнены.',
     bakBtn:'📂 Выбрать файл',
+    sBvScreenTitle:'Архив резервных копий',sBvLbl:'Архив резервных копий',sBvSub:'Управление несколькими резервными копиями',
+    bvJsonT:'Загрузить JSON-резервную копию',bvJsonD:'Выберите .json-файл с устройства',bvJsonBtn:'📂 Выбрать файл',
+    bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge может удалять данные. Регулярно экспортируй в JSON.',bvIosLast:'Последний экспорт:',bvIosNone:'Экспорт не выполнялся.',
+    bvNamePH:'Название (напр. Перед отпуском)',bvSaveBtn:'💾 Сохранить',
+    bvRec:'рецепт',bvRecs:'рецептов',
+    bvSecManual:'📌 Мои резервные копии',bvSecAuto:'🔄 Автоматические резервные копии (последние {n})',bvEmpty:'Резервных копий нет. Создайте первую сейчас.',
+    bvBtnLoad:'Загрузить',bvBtnExp:'Экспорт JSON',bvBtnDel:'Удалить',
     expTitle:'💾 Сохранить & Экспорт',
     expEpubT:'Электронная книга (EPUB 3)',expEpubD:'Все рецепты как EPUB 3 — для Google Play Книги, Moon+ Reader, iBooks.',expEpubBtn:'📥 Создать EPUB',epubProg:'Создание EPUB …',epubDone:'✅ EPUB создан!',
     expFlipT:'Листалка (HTML)',expFlipD:'Интерактивная листалка как HTML-файл — работает офлайн.',expFlipBtn:'📥 Создать листалку',flipProg:'Создание …',flipDone:'✅ Листалка создана!',
+    expPdfT:'PDF-книга',expPdfD:'Все рецепты как PDF для печати с обложкой.',expPdfBtn:'📥 Создать PDF-книгу',
     expJsonT:'Резервная копия (JSON)',expJsonD:'Сохранить все рецепты и меню как JSON-файл.',expJsonSafe:'🔒 API-ключи не включены — безопасно для передачи',expJsonBtn:'💾 Создать резервную копию',
     sTheme:'🎨 ТЕМА',sLang:'🌐 ЯЗЫК',sData:'📁 ИМПОРТ & ЭКСПОРТ',
     sImpLbl:'Импорт',sImpSub:'Фото, ИИ-скан, резерв',
@@ -2643,7 +2665,7 @@ const LANGS={
     resetShop:'Сбросить',recPickerTitle:'Выбрать рецепт',noFolder:'— нет —',
     thDefault:'Деревенский',thSpring:'Весна',thNight:'Ночь',thModern:'Модерн',thColor:'Яркий',thNeon:'Неон',thPastel:'Пастель',
     noRecipes:'Рецептов пока нет',emptyStateDesc:'Добавьте первый рецепт — по фото, ссылке или вручную.',emptyStateAdd:'добавить',clearConfirm:'Действительно удалить ВСЕ данные?',
-    hlpTitle:'ℹ️ Помощь · Поделиться · Ремонт',hlpShare:'🆘 Помощь и аварийная ссылка',hlpShareSub:'Ссылка работает даже если приложение сломано · Ремонт · Поделиться',hlpExport:'Сохранить рецепты (резервная копия)',hlpExportSub:'Экспортировать JSON-файл и сохранить',hlpImport:'Восстановить резервную копию',hlpImportSub:'Загрузить JSON-файл и вернуть рецепты',hlpCache:'Очистить кеш – инструкция',hlpCacheSub:'Если приложение не загружается',hlpReset:'Сбросить приложение',hlpResetSub:'Удалить все данные – сначала создайте копию!',hlpCacheTitle:'🧹 Как очистить кеш',hlpCacheOk:'Понятно ✓',hlpResetMsg:'⚠️ Все рецепты и настройки будут удалены.\n\nВы создали резервную копию?\n\nПродолжить и удалить все данные?',
+    hlpTitle:'ℹ️ Помощь · Поделиться · Ремонт',hlpShare:'🆘 Помощь и аварийная ссылка',hlpShareSub:'Ссылка работает даже если приложение сломано · Ремонт · Поделиться',hlpExport:'Сохранить рецепты (резервная копия)',hlpExportSub:'Экспортировать JSON-файл и сохранить',hlpImport:'Восстановить резервную копию',hlpImportSub:'Загрузить JSON-файл и вернуть рецепты',hlpCache:'Очистить кеш – инструкция',hlpCacheSub:'Если приложение не загружается',hlpReset:'Сбросить приложение',hlpResetSub:'Удалить все данные – сначала создайте копию!',hlpCacheTitle:'🧹 Как очистить кеш',hlpCacheOk:'Понятно ✓',hlpShareBtn:'🆘 Открыть аварийную ссылку',hlpExportBtn:'📤 Создать резервную копию',hlpImportBtn:'📥 Загрузить резервную копию',hlpCacheBtn:'🧹 Показать инструкцию',hlpResetBtn:'⚠️ Сбросить',hlpResetMsg:'⚠️ Все рецепты и настройки будут удалены.\n\nВы создали резервную копию?\n\nПродолжить и удалить все данные?',
     mvNone:'В меню пока нет рецептов.',cookHint:'Нажмите на шаг чтобы отметить ✓',
     cropTitle:'Настроить кадрирование',cropBtn:'Кадр',cpCenter:'⬛ Центр',cpTop:'⬆ Вверх',cpBottom:'⬇ Вниз',cpLeft:'◀ Влево',cpRight:'▶ Вправо',cropSave:'✓ Сохранить',cropCancel:'Отмена',cropReset:'↺ Сброс',cropHint:'✂️ Изменить кадр',
     printBtn:'🖨️ Распечатать рецепт / PDF',printSub:'Состав и приготовление',srvLabel:'Порции',srvBase:'Основа',srvFor:'на',srvPers:'чел.',srvCustom:'другое',srvReset:'Сброс',prepTimeLabel:'⏱ Время готовки',prepTimeMin:'мин.',prepTimeHr:'ч.',prepTimePh:'мин',prepTimeAuto:'авто',
@@ -2697,7 +2719,7 @@ const LANGS={
     mvTitle:'我的菜单',mvTabTl:'🗓️ 概览',mvTabSh:'🛒 购物',mvTabCk:'👩‍🍳 烹饪',mvTabAl:'📋 汇总',
     mvPrint:'🖨️ 打印 / PDF',mvClose:'关闭',
     bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
-    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabScan:'📄 AI扫描',impTabJson:'💾 备份',
+    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'💾 备份',
     imgDropLbl:'选择或拖拽图片至此',
     sc1T:'选择食谱照片',sc1D:'从相册、相机或文件夹选择食谱照片。',
     sc2T:'AI识别食谱（需要网络）',sc2D:'Claude自动识别食材、用量和步骤。',
@@ -2705,11 +2727,19 @@ const LANGS={
     scanDropLbl:'选择食谱图片',apiKeyLbl:'Claude API密钥',
     apiHint:'仅本地存储。',scanBtn:'✨ 扫描',
     bakTitle:'💾 加载备份',
-    bakDesc:'加载之前导出的.json文件。注意：当前数据将被覆盖。',
+    bakDesc:'加载之前导出的.json文件。注意：当前数据将被覆盖或添加。',
     bakBtn:'📂 选择文件',
+    sBvScreenTitle:'备份库',sBvLbl:'备份库',sBvSub:'管理多个备份',
+    bvJsonT:'从下载中加载JSON备份',bvJsonD:'从设备选择已保存的.json文件',bvJsonBtn:'📂 选择文件',
+    bvIosWarn:'⚠️ <strong>iOS提示：</strong>Safari/Edge可能删除数据，请定期导出JSON。',bvIosLast:'上次导出：',bvIosNone:'尚未导出。',
+    bvNamePH:'名称（如：假期前）',bvSaveBtn:'💾 保存',
+    bvRec:'食谱',bvRecs:'食谱',
+    bvSecManual:'📌 我的备份',bvSecAuto:'🔄 自动备份（最近 {n} 个）',bvEmpty:'暂无备份。立即创建第一个备份。',
+    bvBtnLoad:'加载备份',bvBtnExp:'导出JSON',bvBtnDel:'删除',
     expTitle:'💾 保存 & 导出',
     expEpubT:'电子书（EPUB 3）',expEpubD:'所有食谱导出为EPUB 3。',expEpubBtn:'📥 创建EPUB',epubProg:'正在创建EPUB …',epubDone:'✅ EPUB已创建！',
     expFlipT:'翻页书（HTML）',expFlipD:'交互式翻页书，离线在任何浏览器中使用。',expFlipBtn:'📥 创建翻页书',flipProg:'正在创建 …',flipDone:'✅ 翻页书已创建！',
+    expPdfT:'PDF书籍',expPdfD:'所有食谱导出为带封面的可打印PDF。',expPdfBtn:'📥 创建PDF书籍',
     expJsonT:'数据备份（JSON）',expJsonD:'将所有食谱和菜单保存为JSON文件。',expJsonSafe:'🔒 不含API密钥 — 可安全共享',expJsonBtn:'💾 创建备份',
     sTheme:'🎨 主题',sLang:'🌐 语言',sData:'📁 导入 & 导出',
     sImpLbl:'导入',sImpSub:'图片、AI扫描、备份',
@@ -2741,7 +2771,7 @@ const LANGS={
     resetShop:'重置',recPickerTitle:'选择食谱',noFolder:'— 无 —',
     thDefault:'乡村',thSpring:'春天',thNight:'夜晚',thModern:'现代',thColor:'多彩',thNeon:'霓虹',thPastel:'粉彩',
     noRecipes:'暂无食谱',emptyStateDesc:'添加您的第一个食谱 — 通过照片、网址或手动输入。',emptyStateAdd:'添加',clearConfirm:'真的要删除所有数据吗？',
-    hlpTitle:'ℹ️ 帮助 · 分享 · 修复',hlpShare:'🆘 帮助 & 紧急链接',hlpShareSub:'即使应用崩溃也能使用 · 修复 · 分享',hlpExport:'备份食谱',hlpExportSub:'导出 JSON 文件并妥善保存',hlpImport:'恢复备份',hlpImportSub:'加载 JSON 备份文件以恢复食谱',hlpCache:'清除缓存 – 操作指南',hlpCacheSub:'当应用无法正常加载时',hlpReset:'重置应用',hlpResetSub:'删除所有数据 – 请先创建备份！',hlpCacheTitle:'🧹 如何清除缓存',hlpCacheOk:'明白了 ✓',hlpResetMsg:'⚠️ 所有食谱和设置将被删除。\n\n您已创建备份吗？\n\n继续并删除所有数据？',
+    hlpTitle:'ℹ️ 帮助 · 分享 · 修复',hlpShare:'🆘 帮助 & 紧急链接',hlpShareSub:'即使应用崩溃也能使用 · 修复 · 分享',hlpExport:'备份食谱',hlpExportSub:'导出 JSON 文件并妥善保存',hlpImport:'恢复备份',hlpImportSub:'加载 JSON 备份文件以恢复食谱',hlpCache:'清除缓存 – 操作指南',hlpCacheSub:'当应用无法正常加载时',hlpReset:'重置应用',hlpResetSub:'删除所有数据 – 请先创建备份！',hlpCacheTitle:'🧹 如何清除缓存',hlpCacheOk:'明白了 ✓',hlpShareBtn:'🆘 打开紧急链接',hlpExportBtn:'📤 创建备份',hlpImportBtn:'📥 加载备份',hlpCacheBtn:'🧹 显示说明',hlpResetBtn:'⚠️ 重置',hlpResetMsg:'⚠️ 所有食谱和设置将被删除。\n\n您已创建备份吗？\n\n继续并删除所有数据？',
     mvNone:'菜单中暂无食谱。',cookHint:'点击步骤标记完成 ✓',
     cropTitle:'调整图片裁剪',cropBtn:'裁剪',cpCenter:'⬛ 居中',cpTop:'⬆ 上方',cpBottom:'⬇ 下方',cpLeft:'◀ 左侧',cpRight:'▶ 右侧',cropSave:'✓ 保存',cropCancel:'取消',cropReset:'↺ 重置',cropHint:'✂️ 调整裁剪',
     printBtn:'🖨️ 打印食谱 / 保存PDF',printSub:'配料和制作步骤',srvLabel:'份量',srvBase:'基础',srvFor:'供',srvPers:'人',srvCustom:'自定义',srvReset:'重置',prepTimeLabel:'⏱ 准备时间',prepTimeMin:'分',prepTimeHr:'时',prepTimePh:'分钟',prepTimeAuto:'自动',
@@ -2795,7 +2825,7 @@ const LANGS={
     mvTitle:'Mi menú',mvTabTl:'🗓️ Orden',mvTabSh:'🛒 Comprar',mvTabCk:'👩‍🍳 Cocinar',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimir / PDF',mvClose:'Cerrar',
     bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
-    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabScan:'📄 Scan IA',impTabJson:'💾 Copia',
+    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'💾 Copia',
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
     sc1T:'Seleccionar foto de receta',sc1D:'Foto de galería, cámara o carpeta.',
     sc2T:'La IA lee la receta (Internet necesario)',sc2D:'Claude reconoce ingredientes, cantidades y pasos.',
@@ -2803,11 +2833,19 @@ const LANGS={
     scanDropLbl:'Seleccionar imagen de receta',apiKeyLbl:'Clave API de Claude',
     apiHint:'Solo guardado localmente.',scanBtn:'✨ Escanear',
     bakTitle:'💾 Cargar copia de seguridad',
-    bakDesc:'Cargar archivo .json exportado. Atención: los datos actuales se sobrescribirán.',
+    bakDesc:'Cargar archivo .json exportado. Atención: los datos actuales se sobrescribirán o añadirán.',
     bakBtn:'📂 Seleccionar archivo',
+    sBvScreenTitle:'Bóveda de copias',sBvLbl:'Bóveda de copias',sBvSub:'Gestionar múltiples copias de seguridad',
+    bvJsonT:'Cargar copia JSON desde descargas',bvJsonD:'Selecciona un archivo .json guardado en tu dispositivo',bvJsonBtn:'📂 Seleccionar archivo',
+    bvIosWarn:'⚠️ <strong>Aviso iOS:</strong> Safari/Edge puede borrar datos. Exporta regularmente en JSON.',bvIosLast:'Último export:',bvIosNone:'Sin exportaciones.',
+    bvNamePH:'Nombre (p.ej. Antes de vacaciones)',bvSaveBtn:'💾 Guardar',
+    bvRec:'receta',bvRecs:'recetas',
+    bvSecManual:'📌 Mis copias',bvSecAuto:'🔄 Copias automáticas (últimas {n})',bvEmpty:'Sin copias. Crea tu primera copia ahora.',
+    bvBtnLoad:'Cargar',bvBtnExp:'Exportar JSON',bvBtnDel:'Eliminar',
     expTitle:'💾 Guardar & Exportar',
     expEpubT:'E-Book (EPUB 3)',expEpubD:'Todas las recetas como EPUB 3 — para Google Play Books, iBooks.',expEpubBtn:'📥 Crear EPUB',epubProg:'Creando EPUB …',epubDone:'✅ EPUB creado!',
     expFlipT:'Libro interactivo (HTML)',expFlipD:'Libro interactivo como HTML — sin conexión en cualquier navegador.',expFlipBtn:'📥 Crear libro',flipProg:'Creando …',flipDone:'✅ Libro creado!',
+    expPdfT:'Libro PDF',expPdfD:'Todas las recetas como PDF imprimible con portada.',expPdfBtn:'📥 Crear libro PDF',
     expJsonT:'Copia de seguridad (JSON)',expJsonD:'Guardar todas las recetas y menús como JSON.',expJsonSafe:'🔒 Sin claves API — seguro para compartir',expJsonBtn:'💾 Crear copia de seguridad',
     sTheme:'🎨 TEMA',sLang:'🌐 IDIOMA',sData:'📁 IMPORTAR & EXPORTAR',
     sImpLbl:'Importar',sImpSub:'Imágenes, Scan IA, Copia',
@@ -2839,7 +2877,7 @@ const LANGS={
     resetShop:'Restablecer',recPickerTitle:'Elegir receta',noFolder:'— ninguna —',
     thDefault:'Rural',thSpring:'Primavera',thNight:'Noche',thModern:'Moderno',thColor:'Colorido',thNeon:'Neón',thPastel:'Pastel',
     noRecipes:'Aún no hay recetas',emptyStateDesc:'Añade tu primera receta — por foto, enlace web o manualmente.',emptyStateAdd:'añadir',clearConfirm:'¿Borrar TODOS los datos? Esto no se puede deshacer.',
-    hlpTitle:'ℹ️ Ayuda · Compartir · Reparar',hlpShare:'🆘 Ayuda & Enlace de emergencia',hlpShareSub:'Funciona aunque la app esté rota · Reparar · Compartir',hlpExport:'Guardar recetas (copia de seguridad)',hlpExportSub:'Exportar archivo JSON y guardarlo',hlpImport:'Restaurar copia de seguridad',hlpImportSub:'Cargar archivo JSON y recuperar recetas',hlpCache:'Borrar caché – instrucciones',hlpCacheSub:'Si la app no carga correctamente',hlpReset:'Restablecer app',hlpResetSub:'¡Borrar todos los datos – crea copia antes!',hlpCacheTitle:'🧹 Cómo borrar la caché',hlpCacheOk:'Entendido ✓',hlpResetMsg:'⚠️ Se eliminarán todas las recetas y ajustes.\n\n¿Has creado una copia de seguridad?\n\n¿Continuar y borrar todos los datos?',
+    hlpTitle:'ℹ️ Ayuda · Compartir · Reparar',hlpShare:'🆘 Ayuda & Enlace de emergencia',hlpShareSub:'Funciona aunque la app esté rota · Reparar · Compartir',hlpExport:'Guardar recetas (copia de seguridad)',hlpExportSub:'Exportar archivo JSON y guardarlo',hlpImport:'Restaurar copia de seguridad',hlpImportSub:'Cargar archivo JSON y recuperar recetas',hlpCache:'Borrar caché – instrucciones',hlpCacheSub:'Si la app no carga correctamente',hlpReset:'Restablecer app',hlpResetSub:'¡Borrar todos los datos – crea copia antes!',hlpCacheTitle:'🧹 Cómo borrar la caché',hlpCacheOk:'Entendido ✓',hlpShareBtn:'🆘 Abrir enlace de emergencia',hlpExportBtn:'📤 Crear copia de seguridad',hlpImportBtn:'📥 Cargar copia de seguridad',hlpCacheBtn:'🧹 Mostrar instrucciones',hlpResetBtn:'⚠️ Restablecer',hlpResetMsg:'⚠️ Se eliminarán todas las recetas y ajustes.\n\n¿Has creado una copia de seguridad?\n\n¿Continuar y borrar todos los datos?',
     mvNone:'Aún no hay recetas en el menú.',cookHint:'Tocar paso = hecho ✓',
     cropTitle:'Ajustar recorte',cropBtn:'Recorte',cpCenter:'⬛ Centro',cpTop:'⬆ Arriba',cpBottom:'⬇ Abajo',cpLeft:'◀ Izquierda',cpRight:'▶ Derecha',cropSave:'✓ Guardar',cropCancel:'Cancelar',cropReset:'↺ Restablecer',cropHint:'✂️ Ajustar recorte',
     printBtn:'🖨️ Imprimir receta / PDF',printSub:'Lista de ingredientes y preparación',srvLabel:'Porciones',srvBase:'Base',srvFor:'para',srvPers:'pers.',srvCustom:'número propio',srvReset:'Restablecer',prepTimeLabel:'⏱ Tiempo prep.',prepTimeMin:'min.',prepTimeHr:'h.',prepTimePh:'min',prepTimeAuto:'auto',
@@ -2916,7 +2954,9 @@ const LANGS={
     bnBv:'Coffre',
     impTitle:'📥 Importer',
     impTabImg:'🖼️ Images',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Texte',
     impTabJson:'💾 Sauvegarde',
     imgDropLbl:'Sélectionner des images',
     sc1T:'Sélectionner photo',
@@ -2930,8 +2970,15 @@ const LANGS={
     apiHint:'Enregistré localement.',
     scanBtn:'✨ Scanner',
     bakTitle:'💾 Charger sauvegarde',
-    bakDesc:'Charger fichier json.',
+    bakDesc:'Charger un fichier .json exporté. Attention : les données actuelles seront remplacées ou ajoutées.',
     bakBtn:'📂 Sélectionner fichier',
+    sBvScreenTitle:'Coffre de sauvegardes',sBvLbl:'Coffre de sauvegardes',sBvSub:'Gérer plusieurs sauvegardes',
+    bvJsonT:'Charger sauvegarde JSON',bvJsonD:'Sélectionner un fichier .json depuis l\'appareil',bvJsonBtn:'📂 Sélectionner fichier',
+    bvIosWarn:'⚠️ <strong>iOS :</strong> Safari/Edge peut supprimer des données. Exportez régulièrement en JSON.',bvIosLast:'Dernier export :',bvIosNone:'Aucun export.',
+    bvNamePH:'Nom (ex. Avant vacances)',bvSaveBtn:'💾 Sauvegarder',
+    bvRec:'recette',bvRecs:'recettes',
+    bvSecManual:'📌 Mes sauvegardes',bvSecAuto:'🔄 Sauvegardes automatiques (dernières {n})',bvEmpty:'Aucune sauvegarde. Créez votre première maintenant.',
+    bvBtnLoad:'Charger',bvBtnExp:'Exporter JSON',bvBtnDel:'Supprimer',
     expTitle:'💾 Sauvegarder & Exporter',
     expEpubT:'E-Book EPUB 3',
     expEpubD:'Toutes les recettes en EPUB.',
@@ -2941,6 +2988,7 @@ const LANGS={
     expFlipT:'Livre interactif',
     expFlipD:'Livre HTML hors ligne.',
     expFlipBtn:'📥 Créer livre',
+    expPdfT:'Livre PDF',expPdfD:'Toutes les recettes en PDF imprimable avec couverture.',expPdfBtn:'📥 Créer livre PDF',
     flipProg:'Création',
     flipDone:'✅ Livre créé!',
     expJsonT:'Sauvegarde JSON',
@@ -3021,7 +3069,7 @@ const LANGS={
     thNeon:'Néon',thPastel:'Pastel',
     noRecipes:'Aucune recette',emptyStateDesc:'Ajoutez votre première recette — par photo, lien web ou manuellement.',emptyStateAdd:'ajouter',
     clearConfirm:'Supprimer TOUTES données?',
-    hlpTitle:'ℹ️ Aide · Partager · Réparer',hlpShare:'🆘 Aide & Lien d\'urgence',hlpShareSub:'Fonctionne même si l\'app est cassée · Réparer · Partager',hlpExport:'Sauvegarder les recettes',hlpExportSub:'Exporter le fichier JSON et le conserver',hlpImport:'Restaurer la sauvegarde',hlpImportSub:'Charger le fichier JSON et récupérer les recettes',hlpCache:'Vider le cache – instructions',hlpCacheSub:'Si l\'app ne se charge pas correctement',hlpReset:'Réinitialiser l\'app',hlpResetSub:'Supprimer tout – sauvegardez d\'abord !',hlpCacheTitle:'🧹 Comment vider le cache',hlpCacheOk:'Compris ✓',hlpResetMsg:'⚠️ Toutes les recettes et paramètres seront supprimés.\n\nAvez-vous créé une sauvegarde ?\n\nContinuer et tout supprimer ?',
+    hlpTitle:'ℹ️ Aide · Partager · Réparer',hlpShare:'🆘 Aide & Lien d\'urgence',hlpShareSub:'Fonctionne même si l\'app est cassée · Réparer · Partager',hlpExport:'Sauvegarder les recettes',hlpExportSub:'Exporter le fichier JSON et le conserver',hlpImport:'Restaurer la sauvegarde',hlpImportSub:'Charger le fichier JSON et récupérer les recettes',hlpCache:'Vider le cache – instructions',hlpCacheSub:'Si l\'app ne se charge pas correctement',hlpReset:'Réinitialiser l\'app',hlpResetSub:'Supprimer tout – sauvegardez d\'abord !',hlpCacheTitle:'🧹 Comment vider le cache',hlpCacheOk:'Compris ✓',hlpShareBtn:'🆘 Ouvrir le lien d\'urgence',hlpExportBtn:'📤 Créer la sauvegarde',hlpImportBtn:'📥 Charger la sauvegarde',hlpCacheBtn:'🧹 Afficher les instructions',hlpResetBtn:'⚠️ Réinitialiser',hlpResetMsg:'⚠️ Toutes les recettes et paramètres seront supprimés.\n\nAvez-vous créé une sauvegarde ?\n\nContinuer et tout supprimer ?',
     mvNone:'Aucune recette dans menu.',
     cookHint:'Appuyer étape = fait ✓',
     cropTitle:'Ajuster cadrage',
@@ -3121,7 +3169,9 @@ const LANGS={
     bnBv:'Archivio',
     impTitle:'📥 Importa',
     impTabImg:'🖼️ Immagini',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Testo',
     impTabJson:'💾 Backup',
     imgDropLbl:'Seleziona immagini',
     sc1T:'Seleziona foto ricetta',
@@ -3135,8 +3185,15 @@ const LANGS={
     apiHint:'Salvato localmente.',
     scanBtn:'✨ Scansiona',
     bakTitle:'💾 Carica backup',
-    bakDesc:'Carica file json.',
+    bakDesc:'Carica un file .json esportato. Attenzione: i dati attuali verranno sovrascritti o aggiunti.',
     bakBtn:'📂 Seleziona file',
+    sBvScreenTitle:'Archivio backup',sBvLbl:'Archivio backup',sBvSub:'Gestisci più backup',
+    bvJsonT:'Carica backup JSON',bvJsonD:'Seleziona un file .json salvato sul dispositivo',bvJsonBtn:'📂 Seleziona file',
+    bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge può eliminare i dati. Esporta regolarmente in JSON.',bvIosLast:'Ultimo export:',bvIosNone:'Nessun export.',
+    bvNamePH:'Nome (es. Prima delle vacanze)',bvSaveBtn:'💾 Salva',
+    bvRec:'ricetta',bvRecs:'ricette',
+    bvSecManual:'📌 I miei backup',bvSecAuto:'🔄 Backup automatici (ultimi {n})',bvEmpty:'Nessun backup. Crea il primo ora.',
+    bvBtnLoad:'Carica',bvBtnExp:'Esporta JSON',bvBtnDel:'Elimina',
     expTitle:'💾 Salva & Esporta',
     expEpubT:'E-Book EPUB 3',
     expEpubD:'Tutte le ricette come EPUB.',
@@ -3146,6 +3203,7 @@ const LANGS={
     expFlipT:'Libro interattivo',
     expFlipD:'Libro HTML offline.',
     expFlipBtn:'📥 Crea libro',
+    expPdfT:'Libro PDF',expPdfD:'Tutte le ricette come PDF stampabile con copertina.',expPdfBtn:'📥 Crea libro PDF',
     flipProg:'Creazione',
     flipDone:'✅ Libro creato!',
     expJsonT:'Backup JSON',
@@ -3226,7 +3284,7 @@ const LANGS={
     thNeon:'Neon',thPastel:'Pastello',
     noRecipes:'Nessuna ricetta',emptyStateDesc:'Aggiungi la tua prima ricetta — tramite foto, link web o manualmente.',emptyStateAdd:'aggiungere',
     clearConfirm:'Eliminare TUTTI i dati?',
-    hlpTitle:'ℹ️ Aiuto · Condividi · Ripara',hlpShare:'🆘 Aiuto & Link di emergenza',hlpShareSub:'Funziona anche se l\'app è rotta · Ripara · Condividi',hlpExport:'Salva ricette (backup)',hlpExportSub:'Esporta file JSON e conservalo',hlpImport:'Ripristina backup',hlpImportSub:'Carica file JSON e recupera le ricette',hlpCache:'Svuota cache – istruzioni',hlpCacheSub:'Se l\'app non si carica correttamente',hlpReset:'Ripristina app',hlpResetSub:'Elimina tutto – crea prima un backup!',hlpCacheTitle:'🧹 Come svuotare la cache',hlpCacheOk:'Capito ✓',hlpResetMsg:'⚠️ Tutte le ricette e impostazioni verranno eliminate.\n\nHai creato un backup?\n\nContinuare ed eliminare tutto?',
+    hlpTitle:'ℹ️ Aiuto · Condividi · Ripara',hlpShare:'🆘 Aiuto & Link di emergenza',hlpShareSub:'Funziona anche se l\'app è rotta · Ripara · Condividi',hlpExport:'Salva ricette (backup)',hlpExportSub:'Esporta file JSON e conservalo',hlpImport:'Ripristina backup',hlpImportSub:'Carica file JSON e recupera le ricette',hlpCache:'Svuota cache – istruzioni',hlpCacheSub:'Se l\'app non si carica correttamente',hlpReset:'Ripristina app',hlpResetSub:'Elimina tutto – crea prima un backup!',hlpCacheTitle:'🧹 Come svuotare la cache',hlpCacheOk:'Capito ✓',hlpShareBtn:'🆘 Apri link di emergenza',hlpExportBtn:'📤 Crea backup',hlpImportBtn:'📥 Carica backup',hlpCacheBtn:'🧹 Mostra istruzioni',hlpResetBtn:'⚠️ Ripristina',hlpResetMsg:'⚠️ Tutte le ricette e impostazioni verranno eliminate.\n\nHai creato un backup?\n\nContinuare ed eliminare tutto?',
     mvNone:'Nessuna ricetta nel menu.',
     cookHint:'Tocca passo = fatto ✓',
     cropTitle:'Regola ritaglio',
@@ -3326,7 +3384,9 @@ const LANGS={
     bnBv:'Cofre',
     impTitle:'📥 Importar',
     impTabImg:'🖼️ Imagens',
+    impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
+    impTabTxt:'📝 Texto',
     impTabJson:'💾 Cópia',
     imgDropLbl:'Selecionar imagens',
     sc1T:'Selecionar foto receita',
@@ -3340,8 +3400,15 @@ const LANGS={
     apiHint:'Guardado localmente.',
     scanBtn:'✨ Digitalizar',
     bakTitle:'💾 Carregar cópia',
-    bakDesc:'Carregar ficheiro json.',
+    bakDesc:'Carregar ficheiro .json exportado. Atenção: os dados atuais serão substituídos ou adicionados.',
     bakBtn:'📂 Selecionar ficheiro',
+    sBvScreenTitle:'Cofre de cópias',sBvLbl:'Cofre de cópias',sBvSub:'Gerir múltiplas cópias de segurança',
+    bvJsonT:'Carregar cópia JSON',bvJsonD:'Selecionar ficheiro .json guardado no dispositivo',bvJsonBtn:'📂 Selecionar ficheiro',
+    bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge pode apagar dados. Exporte regularmente em JSON.',bvIosLast:'Último export:',bvIosNone:'Sem exports.',
+    bvNamePH:'Nome (ex. Antes das férias)',bvSaveBtn:'💾 Guardar',
+    bvRec:'receita',bvRecs:'receitas',
+    bvSecManual:'📌 As minhas cópias',bvSecAuto:'🔄 Cópias automáticas (últimas {n})',bvEmpty:'Sem cópias. Crie a primeira agora.',
+    bvBtnLoad:'Carregar',bvBtnExp:'Exportar JSON',bvBtnDel:'Eliminar',
     expTitle:'💾 Guardar & Exportar',
     expEpubT:'E-Book EPUB 3',
     expEpubD:'Todas as receitas como EPUB.',
@@ -3351,6 +3418,7 @@ const LANGS={
     expFlipT:'Livro interativo',
     expFlipD:'Livro HTML offline.',
     expFlipBtn:'📥 Criar livro',
+    expPdfT:'Livro PDF',expPdfD:'Todas as receitas como PDF imprimível com capa.',expPdfBtn:'📥 Criar livro PDF',
     flipProg:'A criar',
     flipDone:'✅ Livro criado!',
     expJsonT:'Cópia JSON',
@@ -3431,7 +3499,7 @@ const LANGS={
     thNeon:'Néon',thPastel:'Pastel',
     noRecipes:'Sem receitas',emptyStateDesc:'Adicione a sua primeira receita — por foto, link da web ou manualmente.',emptyStateAdd:'adicionar',
     clearConfirm:'Apagar TODOS dados?',
-    hlpTitle:'ℹ️ Ajuda · Partilhar · Reparar',hlpShare:'🆘 Ajuda & Link de emergência',hlpShareSub:'Funciona mesmo que a app esteja com problemas · Reparar · Partilhar',hlpExport:'Guardar receitas (backup)',hlpExportSub:'Exportar ficheiro JSON e guardar',hlpImport:'Restaurar backup',hlpImportSub:'Carregar ficheiro JSON e recuperar receitas',hlpCache:'Limpar cache – instruções',hlpCacheSub:'Se a app não carregar corretamente',hlpReset:'Repor app',hlpResetSub:'Apagar tudo – crie backup primeiro!',hlpCacheTitle:'🧹 Como limpar o cache',hlpCacheOk:'Entendido ✓',hlpResetMsg:'⚠️ Todas as receitas e definições serão eliminadas.\n\nCriou um backup?\n\nContinuar e apagar tudo?',
+    hlpTitle:'ℹ️ Ajuda · Partilhar · Reparar',hlpShare:'🆘 Ajuda & Link de emergência',hlpShareSub:'Funciona mesmo que a app esteja com problemas · Reparar · Partilhar',hlpExport:'Guardar receitas (backup)',hlpExportSub:'Exportar ficheiro JSON e guardar',hlpImport:'Restaurar backup',hlpImportSub:'Carregar ficheiro JSON e recuperar receitas',hlpCache:'Limpar cache – instruções',hlpCacheSub:'Se a app não carregar corretamente',hlpReset:'Repor app',hlpResetSub:'Apagar tudo – crie backup primeiro!',hlpCacheTitle:'🧹 Como limpar o cache',hlpCacheOk:'Entendido ✓',hlpShareBtn:'🆘 Abrir link de emergência',hlpExportBtn:'📤 Criar backup',hlpImportBtn:'📥 Carregar backup',hlpCacheBtn:'🧹 Mostrar instruções',hlpResetBtn:'⚠️ Repor',hlpResetMsg:'⚠️ Todas as receitas e definições serão eliminadas.\n\nCriou um backup?\n\nContinuar e apagar tudo?',
     mvNone:'Sem receitas no menu.',
     cookHint:'Tocar passo = feito ✓',
     cropTitle:'Ajustar recorte',
@@ -3825,13 +3893,14 @@ function applyLang(code){
   const ids=['pTitle','lName','lCat','lFolder','lFlavor','btnCreate','btnCancel',
     'menuTitle','mActAdd','mActView','mvTitle','mvTabTl','mvTabSh','mvTabCk','mvTabAl','mvPrintBtn','mvCloseBtn',
     'bnRec','bnFld','bnMen','bnSet','bnBv',
-    'impTitle','impTabImg','impTabScan','impTabTxt','impTabJson','imgDropLbl',
+    'impTitle','impTabImg','impTabWeb','impTabScan','impTabTxt','impTabJson','imgDropLbl',
     'txtTitleEl','txtDescEl','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
     'txtSc1T','txtSc1D','txtWebLbl','txtSc2T','txtSc3T',
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
     'scanOpenLink','scanReadyLbl','scanChangeLbl','scanBtnLbl','pasteBtnLbl',
     'cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight',
     'bakTitle','bakDesc','bakBtn',
+    'sBvScreenTitle','sBvLbl','sBvSub',
     'expTitle','expPdfT','expPdfD','expPdfBtn','expFlipT','expFlipD','expFlipBtn',
     'expJsonT','expJsonD','expJsonSafe','expJsonBtn',
     'sTheme','sLang','sData','sImpLbl','sImpSub','sExpLbl','sExpSub',
@@ -3840,9 +3909,10 @@ function applyLang(code){
     'fldTitle','fldSearch','fldNew','fldShTitle','fldNameLbl','fldIconLbl','fldCancel','fldSave',
     'cshTitle','csCancel','csConfirm','pwaText','pwaBtn','updText','updBtn',
     'hAddLbl',
-    'hlpTitleEl','hlpShareEl','hlpShareSubEl','hlpExportEl','hlpExportSubEl',
-    'hlpImportEl','hlpImportSubEl','hlpCacheEl','hlpCacheSubEl',
-    'hlpResetEl','hlpResetSubEl','hlpCacheTitleEl','hlpCacheOkEl'];
+    'hlpTitle','hlpShare','hlpShareSub','hlpExport','hlpExportSub',
+    'hlpImport','hlpImportSub','hlpCache','hlpCacheSub',
+    'hlpReset','hlpResetSub','hlpCacheTitle','hlpCacheOk',
+    'hlpShareBtn','hlpExportBtn','hlpImportBtn','hlpCacheBtn','hlpResetBtn'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&L[id]!==undefined)el.textContent=L[id];});
   const phs={srchIn:'searchPH',newName:'lName',newFlavor:'lFlavor',fldNameIn:'fldNameLbl'};
   for(const[id,k]of Object.entries(phs)){const el=document.getElementById(id);if(el)el.placeholder=L[k]||'';}
@@ -9112,11 +9182,10 @@ async function _renderVault(){
 
   // ── JSON aus Downloads laden ──────────────────────────────────────────────
   html+=`<div class="bvault-json">
-    <div class="bvault-json-lbl">📂 <strong>JSON-Backup aus Downloads laden</strong><br>
-      Wähle eine gespeicherte .json-Datei von deinem Gerät</div>
+    <div class="bvault-json-lbl">📂 <strong>${T('bvJsonT')}</strong><br>${T('bvJsonD')}</div>
     <label class="bvault-json-btn">
       <input type="file" accept=".json,application/json" onchange="importJsonFromVault(this)">
-      📂 Datei auswählen
+      ${T('bvJsonBtn')}
     </label>
   </div>`;
 
@@ -9125,18 +9194,19 @@ async function _renderVault(){
     const lastExp=localStorage.getItem('mrz9_last_export')||'';
     const daysSince=lastExp?Math.floor((Date.now()-new Date(lastExp))/864e5):999;
     if(daysSince>6||!lastExp){
+      const localeMap={de:'de-DE',en:'en-GB',ru:'ru-RU',zh:'zh-CN',es:'es-ES',fr:'fr-FR',it:'it-IT',pt:'pt-PT'};
+      const loc=localeMap[CL]||'de-DE';
       html+=`<div class="bvault-ios">
-        ⚠️ <strong>iOS-Hinweis:</strong> Safari und Edge können Browser-Daten automatisch löschen.
-        Exportiere deine Rezepte regelmäßig als JSON-Datei (auf deinem Gerät speichern).
-        ${lastExp?'Letzter Export: '+new Date(lastExp).toLocaleDateString('de-DE'):'Noch kein Export.'}
+        ${T('bvIosWarn')}
+        ${lastExp?T('bvIosLast')+' '+new Date(lastExp).toLocaleDateString(loc):T('bvIosNone')}
       </div>`;
     }
   }
 
   // Neues manuelles Backup
   html+=`<div class="bvault-new">
-    <input id="bvNewName" placeholder="Name (z.B. Vor dem Urlaub)" maxlength="40"/>
-    <button class="bvault-new-btn" onclick="saveManualBackup()" title="Neues Backup erstellen">💾 Sichern</button>
+    <input id="bvNewName" placeholder="${T('bvNamePH')}" maxlength="40"/>
+    <button class="bvault-new-btn" onclick="saveManualBackup()">${T('bvSaveBtn')}</button>
   </div>`;
 
   // Vault-Map für Export-Zugriff per ID
@@ -9144,37 +9214,40 @@ async function _renderVault(){
   sorted.forEach(e=>{window._bvMap[e.id]=e;});
 
   function _bvRow(e,ico){
-    const dt=new Date(e.ts).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+
-      new Date(e.ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const localeMap={de:'de-DE',en:'en-GB',ru:'ru-RU',zh:'zh-CN',es:'es-ES',fr:'fr-FR',it:'it-IT',pt:'pt-PT'};
+    const loc=localeMap[CL]||'de-DE';
+    const dt=new Date(e.ts).toLocaleDateString(loc,{day:'2-digit',month:'2-digit',year:'numeric'})+' '+
+      new Date(e.ts).toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'});
     const eid=e.id.replace(/'/g,"\\'");
+    const recLbl=`${e.recCnt} ${e.recCnt===1?T('bvRec'):T('bvRecs')}`;
     return`<div class="bvault-row">
       <div class="bvault-ico">${ico}</div>
       <div class="bvault-info">
         <div class="bvault-name">${e.name}</div>
-        <div class="bvault-meta">${dt} · ${e.recCnt} Rezept${e.recCnt!==1?'e':''}</div>
+        <div class="bvault-meta">${dt} · ${recLbl}</div>
       </div>
       <div class="bvault-acts">
-        <button class="bvault-btn load" onclick="loadFromVault('${eid}')" title="Backup laden">🔄</button>
-        <button class="bvault-btn exp" onclick="exportFromVault(window._bvMap['${eid}'])" title="Als JSON exportieren">📤</button>
-        <button class="bvault-btn del" onclick="deleteFromVault('${eid}')" title="Löschen">🗑</button>
+        <button class="bvault-btn load" onclick="loadFromVault('${eid}')" title="${T('bvBtnLoad')}">🔄</button>
+        <button class="bvault-btn exp" onclick="exportFromVault(window._bvMap['${eid}'])" title="${T('bvBtnExp')}">📤</button>
+        <button class="bvault-btn del" onclick="deleteFromVault('${eid}')" title="${T('bvBtnDel')}">🗑</button>
       </div>
     </div>`;
   }
 
   // Manuelle Backups
   if(manual.length>0){
-    html+=`<div class="bvault-sec">📌 Eigene Backups</div>`;
+    html+=`<div class="bvault-sec">${T('bvSecManual')}</div>`;
     manual.forEach(e=>{html+=_bvRow(e,'📋');});
   }
 
   // Auto-Backups
   if(auto.length>0){
-    html+=`<div class="bvault-sec">🔄 Automatische Backups (letzte ${_BV_MAX_AUTO})</div>`;
+    html+=`<div class="bvault-sec">${T('bvSecAuto').replace('{n}',_BV_MAX_AUTO)}</div>`;
     auto.forEach(e=>{html+=_bvRow(e,'🕐');});
   }
 
   if(manual.length===0&&auto.length===0){
-    html+=`<div class="bvault-empty">🗂️ Noch keine Backups.<br>Erstelle jetzt dein erstes Backup.</div>`;
+    html+=`<div class="bvault-empty">🗂️ ${T('bvEmpty')}</div>`;
   }
 
   body.innerHTML=html;
@@ -9563,15 +9636,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <div class="fov" id="helpOv" style="display:none">
   <div class="fov-hdr" onclick="closeHelpOv()">
     <button class="fov-back" onclick="event.stopPropagation();closeHelpOv()" title="Zurück">←</button>
-    <div class="fov-title" id="hlpTitleEl">ℹ️ Hilfe · Teilen · Reparatur</div>
+    <div class="fov-title" id="hlpTitle">ℹ️ Hilfe · Teilen · Reparatur</div>
   </div>
   <div class="fov-body">
 
     <div class="exp-card">
       <div class="exp-ico">🆘</div>
       <div>
-        <div class="exp-title" id="hlpShareEl">🆘 Hilfe &amp; Notfall-Link</div>
-        <div class="exp-desc" id="hlpShareSubEl">Einladungslink öffnen – funktioniert auch wenn die App kaputt ist · Reparieren · Teilen · QR-Code</div>
+        <div class="exp-title" id="hlpShare">🆘 Hilfe &amp; Notfall-Link</div>
+        <div class="exp-desc" id="hlpShareSub">Einladungslink öffnen – funktioniert auch wenn die App kaputt ist · Reparieren · Teilen · QR-Code</div>
         <button class="exp-btn tl" onclick="helpAction('invite')" id="hlpShareBtn">🆘 Notfall-Link öffnen</button>
       </div>
     </div>
@@ -9579,8 +9652,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     <div class="exp-card">
       <div class="exp-ico">💾</div>
       <div>
-        <div class="exp-title" id="hlpExportEl">Rezepte sichern (Backup)</div>
-        <div class="exp-desc" id="hlpExportSubEl">JSON-Datei exportieren und sicher speichern</div>
+        <div class="exp-title" id="hlpExport">Rezepte sichern (Backup)</div>
+        <div class="exp-desc" id="hlpExportSub">JSON-Datei exportieren und sicher speichern</div>
         <button class="exp-btn grn" onclick="helpAction('export')" id="hlpExportBtn">📤 Backup erstellen</button>
       </div>
     </div>
@@ -9588,8 +9661,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     <div class="exp-card">
       <div class="exp-ico">📂</div>
       <div>
-        <div class="exp-title" id="hlpImportEl">Backup wiederherstellen</div>
-        <div class="exp-desc" id="hlpImportSubEl">JSON-Backup laden und Rezepte zurückholen</div>
+        <div class="exp-title" id="hlpImport">Backup wiederherstellen</div>
+        <div class="exp-desc" id="hlpImportSub">JSON-Backup laden und Rezepte zurückholen</div>
         <button class="exp-btn grn" onclick="helpAction('import')" id="hlpImportBtn">📥 Backup laden</button>
       </div>
     </div>
@@ -9597,8 +9670,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     <div class="exp-card">
       <div class="exp-ico">🧹</div>
       <div>
-        <div class="exp-title" id="hlpCacheEl">Cache leeren – Anleitung</div>
-        <div class="exp-desc" id="hlpCacheSubEl">Wenn die App nicht richtig lädt</div>
+        <div class="exp-title" id="hlpCache">Cache leeren – Anleitung</div>
+        <div class="exp-desc" id="hlpCacheSub">Wenn die App nicht richtig lädt</div>
         <button class="exp-btn gld" onclick="helpAction('cache')" id="hlpCacheBtn">🧹 Anleitung anzeigen</button>
       </div>
     </div>
@@ -9606,8 +9679,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     <div class="exp-card">
       <div class="exp-ico">⚠️</div>
       <div>
-        <div class="exp-title" id="hlpResetEl" style="color:var(--rust)">App zurücksetzen</div>
-        <div class="exp-desc" id="hlpResetSubEl">Alle Daten löschen – erst Backup erstellen!</div>
+        <div class="exp-title" id="hlpReset" style="color:var(--rust)">App zurücksetzen</div>
+        <div class="exp-desc" id="hlpResetSub">Alle Daten löschen – erst Backup erstellen!</div>
         <button class="exp-btn brn" onclick="helpAction('reset')" id="hlpResetBtn" style="border-color:var(--rust);color:var(--rust)">⚠️ Zurücksetzen</button>
       </div>
     </div>
@@ -9619,7 +9692,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <div class="fov" id="cacheOv" style="display:none">
   <div class="fov-hdr" onclick="document.getElementById('cacheOv').style.display='none'">
     <button class="fov-back" onclick="event.stopPropagation();document.getElementById('cacheOv').style.display='none'" title="Zurück">←</button>
-    <div class="fov-title" id="hlpCacheTitleEl">🧹 Cache leeren – so geht's</div>
+    <div class="fov-title" id="hlpCacheTitle">🧹 Cache leeren – so geht's</div>
   </div>
   <div class="fov-body">
     <div class="exp-card"><div class="exp-ico">🍎</div><div>
@@ -9639,7 +9712,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       <div class="exp-desc">Strg+Shift+Entf → Cache auswählen → Löschen → Seite neu laden</div>
     </div></div>
     <div style="padding:8px 0">
-      <button class="exp-btn tl" style="width:100%;padding:11px;font-size:.82rem" id="hlpCacheOkEl"
+      <button class="exp-btn tl" style="width:100%;padding:11px;font-size:.82rem" id="hlpCacheOk"
         onclick="document.getElementById('cacheOv').style.display='none'">✓ Verstanden</button>
     </div>
   </div>
