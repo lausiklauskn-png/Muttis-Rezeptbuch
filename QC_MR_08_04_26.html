@@ -604,6 +604,25 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .sett-lbl{font-size:.8rem;font-weight:700}
 .sett-sub{font-size:.64rem;color:var(--br3);margin-top:1px}
 .sett-arr{color:var(--br3);font-size:1.3rem;line-height:1}
+.a11y-combo{display:flex;align-items:stretch}
+.a11y-contrast-side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 10px;flex:0 0 44%;border-right:1px solid var(--sand2);text-align:center}
+.a11y-size-side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 10px;flex:1;text-align:center}
+.a11y-label{font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--br3)}
+.a11y-ruler-wrap{display:flex;align-items:center;gap:5px;width:100%}
+.a11y-ruler{flex:1;position:relative;padding-bottom:8px}
+.a11y-ruler input[type=range]{width:100%;margin:0;accent-color:var(--teal,#36706a)}
+.a11y-ticks{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;height:8px}
+.a11y-tick{width:1px;flex-shrink:0}
+.a11y-tick.major{background:var(--br3);height:8px}
+.a11y-tick.minor{background:var(--sand2,#ede5d8);height:5px}
+.a11y-a-sm{font-size:.72rem;font-weight:700;color:var(--br3);flex-shrink:0}
+.a11y-a-lg{font-size:.95rem;font-weight:700;color:var(--br3);flex-shrink:0}
+.a11y-toggle{position:relative;display:inline-flex;align-items:center;cursor:pointer}
+.a11y-toggle input{opacity:0;width:0;height:0;position:absolute}
+.a11y-track{display:inline-block;width:40px;height:22px;background:var(--sand2,#ede5d8);border-radius:11px;position:relative;transition:background .2s;flex-shrink:0}
+.a11y-toggle input:checked+.a11y-track{background:var(--teal,#36706a)}
+.a11y-track::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.a11y-toggle input:checked+.a11y-track::after{transform:translateX(18px)}
 .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 11px 10px}
 .theme-chip{border-radius:8px;padding:7px 4px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .12s}
 .theme-chip.on{border-color:var(--br)}
@@ -611,13 +630,16 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .theme-prev{width:100%;height:20px;border-radius:4px;margin-bottom:3px;display:flex;overflow:hidden}
 .theme-strip{flex:1}
 .theme-name{font-size:.6rem;font-weight:700}
-.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 11px 10px}
+.lang-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:6px 8px 8px}
 .lang-chip{border-radius:9px;padding:11px 8px;cursor:pointer;text-align:center;border:2px solid var(--sand2);background:var(--sand);transition:all .12s}
 .lang-chip.on{border-color:var(--br);background:var(--br);color:#fff}
 .lang-chip:active{opacity:.7}
 .lang-flag{font-size:1.6rem;display:block;margin-bottom:3px}
 .lang-name{font-size:.72rem;font-weight:700}
 .lang-nat{font-size:.64rem;color:var(--br3)}
+.lang-grid .lang-chip{flex-direction:column;padding:5px 3px;border-radius:8px;justify-content:center;align-items:center}
+.lang-grid .lang-flag{font-size:1.05rem;margin-bottom:1px}
+.lang-grid .lang-name{font-size:.58rem}
 .pwa-install{background:var(--teals);border:1px solid var(--teal);border-radius:9px;padding:10px 11px;display:flex;align-items:center;gap:8px;margin-bottom:10px;display:none}
 .pwa-install.show{display:flex}
 .upd-banner{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:9999;background:#1a4a3a;color:#fff;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,.35);font-size:.82rem;max-width:340px;width:calc(100% - 32px);display:none;animation:slideUp .3s ease}
@@ -1712,31 +1734,33 @@ button:active{transform:scale(0.97)}
     <div class="sett-sec" id="a11ySec">
       <div class="sett-head" id="sA11yHead">♿ BARRIEREFREIHEIT</div>
       <div class="a11y-sec">
-        <div class="a11y-row">
-          <div class="a11y-label" id="sA11ySize">Schriftgröße</div>
-          <div class="a11y-ruler-wrap">
-            <span class="a11y-a-sm">a</span>
-            <div class="a11y-ruler">
-              <input type="range" id="a11ySizeSlider" min="0" max="2" step="1" value="1" oninput="setA11ySize(this.value)">
-              <div class="a11y-ticks" aria-hidden="true">
-                <div class="a11y-tick major" style="left:0%"></div>
-                <div class="a11y-tick minor" style="left:16.67%"></div>
-                <div class="a11y-tick minor" style="left:33.33%"></div>
-                <div class="a11y-tick major" style="left:50%"></div>
-                <div class="a11y-tick minor" style="left:66.67%"></div>
-                <div class="a11y-tick minor" style="left:83.33%"></div>
-                <div class="a11y-tick major" style="left:100%"></div>
-              </div>
-            </div>
-            <span class="a11y-a-lg">A</span>
+        <div class="a11y-combo">
+          <div class="a11y-contrast-side">
+            <div class="a11y-label" id="sA11yContrast">Hoher Kontrast</div>
+            <label class="a11y-toggle">
+              <input type="checkbox" id="a11yHcToggle" onchange="setA11yContrast(this.checked)">
+              <span class="a11y-track"></span>
+            </label>
           </div>
-        </div>
-        <div class="a11y-row">
-          <div class="a11y-label" id="sA11yContrast">Hoher Kontrast</div>
-          <label class="a11y-toggle">
-            <input type="checkbox" id="a11yHcToggle" onchange="setA11yContrast(this.checked)">
-            <span class="a11y-track"></span>
-          </label>
+          <div class="a11y-size-side">
+            <div class="a11y-label" id="sA11ySize">Schriftgröße</div>
+            <div class="a11y-ruler-wrap">
+              <span class="a11y-a-sm">a</span>
+              <div class="a11y-ruler">
+                <input type="range" id="a11ySizeSlider" min="0" max="2" step="1" value="1" oninput="setA11ySize(this.value)">
+                <div class="a11y-ticks" aria-hidden="true">
+                  <div class="a11y-tick major"></div>
+                  <div class="a11y-tick minor"></div>
+                  <div class="a11y-tick minor"></div>
+                  <div class="a11y-tick major"></div>
+                  <div class="a11y-tick minor"></div>
+                  <div class="a11y-tick minor"></div>
+                  <div class="a11y-tick major"></div>
+                </div>
+              </div>
+              <span class="a11y-a-lg">A</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
