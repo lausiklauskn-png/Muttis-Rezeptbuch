@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <filter id="shadow512" x="-8%" y="-8%" width="116%" height="116%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#100820" flood-opacity="0.38"/>
-    </filter>
-    <!-- Spektralfarben des Lichts: Rot → Orange → Gelb → Grün → Cyan → Blau → Violett -->
-    <linearGradient id="spectrumCover512" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="specCov512" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"    stop-color="#FF0000"/>
       <stop offset="16.6%" stop-color="#FF7700"/>
       <stop offset="33.3%" stop-color="#FFE500"/>
@@ -13,22 +9,22 @@
       <stop offset="83.3%" stop-color="#0044FF"/>
       <stop offset="100%"  stop-color="#8800FF"/>
     </linearGradient>
-    <linearGradient id="spectrumSpine512" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"    stop-color="#FF0000"/>
-      <stop offset="25%"   stop-color="#FFE500"/>
-      <stop offset="50%"   stop-color="#00CC00"/>
-      <stop offset="75%"   stop-color="#0044FF"/>
-      <stop offset="100%"  stop-color="#8800FF"/>
+    <linearGradient id="specSp512" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FF0000"/>
+      <stop offset="25%"  stop-color="#FFE500"/>
+      <stop offset="50%"  stop-color="#00CC00"/>
+      <stop offset="75%"  stop-color="#0044FF"/>
+      <stop offset="100%" stop-color="#8800FF"/>
     </linearGradient>
-    <linearGradient id="pageLeft512" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#e8ddd0"/>
-      <stop offset="100%" stop-color="#f9f4ec"/>
-    </linearGradient>
-    <linearGradient id="pageRight512" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="pgL512" x1="1" y1="0" x2="0" y2="0">
       <stop offset="0%"   stop-color="#f9f4ec"/>
-      <stop offset="100%" stop-color="#e8ddd0"/>
+      <stop offset="100%" stop-color="#ede5d5"/>
     </linearGradient>
-    <linearGradient id="spectrumBar512" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="pgR512" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#f9f4ec"/>
+      <stop offset="100%" stop-color="#ede5d5"/>
+    </linearGradient>
+    <linearGradient id="specBar512" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%"    stop-color="#FF0000"/>
       <stop offset="20%"   stop-color="#FF7700"/>
       <stop offset="40%"   stop-color="#FFE500"/>
@@ -36,63 +32,62 @@
       <stop offset="80%"   stop-color="#0044FF"/>
       <stop offset="100%"  stop-color="#8800FF"/>
     </linearGradient>
+    <filter id="sh512" x="-14%" y="-14%" width="128%" height="128%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#100820" flood-opacity="0.45"/>
+    </filter>
   </defs>
 
-  <!-- Outer book cover – Spektralgradient -->
-  <rect x="36" y="72" width="440" height="368" rx="18" ry="18"
-        fill="url(#spectrumCover512)" filter="url(#shadow512)"/>
+  <rect x="30" y="72" width="220" height="372" rx="14" ry="14"
+        fill="url(#specCov512)" filter="url(#sh512)"/>
+  <rect x="262" y="72" width="220" height="372" rx="14" ry="14"
+        fill="url(#specCov512)" filter="url(#sh512)"/>
+  <rect x="44" y="84" width="204" height="348" rx="4" ry="4"
+        fill="url(#pgL512)"/>
+  <rect x="264" y="84" width="204" height="348" rx="4" ry="4"
+        fill="url(#pgR512)"/>
+  <rect x="240" y="64" width="32" height="388" rx="6" ry="6"
+        fill="url(#specSp512)"/>
+  <rect x="253" y="64" width="4" height="388"
+        fill="#ffffff" opacity="0.25"/>
 
-  <!-- Left page -->
-  <rect x="60" y="90" width="192" height="332" rx="4" ry="4"
-        fill="url(#pageLeft512)"/>
-
-  <!-- Right page -->
-  <rect x="260" y="90" width="192" height="332" rx="4" ry="4"
-        fill="url(#pageRight512)"/>
-
-  <!-- Spine -->
-  <rect x="240" y="72" width="32" height="368"
-        fill="url(#spectrumSpine512)"/>
-  <rect x="255" y="72" width="2" height="368"
-        fill="#ffffff" opacity="0.30"/>
-
-  <!-- Text lines – left page -->
+  <rect x="60" y="102" width="172" height="14" rx="7"
+        fill="url(#specBar512)" opacity="0.90"/>
   <g opacity="0.55">
-    <rect x="82"  y="130" width="148" height="8" rx="4" fill="#FF2200"/>
-    <rect x="82"  y="152" width="130" height="8" rx="4" fill="#FF7700"/>
-    <rect x="82"  y="174" width="148" height="8" rx="4" fill="#FFE500"/>
-    <rect x="82"  y="196" width="110" height="8" rx="4" fill="#00BB00"/>
-    <rect x="82"  y="218" width="148" height="8" rx="4" fill="#00AAEE"/>
-    <rect x="82"  y="240" width="138" height="8" rx="4" fill="#0044FF"/>
-    <rect x="82"  y="270" width="148" height="8" rx="4" fill="#8800FF"/>
-    <rect x="82"  y="292" width="120" height="8" rx="4" fill="#FF2200"/>
-    <rect x="82"  y="314" width="148" height="8" rx="4" fill="#FF7700"/>
-    <rect x="82"  y="336" width="100" height="8" rx="4" fill="#FFE500"/>
-    <rect x="82"  y="358" width="148" height="8" rx="4" fill="#00BB00"/>
+    <rect x="60" y="130" width="172" height="7" rx="3.5" fill="#FF2200"/>
+    <rect x="60" y="148" width="142" height="7" rx="3.5" fill="#FF7700"/>
+    <rect x="60" y="166" width="172" height="7" rx="3.5" fill="#FFE500"/>
+    <rect x="60" y="193" width="172" height="7" rx="3.5" fill="#00BB00"/>
+    <rect x="60" y="211" width="120" height="7" rx="3.5" fill="#00AAEE"/>
+    <rect x="60" y="229" width="172" height="7" rx="3.5" fill="#0044FF"/>
+    <rect x="60" y="256" width="172" height="7" rx="3.5" fill="#8800FF"/>
+    <rect x="60" y="274" width="154" height="7" rx="3.5" fill="#FF2200"/>
+    <rect x="60" y="292" width="172" height="7" rx="3.5" fill="#FF7700"/>
+    <rect x="60" y="319" width="172" height="7" rx="3.5" fill="#FFE500"/>
+    <rect x="60" y="337" width="132" height="7" rx="3.5" fill="#00BB00"/>
+    <rect x="60" y="355" width="172" height="7" rx="3.5" fill="#00AAEE"/>
+    <rect x="60" y="382" width="172" height="7" rx="3.5" fill="#0044FF"/>
+    <rect x="60" y="400" width="108" height="7" rx="3.5" fill="#8800FF"/>
   </g>
 
-  <!-- Text lines – right page -->
+  <rect x="280" y="102" width="172" height="14" rx="7"
+        fill="url(#specBar512)" opacity="0.90"/>
   <g opacity="0.55">
-    <rect x="282" y="130" width="148" height="8" rx="4" fill="#00AAEE"/>
-    <rect x="282" y="152" width="120" height="8" rx="4" fill="#0044FF"/>
-    <rect x="282" y="174" width="148" height="8" rx="4" fill="#8800FF"/>
-    <rect x="282" y="196" width="138" height="8" rx="4" fill="#FF2200"/>
-    <rect x="282" y="218" width="148" height="8" rx="4" fill="#FF7700"/>
-    <rect x="282" y="240" width="108" height="8" rx="4" fill="#FFE500"/>
-    <rect x="282" y="270" width="148" height="8" rx="4" fill="#00BB00"/>
-    <rect x="282" y="292" width="130" height="8" rx="4" fill="#00AAEE"/>
-    <rect x="282" y="314" width="148" height="8" rx="4" fill="#0044FF"/>
-    <rect x="282" y="336" width="115" height="8" rx="4" fill="#8800FF"/>
-    <rect x="282" y="358" width="148" height="8" rx="4" fill="#FF2200"/>
+    <rect x="280" y="130" width="172" height="7" rx="3.5" fill="#00AAEE"/>
+    <rect x="280" y="148" width="146" height="7" rx="3.5" fill="#0044FF"/>
+    <rect x="280" y="166" width="172" height="7" rx="3.5" fill="#8800FF"/>
+    <rect x="280" y="193" width="172" height="7" rx="3.5" fill="#FF2200"/>
+    <rect x="280" y="211" width="128" height="7" rx="3.5" fill="#FF7700"/>
+    <rect x="280" y="229" width="172" height="7" rx="3.5" fill="#FFE500"/>
+    <rect x="280" y="256" width="172" height="7" rx="3.5" fill="#00BB00"/>
+    <rect x="280" y="274" width="156" height="7" rx="3.5" fill="#00AAEE"/>
+    <rect x="280" y="292" width="172" height="7" rx="3.5" fill="#0044FF"/>
+    <rect x="280" y="319" width="172" height="7" rx="3.5" fill="#8800FF"/>
+    <rect x="280" y="337" width="138" height="7" rx="3.5" fill="#FF2200"/>
+    <rect x="280" y="355" width="172" height="7" rx="3.5" fill="#FF7700"/>
+    <rect x="280" y="382" width="172" height="7" rx="3.5" fill="#FFE500"/>
+    <rect x="280" y="400" width="116" height="7" rx="3.5" fill="#00BB00"/>
   </g>
 
-  <!-- Section header accent bars -->
-  <rect x="82"  y="108" width="148" height="12" rx="6"
-        fill="url(#spectrumBar512)" opacity="0.90"/>
-  <rect x="282" y="108" width="148" height="12" rx="6"
-        fill="url(#spectrumBar512)" opacity="0.90"/>
-
-  <!-- Page curl hint -->
-  <path d="M452 422 Q452 440 434 440 L452 440 Z"
+  <path d="M468 432 Q468 448 452 448 L468 448 Z"
         fill="#d8d0f0" opacity="0.55"/>
 </svg>

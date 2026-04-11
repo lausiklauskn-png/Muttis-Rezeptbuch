@@ -1,86 +1,120 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <filter id="sh" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0a1a3a" flood-opacity="0.40"/>
-    </filter>
-    <linearGradient id="coverL" x1="0" y1="0" x2="1" y2="1">
+    <!-- Dark circle background -->
+    <radialGradient id="bgG" cx="50%" cy="42%" r="60%">
+      <stop offset="0%"   stop-color="#1c2d55"/>
+      <stop offset="100%" stop-color="#060c1e"/>
+    </radialGradient>
+    <!-- Blue left cover -->
+    <linearGradient id="covL" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <!-- Blue right cover -->
+    <linearGradient id="covR" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"   stop-color="#2563eb"/>
       <stop offset="100%" stop-color="#1e40af"/>
     </linearGradient>
-    <linearGradient id="coverR" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"   stop-color="#1d4ed8"/>
+    <!-- Left page (cream-white) -->
+    <linearGradient id="pgL" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%"   stop-color="#f4f8ff"/>
+      <stop offset="100%" stop-color="#dce8ff"/>
+    </linearGradient>
+    <!-- Right page (cream-white) -->
+    <linearGradient id="pgR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#f4f8ff"/>
+      <stop offset="100%" stop-color="#dce8ff"/>
+    </linearGradient>
+    <!-- Spine gradient -->
+    <linearGradient id="spG" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#1e3a8a"/>
+      <stop offset="50%"  stop-color="#2563eb"/>
       <stop offset="100%" stop-color="#1e3a8a"/>
     </linearGradient>
-    <linearGradient id="spine" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#1e40af"/>
-      <stop offset="100%" stop-color="#1e3a8a"/>
-    </linearGradient>
-    <linearGradient id="pageL" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#e2e8f0"/>
-      <stop offset="100%" stop-color="#f8fafc"/>
-    </linearGradient>
-    <linearGradient id="pageR" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#f8fafc"/>
-      <stop offset="100%" stop-color="#e2e8f0"/>
-    </linearGradient>
+    <!-- Drop shadow -->
+    <filter id="sh" x="-14%" y="-14%" width="128%" height="128%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000820" flood-opacity="0.60"/>
+    </filter>
   </defs>
 
-  <!-- Linke Buchdecke -->
-  <path d="M256 96 L60 120 Q44 122 44 138 L44 404 Q44 420 60 418 L256 400 Z"
-        fill="url(#coverL)" filter="url(#sh)"/>
+  <!-- ── Background circle ── -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgG)"/>
 
-  <!-- Rechte Buchdecke -->
-  <path d="M256 96 L452 120 Q468 122 468 138 L468 404 Q468 420 452 418 L256 400 Z"
-        fill="url(#coverR)" filter="url(#sh)"/>
+  <!-- ── LEFT COVER (outer board, blue) ── -->
+  <!-- Outer-top corner y=78 is HIGHER than spine-top y=96 → correct: spine at front/near,
+       pages fan away from viewer (page open toward viewer is wrong; this shows the back of
+       the left page fanning away — but for a flat icon, just use rectangles) -->
+  <rect x="30" y="72" width="220" height="372" rx="14" ry="14"
+        fill="url(#covL)" filter="url(#sh)"/>
 
-  <!-- Buchrücken -->
-  <rect x="240" y="90" width="32" height="322" rx="4"
-        fill="url(#spine)"/>
-  <!-- Rücken-Glanzlinie -->
-  <rect x="254" y="90" width="3" height="322"
-        fill="#ffffff" opacity="0.20"/>
+  <!-- ── RIGHT COVER (outer board, blue) ── -->
+  <rect x="262" y="72" width="220" height="372" rx="14" ry="14"
+        fill="url(#covR)" filter="url(#sh)"/>
 
-  <!-- Linke Seite (Papier) -->
-  <path d="M256 110 L72 132 Q62 134 62 146 L62 392 Q62 402 72 400 L256 384 Z"
-        fill="url(#pageL)"/>
+  <!-- ── LEFT PAGE (paper) ── -->
+  <rect x="44" y="84" width="204" height="348" rx="4" ry="4"
+        fill="url(#pgL)"/>
 
-  <!-- Rechte Seite (Papier) -->
-  <path d="M256 110 L440 132 Q450 134 450 146 L450 392 Q450 402 440 400 L256 384 Z"
-        fill="url(#pageR)"/>
+  <!-- ── RIGHT PAGE (paper) ── -->
+  <rect x="264" y="84" width="204" height="348" rx="4" ry="4"
+        fill="url(#pgR)"/>
 
-  <!-- Textzeilen links -->
-  <g opacity="0.45" fill="#1e40af">
-    <rect x="80"  y="165" width="136" height="7" rx="3.5"/>
-    <rect x="80"  y="185" width="118" height="7" rx="3.5"/>
-    <rect x="80"  y="205" width="136" height="7" rx="3.5"/>
-    <rect x="80"  y="225" width="100" height="7" rx="3.5"/>
-    <rect x="80"  y="255" width="136" height="7" rx="3.5"/>
-    <rect x="80"  y="275" width="120" height="7" rx="3.5"/>
-    <rect x="80"  y="295" width="136" height="7" rx="3.5"/>
-    <rect x="80"  y="315" width="108" height="7" rx="3.5"/>
-    <rect x="80"  y="345" width="136" height="7" rx="3.5"/>
-    <rect x="80"  y="365" width="90"  height="7" rx="3.5"/>
+  <!-- ── SPINE ── -->
+  <rect x="240" y="64" width="32" height="388" rx="6" ry="6"
+        fill="url(#spG)"/>
+  <!-- Spine highlight -->
+  <rect x="253" y="64" width="4" height="388"
+        fill="#ffffff" opacity="0.18"/>
+
+  <!-- ══ LEFT PAGE CONTENT ══ -->
+
+  <!-- Chapter header bar -->
+  <rect x="60" y="102" width="172" height="14" rx="7"
+        fill="#1e3a8a" opacity="0.70"/>
+
+  <!-- Text lines left -->
+  <g fill="#1e40af" opacity="0.42">
+    <rect x="60" y="130" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="148" width="142" height="7" rx="3.5"/>
+    <rect x="60" y="166" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="193" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="211" width="120" height="7" rx="3.5"/>
+    <rect x="60" y="229" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="256" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="274" width="154" height="7" rx="3.5"/>
+    <rect x="60" y="292" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="319" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="337" width="132" height="7" rx="3.5"/>
+    <rect x="60" y="355" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="382" width="172" height="7" rx="3.5"/>
+    <rect x="60" y="400" width="108" height="7" rx="3.5"/>
   </g>
 
-  <!-- Textzeilen rechts -->
-  <g opacity="0.45" fill="#1e40af">
-    <rect x="296" y="165" width="136" height="7" rx="3.5"/>
-    <rect x="296" y="185" width="110" height="7" rx="3.5"/>
-    <rect x="296" y="205" width="136" height="7" rx="3.5"/>
-    <rect x="296" y="225" width="125" height="7" rx="3.5"/>
-    <rect x="296" y="255" width="136" height="7" rx="3.5"/>
-    <rect x="296" y="275" width="95"  height="7" rx="3.5"/>
-    <rect x="296" y="295" width="136" height="7" rx="3.5"/>
-    <rect x="296" y="315" width="118" height="7" rx="3.5"/>
-    <rect x="296" y="345" width="136" height="7" rx="3.5"/>
-    <rect x="296" y="365" width="104" height="7" rx="3.5"/>
+  <!-- ══ RIGHT PAGE CONTENT ══ -->
+
+  <!-- Chapter header bar -->
+  <rect x="280" y="102" width="172" height="14" rx="7"
+        fill="#1e3a8a" opacity="0.70"/>
+
+  <!-- Text lines right -->
+  <g fill="#1e40af" opacity="0.42">
+    <rect x="280" y="130" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="148" width="146" height="7" rx="3.5"/>
+    <rect x="280" y="166" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="193" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="211" width="128" height="7" rx="3.5"/>
+    <rect x="280" y="229" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="256" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="274" width="156" height="7" rx="3.5"/>
+    <rect x="280" y="292" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="319" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="337" width="138" height="7" rx="3.5"/>
+    <rect x="280" y="355" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="382" width="172" height="7" rx="3.5"/>
+    <rect x="280" y="400" width="116" height="7" rx="3.5"/>
   </g>
 
-  <!-- Kapitelüberschriften (dunkelblau) -->
-  <rect x="80"  y="140" width="136" height="12" rx="6" fill="#1e3a8a" opacity="0.70"/>
-  <rect x="296" y="140" width="136" height="12" rx="6" fill="#1e3a8a" opacity="0.70"/>
-
-  <!-- Seitenknick unten rechts -->
-  <path d="M450 392 Q450 410 432 410 L450 410 Z"
-        fill="#cbd5e1" opacity="0.60"/>
+  <!-- Page curl hint (bottom-right corner) -->
+  <path d="M468 432 Q468 448 452 448 L468 448 Z"
+        fill="#c7d2fe" opacity="0.55"/>
 </svg>
