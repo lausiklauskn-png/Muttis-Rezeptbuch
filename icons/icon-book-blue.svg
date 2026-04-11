@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0a1a3a" flood-opacity="0.40"/>
+    </filter>
+    <linearGradient id="coverL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <linearGradient id="coverR" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="spine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="pageL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="pageR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Linke Buchdecke -->
+  <path d="M256 96 L60 120 Q44 122 44 138 L44 404 Q44 420 60 418 L256 400 Z"
+        fill="url(#coverL)" filter="url(#sh)"/>
+
+  <!-- Rechte Buchdecke -->
+  <path d="M256 96 L452 120 Q468 122 468 138 L468 404 Q468 420 452 418 L256 400 Z"
+        fill="url(#coverR)" filter="url(#sh)"/>
+
+  <!-- Buchrücken -->
+  <rect x="240" y="90" width="32" height="322" rx="4"
+        fill="url(#spine)"/>
+  <!-- Rücken-Glanzlinie -->
+  <rect x="254" y="90" width="3" height="322"
+        fill="#ffffff" opacity="0.20"/>
+
+  <!-- Linke Seite (Papier) -->
+  <path d="M256 110 L72 132 Q62 134 62 146 L62 392 Q62 402 72 400 L256 384 Z"
+        fill="url(#pageL)"/>
+
+  <!-- Rechte Seite (Papier) -->
+  <path d="M256 110 L440 132 Q450 134 450 146 L450 392 Q450 402 440 400 L256 384 Z"
+        fill="url(#pageR)"/>
+
+  <!-- Textzeilen links -->
+  <g opacity="0.45" fill="#1e40af">
+    <rect x="80"  y="165" width="136" height="7" rx="3.5"/>
+    <rect x="80"  y="185" width="118" height="7" rx="3.5"/>
+    <rect x="80"  y="205" width="136" height="7" rx="3.5"/>
+    <rect x="80"  y="225" width="100" height="7" rx="3.5"/>
+    <rect x="80"  y="255" width="136" height="7" rx="3.5"/>
+    <rect x="80"  y="275" width="120" height="7" rx="3.5"/>
+    <rect x="80"  y="295" width="136" height="7" rx="3.5"/>
+    <rect x="80"  y="315" width="108" height="7" rx="3.5"/>
+    <rect x="80"  y="345" width="136" height="7" rx="3.5"/>
+    <rect x="80"  y="365" width="90"  height="7" rx="3.5"/>
+  </g>
+
+  <!-- Textzeilen rechts -->
+  <g opacity="0.45" fill="#1e40af">
+    <rect x="296" y="165" width="136" height="7" rx="3.5"/>
+    <rect x="296" y="185" width="110" height="7" rx="3.5"/>
+    <rect x="296" y="205" width="136" height="7" rx="3.5"/>
+    <rect x="296" y="225" width="125" height="7" rx="3.5"/>
+    <rect x="296" y="255" width="136" height="7" rx="3.5"/>
+    <rect x="296" y="275" width="95"  height="7" rx="3.5"/>
+    <rect x="296" y="295" width="136" height="7" rx="3.5"/>
+    <rect x="296" y="315" width="118" height="7" rx="3.5"/>
+    <rect x="296" y="345" width="136" height="7" rx="3.5"/>
+    <rect x="296" y="365" width="104" height="7" rx="3.5"/>
+  </g>
+
+  <!-- Kapitelüberschriften (dunkelblau) -->
+  <rect x="80"  y="140" width="136" height="12" rx="6" fill="#1e3a8a" opacity="0.70"/>
+  <rect x="296" y="140" width="136" height="12" rx="6" fill="#1e3a8a" opacity="0.70"/>
+
+  <!-- Seitenknick unten rechts -->
+  <path d="M450 392 Q450 410 432 410 L450 410 Z"
+        fill="#cbd5e1" opacity="0.60"/>
+</svg>
