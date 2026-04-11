@@ -2498,6 +2498,7 @@ const LANGS={
     ,appRateBtn:'App im Play Store bewerten'
     ,appRateLater:'Vielleicht später'
     ,appRateNote:'Nur ★★★★+ Bewertungen werden gesammelt. Bitte beachte die AGB.'
+    ,backExit:'Nochmal drücken zum Beenden'
     ,txtTitle:'📋 Rezeptzettel einfach einfügen'
     ,txtDesc:'Omas handgeschriebene Notizen, kopierte Texte oder getippte Rezepte — die KI erkennt Zutaten, Mengen und Schritte automatisch und trägt alles ins Rezeptbuch ein.'
     ,txtReadyLbl:'Text-KI aktiv'
@@ -2604,6 +2605,7 @@ const LANGS={
     ,appRateBtn:'Rate app on Play Store'
     ,appRateLater:'Maybe later'
     ,appRateNote:'Only ★★★★+ ratings are collected. See terms.'
+    ,backExit:'Press again to exit'
     ,txtTitle:'📋 Paste any recipe text'
     ,txtDesc:'Handwritten notes, copied recipes or typed text — the AI automatically recognises ingredients, quantities and steps and adds everything to your recipe book.'
     ,txtReadyLbl:'Text AI active'
@@ -2710,6 +2712,7 @@ const LANGS={
     ,appRateBtn:'Оценить в Play Store'
     ,appRateLater:'Позже'
     ,appRateNote:'Учитываются оценки ★★★★+. См. условия.'
+    ,backExit:'Нажмите ещё раз для выхода'
     ,txtTitle:'📋 Вставьте текст рецепта'
     ,txtDesc:'Рукописные записи, скопированные тексты или напечатанные рецепты — ИИ автоматически распознаёт ингредиенты, количества и шаги и вносит всё в книгу рецептов.'
     ,txtReadyLbl:'Текстовый ИИ активен'
@@ -2816,6 +2819,7 @@ const LANGS={
     ,appRateBtn:'在Play Store评分'
     ,appRateLater:'稍后'
     ,appRateNote:'仅收集4星及以上评分。详见条款。'
+    ,backExit:'再按一次退出'
     ,txtTitle:'📋 粘贴任何食谱文字'
     ,txtDesc:'手写笔记、复制的文字或输入的食谱 — AI 自动识别食材、用量和步骤，并将所有内容添加到食谱书中。'
     ,txtReadyLbl:'文字AI已激活'
@@ -2920,6 +2924,7 @@ const LANGS={
     ,appRateBtn:'Valorar en Play Store'
     ,appRateLater:'Quizás más tarde'
     ,appRateNote:'Solo se recogen valoraciones de ★★★★+. Ver condiciones.'
+    ,backExit:'Pulsa otra vez para salir'
     ,txtTitle:'📋 Pega cualquier texto de receta'
     ,txtDesc:'Notas escritas a mano, textos copiados o recetas escritas — la IA reconoce automáticamente ingredientes, cantidades y pasos y lo añade todo al recetario.'
     ,txtReadyLbl:'IA de texto activa'
@@ -3135,6 +3140,7 @@ const LANGS={
     ,appRateBtn:'Noter sur Play Store'
     ,appRateLater:'Peut-être plus tard'
     ,appRateNote:'Seules les notes ★★★★+ sont retenues. Voir CGU.'
+    ,backExit:'Appuyez encore pour quitter'
     ,txtTitle:'📋 Collez n\'importe quel texte de recette'
     ,txtDesc:'Notes manuscrites, textes copiés ou recettes tapées — l\'IA reconnaît automatiquement ingrédients, quantités et étapes et les ajoute au livre de recettes.'
     ,txtReadyLbl:'IA texte active'
@@ -3350,6 +3356,7 @@ const LANGS={
     ,appRateBtn:'Valuta su Play Store'
     ,appRateLater:'Forse più tardi'
     ,appRateNote:'Vengono considerate solo valutazioni ★★★★+. Vedi T&C.'
+    ,backExit:'Premi ancora per uscire'
     ,txtTitle:'📋 Incolla qualsiasi testo di ricetta'
     ,txtDesc:'Note scritte a mano, testi copiati o ricette digitate — l\'IA riconosce automaticamente ingredienti, quantità e passaggi e aggiunge tutto al ricettario.'
     ,txtReadyLbl:'IA testo attiva'
@@ -3565,6 +3572,7 @@ const LANGS={
     ,appRateBtn:'Avaliar no Play Store'
     ,appRateLater:'Talvez mais tarde'
     ,appRateNote:'Apenas avaliações ★★★★+ são consideradas. Ver T&C.'
+    ,backExit:'Prima novamente para sair'
     ,txtTitle:'📋 Colar qualquer texto de receita'
     ,txtDesc:'Notas manuscritas, textos copiados ou receitas digitadas — a IA reconhece automaticamente ingredientes, quantidades e passos e adiciona tudo ao livro de receitas.'
     ,txtReadyLbl:'IA de texto ativa'
@@ -7607,6 +7615,52 @@ function _initTooltips(){
 })();
 
 boot();
+
+// ── ZURÜCK-TASTE (Android-Hardware + Maus-Zurück) ────────
+(function(){
+  var OVERLAY_MAP=[
+    {id:'cropOv',         close:function(){closeCrop();}},
+    {id:'ob-scan-ov',     close:function(){obCloseIntercept();}},
+    {id:'ob-wizard-bg',   close:function(){obCloseWizard();}},
+    {id:'ob-helper-bg',   close:function(){obCloseHelper();}},
+    {id:'ob-settings-bg', close:function(){obCloseSettings();}},
+    {id:'spellModal',     close:function(){closeSpellModal();}},
+    {id:'appRateModal',   close:function(){closeAppRate();}},
+    {id:'manualOv',       close:function(){var e=document.getElementById('manualOv');if(e)e.style.display='none';}},
+    {id:'helpOv',         close:function(){closeHelpOv();}},
+    {id:'aip',            close:function(){closeAiPanel();}},
+    {id:'aslBg',          close:function(){closeAsl(null);}},
+    {id:'bvaultModal',    close:function(){var e=document.getElementById('bvaultModal');if(e)e.style.display='none';}},
+    {id:'importOv',       close:function(){closeImport();}},
+    {id:'exportOv',       close:function(){closeExport();}},
+    {id:'apikeyOv',       close:function(){closeApiKeyOv();}},
+    {id:'courseSheet',    close:function(){closeCSheet();}},
+    {id:'folderSheet',    close:function(){closeFolderSheet();}},
+    {id:'mv',             close:function(){closeMV();}},
+    {id:'langOv',         close:function(){closeLang();}},
+  ];
+  function _vis(id){var e=document.getElementById(id);return!!(e&&e.style.display&&e.style.display!=='none');}
+  function _doBack(){
+    var np=document.getElementById('newPanel');
+    if(np&&np.classList.contains('open')){closeNewPanel();return true;}
+    for(var i=0;i<OVERLAY_MAP.length;i++){if(_vis(OVERLAY_MAP[i].id)){OVERLAY_MAP[i].close();return true;}}
+    return false;
+  }
+  history.replaceState({app:'mr'},document.title);
+  history.pushState({app:'mr'},document.title);
+  var _lastBack=0;
+  window.addEventListener('popstate',function(){
+    if(_doBack()){history.pushState({app:'mr'},document.title);return;}
+    var cur=(document.querySelector('.sc.on')||{}).id;
+    if(cur)cur=cur.replace('sc-','');
+    if(cur&&cur!=='recipes'){history.pushState({app:'mr'},document.title);showSc('recipes');return;}
+    var now=Date.now();
+    if(now-_lastBack<2200)return; // zweites Drücken → App beendet sich natürlich
+    _lastBack=now;
+    history.pushState({app:'mr'},document.title);
+    toast('← '+T('backExit'));
+  });
+})();
 
 // Globaler dragover für Auto-Scroll auch außerhalb von fld-grp-Bereichen
 document.addEventListener('dragover',function(e){
