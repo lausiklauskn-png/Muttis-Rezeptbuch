@@ -7715,7 +7715,7 @@ boot();
     var prev=_scStack.pop();
     if(prev){history.pushState({app:'mr'},document.title);_origShowSc(prev);return;}
     var now=Date.now();
-    if(now-_lastBack<2200)return; // zweites Drücken → App beendet sich natürlich
+    if(now-_lastBack<2200){history.pushState({app:'mr'},document.title);return;} // zweites Drücken → in App bleiben, Rezepte bleiben erhalten
     _lastBack=now;
     history.pushState({app:'mr'},document.title);
     toast('← '+T('backExit'));
