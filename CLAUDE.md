@@ -111,9 +111,48 @@ Wenn der Benutzer **"Hochladen"** schreibt:
 - git-Fallback verwenden: alle Remote-Branches auf ungemergede Commits prüfen
 - NIEMALS "nichts offen" sagen ohne zu prüfen, was tatsächlich geprüft wurde
 
+**⚠️ Squash-Merge-Falle:**
+Nach einem Squash-Merge zeigt `git log origin/main..origin/<branch>` immer noch Commits an, obwohl der Inhalt bereits in main ist. Deshalb **immer zusätzlich** prüfen:
+```bash
+git diff origin/main..origin/<branch> --stat
+```
+- Keine Unterschiede → Branch ist veraltet, sicher zu löschen
+- Echte Unterschiede → Branch hat neueren/anderen Inhalt, erst prüfen ob Merge sinnvoll
+
 ### Branch-Konvention
 - Feature-Branches werden automatisch angelegt (Format: `claude/<beschreibung>-<id>`)
 - Immer auf dem zugewiesenen Branch arbeiten (steht oben in der Session-Konfiguration)
+
+---
+
+## Icon-System
+
+### Aktuelle Icon-Datei
+`icons/icon-book-blue.svg` – Spektral-Verlauf (Violett→Blau→Cyan→Grün→Orange→Rot)
+
+### Icons neu generieren (nach SVG-Änderung)
+```python
+import cairosvg
+for s in [72,96,120,128,144,152,180,192,384,512]:
+    cairosvg.svg2png(url='icons/icon-book-blue.svg',
+                     write_to=f'icons/icon-book-blue-{s}.png',
+                     output_width=s, output_height=s)
+```
+
+### Icons in HTML einbetten (Favicon-Caching-Lösung)
+Browser cachen externe Favicon-URLs aggressiv – selbst nach Cache-Leeren bleibt das alte Icon.
+**Lösung:** Alle Icons als Base64-Data-URL direkt in die HTML-Datei einbetten:
+
+```html
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,...">
+<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,...">
+```
+
+- Kein separater HTTP-Request, kein separater Cache-Eintrag
+- Icon aktualisiert sich automatisch wenn die HTML-Datei geändert wird
+- Auch apple-touch-icons und PWA-Manifest-Icons sind eingebettet (JS-Blob)
+
+Nach Icon-Änderung: Base64-Strings in QC-Datei neu generieren (Python-Script), dann `build.py`.
 
 ---
 
