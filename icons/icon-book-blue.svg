@@ -1,76 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#1a3fbf"/>
+    <linearGradient id="bgPremium" x1="18%" y1="14%" x2="82%" y2="86%">
+      <stop offset="0%" stop-color="#ff8a6b"/>
+      <stop offset="52%" stop-color="#f4515e"/>
+      <stop offset="100%" stop-color="#c2185b"/>
     </linearGradient>
-    <filter id="bsh" x="-8%" y="-8%" width="116%" height="116%">
-      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#050e30" flood-opacity="0.55"/>
-    </filter>
-    <clipPath id="cL">
-      <polygon points="72,150 246,130 246,398 72,380"/>
-    </clipPath>
-    <clipPath id="cR">
-      <polygon points="266,130 440,150 440,380 266,398"/>
-    </clipPath>
   </defs>
 
-  <!-- ── Hintergrund: blaues abgerundetes Quadrat ── -->
-  <rect width="512" height="512" rx="96" ry="96" fill="url(#bg)"/>
-  <!-- Glanzlicht oben -->
-  <rect width="512" height="200" rx="96" fill="rgba(255,255,255,0.06)"/>
+  <!-- Hintergrund -->
+  <rect x="64" y="64" width="896" height="896" rx="220" fill="url(#bgPremium)"/>
 
-  <!-- ── Buch mit Schatten ── -->
-  <g filter="url(#bsh)">
+  <!-- Buch Außenform -->
+  <g
+    fill="none"
+    stroke="#fff8f2"
+    stroke-width="50"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="
+      M308 722
+      V356
+      Q308 326 340 326
+      Q424 326 512 388
+      Q600 326 684 326
+      Q716 326 716 356
+      V722
+    "/>
 
-    <!-- Linke Seite (weiß) -->
-    <polygon points="72,150 246,130 246,398 72,380" fill="white"/>
-
-    <!-- Rechte Seite (leicht bläulich für Tiefe) -->
-    <polygon points="266,130 440,150 440,380 266,398" fill="#dbeafe"/>
-
-    <!-- Buchrücken (dunkelblau) -->
-    <rect x="242" y="126" width="28" height="276" rx="4" fill="#1e3a8a"/>
-
+    <line x1="512" y1="388" x2="512" y2="722"/>
   </g>
 
-  <!-- Buchrücken-Glanzlinie -->
-  <rect x="250" y="126" width="4" height="276" rx="2" fill="rgba(255,255,255,0.22)"/>
+  <!-- Buch Innenlinien -->
+  <g
+    fill="none"
+    stroke="#fff8f2"
+    stroke-width="36"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M378 432 Q442 432 512 468"/>
+    <path d="M646 432 Q582 432 512 468"/>
 
-  <!-- ── Kapitelüberschrift-Balken (oben, klar sichtbar → zeigt Buchoberkante) ── -->
-  <rect x="90" y="150" width="136" height="12" rx="6" fill="#93c5fd" opacity="0.95" clip-path="url(#cL)"/>
-  <rect x="280" y="150" width="136" height="12" rx="6" fill="#60a5fa" opacity="0.95" clip-path="url(#cR)"/>
-
-  <!-- ── Textzeilen linke Seite ── -->
-  <g fill="#1e40af" opacity="0.42" clip-path="url(#cL)">
-    <rect x="90" y="178" width="138" height="7" rx="3.5"/>
-    <rect x="90" y="196" width="114" height="7" rx="3.5"/>
-    <rect x="90" y="214" width="138" height="7" rx="3.5"/>
-    <rect x="90" y="232" width="100" height="7" rx="3.5"/>
-    <rect x="90" y="258" width="138" height="7" rx="3.5"/>
-    <rect x="90" y="276" width="122" height="7" rx="3.5"/>
-    <rect x="90" y="294" width="138" height="7" rx="3.5"/>
-    <rect x="90" y="312" width="108" height="7" rx="3.5"/>
-    <rect x="90" y="338" width="138" height="7" rx="3.5"/>
-    <rect x="90" y="356" width="90"  height="7" rx="3.5"/>
-    <rect x="90" y="374" width="138" height="7" rx="3.5"/>
+    <path d="M308 722 Q410 700 512 736"/>
+    <path d="M716 722 Q614 700 512 736"/>
   </g>
-
-  <!-- ── Textzeilen rechte Seite ── -->
-  <g fill="#1e40af" opacity="0.42" clip-path="url(#cR)">
-    <rect x="280" y="178" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="196" width="118" height="7" rx="3.5"/>
-    <rect x="280" y="214" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="232" width="104" height="7" rx="3.5"/>
-    <rect x="280" y="258" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="276" width="128" height="7" rx="3.5"/>
-    <rect x="280" y="294" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="312" width="112" height="7" rx="3.5"/>
-    <rect x="280" y="338" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="356" width="98"  height="7" rx="3.5"/>
-    <rect x="280" y="374" width="138" height="7" rx="3.5"/>
-  </g>
-
-  <!-- Seitenknick unten rechts -->
-  <path d="M440 380 Q440 395 424 395 L440 395 Z" fill="rgba(0,0,40,0.14)"/>
 </svg>
