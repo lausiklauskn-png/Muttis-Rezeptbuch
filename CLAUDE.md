@@ -119,6 +119,14 @@ git diff origin/main..origin/<branch> --stat
 - Keine Unterschiede → Branch ist veraltet, sicher zu löschen
 - Echte Unterschiede → Branch hat neueren/anderen Inhalt, erst prüfen ob Merge sinnvoll
 
+**⚠️ Branch würde main VERSCHLECHTERN:**
+Wenn `git diff` zeigt, dass der Branch ältere Versionen von Dateien enthält (z.B. kleinere PNGs, alten Code), würde ein Merge main-Verbesserungen **rückgängig machen**.
+→ **NIEMALS mergen** – stattdessen klar erklären und Branch zum Löschen empfehlen.
+
+**⚠️ Angaben aus anderen Sitzungen nicht blind vertrauen:**
+Wenn der Benutzer sagt "Branch X muss noch hochgeladen/gemergt werden" (Info aus anderer Session):
+→ **Immer zuerst selbst prüfen** mit `git log` + `git diff --stat` bevor gehandelt wird.
+
 ### Branch-Konvention
 - Feature-Branches werden automatisch angelegt (Format: `claude/<beschreibung>-<id>`)
 - Immer auf dem zugewiesenen Branch arbeiten (steht oben in der Session-Konfiguration)
