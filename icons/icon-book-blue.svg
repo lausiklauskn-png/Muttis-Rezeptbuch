@@ -1,120 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <!-- Dark circle background -->
-    <radialGradient id="bgG" cx="50%" cy="42%" r="60%">
-      <stop offset="0%"   stop-color="#1c2d55"/>
-      <stop offset="100%" stop-color="#060c1e"/>
-    </radialGradient>
-    <!-- Blue left cover -->
-    <linearGradient id="covL" x1="1" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#1d4ed8"/>
+    <linearGradient id="bgPremium" x1="18%" y1="14%" x2="82%" y2="86%">
+      <stop offset="0%" stop-color="#ff8a6b"/>
+      <stop offset="52%" stop-color="#f4515e"/>
+      <stop offset="100%" stop-color="#c2185b"/>
     </linearGradient>
-    <!-- Blue right cover -->
-    <linearGradient id="covR" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"   stop-color="#2563eb"/>
-      <stop offset="100%" stop-color="#1e40af"/>
-    </linearGradient>
-    <!-- Left page (cream-white) -->
-    <linearGradient id="pgL" x1="1" y1="0" x2="0" y2="0">
-      <stop offset="0%"   stop-color="#f4f8ff"/>
-      <stop offset="100%" stop-color="#dce8ff"/>
-    </linearGradient>
-    <!-- Right page (cream-white) -->
-    <linearGradient id="pgR" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#f4f8ff"/>
-      <stop offset="100%" stop-color="#dce8ff"/>
-    </linearGradient>
-    <!-- Spine gradient -->
-    <linearGradient id="spG" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#1e3a8a"/>
-      <stop offset="50%"  stop-color="#2563eb"/>
-      <stop offset="100%" stop-color="#1e3a8a"/>
-    </linearGradient>
-    <!-- Drop shadow -->
-    <filter id="sh" x="-14%" y="-14%" width="128%" height="128%">
-      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000820" flood-opacity="0.60"/>
-    </filter>
   </defs>
 
-  <!-- ── Background circle ── -->
-  <circle cx="256" cy="256" r="256" fill="url(#bgG)"/>
+  <!-- Hintergrund -->
+  <rect x="64" y="64" width="896" height="896" rx="220" fill="url(#bgPremium)"/>
 
-  <!-- ── LEFT COVER (outer board, blue) ── -->
-  <!-- Outer-top corner y=78 is HIGHER than spine-top y=96 → correct: spine at front/near,
-       pages fan away from viewer (page open toward viewer is wrong; this shows the back of
-       the left page fanning away — but for a flat icon, just use rectangles) -->
-  <rect x="30" y="72" width="220" height="372" rx="14" ry="14"
-        fill="url(#covL)" filter="url(#sh)"/>
+  <!-- Buch Außenform -->
+  <g
+    fill="none"
+    stroke="#fff8f2"
+    stroke-width="50"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="
+      M308 722
+      V356
+      Q308 326 340 326
+      Q424 326 512 388
+      Q600 326 684 326
+      Q716 326 716 356
+      V722
+    "/>
 
-  <!-- ── RIGHT COVER (outer board, blue) ── -->
-  <rect x="262" y="72" width="220" height="372" rx="14" ry="14"
-        fill="url(#covR)" filter="url(#sh)"/>
-
-  <!-- ── LEFT PAGE (paper) ── -->
-  <rect x="44" y="84" width="204" height="348" rx="4" ry="4"
-        fill="url(#pgL)"/>
-
-  <!-- ── RIGHT PAGE (paper) ── -->
-  <rect x="264" y="84" width="204" height="348" rx="4" ry="4"
-        fill="url(#pgR)"/>
-
-  <!-- ── SPINE ── -->
-  <rect x="240" y="64" width="32" height="388" rx="6" ry="6"
-        fill="url(#spG)"/>
-  <!-- Spine highlight -->
-  <rect x="253" y="64" width="4" height="388"
-        fill="#ffffff" opacity="0.18"/>
-
-  <!-- ══ LEFT PAGE CONTENT ══ -->
-
-  <!-- Chapter header bar -->
-  <rect x="60" y="102" width="172" height="14" rx="7"
-        fill="#1e3a8a" opacity="0.70"/>
-
-  <!-- Text lines left -->
-  <g fill="#1e40af" opacity="0.42">
-    <rect x="60" y="130" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="148" width="142" height="7" rx="3.5"/>
-    <rect x="60" y="166" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="193" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="211" width="120" height="7" rx="3.5"/>
-    <rect x="60" y="229" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="256" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="274" width="154" height="7" rx="3.5"/>
-    <rect x="60" y="292" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="319" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="337" width="132" height="7" rx="3.5"/>
-    <rect x="60" y="355" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="382" width="172" height="7" rx="3.5"/>
-    <rect x="60" y="400" width="108" height="7" rx="3.5"/>
+    <line x1="512" y1="388" x2="512" y2="722"/>
   </g>
 
-  <!-- ══ RIGHT PAGE CONTENT ══ -->
+  <!-- Buch Innenlinien -->
+  <g
+    fill="none"
+    stroke="#fff8f2"
+    stroke-width="36"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M378 432 Q442 432 512 468"/>
+    <path d="M646 432 Q582 432 512 468"/>
 
-  <!-- Chapter header bar -->
-  <rect x="280" y="102" width="172" height="14" rx="7"
-        fill="#1e3a8a" opacity="0.70"/>
-
-  <!-- Text lines right -->
-  <g fill="#1e40af" opacity="0.42">
-    <rect x="280" y="130" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="148" width="146" height="7" rx="3.5"/>
-    <rect x="280" y="166" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="193" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="211" width="128" height="7" rx="3.5"/>
-    <rect x="280" y="229" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="256" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="274" width="156" height="7" rx="3.5"/>
-    <rect x="280" y="292" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="319" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="337" width="138" height="7" rx="3.5"/>
-    <rect x="280" y="355" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="382" width="172" height="7" rx="3.5"/>
-    <rect x="280" y="400" width="116" height="7" rx="3.5"/>
+    <path d="M308 722 Q410 700 512 736"/>
+    <path d="M716 722 Q614 700 512 736"/>
   </g>
-
-  <!-- Page curl hint (bottom-right corner) -->
-  <path d="M468 432 Q468 448 452 448 L468 448 Z"
-        fill="#c7d2fe" opacity="0.55"/>
 </svg>
