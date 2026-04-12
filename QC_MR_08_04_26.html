@@ -7691,7 +7691,7 @@ boot();
     if(cur)cur=cur.replace('sc-','');
     if(cur&&cur!==n&&(_scStack.length===0||_scStack[_scStack.length-1]!==cur)){
       _scStack.push(cur);
-      if(_scStack.length>4)_scStack.shift();
+      if(_scStack.length>20)_scStack.shift();
     }
     _origShowSc(n,dir);
   };
