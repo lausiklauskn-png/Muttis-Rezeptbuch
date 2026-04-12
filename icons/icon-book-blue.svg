@@ -1,9 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
     <linearGradient id="bgPremium" x1="18%" y1="14%" x2="82%" y2="86%">
-      <stop offset="0%" stop-color="#ff8a6b"/>
-      <stop offset="52%" stop-color="#f4515e"/>
-      <stop offset="100%" stop-color="#c2185b"/>
+      <stop offset="0%"   stop-color="#6a1b9a"/>  <!-- Violett -->
+      <stop offset="20%"  stop-color="#1565c0"/>  <!-- Blau -->
+      <stop offset="40%"  stop-color="#00838f"/>  <!-- Cyan -->
+      <stop offset="58%"  stop-color="#2e7d32"/>  <!-- Grün -->
+      <stop offset="78%"  stop-color="#e65100"/>  <!-- Orange -->
+      <stop offset="100%" stop-color="#b71c1c"/>  <!-- Rot -->
     </linearGradient>
   </defs>
 
