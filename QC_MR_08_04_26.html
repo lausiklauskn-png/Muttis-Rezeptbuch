@@ -7683,13 +7683,27 @@ boot();
     {id:'apikeyOv',       close:function(){closeApiKeyOv();}},
     {id:'courseSheet',    close:function(){closeCSheet();}},
     {id:'folderSheet',    close:function(){closeFolderSheet();}},
-    {id:'mv',             close:function(){closeMV();}},
+    {id:'mv',             close:function(){_mvTabStack=[];closeMV();}},
     {id:'langOv',         close:function(){closeLang();}},
   ];
   function _vis(id){var e=document.getElementById(id);return!!(e&&e.style.display&&e.style.display!=='none');}
+  // MV-Tab-History: merkt sich vorige Tabs in Mein Menü
+  var _mvTabStack=[];
   function _doBack(){
     var np=document.getElementById('newPanel');
     if(np&&np.classList.contains('open')){closeNewPanel();return true;}
+    // Mein Menü: erst durch Tab-History navigieren, dann MV schließen
+    if(_vis('mv')){
+      var prevTab=_mvTabStack.pop();
+      if(prevTab){
+        var tid='mvTab'+prevTab.charAt(0).toUpperCase()+prevTab.slice(1);
+        var tel=document.getElementById(tid)||document.querySelector('.mvtab');
+        if(window._origSwitchMVTab)window._origSwitchMVTab(prevTab,tel);
+        else window.switchMVTab(prevTab,tel);
+        return true;
+      }
+      _mvTabStack=[];closeMV();return true;
+    }
     for(var i=0;i<OVERLAY_MAP.length;i++){if(_vis(OVERLAY_MAP[i].id)){OVERLAY_MAP[i].close();return true;}}
     return false;
   }
@@ -7704,6 +7718,16 @@ boot();
       if(_scStack.length>20)_scStack.shift();
     }
     _origShowSc(n,dir);
+  };
+  // MV-Tab-Wrapper: speichert jeden Tab-Wechsel im _mvTabStack
+  var _origSwitchMVTab=window.switchMVTab;
+  window.switchMVTab=function(id,el){
+    var cur=window.MVT;
+    if(cur&&cur!==id&&(_mvTabStack.length===0||_mvTabStack[_mvTabStack.length-1]!==cur)){
+      _mvTabStack.push(cur);
+      if(_mvTabStack.length>10)_mvTabStack.shift();
+    }
+    _origSwitchMVTab(id,el);
   };
   history.replaceState({app:'mr'},document.title);
   history.pushState({app:'mr'},document.title);
