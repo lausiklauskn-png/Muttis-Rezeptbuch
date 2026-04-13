@@ -1444,7 +1444,7 @@ button:active{transform:scale(0.97)}
     <button class="hbtn" onclick="openHelp()" title="Hilfe · Teilen · Reparatur" id="helpHdrBtn">ℹ️</button>
 <!-- === ONBOARDING START === -->
     <!-- === ONBOARDING END === -->
-    <button class="hbtn add" onclick="openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
+    <button class="hbtn add" onclick="document.getElementById('newPanel').classList.contains('open')?closeNewPanel():openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
   </div>
 </div>
 
