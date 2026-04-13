@@ -4262,7 +4262,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ═══════════════════════════════════════════════════════
 // DRAG & DROP — Karten, Zutaten, Schritte
 // ═══════════════════════════════════════════════════════
-let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddRowPending=null,_sliPending=null,_rcardPending=null,_autoScroll=null;
+let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddPending=null,_tddRowPending=null,_sliPending=null,_rcardPending=null,_autoScroll=null;
 
 function _startAutoScroll(clientY){
   const zone=80,h=window.innerHeight;
@@ -7105,6 +7105,7 @@ function _rcardHdEnd(){
 function _tddStart(e){
   // Aufräumen falls vorheriger Drag nicht sauber beendet wurde
   if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
+  if(_tddPending)_tddPendingEnd();
   e.preventDefault(); // Verhindert Browser-nativen Drag (HTML5) und Textauswahl
   const hdl=e.currentTarget,type=hdl.dataset.hdl;
   let li,rid,id;
@@ -7122,7 +7123,22 @@ function _tddStart(e){
     rid=parseInt(li.dataset.rid);
     id=parseInt(type==='ing'?li.dataset.iid:li.dataset.sid);
   }
-  const rect=li.getBoundingClientRect(),t=e.touches[0];
+  const t=e.touches[0];
+  // Drag erst nach Mindestbewegung starten (verhindert versehentliche Auslösung)
+  _tddPending={type,rid,id,li,startX:t.clientX,startY:t.clientY};
+  document.addEventListener('touchmove',_tddPendingMove,{passive:false});
+  document.addEventListener('touchend',_tddPendingEnd,{passive:true});
+  document.addEventListener('touchcancel',_tddPendingEnd,{passive:true});
+}
+function _tddPendingMove(e){
+  if(!_tddPending)return;
+  const t=e.touches[0];
+  const dx=t.clientX-_tddPending.startX,dy=t.clientY-_tddPending.startY;
+  if(Math.hypot(dx,dy)<8)return; // Noch nicht genug Bewegung
+  e.preventDefault();
+  const{type,rid,id,li}=_tddPending;
+  _tddPendingEnd();
+  const rect=li.getBoundingClientRect();
   const ghostSrc=type==='card'?(li.querySelector('.rcard-hd')||li):li;
   const ghostRect=ghostSrc.getBoundingClientRect();
   const ghost=ghostSrc.cloneNode(true);
@@ -7134,6 +7150,12 @@ function _tddStart(e){
   document.addEventListener('touchmove',_tddMove,{passive:false});
   document.addEventListener('touchend',_tddEnd,{passive:true});
   document.addEventListener('touchcancel',_tddEnd,{passive:true});
+}
+function _tddPendingEnd(){
+  document.removeEventListener('touchmove',_tddPendingMove);
+  document.removeEventListener('touchend',_tddPendingEnd);
+  document.removeEventListener('touchcancel',_tddPendingEnd);
+  _tddPending=null;
 }
 function _tddMove(e){
   if(!_tdd)return;
