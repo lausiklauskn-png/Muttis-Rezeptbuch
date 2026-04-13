@@ -171,6 +171,27 @@ Nach Icon-Änderung: Base64-Strings in QC-Datei neu generieren (Python-Script), 
 2. `python3 build.py` ausführen
 3. Hochladen
 
+### Zurück-Navigation (Back-Taste / Maus-Zurück)
+Das System arbeitet in drei Schichten (Priorität von oben nach unten):
+1. **newPanel** offen → schließen
+2. **Mein Menü offen + Tab-History** → zum vorigen Tab (`_mvTabStack`)
+3. **Mein Menü offen, kein Tab mehr** → MV schließen
+4. **Anderes Overlay offen** → Overlay schließen (`OVERLAY_MAP`)
+5. **Screen-History** → zum vorigen Screen (`_scStack`, max. 20)
+6. **Nichts mehr** → Toast "Nochmal drücken" → beim 2. Druck in App bleiben
+
+**`_mvTabStack`** – Tab-History für Mein Menü:
+- `switchMVTab()` ist gewrappt: jeder Tab-Wechsel wird auf den Stack gelegt
+- Zurück popt den letzten Tab und wechselt dorthin (ohne MV zu schließen)
+- Stack wird beim Schließen von MV automatisch geleert
+- Gleiches Muster wie `_scStack` für Haupt-Screens
+
+**`_scStack`** – Screen-History für Haupt-Navigation:
+- `showSc()` ist gewrappt: jeder Screen-Wechsel wird gespeichert (max. 20)
+- Zurück navigiert zum tatsächlich letzten Screen statt immer zu Rezepte
+
+→ **Für Mein-Rezeptbuch übernehmen** (identische Implementierung)
+
 ### Swipe / Touch / Drag & Drop
 - Swipe-Handler: IIFE ab `// ── SWIPE-NAVIGATION ──` (kurz vor `boot()`)
 - Touch-Drag: `setupTouchDrag()` und `setupWkTouchDrag()`
