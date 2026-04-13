@@ -110,7 +110,7 @@
 [data-theme=spektral] .mvtab.on{color:#fff;border-bottom-color:#fff}
 [data-theme=spektral] .mv-back{color:rgba(255,255,255,.56)}
 [data-theme=spektral] .mv-title{color:#fff}
-[data-theme=spektral] .mv-print-btn{background:rgba(0,0,0,.28);color:#fff;border-radius:8px}
+[data-theme=spektral] .mv-print-btn{background:transparent;font-size:1.3rem;padding:0 2px;height:auto;border-radius:0}
 [data-theme=spektral] .lang-chip.on{background:linear-gradient(135deg,#8800FF,#0044FF);border-color:#8800FF}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
@@ -422,7 +422,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 
 /* menu viewer */
 .mv{position:fixed;inset:0;z-index:600;display:flex;flex-direction:column;background:var(--sand);padding-top:var(--st)}
-.mv-hdr{background:var(--br);padding:10px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mv-hdr{background:var(--br);padding:10px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
 .mv-back{background:none;border:none;color:#d0b898;font-size:1.2rem;cursor:pointer;padding:3px 5px}
 .mv-title{font-family:Georgia,serif;color:#f0e6d8;font-size:.98rem;flex:1}
 .mv-print-btn{background:var(--rust);color:#fff;border:none;border-radius:12px;padding:0 9px;height:26px;font-weight:700;font-size:.64rem;cursor:pointer}
@@ -1838,10 +1838,10 @@ Vielen Dank für deine Unterstützung.</div>
 
 
 <div class="mv" id="mv" style="display:none">
-  <div class="mv-hdr">
-    <button class="mv-back" onclick="closeMV()" title="Zurück">←</button>
+  <div class="mv-hdr" onclick="closeMV()">
+    <button class="mv-back" onclick="event.stopPropagation();closeMV()" title="Zurück">←</button>
     <div class="mv-title" id="mvTitle">Mein Menü</div>
-    <button class="mv-print-btn" onclick="doPrint()" title="Drucken / PDF">🖨️</button>
+    <button class="mv-print-btn" onclick="event.stopPropagation();doPrint()" title="Drucken / PDF">🖨️</button>
   </div>
   <div class="mv-tabs">
     <div class="mvtab on" onclick="switchMVTab('tl',this)" id="mvTabTl">🗓️ Planung</div>
