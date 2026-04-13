@@ -7055,7 +7055,7 @@ function _sliRowEnd(){
   document.removeEventListener('touchcancel',_sliRowEnd);
   _sliPending=null;
 }
-// ── Ganze rcard-hd als Drag-Quelle (Meine-Ordner-Muster für Rezepte) ──
+// ── Ganze rcard-hd als Drag-Quelle (Long-Press 350ms, wie step-li) ──
 function _rcardHdStart(e){
   if(_tdd||_rcardPending)return;
   if(e.target.closest('.drag-hdl,.rcard-acts,button,input,.rname-edit'))return;
@@ -7063,40 +7063,56 @@ function _rcardHdStart(e){
   const card=hd.closest('.rcard');if(!card||!card.id)return;
   const rid=parseInt(card.id.replace('c',''));if(!rid)return;
   const t=e.touches[0];
-  _rcardPending={hd,card,rid,startX:t.clientX,startY:t.clientY};
-  document.addEventListener('touchmove',_rcardHdMove,{passive:false});
+  const timer=setTimeout(()=>{
+    if(!_rcardPending)return;
+    _rcardPending.ready=true;
+    card.style.transition='box-shadow .12s';
+    card.style.boxShadow='inset 0 0 0 2px var(--teal,#36706a)';
+    document.removeEventListener('touchmove',_rcardHdCheck);
+    document.addEventListener('touchmove',_rcardHdMove,{passive:false});
+  },350);
+  _rcardPending={hd,card,rid,startX:t.clientX,startY:t.clientY,timer,ready:false};
+  document.addEventListener('touchmove',_rcardHdCheck,{passive:true});
   document.addEventListener('touchend',_rcardHdEnd,{passive:true});
   document.addEventListener('touchcancel',_rcardHdEnd,{passive:true});
+}
+function _rcardHdCheck(e){
+  if(!_rcardPending||_rcardPending.ready)return;
+  const t=e.touches[0];
+  if(Math.abs(t.clientX-_rcardPending.startX)>8||Math.abs(t.clientY-_rcardPending.startY)>8)_rcardHdEnd();
 }
 function _rcardHdMove(e){
   if(!_rcardPending)return;
   const t=e.touches[0];
-  const dx=t.clientX-_rcardPending.startX,dy=t.clientY-_rcardPending.startY;
-  if(Math.abs(dx)>12){_rcardHdEnd();return;}// horizontal → Wisch-Navigation läuft
-  if(Math.abs(dy)>10){
-    e.preventDefault();
-    const{hd,card,rid}=_rcardPending;
-    document.removeEventListener('touchmove',_rcardHdMove);
-    document.removeEventListener('touchend',_rcardHdEnd);
-    document.removeEventListener('touchcancel',_rcardHdEnd);
-    _rcardPending=null;
-    if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
-    const cardRect=card.getBoundingClientRect();
-    const ghostSrc=hd;
-    const ghostRect=ghostSrc.getBoundingClientRect();
-    const ghost=ghostSrc.cloneNode(true);
-    ghost.id='tdd-ghost';
-    ghost.style.cssText=`position:fixed;left:${ghostRect.left}px;top:${ghostRect.top}px;width:${ghostRect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
-    document.body.appendChild(ghost);
-    card.style.opacity='.3';
-    _tdd={type:'card',rid,id:rid,li:card,ghost,offsetY:t.clientY-cardRect.top};
-    document.addEventListener('touchmove',_tddMove,{passive:false});
-    document.addEventListener('touchend',_tddEnd,{passive:true});
-    document.addEventListener('touchcancel',_tddEnd,{passive:true});
-  }
+  const dx=t.clientX-_rcardPending.startX;
+  if(Math.abs(dx)>14){_rcardHdEnd();return;}// horizontal → Wisch-Navigation läuft
+  e.preventDefault();
+  const{hd,card,rid}=_rcardPending;
+  card.style.boxShadow='';card.style.transition='';
+  document.removeEventListener('touchmove',_rcardHdMove);
+  document.removeEventListener('touchend',_rcardHdEnd);
+  document.removeEventListener('touchcancel',_rcardHdEnd);
+  _rcardPending=null;
+  if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
+  const cardRect=card.getBoundingClientRect();
+  const ghostSrc=hd;
+  const ghostRect=ghostSrc.getBoundingClientRect();
+  const ghost=ghostSrc.cloneNode(true);
+  ghost.id='tdd-ghost';
+  ghost.style.cssText=`position:fixed;left:${ghostRect.left}px;top:${ghostRect.top}px;width:${ghostRect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
+  document.body.appendChild(ghost);
+  card.style.opacity='.3';
+  _tdd={type:'card',rid,id:rid,li:card,ghost,offsetY:t.clientY-cardRect.top};
+  document.addEventListener('touchmove',_tddMove,{passive:false});
+  document.addEventListener('touchend',_tddEnd,{passive:true});
+  document.addEventListener('touchcancel',_tddEnd,{passive:true});
 }
 function _rcardHdEnd(){
   if(!_rcardPending)return;
+  clearTimeout(_rcardPending.timer);
+  const{card}=_rcardPending;
+  if(card){card.style.boxShadow='';card.style.transition='';}
+  document.removeEventListener('touchmove',_rcardHdCheck);
   document.removeEventListener('touchmove',_rcardHdMove);
   document.removeEventListener('touchend',_rcardHdEnd);
   document.removeEventListener('touchcancel',_rcardHdEnd);
