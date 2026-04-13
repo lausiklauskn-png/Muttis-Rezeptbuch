@@ -5901,17 +5901,18 @@ function buildMV(){
       <div class="mv-stxt ${DoneS[r.id+'-'+s.id]?'done':''}">${h(stxt)}${(!trSteps&&s.note)?`<div style="margin-top:2px;background:var(--teals);border-left:2px solid var(--teal);padding:2px 6px;font-size:.7rem;color:#1e4a45">✏ ${h(s.note)}</div>`:''}</div>
     </div>`;}).join('');
     const trBadge=tr?`<span style="background:var(--teals);color:var(--teal);border-radius:8px;padding:1px 6px;font-size:.58rem;font-weight:700;margin-left:5px">🌐 ${CL.toUpperCase()}</span>`:'';
-    tl+=`<div><div class="mv-cbadge">${slot.ico} ${slot.lbl}</div>
-      <div class="mv-rcard">
-        <div class="mv-rh" style="border-left-color:${cc}">
-          <div class="mv-rname">${h(dispName)}${trBadge}</div>
+    tl+=`<div class="mv-rcard">
+      <div style="padding:7px 10px;display:flex;align-items:flex-start;justify-content:space-between;background:var(--parch);border-left:3px solid ${cc}">
+        <div>
+          <div style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">${slot.ico} ${slot.lbl}</div>
+          <div style="font-family:Georgia,serif;font-size:.86rem;color:var(--ink)">${h(dispName)}${trBadge}</div>
           ${dispName!==r.name?`<div style="font-size:.6rem;color:var(--br3);margin-top:1px">${h(r.name)}</div>`:''}
-          <div class="mv-rmeta">${(r.ings||[]).length} ${T('sIngr')} · ${(r.steps||[]).length} ${T('sSteps')}</div>
         </div>
-        ${(r.flavors||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 10px">${r.flavors.map(f=>`<span style="background:var(--sand2);border-radius:10px;padding:2px 7px;font-size:.68rem">${h(f)}</span>`).join('')}</div>`:''}
-        ${ings?`<div class="mv-sec"><div class="mv-slbl">${T('sIngr')}</div>${ings}</div>`:''}
-        ${steps?`<div class="mv-sec"><div class="mv-slbl">${T('sSteps')}</div>${steps}</div>`:''}
+        <div style="font-size:.6rem;color:var(--br3);text-align:right;white-space:nowrap;padding-left:6px;margin-top:14px">${(r.ings||[]).length} ${T('sIngr')} · ${(r.steps||[]).length} ${T('sSteps')}</div>
       </div>
+      ${(r.flavors||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 10px">${r.flavors.map(f=>`<span style="background:var(--sand2);border-radius:10px;padding:2px 7px;font-size:.68rem">${h(f)}</span>`).join('')}</div>`:''}
+      ${ings?`<div class="mv-sec"><div class="mv-slbl">${T('sIngr')}</div>${ings}</div>`:''}
+      ${steps?`<div class="mv-sec"><div class="mv-slbl">${T('sSteps')}</div>${steps}</div>`:''}
     </div>`;
   });
   document.getElementById('mv-tl').innerHTML=tl;
@@ -5958,7 +5959,13 @@ function buildMV(){
         <div class="ck-snum" style="background:${done?'var(--grn)':cc}">${idx+1}</div>
         <div class="ck-txt">${h(stxt)}${(!trSteps&&s.note)?`<div style="margin-top:2px;background:var(--teals);border-left:2px solid var(--teal);padding:2px 6px;font-size:.7rem;color:#1e4a45">✏ ${h(s.note)}</div>`:''}</div>
       </div>`;}).join('');
-    ck+=`<div class="ck-block"><div class="ck-title" style="background:${cc}">${slot.ico} ${slot.lbl} — ${h(dispName)}</div>${steps}</div>`;
+    ck+=`<div class="ck-block">
+      <div style="padding:7px 10px;background:var(--parch);border-radius:6px 6px 0 0;border:1px solid var(--sand2);border-bottom:none;border-left:3px solid ${cc}">
+        <div style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">${slot.ico} ${slot.lbl}</div>
+        <div style="font-family:Georgia,serif;font-size:.86rem;color:var(--ink)">${h(dispName)}</div>
+      </div>
+      <div style="border:1px solid var(--sand2);border-top:none;border-radius:0 0 6px 6px;overflow:hidden">${steps}</div>
+    </div>`;
   });
   document.getElementById('mv-ck').innerHTML=ck;
   // ── Aggregated shopping list with categories & unit normalization ──
@@ -6027,9 +6034,8 @@ function buildMV(){
     const items=_catGrp[cat.key];if(!items||!items.length)return;
     const catLabel=cat.label[_lang]||cat.label['de'];
     al+=`<div style="margin-top:10px">
-      <div style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--parch);border-radius:8px 8px 0 0;border:1px solid var(--sand2);border-bottom:none">
-        <span style="font-size:1rem">${cat.ico}</span>
-        <span style="font-weight:700;font-size:.78rem;letter-spacing:.05em;color:var(--br2)">${catLabel}</span>
+      <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--parch);border-radius:8px 8px 0 0;border:1px solid var(--sand2);border-bottom:none">
+        <span style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)">${cat.ico} ${catLabel}</span>
         <span style="font-size:.65rem;color:var(--br3);margin-left:auto">${items.length}</span>
       </div>
       <div style="background:#fff;border-radius:0 0 8px 8px;border:1px solid var(--sand2);overflow:hidden;padding:0 10px 7px">`;
