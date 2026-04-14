@@ -5838,7 +5838,8 @@ function savePrepTime(rid,val){
 function openCSheet(rid){CST={rid,slotId:null,sel:null};renderCGrid();document.getElementById('courseSheet').style.display='block';}
 function openCSheetForSlot(sid){CST={rid:null,slotId:sid,sel:null};renderCGrid();document.getElementById('courseSheet').style.display='block';}
 function renderCGrid(){
-  document.getElementById('courseGrid').innerHTML=COURSES.map(c=>`
+  const courses=CST.rid!==null?COURSES.filter(c=>c.id!=='oth'):COURSES;
+  document.getElementById('courseGrid').innerHTML=courses.map(c=>`
     <div class="copt ${CST.sel?.id===c.id?'sel':''}" onclick="selCourse('${c.id}','${c[CL]||c.de}','${c.ico}')">
       <div class="copt-ico">${c.ico}</div>
       <div class="copt-lbl">${c[CL]||c.de}</div>
@@ -5854,8 +5855,11 @@ function confirmCourse(){
     MS.push({id:Date.now(),lbl,ico:sel.ico,rid,courseType:sel.id,customText:sel.id==='oth'?(othTxt||null):null});svM();badge();
     closeCSheet();render();
   }else if(slotId!==null){
-    const slot=MS.find(s=>s.id===slotId);if(slot){slot.lbl=lbl;slot.ico=sel.ico;}
-    closeCSheet();showRecipePicker(slotId);
+    const slot=MS.find(s=>s.id===slotId);
+    if(slot){slot.lbl=lbl;slot.ico=sel.ico;slot.courseType=sel.id;slot.customText=sel.id==='oth'?(othTxt||null):null;}
+    closeCSheet();
+    if(sel.id==='oth'){svM();renderWeek();}
+    else{showRecipePicker(slotId);}
   }
 }
 function showRecipePicker(sid,showAll){
