@@ -776,6 +776,23 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .scan-prev-ing{font-size:.74rem;color:#1e4a45;padding:2px 0;line-height:1.4}
 .scan-prev-more{font-size:.68rem;color:#36706a;font-style:italic;padding:2px 0}
 
+/* Scan-Modus Selektor */
+.scan-mode-wrap{margin:10px 0 8px}
+.scan-mode-title{font-size:.66rem;font-weight:700;color:var(--br2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.scan-mode-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.scan-mode-card{background:var(--parch);border:2px solid var(--sand2);border-radius:10px;padding:9px 5px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.scan-mode-card:active{opacity:.8}
+.scan-mode-card.selected{border-color:var(--teal);background:var(--teals)}
+.scan-mode-card.selected .smc-label{color:var(--teal)}
+.smc-icon{font-size:1.3rem;margin-bottom:2px;line-height:1}
+.smc-label{font-size:.73rem;font-weight:700;color:var(--br);margin-bottom:2px}
+.smc-stars{font-size:.58rem;color:#f0a500;letter-spacing:.5px;margin-bottom:2px}
+.smc-cost{font-size:.64rem;font-weight:700;color:var(--grn);margin-bottom:2px}
+.smc-desc{font-size:.57rem;color:var(--br3);line-height:1.3}
+.scan-upgrade-hint{background:var(--golds);border:1.5px solid var(--gold);border-radius:8px;padding:8px 10px;font-size:.7rem;color:#7a5800;display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.scan-upgrade-btn{background:var(--gold);color:#fff;border:none;border-radius:6px;padding:5px 11px;font-size:.69rem;font-weight:700;cursor:pointer;margin-left:auto;white-space:nowrap}
+.scan-upgrade-btn:active{opacity:.8}
+
 /* toast */
 .toast{position:fixed;bottom:calc(var(--bnh)+var(--sb)+10px);left:50%;transform:translateX(-50%);
   background:#302010;color:#fff;padding:7px 14px;border-radius:19px;font-size:.76rem;
@@ -2073,6 +2090,34 @@ Vielen Dank für deine Unterstützung.</div>
         </div>
 
         
+<!-- ── Scan-Modus Auswahl ── -->
+        <div class="scan-mode-wrap" id="scanModeWrap">
+          <div class="scan-mode-title">⚙️ Scan-Qualität wählen</div>
+          <div class="scan-mode-cards">
+            <div class="scan-mode-card selected" id="smc-schnell" onclick="selectScanModel('schnell')" title="Schnell &amp; günstig — ideal für einfache, bekannte Gerichte">
+              <div class="smc-icon">⚡</div>
+              <div class="smc-label">Schnell</div>
+              <div class="smc-stars">★★★☆☆</div>
+              <div class="smc-cost">~0,001 €</div>
+              <div class="smc-desc">Bekannte Gerichte</div>
+            </div>
+            <div class="scan-mode-card" id="smc-standard" onclick="selectScanModel('standard')" title="Ausgewogen — gute Qualität für die meisten Rezepte">
+              <div class="smc-icon">🧠</div>
+              <div class="smc-label">Standard</div>
+              <div class="smc-stars">★★★★☆</div>
+              <div class="smc-cost">~0,005 €</div>
+              <div class="smc-desc">Komplexe Rezepte</div>
+            </div>
+            <div class="scan-mode-card" id="smc-profi" onclick="selectScanModel('profi')" title="Beste Qualität — maximale Genauigkeit, auch für unleserliche Rezepte">
+              <div class="smc-icon">💎</div>
+              <div class="smc-label">Profi</div>
+              <div class="smc-stars">★★★★★</div>
+              <div class="smc-cost">~0,02 €</div>
+              <div class="smc-desc">Max. Genauigkeit</div>
+            </div>
+          </div>
+        </div>
+
         <div id="scanStatus" class="scan-status"></div>
         <div id="scanResultWrap"></div>
 
@@ -3693,7 +3738,7 @@ let R=[],MS=[],FD=[];
 let CAT='all',SQ='',MVT='tl';
 let EN={},EI={},ES={},CST={rid:null,slotId:null,sel:null};
 let DoneS={},DoneI={},DoneAL={};
-let pendImgs=[],scanData=null;
+let pendImgs=[],scanData=null,scanDataStore=null;
 let SERV={}; // rid → current serving count (active scaling)
 let cropQueue=[]; // rids waiting for crop editor after bulk import
 let deferredPWA=null;
@@ -3734,6 +3779,23 @@ function _idbGet(k){
   })).catch(()=>null);
 }
 
+// ── Bild-Komprimierung via Canvas ────────────────────────
+function resizeImage(dataUrl,maxW,quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/img.width);
+      const w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
+  });
+}
+
 // ── Undo-System (Rezept-Editor, max. 10 Schritte) ────────
 var _undoStack={};
 var _lastEditRid=null;
@@ -3755,15 +3817,19 @@ function undoRec(rid){
 }
 // ─────────────────────────────────────────────────────────
 function sv(){
-  const data=JSON.stringify(R.filter(r=>!r.blank));
+  const recs=R.filter(r=>!r.blank);
+  // Bilder separat in IDB — localStorage bleibt schlank (kein Speicherlimit-Problem)
+  const imgMap={};
+  const light=recs.map(r=>{if(r.img)imgMap[r.id]=r.img;return Object.assign({},r,{img:''});});
+  const data=JSON.stringify(light);
   try{
     localStorage.setItem('mrz9',data);
     localStorage.setItem('mrz9_ts',new Date().toISOString());
   }catch(e){
-    // Speicher voll: alten Eintrag NICHT löschen – Daten bleiben in IDB erhalten
     toast('⚠️ Speicher voll! Daten in Backup gesichert.');
   }
   _idbSet('mrz9',data);
+  _idbSet('mrz9_imgs',JSON.stringify(imgMap));
 }
 function svM(){
   const data=JSON.stringify(MS);
@@ -3903,6 +3969,14 @@ async function boot(){
     if(!r.imgCrop)r.imgCrop={x:50,y:50,scale:1}; // crop/pan/zoom
     if(r.prepTime===undefined)r.prepTime=null; // null = auto-detect from steps
   });
+  // Bilder aus IDB wiederherstellen (werden nicht mehr in localStorage gespeichert)
+  try{
+    const rawImgs=await _idbGet('mrz9_imgs');
+    if(rawImgs){
+      const imgMap=JSON.parse(rawImgs);
+      R.forEach(r=>{if(imgMap[r.id])r.img=imgMap[r.id];});
+    }
+  }catch(e){}
   // Seed blank slots on first run (nur echte Rezepte zählen)
   if(!R.some(r=>!r.blank)){
     const BLANKS={vorsp:10,suppe:10,fleisch:10,fisch:10,vegi:10,kuchen:10,dessert:10};
@@ -4214,8 +4288,9 @@ function handleImgSel(e){
   const named=R.filter(r=>r.name);
   files.forEach(f=>{
     const fr=new FileReader();
-    fr.onload=ev=>{
-      pendImgs.push({name:f.name,dataUrl:ev.target.result,rid:named[0]?.id||null});
+    fr.onload=async ev=>{
+      const compressed=await resizeImage(ev.target.result,800,0.75);
+      pendImgs.push({name:f.name,dataUrl:compressed,rid:named[0]?.id||null});
       if(++done===files.length)renderPendImgs();
     };fr.readAsDataURL(f);
   });
@@ -4598,6 +4673,23 @@ const _KEY_ERR={
   ratelimit:'⏳ Zu viele Anfragen — bitte 1 Minute warten und nochmal versuchen'
 };
 
+// ── Scan-Modelle ──────────────────────────────────────
+var _scanModel='schnell';
+const _SCAN_MODELS={
+  schnell: {id:'claude-haiku-4-5-20251001', tokens:2000, label:'⚡ Schnell'},
+  standard:{id:'claude-sonnet-4-6',          tokens:3000, label:'🧠 Standard'},
+  profi:   {id:'claude-opus-4-5',             tokens:4000, label:'💎 Profi'}
+};
+function selectScanModel(key){
+  _scanModel=key;
+  ['schnell','standard','profi'].forEach(k=>{
+    const el=document.getElementById('smc-'+k);
+    if(el)el.classList.toggle('selected',k===key);
+  });
+  const lbl=document.getElementById('scanBtnLbl');
+  if(lbl)lbl.textContent='Rezept erkennen · '+(_SCAN_MODELS[key]||_SCAN_MODELS.schnell).label;
+}
+
 // ── SCAN: KEY MANAGEMENT ──────────────────────────────
 function getSavedKey(){return localStorage.getItem('claudeKey9')||'';}
 
@@ -4694,20 +4786,22 @@ function loadScanFile(file){
   if(!file)return;
   if(file.size>5*1024*1024){toast('⚠️ Bild zu groß (max. 5 MB). Bitte ein kleineres Foto wählen.');return;}
   const fr=new FileReader();
-  fr.onload=ev=>{
-    scanData=ev.target.result;
+  fr.onload=async ev=>{
+    const orig=ev.target.result;
+    // 1200px für KI-Erkennung, 800px/0.75 für Rezeptbild-Speicher
+    [scanData,scanDataStore]=await Promise.all([
+      resizeImage(orig,1200,0.90),
+      resizeImage(orig,800,0.75)
+    ]);
     const prev=document.getElementById('scanPrev');
     const ph=document.getElementById('scanPhotoContent');
-    if(prev){prev.src=scanData;prev.style.display='block';}
+    if(prev){prev.src=scanDataStore;prev.style.display='block';}
     if(ph)ph.style.display='none';
     document.getElementById('scanActions').style.display='block';
     document.getElementById('scanResultWrap').innerHTML='';
     const st=document.getElementById('scanStatus');
     if(st)st.style.display='none';
-    // Auto-scan immediately if key is ready
-    if(getSavedKey()){
-      triggerScan();
-    }
+    if(getSavedKey()){triggerScan();}
   };
   fr.readAsDataURL(file);
 }
@@ -4743,8 +4837,9 @@ async function runBatchScan(files){
   for(let i=0;i<files.length;i++){
     updBar(`Bild ${i+1} von ${total}: <em>${h(files[i].name)}</em> …`);
     try{
-      const b64data=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.onerror=rej;fr.readAsDataURL(files[i]);});
-      const b64=b64data.split(',')[1],mime=b64data.split(';')[0].split(':')[1]||'image/jpeg';
+      const origData=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.onerror=rej;fr.readAsDataURL(files[i]);});
+      const[apiData,storeData]=await Promise.all([resizeImage(origData,1200,0.90),resizeImage(origData,800,0.75)]);
+      const b64=apiData.split(',')[1],mime=apiData.split(';')[0].split(':')[1]||'image/jpeg';
       const prompt=`You are a recipe extraction expert. Look at this recipe image carefully and extract ALL information.
 Return ONLY a valid JSON object — no markdown, no explanation, just the raw JSON:
 {
@@ -4766,7 +4861,7 @@ Rules:
       const resp=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-opus-4-5',max_tokens:3000,
+        body:JSON.stringify({model:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).id,max_tokens:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).tokens,
           messages:[{role:'user',content:[
             {type:'image',source:{type:'base64',media_type:mime,data:b64}},
             {type:'text',text:prompt}
@@ -4780,7 +4875,7 @@ Rules:
       const catId=CATS.find(c=>c.id===rec.category)?rec.category:'fleisch';
       const srvNum=parseInt(rec.servings)||4;
       const nr={id:Date.now()+i,name:rec.name||'Gescanntes Rezept',cat:catId,shut:false,
-        img:'',folder:'',blank:false,servings:srvNum,imgCrop:{x:50,y:50,scale:1},
+        img:storeData||'',folder:'',blank:false,servings:srvNum,imgCrop:{x:50,y:50,scale:1},
         flavors:rec.flavor?[rec.flavor]:[],
         ings:(rec.ingredients||[]).map((ing,x)=>({id:x+1,amt:ing.amt||'',unit:ing.unit||'',name:ing.name||'',ck:false,note:''})),
         steps:(rec.steps||[]).map((s,x)=>({id:x+1,txt:typeof s==='string'?s:s.txt||'',note:''})),
@@ -4813,7 +4908,7 @@ function handleScanDrop(e){
 }
 
 function resetScan(){
-  scanData=null;
+  scanData=null;scanDataStore=null;
   const prev=document.getElementById('scanPrev');
   const ph=document.getElementById('scanPhotoContent');
   if(prev){prev.src='';prev.style.display='none';}
@@ -4857,7 +4952,7 @@ Rules:
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-opus-4-5',max_tokens:3000,
+      body:JSON.stringify({model:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).id,max_tokens:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).tokens,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:mime,data:b64}},
           {type:'text',text:prompt}
@@ -5124,6 +5219,14 @@ function renderScanResult(rec){
         ✅ Ins Rezeptbuch eintragen
       </button>
       <button class="scan-retry-btn" onclick="document.getElementById('scanFileIn').click()">📷 Anderes Foto wählen</button>
+      ${(()=>{
+        const lowQ=(rec.ingredients||[]).length<3||(rec.steps||[]).length<2;
+        if(_scanModel==='profi')return '';
+        const nextModel=_scanModel==='schnell'?'standard':'profi';
+        const nextLabel=_SCAN_MODELS[nextModel].label;
+        const hint=lowQ?'⚠️ Ergebnis scheint unvollständig —':'💡 Besseres Ergebnis möglich —';
+        return `<div class="scan-upgrade-hint">${hint}<button class="scan-upgrade-btn" onclick="selectScanModel('${nextModel}');triggerScan()">🔄 Nochmal mit ${nextLabel}</button></div>`;
+      })()}
     </div>`;
 }
 function acceptScan(){
@@ -5132,7 +5235,7 @@ function acceptScan(){
   const empty=R.find(r=>r.blank&&!r.name&&r.cat===catId);
   const srvNum=parseInt(rec.servings)||4;
   const nr={id:Date.now(),name:rec.name||'Gescanntes Rezept',cat:catId,shut:false,
-    img:scanData||'',folder:'',blank:false,servings:srvNum,imgCrop:{x:50,y:50,scale:1},
+    img:scanDataStore||scanData||'',folder:'',blank:false,servings:srvNum,imgCrop:{x:50,y:50,scale:1},
     flavors:rec.flavor?[rec.flavor]:[],
     ings:(rec.ingredients||[]).map((i,x)=>({id:x+1,amt:i.amt||'',unit:i.unit||'',name:i.name||'',ck:false,note:''})),
     steps:(rec.steps||[]).map((s,x)=>({id:x+1,txt:typeof s==='string'?s:s.txt||'',note:''})),
@@ -6484,12 +6587,11 @@ function pickImgForCard(rid){
   inp.onchange=e=>{
     const f=e.target.files[0];if(!f)return;
     const fr=new FileReader();
-    fr.onload=ev=>{
+    fr.onload=async ev=>{
       const r=R.find(r=>r.id===rid);if(!r)return;
-      r.img=ev.target.result;
-      r.imgCrop={x:50,y:50,scale:1}; // reset crop for new image
+      r.img=await resizeImage(ev.target.result,800,0.75);
+      r.imgCrop={x:50,y:50,scale:1};
       sv();render();
-      // Automatically open crop editor for the new image
       setTimeout(()=>openCrop(rid),120);
     };
     fr.readAsDataURL(f);
