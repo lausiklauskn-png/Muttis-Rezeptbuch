@@ -2306,6 +2306,9 @@ Vielen Dank für deine Unterstützung.</div>
         <button class="sh-x" onclick="closeCSheet()" title="Schließen">✕</button></div>
       <div class="sh-body">
         <div class="cgrid" id="courseGrid"></div>
+        <div id="othInpWrap" style="display:none;padding:8px 0 4px">
+          <input class="fin" id="othInp" style="width:100%;font-size:.9rem" placeholder="Beschreibung eingeben …" onkeydown="if(event.key==='Enter')confirmCourse()"/>
+        </div>
       </div>
       <div class="sh-footer">
         <button class="sbtn sec" onclick="closeCSheet()" id="csCancel">Abbrechen</button>
@@ -5819,15 +5822,17 @@ function renderCGrid(){
       <div class="copt-lbl">${c[CL]||c.de}</div>
     </div>`).join('');
 }
-function selCourse(id,lbl,ico){CST.sel={id,lbl,ico};renderCGrid();}
-function closeCSheet(){document.getElementById('courseSheet').style.display='none';}
+function selCourse(id,lbl,ico){CST.sel={id,lbl,ico};renderCGrid();const w=document.getElementById('othInpWrap');if(w)w.style.display=id==='oth'?'block':'none';if(id==='oth')setTimeout(()=>document.getElementById('othInp')?.focus(),80);}
+function closeCSheet(){document.getElementById('courseSheet').style.display='none';const i=document.getElementById('othInp');if(i)i.value='';const w=document.getElementById('othInpWrap');if(w)w.style.display='none';}
 function confirmCourse(){
   const{rid,slotId,sel}=CST;if(!sel){toast('⚠️');return;}
+  const othTxt=sel.id==='oth'?(document.getElementById('othInp')?.value||'').trim():'';
+  const lbl=othTxt||sel.lbl;
   if(rid!==null){
-    MS.push({id:Date.now(),lbl:sel.lbl,ico:sel.ico,rid});svM();badge();
+    MS.push({id:Date.now(),lbl,ico:sel.ico,rid});svM();badge();
     closeCSheet();render();
   }else if(slotId!==null){
-    const slot=MS.find(s=>s.id===slotId);if(slot){slot.lbl=sel.lbl;slot.ico=sel.ico;}
+    const slot=MS.find(s=>s.id===slotId);if(slot){slot.lbl=lbl;slot.ico=sel.ico;}
     closeCSheet();showRecipePicker(slotId);
   }
 }
