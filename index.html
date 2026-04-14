@@ -2318,9 +2318,6 @@ Vielen Dank für deine Unterstützung.</div>
         <button class="sh-x" onclick="closeCSheet()" title="Schließen">✕</button></div>
       <div class="sh-body">
         <div class="cgrid" id="courseGrid"></div>
-        <div id="cstInpWrap" style="display:none;padding:8px 0 4px">
-          <input class="fin" id="cstInp" style="width:100%;font-size:.9rem" placeholder="z.B. Vegane Variante ohne Majodipp …" onkeydown="if(event.key==='Enter')confirmCourse()"/>
-        </div>
       </div>
       <div class="sh-footer">
         <button class="sbtn sec" onclick="closeCSheet()" id="csCancel">Abbrechen</button>
@@ -3659,7 +3656,8 @@ const COURSES=[
   {id:'des',ico:'🍮',de:'Nachspeise',en:'Dessert',ru:'Десерт',zh:'甜点',es:'Postre',fr:'Dessert',it:'Dolce',pt:'Sobremesa'},
   {id:'drk',ico:'🍷',de:'Getränk',en:'Drink',ru:'Напиток',zh:'饮料',es:'Bebida',fr:'Boisson',it:'Bevanda',pt:'Bebida'},
   {id:'brd',ico:'🥖',de:'Brot/Snack',en:'Bread',ru:'Хлеб',zh:'面包',es:'Pan/Snack',fr:'Pain',it:'Pane',pt:'Pão'},
-  {id:'cst',ico:'📝',de:'Notiz',en:'Note',ru:'Заметка',zh:'备注',es:'Nota',fr:'Note',it:'Nota',pt:'Nota'},
+  {id:'oth',ico:'🍴',de:'Sonstiges',en:'Other',ru:'Прочее',zh:'其他',es:'Otros',fr:'Autres',it:'Altro',pt:'Outros'},
+  {id:'oth',ico:'📝',de:'Sonstiges',en:'Other',ru:'Другое',zh:'其他',es:'Otros',fr:'Autres',it:'Altro',pt:'Outros'},
 ];
 const THEMES=[
   {id:'spektral',de:'Spektral',en:'Spectral',ru:'Спектр',zh:'光谱',es:'Espectral',fr:'Spectral',it:'Spettrale',pt:'Espectral',strips:['#FF0000','#FFE500','#00CC00','#8800FF']},
@@ -5691,13 +5689,12 @@ function renderWeek(){
       if(mSlots.length){
         mSlots.forEach(function(slot){
           var r=slot.rid?R.find(function(x){return x.id===slot.rid;}):null;
-          var filled=r&&r.name,isOth=slot.courseType==='oth',isCst=slot.courseType==='cst',hasC=isOth&&slot.customText;
-          d+='<div class="wk-slot'+(filled||hasC||isCst?' filled':'')+'" id="wks'+slot.id+'" draggable="true" ondragstart="wkSlotDragStart(event,'+slot.id+')" ondragend="wkSlotDragEnd('+slot.id+')" ondragover="wkSlotDragOver(event,'+slot.id+')" ondragleave="wkSlotDragLeave(event,'+slot.id+')" ondrop="wkSlotDrop(event,'+slot.id+')" onclick="editWkSlot('+slot.id+')">';
+          var filled=r&&r.name,isOth=slot.courseType==='oth',hasC=isOth&&slot.customText;
+          d+='<div class="wk-slot'+(filled||hasC?' filled':'')+'" id="wks'+slot.id+'" draggable="true" ondragstart="wkSlotDragStart(event,'+slot.id+')" ondragend="wkSlotDragEnd('+slot.id+')" ondragover="wkSlotDragOver(event,'+slot.id+')" ondragleave="wkSlotDragLeave(event,'+slot.id+')" ondrop="wkSlotDrop(event,'+slot.id+')" onclick="editWkSlot('+slot.id+')">';
           d+='<div class="wk-drag-hdl" data-hdl="wkslot" data-sid="'+slot.id+'" title="Ziehen zum Verschieben">⠿</div>';
           d+='<div class="wk-slot-ico">'+slot.ico+'</div><div class="wk-slot-info">';
           d+='<div class="wk-slot-course">'+h(slot.lbl)+'</div>';
           if(hasC)d+='<div class="wk-slot-name">'+h(slot.customText)+'</div>';
-          else if(isCst)d+='';
           else if(filled){var dn=rName(r);d+='<div class="wk-slot-name">'+h(dn)+(dn!==r.name?'<span style="font-size:.55rem;opacity:.55;display:block">'+h(r.name)+'</span>':'')+'</div>';}
           else d+='<div class="wk-slot-name empty">'+T('assignSlot')+'</div>';
           d+='</div>';
@@ -5835,26 +5832,16 @@ function renderCGrid(){
       <div class="copt-lbl">${c[CL]||c.de}</div>
     </div>`).join('');
 }
-function selCourse(id,lbl,ico){CST.sel={id,lbl,ico};renderCGrid();const w=document.getElementById('cstInpWrap');if(w)w.style.display=id==='cst'?'block':'none';if(id==='cst')setTimeout(()=>document.getElementById('cstInp')?.focus(),80);}
-function closeCSheet(){document.getElementById('courseSheet').style.display='none';const i=document.getElementById('cstInp');if(i)i.value='';const w=document.getElementById('cstInpWrap');if(w)w.style.display='none';}
+function selCourse(id,lbl,ico){CST.sel={id,lbl,ico};renderCGrid();}
+function closeCSheet(){document.getElementById('courseSheet').style.display='none';}
 function confirmCourse(){
   const{rid,slotId,sel}=CST;if(!sel){toast('⚠️');return;}
-  let lbl=sel.lbl,ico=sel.ico;
-  if(sel.id==='cst'){
-    const txt=(document.getElementById('cstInp')?.value||'').trim();
-    if(!txt){toast('⚠️');return;}
-    lbl=txt;ico='📝';
-  }
   if(rid!==null){
-    const e={id:Date.now(),lbl,ico,rid:sel.id==='cst'?null:rid};
-    if(sel.id==='cst')e.courseType='cst';
-    MS.push(e);svM();badge();
+    MS.push({id:Date.now(),lbl:sel.lbl,ico:sel.ico,rid});svM();badge();
     closeCSheet();render();
   }else if(slotId!==null){
-    const slot=MS.find(s=>s.id===slotId);
-    if(slot){slot.lbl=lbl;slot.ico=ico;if(sel.id==='cst')slot.courseType='cst';}
-    closeCSheet();
-    if(sel.id!=='cst')showRecipePicker(slotId);
+    const slot=MS.find(s=>s.id===slotId);if(slot){slot.lbl=sel.lbl;slot.ico=sel.ico;}
+    closeCSheet();showRecipePicker(slotId);
   }
 }
 function showRecipePicker(sid){
@@ -7933,9 +7920,6 @@ function editWkSlot(id){
   if(slot.courseType==='oth'){
     const txt=prompt(T('wkOther'),slot.customText||'');
     if(txt!==null){slot.customText=txt;svM();renderWeek();}
-  } else if(slot.courseType==='cst'){
-    const txt=prompt(slot.lbl||'',slot.lbl||'');
-    if(txt!==null&&txt.trim()){slot.lbl=txt.trim();slot.ico='📝';svM();renderWeek();}
   } else {
     openCSheetForSlot(id);
   }
