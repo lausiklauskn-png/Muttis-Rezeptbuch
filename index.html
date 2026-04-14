@@ -5615,7 +5615,10 @@ function badge(){
   if(b){b.style.display=f?'block':'none';b.textContent=f;}
   const rc=R.filter(r=>!r.blank).length,rb=document.getElementById('recBadge');
   if(rb){rb.style.display=rc?'block':'none';rb.textContent=rc;}
-  const fc=FD.length,fb=document.getElementById('fldBadge');
+  const fc=[
+    ...CATS.filter(c=>c.id!=='all').filter(c=>R.some(r=>r.cat===c.id&&r.name)),
+    ...FD.filter(f=>R.some(r=>r.folder===String(f.id)&&r.name))
+  ].length,fb=document.getElementById('fldBadge');
   if(fb){fb.style.display=fc?'block':'none';fb.textContent=fc;}
 }
 
