@@ -2353,9 +2353,11 @@ Vielen Dank für deine Unterstützung.</div>
   <div class="nav-items">
     <div class="bn on" id="bn-recipes" onclick="showSc('recipes')">
       <div class="bn-ico">📖</div><div class="bn-lbl" id="bnRec">Rezepte</div>
+      <div class="bn-badge" id="recBadge" style="display:none">0</div>
     </div>
     <div class="bn" id="bn-folders" onclick="showSc('folders')">
       <div class="bn-ico">📂</div><div class="bn-lbl" id="bnFld">Ordner</div>
+      <div class="bn-badge" id="fldBadge" style="display:none">0</div>
     </div>
     <div class="bn" id="bn-menu" onclick="showSc('menu')">
       <div class="bn-ico">🍽️</div><div class="bn-lbl" id="bnMen">Menü</div>
@@ -5598,7 +5600,11 @@ function setCAT(id){CAT=id;render();window.scrollTo(0,0);}
 // ═══════════════════════════════════════════════════════
 function badge(){
   const f=MS.filter(s=>s.rid||(s.courseType==='oth'&&s.customText)).length,b=document.getElementById('menuBadge');
-  if(!b)return;b.style.display=f?'block':'none';b.textContent=f;
+  if(b){b.style.display=f?'block':'none';b.textContent=f;}
+  const rc=R.filter(r=>!r.blank).length,rb=document.getElementById('recBadge');
+  if(rb){rb.style.display=rc?'block':'none';rb.textContent=rc;}
+  const fc=FD.length,fb=document.getElementById('fldBadge');
+  if(fb){fb.style.display=fc?'block':'none';fb.textContent=fc;}
 }
 
 // ═══════════════════════════════════════════════════════
