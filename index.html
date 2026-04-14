@@ -5711,13 +5711,15 @@ function renderWeek(){
       if(mSlots.length){
         mSlots.forEach(function(slot){
           var r=slot.rid?R.find(function(x){return x.id===slot.rid;}):null;
-          var filled=r&&r.name,isOth=slot.courseType==='oth',hasC=isOth&&slot.customText;
+          var filled=r&&r.name,isOth=slot.courseType==='oth';
+          var _othTxt=isOth?(slot.customText!=null?slot.customText:(slot.lbl&&slot.lbl!==T('wkOther')?slot.lbl:'')):null;
+          var hasC=isOth&&!!_othTxt;
           d+='<div class="wk-slot'+(filled||hasC?' filled':'')+'" id="wks'+slot.id+'" draggable="true" ondragstart="wkSlotDragStart(event,'+slot.id+')" ondragend="wkSlotDragEnd('+slot.id+')" ondragover="wkSlotDragOver(event,'+slot.id+')" ondragleave="wkSlotDragLeave(event,'+slot.id+')" ondrop="wkSlotDrop(event,'+slot.id+')" onclick="editWkSlot('+slot.id+')">';
           d+='<div class="wk-drag-hdl" data-hdl="wkslot" data-sid="'+slot.id+'" title="Ziehen zum Verschieben">⠿</div>';
           d+='<div class="wk-slot-ico">'+slot.ico+'</div><div class="wk-slot-info">';
           d+='<div class="wk-slot-course">'+h(slot.lbl)+'</div>';
           if(filled){var dn=rName(r);d+='<div class="wk-slot-name">'+h(dn)+(dn!==r.name?'<span style="font-size:.55rem;opacity:.55;display:block">'+h(r.name)+'</span>':'')+'</div>';}
-          if(hasC)d+='<div class="wk-slot-oth-txt">'+h(slot.customText)+'</div>';
+          if(hasC)d+='<div class="wk-slot-oth-txt">'+h(_othTxt)+'</div>';
           if(!filled&&!hasC)d+='<div class="wk-slot-name empty">'+T('assignSlot')+'</div>';
           d+='</div>';
           if(filled)d+='<div class="wk-slot-link" onclick="event.stopPropagation();goToRecipe('+r.id+')" title="Zum Rezept">↗</div>';
@@ -7987,8 +7989,10 @@ function aipImport(){
 function editWkSlot(id){
   const slot=MS.find(s=>s.id===id);if(!slot)return;
   if(slot.courseType==='oth'){
-    const txt=prompt(T('wkOther'),slot.customText||'');
-    if(txt!==null){slot.customText=txt;svM();renderWeek();}
+    // Fallback für ältere Slots: Text war in lbl statt customText gespeichert
+    const pre=slot.customText!=null?slot.customText:(slot.lbl&&slot.lbl!==T('wkOther')?slot.lbl:'');
+    const txt=prompt(T('wkOther'),pre);
+    if(txt!==null){slot.customText=txt;slot.lbl=txt||T('wkOther');svM();renderWeek();}
   } else {
     openCSheetForSlot(id);
   }
