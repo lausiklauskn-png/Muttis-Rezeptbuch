@@ -907,6 +907,12 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
   border:1.5px solid var(--sand2);cursor:pointer;font-size:1rem;
   display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--br)}
 .aip-persons-val{font-size:.88rem;font-weight:700;color:var(--ink);min-width:20px;text-align:center}
+.aip-src-row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.aip-seg{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--sand2)}
+.aip-seg-btn{border:none;background:var(--sand);color:var(--br3);font-size:.76rem;font-weight:600;padding:5px 11px;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+.aip-seg-btn.on{background:var(--br);color:#fff}
+.aip-day-sel{border:1.5px solid var(--sand2);border-radius:8px;background:var(--sand);color:var(--ink);font-size:.76rem;padding:4px 7px;font-family:inherit;cursor:pointer;max-width:82px}
+.wk-slot-oth-txt{font-size:.7rem;color:var(--br3);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
 /* ── BARRIEREFREIHEIT: Schriftgröße ── */
 html.a11y-sm { font-size:85% !important }
@@ -1642,6 +1648,20 @@ button:active{transform:scale(0.97)}
           <span class="aip-persons-val" id="aipPersonsVal">4</span>
           <button class="aip-persons-btn" onclick="aipChgP(1)" title="Mehr Personen">+</button>
         </div>
+      </div>
+      <div class="aip-src-row">
+        <span class="aip-persons-lbl" id="aipSrcLbl">Rezepte:</span>
+        <div class="aip-seg">
+          <button class="aip-seg-btn on" id="aipSrcAddedBtn" onclick="aipSetSrc('added')">+Menü ✓</button>
+          <button class="aip-seg-btn" id="aipSrcAllBtn" onclick="aipSetSrc('all')">Alle</button>
+        </div>
+      </div>
+      <div class="aip-src-row">
+        <span class="aip-persons-lbl" id="aipDayLbl">Tage:</span>
+        <span class="aip-persons-lbl" id="aipDayFromLbl">Von</span>
+        <select class="aip-day-sel" id="aipDayFrom" onchange="aipSetDayRange()"></select>
+        <span class="aip-persons-lbl" id="aipDayToLbl">Bis</span>
+        <select class="aip-day-sel" id="aipDayTo" onchange="aipSetDayRange()"></select>
       </div>
       <div class="aip-prompt" id="aipPromptBox"></div>
       <button class="aip-btn primary" onclick="aipCopy()" id="aipCopyBtn" title="Wochenplan kopieren"></button>
@@ -2484,7 +2504,7 @@ const LANGS={
     printBtn:'🖨️ Rezept drucken / als PDF',printSub:'Zutatenliste & Zubereitung',srvLabel:'Portionen',srvBase:'Basis',srvFor:'für',srvPers:'Pers.',srvCustom:'eigene Zahl',srvReset:'Zurücksetzen',prepTimeLabel:'⏱ Zubereitungszeit',prepTimeMin:'Min.',prepTimeHr:'Std.',prepTimePh:'min',prepTimeAuto:'automatisch erkannt',
     scanReadyLbl:'KI-Erkennung aktiv',scanReadySub:'Zugangscode gespeichert',scanChangeLbl:'ändern',scanBtnLbl:'Rezept automatisch erkennen',scanRetry:'Nochmal scannen',
     sc1T:'Website öffnen & kostenlosen Account anlegen',sc1D:'Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.',sc2T:'Zugangscode erstellen & kopieren',sc2D:'Auf der Website auf „Create Key" klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code kopieren (📋 Button).',sc3T:'Code hier einfügen — fertig!',sc3D:'Speichern & KI aktivieren',apiKeyLbl:'Zugangscode einfügen',apiHint:'Bleibt nur auf deinem Gerät — wird niemals weitergegeben',pasteBtnLbl:'📋 Einfügen',scanOpenLink:'Zur Anthropic-Website →',
-    wkBf:'Frühstück',wkLu:'Mittagessen',wkDi:'Abendessen',wkPickMeal:'Mahlzeit wählen',wkPickCourse:'Gang wählen',wkOther:'Sonstiges',wkOtherPh:'z.B. Getränk, Brot …',wkPrev:'‹ Vorwoche',wkNext:'Nächste Woche ›',wkCurr:'Diese Woche',wkKw:'KW',wkAiTitle:'✨ KI-Wochenplan',wkAiStep1:'Prompt kopieren',wkAiStep2:'In Claude einfügen und Wochenplan generieren',wkAiStep3:'KI-Antwort (JSON) hier einfügen und importieren',wkAiCopy:'📋 Prompt kopieren',wkAiCopied:'✅ Kopiert!',wkAiLink:'Claude öffnen →',wkAiImportBtn:'✨ Wochenplan importieren',wkAiOk:'✅ Wochenplan importiert!',wkAiErr:'❌ Ungültiges Format',wkAiClose:'Schließen',wkAiPh:'JSON hier einfügen …',wkAiPromptTitle:'Beispiel-Prompt:',wkAiPersons:'Personen'
+    wkBf:'Frühstück',wkLu:'Mittagessen',wkDi:'Abendessen',wkPickMeal:'Mahlzeit wählen',wkPickCourse:'Gang wählen',wkOther:'Sonstiges',wkOtherPh:'z.B. Getränk, Brot …',wkPrev:'‹ Vorwoche',wkNext:'Nächste Woche ›',wkCurr:'Diese Woche',wkKw:'KW',wkAiTitle:'✨ KI-Menüplaner',wkAiStep1:'Prompt kopieren',wkAiStep2:'In Claude einfügen und Menüplan generieren',wkAiStep3:'KI-Antwort (JSON) hier einfügen und importieren',wkAiCopy:'📋 Prompt kopieren',wkAiCopied:'✅ Kopiert!',wkAiLink:'Claude öffnen →',wkAiImportBtn:'✨ Menüplan importieren',wkAiOk:'✅ Menüplan importiert!',wkAiErr:'❌ Ungültiges Format',wkAiClose:'Schließen',wkAiPh:'JSON hier einfügen …',wkAiPromptTitle:'Beispiel-Prompt:',wkAiPersons:'Personen',wkAiSrcLbl:'Rezepte:',wkAiSrcAdded:'+Menü ✓',wkAiSrcAll:'Alle',wkAiDayLbl:'Tage:',wkAiDayFrom:'Von',wkAiDayTo:'Bis',wkPickerHint:'Nur +Menü ✓ Rezepte',wkPickerShowAll:'Alle Rezepte anzeigen'
     ,sRating:'⭐ Bewerte Deinen Fortschritt'
     ,saveRat:'Fortschritt speichern'
     ,a11yHead:'♿ BARRIEREFREIHEIT'
@@ -2594,7 +2614,7 @@ const LANGS={
     printBtn:'🖨️ Print recipe / save PDF',printSub:'Ingredients & preparation',srvLabel:'Servings',srvBase:'Base',srvFor:'for',srvPers:'pers.',srvCustom:'custom',srvReset:'Reset',prepTimeLabel:'⏱ Prep time',prepTimeMin:'min.',prepTimeHr:'hr.',prepTimePh:'min',prepTimeAuto:'auto-detected',
     scanReadyLbl:'AI recognition active',scanReadySub:'Access code saved',scanChangeLbl:'change',scanBtnLbl:'Recognise recipe automatically',scanRetry:'Scan again',
     sc1T:'Open website & create free account',sc1D:'Tap the blue button — it opens the website. Sign up for free with your email address.',sc2T:'Create & copy access code',sc2D:'On the website click "Create Key", enter a name (e.g. "Recipe Book"), then copy the long code (📋 button).',sc3T:'Paste code here — done!',sc3D:'Save & activate AI',apiKeyLbl:'Paste access code',apiHint:'Stays on your device only — never shared',pasteBtnLbl:'📋 Paste',scanOpenLink:'Go to Anthropic website →',
-    wkBf:'Breakfast',wkLu:'Lunch',wkDi:'Dinner',wkPickMeal:'Choose meal',wkPickCourse:'Choose course',wkOther:'Other',wkOtherPh:'e.g. drinks, bread …',wkPrev:'‹ Prev week',wkNext:'Next week ›',wkCurr:'This week',wkKw:'CW',wkAiTitle:'✨ AI Week Plan',wkAiStep1:'Copy prompt',wkAiStep2:'Paste into Claude and generate a week plan',wkAiStep3:'Paste AI response (JSON) here and import',wkAiCopy:'📋 Copy prompt',wkAiCopied:'✅ Copied!',wkAiLink:'Open Claude →',wkAiImportBtn:'✨ Import week plan',wkAiOk:'✅ Week plan imported!',wkAiErr:'❌ Invalid format',wkAiClose:'Close',wkAiPh:'Paste JSON here …',wkAiPromptTitle:'Example prompt:',wkAiPersons:'persons'
+    wkBf:'Breakfast',wkLu:'Lunch',wkDi:'Dinner',wkPickMeal:'Choose meal',wkPickCourse:'Choose course',wkOther:'Other',wkOtherPh:'e.g. drinks, bread …',wkPrev:'‹ Prev week',wkNext:'Next week ›',wkCurr:'This week',wkKw:'CW',wkAiTitle:'✨ AI Menu Planner',wkAiStep1:'Copy prompt',wkAiStep2:'Paste into Claude and generate a menu plan',wkAiStep3:'Paste AI response (JSON) here and import',wkAiCopy:'📋 Copy prompt',wkAiCopied:'✅ Copied!',wkAiLink:'Open Claude →',wkAiImportBtn:'✨ Import menu plan',wkAiOk:'✅ Menu plan imported!',wkAiErr:'❌ Invalid format',wkAiClose:'Close',wkAiPh:'Paste JSON here …',wkAiPromptTitle:'Example prompt:',wkAiPersons:'persons',wkAiSrcLbl:'Recipes:',wkAiSrcAdded:'+Menu ✓',wkAiSrcAll:'All',wkAiDayLbl:'Days:',wkAiDayFrom:'From',wkAiDayTo:'To',wkPickerHint:'+Menu ✓ recipes only',wkPickerShowAll:'Show all recipes'
     ,sRating:'⭐ Rate Your Progress'
     ,saveRat:'Save progress'
     ,a11yHead:'♿ ACCESSIBILITY'
@@ -2704,7 +2724,7 @@ const LANGS={
     printBtn:'🖨️ Распечатать рецепт / PDF',printSub:'Состав и приготовление',srvLabel:'Порции',srvBase:'Основа',srvFor:'на',srvPers:'чел.',srvCustom:'другое',srvReset:'Сброс',prepTimeLabel:'⏱ Время готовки',prepTimeMin:'мин.',prepTimeHr:'ч.',prepTimePh:'мин',prepTimeAuto:'авто',
     scanReadyLbl:'ИИ-распознавание активно',scanReadySub:'Код доступа сохранён',scanChangeLbl:'изменить',scanBtnLbl:'Распознать рецепт автоматически',scanRetry:'Ещё раз',
     sc1T:'Открыть сайт и создать бесплатный аккаунт',sc1D:'Нажмите синюю кнопку — она откроет сайт. Зарегистрируйтесь бесплатно с помощью email.',sc2T:'Создать и скопировать код доступа',sc2D:'На сайте нажмите «Create Key», введите имя (например «Книга рецептов»), затем скопируйте длинный код (кнопка 📋).',sc3T:'Вставьте код здесь — готово!',sc3D:'Сохранить и активировать ИИ',apiKeyLbl:'Вставьте код доступа',apiHint:'Хранится только на вашем устройстве — никуда не передаётся',pasteBtnLbl:'📋 Вставить',scanOpenLink:'Открыть сайт Anthropic →',
-    wkBf:'Завтрак',wkLu:'Обед',wkDi:'Ужин',wkPickMeal:'Выбор приёма пищи',wkPickCourse:'Выбор блюда',wkOther:'Прочее',wkOtherPh:'напр. напитки, хлеб …',wkPrev:'‹ Пред. неделя',wkNext:'Следующая неделя ›',wkCurr:'Эта неделя',wkKw:'КН',wkAiTitle:'✨ ИИ-план недели',wkAiStep1:'Скопировать запрос',wkAiStep2:'Вставить в Claude и создать план',wkAiStep3:'Вставить ответ ИИ (JSON) и импортировать',wkAiCopy:'📋 Скопировать',wkAiCopied:'✅ Скопировано!',wkAiLink:'Открыть Claude →',wkAiImportBtn:'✨ Импортировать план',wkAiOk:'✅ План импортирован!',wkAiErr:'❌ Неверный формат',wkAiClose:'Закрыть',wkAiPh:'Вставить JSON …',wkAiPromptTitle:'Пример запроса:',wkAiPersons:'персон'
+    wkBf:'Завтрак',wkLu:'Обед',wkDi:'Ужин',wkPickMeal:'Выбор приёма пищи',wkPickCourse:'Выбор блюда',wkOther:'Прочее',wkOtherPh:'напр. напитки, хлеб …',wkPrev:'‹ Пред. неделя',wkNext:'Следующая неделя ›',wkCurr:'Эта неделя',wkKw:'КН',wkAiTitle:'✨ ИИ-планировщик меню',wkAiStep1:'Скопировать запрос',wkAiStep2:'Вставить в Claude и создать план',wkAiStep3:'Вставить ответ ИИ (JSON) и импортировать',wkAiCopy:'📋 Скопировать',wkAiCopied:'✅ Скопировано!',wkAiLink:'Открыть Claude →',wkAiImportBtn:'✨ Импортировать план',wkAiOk:'✅ План импортирован!',wkAiErr:'❌ Неверный формат',wkAiClose:'Закрыть',wkAiPh:'Вставить JSON …',wkAiPromptTitle:'Пример запроса:',wkAiPersons:'персон',wkAiSrcLbl:'Рецепты:',wkAiSrcAdded:'+Меню ✓',wkAiSrcAll:'Все',wkAiDayLbl:'Дни:',wkAiDayFrom:'С',wkAiDayTo:'По',wkPickerHint:'Только +Меню ✓',wkPickerShowAll:'Все рецепты'
     ,sRating:'⭐ Оцени свой прогресс'
     ,saveRat:'Сохранить прогресс'
     ,a11yHead:'♿ ДОСТУПНОСТЬ'
@@ -2814,7 +2834,7 @@ const LANGS={
     printBtn:'🖨️ 打印食谱 / 保存PDF',printSub:'配料和制作步骤',srvLabel:'份量',srvBase:'基础',srvFor:'供',srvPers:'人',srvCustom:'自定义',srvReset:'重置',prepTimeLabel:'⏱ 准备时间',prepTimeMin:'分',prepTimeHr:'时',prepTimePh:'分钟',prepTimeAuto:'自动',
     scanReadyLbl:'AI识别已激活',scanReadySub:'访问码已保存',scanChangeLbl:'更改',scanBtnLbl:'自动识别食谱',scanRetry:'重新扫描',
     sc1T:'打开网站并创建免费账户',sc1D:'点击蓝色按钮——它将打开网站。用您的电子邮件免费注册。',sc2T:'创建并复制访问码',sc2D:'在网站上点击「Create Key」，输入名称（如「食谱书」），然后复制长码（📋按钮）。',sc3T:'在此粘贴代码——完成！',sc3D:'保存并激活AI',apiKeyLbl:'粘贴访问码',apiHint:'仅存储在您的设备上——从不共享',pasteBtnLbl:'📋 粘贴',scanOpenLink:'前往Anthropic网站 →',
-    wkBf:'早餐',wkLu:'午餐',wkDi:'晚餐',wkPickMeal:'选择餐次',wkPickCourse:'选择菜类',wkOther:'其他',wkOtherPh:'如饮料、面包…',wkPrev:'‹ 上周',wkNext:'下周 ›',wkCurr:'本周',wkKw:'周',wkAiTitle:'✨ AI周计划',wkAiStep1:'复制提示',wkAiStep2:'粘贴到Claude并生成周计划',wkAiStep3:'粘贴AI回复(JSON)并导入',wkAiCopy:'📋 复制提示',wkAiCopied:'✅ 已复制!',wkAiLink:'打开Claude →',wkAiImportBtn:'✨ 导入周计划',wkAiOk:'✅ 周计划已导入!',wkAiErr:'❌ 格式无效',wkAiClose:'关闭',wkAiPh:'在此粘贴JSON…',wkAiPromptTitle:'示例提示:',wkAiPersons:'人'
+    wkBf:'早餐',wkLu:'午餐',wkDi:'晚餐',wkPickMeal:'选择餐次',wkPickCourse:'选择菜类',wkOther:'其他',wkOtherPh:'如饮料、面包…',wkPrev:'‹ 上周',wkNext:'下周 ›',wkCurr:'本周',wkKw:'周',wkAiTitle:'✨ AI菜单计划',wkAiStep1:'复制提示',wkAiStep2:'粘贴到Claude并生成菜单计划',wkAiStep3:'粘贴AI回复(JSON)并导入',wkAiCopy:'📋 复制提示',wkAiCopied:'✅ 已复制!',wkAiLink:'打开Claude →',wkAiImportBtn:'✨ 导入菜单计划',wkAiOk:'✅ 菜单计划已导入!',wkAiErr:'❌ 格式无效',wkAiClose:'关闭',wkAiPh:'在此粘贴JSON…',wkAiPromptTitle:'示例提示:',wkAiPersons:'人',wkAiSrcLbl:'食谱:',wkAiSrcAdded:'+菜单 ✓',wkAiSrcAll:'全部',wkAiDayLbl:'天数:',wkAiDayFrom:'从',wkAiDayTo:'至',wkPickerHint:'仅+菜单 ✓',wkPickerShowAll:'显示所有食谱'
     ,sRating:'⭐ 评价你的进步'
     ,saveRat:'保存进度'
     ,a11yHead:'♿ 无障碍'
@@ -2924,7 +2944,7 @@ const LANGS={
     printBtn:'🖨️ Imprimir receta / PDF',printSub:'Lista de ingredientes y preparación',srvLabel:'Porciones',srvBase:'Base',srvFor:'para',srvPers:'pers.',srvCustom:'número propio',srvReset:'Restablecer',prepTimeLabel:'⏱ Tiempo prep.',prepTimeMin:'min.',prepTimeHr:'h.',prepTimePh:'min',prepTimeAuto:'auto',
     scanReadyLbl:'Reconocimiento IA activo',scanReadySub:'Código guardado',scanChangeLbl:'cambiar',scanBtnLbl:'Reconocer receta automáticamente',scanRetry:'Escanear de nuevo',
     sc1T:'Abrir web y crear cuenta gratuita',sc1D:'Toca el botón azul — abre la web. Regístrate gratis con tu correo.',sc2T:'Crear y copiar código de acceso',sc2D:'En la web clic en "Create Key", introducir nombre, luego copiar el código.',sc3T:'Pegar código aquí — ¡listo!',sc3D:'Guardar y activar IA',apiKeyLbl:'Pegar código de acceso',apiHint:'Solo en tu dispositivo — nunca se comparte',pasteBtnLbl:'📋 Pegar',scanOpenLink:'Ir a la web de Anthropic →',
-    wkBf:'Desayuno',wkLu:'Almuerzo',wkDi:'Cena',wkPickMeal:'Elegir comida',wkPickCourse:'Elegir plato',wkOther:'Otros',wkOtherPh:'p.ej. bebidas, pan …',wkPrev:'‹ Semana ant.',wkNext:'Semana sig. ›',wkCurr:'Esta semana',wkKw:'SC',wkAiTitle:'✨ Plan IA semana',wkAiStep1:'Copiar prompt',wkAiStep2:'Pegar en Claude y generar plan',wkAiStep3:'Pegar respuesta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ ¡Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plan',wkAiOk:'✅ ¡Plan importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Cerrar',wkAiPh:'Pegar JSON aquí …',wkAiPromptTitle:'Ejemplo de prompt:',wkAiPersons:'personas'
+    wkBf:'Desayuno',wkLu:'Almuerzo',wkDi:'Cena',wkPickMeal:'Elegir comida',wkPickCourse:'Elegir plato',wkOther:'Otros',wkOtherPh:'p.ej. bebidas, pan …',wkPrev:'‹ Semana ant.',wkNext:'Semana sig. ›',wkCurr:'Esta semana',wkKw:'SC',wkAiTitle:'✨ Planificador IA',wkAiStep1:'Copiar prompt',wkAiStep2:'Pegar en Claude y generar plan',wkAiStep3:'Pegar respuesta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ ¡Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plan',wkAiOk:'✅ ¡Plan importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Cerrar',wkAiPh:'Pegar JSON aquí …',wkAiPromptTitle:'Ejemplo de prompt:',wkAiPersons:'personas',wkAiSrcLbl:'Recetas:',wkAiSrcAdded:'+Menú ✓',wkAiSrcAll:'Todas',wkAiDayLbl:'Días:',wkAiDayFrom:'De',wkAiDayTo:'A',wkPickerHint:'Solo +Menú ✓',wkPickerShowAll:'Mostrar todas'
     ,sRating:'⭐ Valora tu progreso'
     ,saveRat:'Guardar progreso'
     ,a11yHead:'♿ ACCESIBILIDAD'
@@ -3143,7 +3163,7 @@ const LANGS={
     scanRetry:'Scanner à nouveau',
     pasteBtnLbl:'📋 Coller',
     scanOpenLink:'Site Anthropic',
-    wkBf:'Petit-déjeuner',wkLu:'Déjeuner',wkDi:'Dîner',wkPickMeal:'Choisir repas',wkPickCourse:'Choisir plat',wkOther:'Autres',wkOtherPh:'p.ex. boissons, pain …',wkPrev:'‹ Semaine préc.',wkNext:'Semaine suiv. ›',wkCurr:'Cette semaine',wkKw:'SC',wkAiTitle:'✨ Plan IA semaine',wkAiStep1:'Copier le prompt',wkAiStep2:'Coller dans Claude et générer le plan',wkAiStep3:'Coller la réponse IA (JSON) et importer',wkAiCopy:'📋 Copier prompt',wkAiCopied:'✅ Copié!',wkAiLink:'Ouvrir Claude →',wkAiImportBtn:'✨ Importer le plan',wkAiOk:'✅ Plan importé!',wkAiErr:'❌ Format invalide',wkAiClose:'Fermer',wkAiPh:'Coller JSON ici …',wkAiPromptTitle:'Exemple de prompt:',wkAiPersons:'personnes'
+    wkBf:'Petit-déjeuner',wkLu:'Déjeuner',wkDi:'Dîner',wkPickMeal:'Choisir repas',wkPickCourse:'Choisir plat',wkOther:'Autres',wkOtherPh:'p.ex. boissons, pain …',wkPrev:'‹ Semaine préc.',wkNext:'Semaine suiv. ›',wkCurr:'Cette semaine',wkKw:'SC',wkAiTitle:'✨ Planificateur IA',wkAiStep1:'Copier le prompt',wkAiStep2:'Coller dans Claude et générer le plan',wkAiStep3:'Coller la réponse IA (JSON) et importer',wkAiCopy:'📋 Copier prompt',wkAiCopied:'✅ Copié!',wkAiLink:'Ouvrir Claude →',wkAiImportBtn:'✨ Importer le plan',wkAiOk:'✅ Plan importé!',wkAiErr:'❌ Format invalide',wkAiClose:'Fermer',wkAiPh:'Coller JSON ici …',wkAiPromptTitle:'Exemple de prompt:',wkAiPersons:'personnes',wkAiSrcLbl:'Recettes:',wkAiSrcAdded:'+Menu ✓',wkAiSrcAll:'Toutes',wkAiDayLbl:'Jours:',wkAiDayFrom:'De',wkAiDayTo:'À',wkPickerHint:'+Menu ✓ uniquement',wkPickerShowAll:'Toutes les recettes'
     ,sRating:'⭐ Évalue ta progression'
     ,saveRat:'Sauver la progression'
     ,a11yHead:'♿ ACCESSIBILITÉ'
@@ -3362,7 +3382,7 @@ const LANGS={
     scanRetry:'Scansiona di nuovo',
     pasteBtnLbl:'📋 Incolla',
     scanOpenLink:'Sito Anthropic',
-    wkBf:'Colazione',wkLu:'Pranzo',wkDi:'Cena',wkPickMeal:'Scegli pasto',wkPickCourse:'Scegli portata',wkOther:'Altro',wkOtherPh:'es. bevande, pane …',wkPrev:'‹ Settimana prec.',wkNext:'Settimana succ. ›',wkCurr:'Questa settimana',wkKw:'SS',wkAiTitle:'✨ Piano IA settimana',wkAiStep1:'Copia il prompt',wkAiStep2:'Incolla in Claude e genera il piano',wkAiStep3:'Incolla la risposta IA (JSON) e importa',wkAiCopy:'📋 Copia prompt',wkAiCopied:'✅ Copiato!',wkAiLink:'Apri Claude →',wkAiImportBtn:'✨ Importa piano',wkAiOk:'✅ Piano importato!',wkAiErr:'❌ Formato non valido',wkAiClose:'Chiudi',wkAiPh:'Incolla JSON qui …',wkAiPromptTitle:'Esempio di prompt:',wkAiPersons:'persone'
+    wkBf:'Colazione',wkLu:'Pranzo',wkDi:'Cena',wkPickMeal:'Scegli pasto',wkPickCourse:'Scegli portata',wkOther:'Altro',wkOtherPh:'es. bevande, pane …',wkPrev:'‹ Settimana prec.',wkNext:'Settimana succ. ›',wkCurr:'Questa settimana',wkKw:'SS',wkAiTitle:'✨ Pianificatore IA',wkAiStep1:'Copia il prompt',wkAiStep2:'Incolla in Claude e genera il piano',wkAiStep3:'Incolla la risposta IA (JSON) e importa',wkAiCopy:'📋 Copia prompt',wkAiCopied:'✅ Copiato!',wkAiLink:'Apri Claude →',wkAiImportBtn:'✨ Importa piano',wkAiOk:'✅ Piano importato!',wkAiErr:'❌ Formato non valido',wkAiClose:'Chiudi',wkAiPh:'Incolla JSON qui …',wkAiPromptTitle:'Esempio di prompt:',wkAiPersons:'persone',wkAiSrcLbl:'Ricette:',wkAiSrcAdded:'+Menu ✓',wkAiSrcAll:'Tutte',wkAiDayLbl:'Giorni:',wkAiDayFrom:'Da',wkAiDayTo:'A',wkPickerHint:'Solo +Menu ✓',wkPickerShowAll:'Mostra tutte'
     ,sRating:'⭐ Valuta il tuo progresso'
     ,saveRat:'Salva progresso'
     ,a11yHead:'♿ ACCESSIBILITÀ'
@@ -3581,7 +3601,7 @@ const LANGS={
     scanRetry:'Digitalizar novamente',
     pasteBtnLbl:'📋 Colar',
     scanOpenLink:'Site Anthropic',
-    wkBf:'Pequeno-almoço',wkLu:'Almoço',wkDi:'Jantar',wkPickMeal:'Escolher refeição',wkPickCourse:'Escolher prato',wkOther:'Outros',wkOtherPh:'ex. bebidas, pão …',wkPrev:'‹ Semana ant.',wkNext:'Próx. semana ›',wkCurr:'Esta semana',wkKw:'SS',wkAiTitle:'✨ Plano IA semana',wkAiStep1:'Copiar prompt',wkAiStep2:'Colar no Claude e gerar plano',wkAiStep3:'Colar resposta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plano',wkAiOk:'✅ Plano importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Fechar',wkAiPh:'Colar JSON aqui …',wkAiPromptTitle:'Exemplo de prompt:',wkAiPersons:'pessoas'
+    wkBf:'Pequeno-almoço',wkLu:'Almoço',wkDi:'Jantar',wkPickMeal:'Escolher refeição',wkPickCourse:'Escolher prato',wkOther:'Outros',wkOtherPh:'ex. bebidas, pão …',wkPrev:'‹ Semana ant.',wkNext:'Próx. semana ›',wkCurr:'Esta semana',wkKw:'SS',wkAiTitle:'✨ Planeador IA',wkAiStep1:'Copiar prompt',wkAiStep2:'Colar no Claude e gerar plano',wkAiStep3:'Colar resposta IA (JSON) e importar',wkAiCopy:'📋 Copiar prompt',wkAiCopied:'✅ Copiado!',wkAiLink:'Abrir Claude →',wkAiImportBtn:'✨ Importar plano',wkAiOk:'✅ Plano importado!',wkAiErr:'❌ Formato inválido',wkAiClose:'Fechar',wkAiPh:'Colar JSON aqui …',wkAiPromptTitle:'Exemplo de prompt:',wkAiPersons:'pessoas',wkAiSrcLbl:'Receitas:',wkAiSrcAdded:'+Menu ✓',wkAiSrcAll:'Todas',wkAiDayLbl:'Dias:',wkAiDayFrom:'De',wkAiDayTo:'Até',wkPickerHint:'Apenas +Menu ✓',wkPickerShowAll:'Ver todas as receitas'
     ,sRating:'⭐ Avalie o seu progresso'
     ,saveRat:'Guardar progresso'
     ,a11yHead:'♿ ACESSIBILIDADE'
@@ -5623,7 +5643,7 @@ function renderMenu(){
   renderWeek();
 }
 // ─── Wochennavigation ───
-let WKO=0,AIP_P=4;
+let WKO=0,AIP_P=4,AIP_SRC='added',AIP_DAY_FROM=0,AIP_DAY_TO=6;
 function wkShift(d){WKO+=d;renderWeek();}
 function getWkDates(off){
   const now=new Date(),dow=(now.getDay()+6)%7;
@@ -5684,9 +5704,9 @@ function renderWeek(){
           d+='<div class="wk-drag-hdl" data-hdl="wkslot" data-sid="'+slot.id+'" title="Ziehen zum Verschieben">⠿</div>';
           d+='<div class="wk-slot-ico">'+slot.ico+'</div><div class="wk-slot-info">';
           d+='<div class="wk-slot-course">'+h(slot.lbl)+'</div>';
-          if(hasC)d+='<div class="wk-slot-name">'+h(slot.customText)+'</div>';
-          else if(filled){var dn=rName(r);d+='<div class="wk-slot-name">'+h(dn)+(dn!==r.name?'<span style="font-size:.55rem;opacity:.55;display:block">'+h(r.name)+'</span>':'')+'</div>';}
-          else d+='<div class="wk-slot-name empty">'+T('assignSlot')+'</div>';
+          if(filled){var dn=rName(r);d+='<div class="wk-slot-name">'+h(dn)+(dn!==r.name?'<span style="font-size:.55rem;opacity:.55;display:block">'+h(r.name)+'</span>':'')+'</div>';}
+          if(hasC)d+='<div class="wk-slot-oth-txt">'+h(slot.customText)+'</div>';
+          if(!filled&&!hasC)d+='<div class="wk-slot-name empty">'+T('assignSlot')+'</div>';
           d+='</div>';
           if(filled)d+='<div class="wk-slot-link" onclick="event.stopPropagation();goToRecipe('+r.id+')" title="Zum Rezept">↗</div>';
           d+='<div class="wk-slot-del" onclick="event.stopPropagation();rmSlot('+slot.id+')" title="Slot entfernen">✕</div></div>';
@@ -5829,22 +5849,25 @@ function confirmCourse(){
   const othTxt=sel.id==='oth'?(document.getElementById('othInp')?.value||'').trim():'';
   const lbl=othTxt||sel.lbl;
   if(rid!==null){
-    MS.push({id:Date.now(),lbl,ico:sel.ico,rid});svM();badge();
+    MS.push({id:Date.now(),lbl,ico:sel.ico,rid,courseType:sel.id,customText:sel.id==='oth'?(othTxt||null):null});svM();badge();
     closeCSheet();render();
   }else if(slotId!==null){
     const slot=MS.find(s=>s.id===slotId);if(slot){slot.lbl=lbl;slot.ico=sel.ico;}
     closeCSheet();showRecipePicker(slotId);
   }
 }
-function showRecipePicker(sid){
-  const named=R.filter(r=>r.name);
+function showRecipePicker(sid,showAll){
+  const inMenuIds=new Set(MS.map(s=>s.rid).filter(Boolean));
+  const named=showAll?R.filter(r=>r.name):R.filter(r=>r.name&&inMenuIds.has(r.id));
+  const anyAdded=R.some(r=>r.name&&inMenuIds.has(r.id));
   const el=document.createElement('div');el.id='_rp';
   el.innerHTML=`<div class="sheet-bg" onclick="document.getElementById('_rp').remove()">
     <div class="sheet" onclick="event.stopPropagation()" style="max-height:85vh">
       <div class="sh-handle"></div>
       <div class="sh-hdr"><div class="sh-title">${T('recPickerTitle')}</div>
         <button class="sh-x" onclick="document.getElementById('_rp').remove()" title="Schließen">✕</button></div>
-      <div style="overflow-y:auto;max-height:58vh">
+      ${!showAll?`<div style="font-size:.72rem;color:var(--br3);padding:5px 14px;border-bottom:1px solid var(--sand2);background:var(--sand)">${T('wkPickerHint')}</div>`:''}
+      <div style="overflow-y:auto;max-height:52vh">
         ${named.map(r=>{const dn=rName(r);return`<div onclick="assignR(${sid},${r.id})"
           style="padding:10px 15px;border-bottom:1px solid var(--sand2);display:flex;align-items:center;gap:8px;cursor:pointer;min-height:46px"
           ontouchstart="this.style.background='var(--sand2)'" ontouchend="this.style.background=''">
@@ -5853,6 +5876,7 @@ function showRecipePicker(sid){
           <div style="font-size:.62rem;color:var(--br3)">${catName(r.cat)}</div></div>
         </div>`;}).join('')||`<div style="padding:20px;text-align:center;color:var(--br3)">${T('noRecipes')}</div>`}
       </div>
+      ${!showAll?`<div style="padding:8px 14px;border-top:1px solid var(--sand2)"><button onclick="document.getElementById('_rp').remove();showRecipePicker(${sid},true)" style="width:100%;padding:9px;background:var(--sand);border:1.5px solid var(--sand2);border-radius:9px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--ink)">${T('wkPickerShowAll')}</button></div>`:''}
     </div></div>`;
   document.body.appendChild(el);
 }
@@ -7808,6 +7832,8 @@ document.addEventListener('dragover',function(e){
 // ─── AI Panel ───────────────────────────────────────────────────────
 function openAiPanel(){
   applyAipLang();
+  aipInitDaySelects();
+  aipSetSrc(AIP_SRC);
   buildAipPrompt();
   document.getElementById('aip').style.display='flex';
 }
@@ -7816,7 +7842,9 @@ function applyAipLang(){
   const ids={wkAiTitleEl:'wkAiTitle',aipS1:'wkAiStep1',aipS2:'wkAiStep2',
     aipS3:'wkAiStep3',aipPromptTitle:'wkAiPromptTitle',
     aipS3label:'wkAiStep3',aipCopyBtn:'wkAiCopy',
-    aipImportBtn:'wkAiImportBtn',wkAiClose2:'wkAiClose'};
+    aipImportBtn:'wkAiImportBtn',wkAiClose2:'wkAiClose',
+    aipSrcLbl:'wkAiSrcLbl',aipSrcAddedBtn:'wkAiSrcAdded',aipSrcAllBtn:'wkAiSrcAll',
+    aipDayLbl:'wkAiDayLbl',aipDayFromLbl:'wkAiDayFrom',aipDayToLbl:'wkAiDayTo'};
   Object.entries(ids).forEach(([elId,key])=>{
     const el=document.getElementById(elId);if(el)el.textContent=T(key);
   });
@@ -7833,8 +7861,13 @@ function aipChgP(d){
   buildAipPrompt();
 }
 function buildAipPrompt(){
-  const dates=getWkDates(WKO);
-  const recList=R.filter(r=>r.name).map(r=>'- '+r.name+(r.cat?' ('+catName(r.cat)+')':'')).join('\n')||'(noch keine Rezepte)';
+  const allDates=getWkDates(WKO);
+  const from=Math.max(0,Math.min(6,AIP_DAY_FROM)),to=Math.max(from,Math.min(6,AIP_DAY_TO));
+  const dates=allDates.slice(from,to+1);
+  // Rezeptliste je nach Quelle filtern
+  const inMenuIds=new Set(MS.map(s=>s.rid).filter(Boolean));
+  const recPool=(AIP_SRC==='added'&&inMenuIds.size>0)?R.filter(r=>r.name&&inMenuIds.has(r.id)):R.filter(r=>r.name);
+  const recList=recPool.map(r=>'- '+r.name+(r.cat?' ('+catName(r.cat)+')':'')).join('\n')||'(noch keine Rezepte)';
   const MDAYS={de:['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'],
     en:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
     ru:['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'],
@@ -7844,15 +7877,47 @@ function buildAipPrompt(){
     it:['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'],
     pt:['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo']};
   const DAYS=MDAYS[CL]||MDAYS.de;
-  const exRow='{"day":0,"date":"'+dates[0]+'","mealType":"bf","courseType":"main","recipeName":"Rührei","customText":""}';
+  const dayRange=dates.length===7?fmtWkRange(allDates):
+    (new Date(dates[0]+'T00:00:00').toLocaleDateString(CL==='zh'?'zh-CN':CL==='ru'?'ru-RU':CL==='en'?'en-GB':'de-DE',{weekday:'short',day:'numeric',month:'short'})+
+     (dates.length>1?' – '+new Date(dates[dates.length-1]+'T00:00:00').toLocaleDateString(CL==='zh'?'zh-CN':CL==='ru'?'ru-RU':CL==='en'?'en-GB':'de-DE',{weekday:'short',day:'numeric',month:'short'}):''));
+  const exRow='{"day":'+from+',"date":"'+dates[0]+'","mealType":"bf","courseType":"main","recipeName":"Rührei","customText":""}';
+  const dayCount=dates.length;
   const prompts={
-    de:'Erstelle einen Wochenplan für '+fmtWkRange(dates)+' für '+AIP_P+' Personen.\n\nMeine Rezepte:\n'+recList+'\n\nErstelle nur das folgende JSON (kein Text davor oder danach):\n{"weekPlan":[\n  '+exRow+',\n  {"day":0,"date":"'+dates[0]+'","mealType":"lu","courseType":"main","recipeName":"Omas Gulasch","customText":""},\n  {"day":0,"date":"'+dates[0]+'","mealType":"di","courseType":"other","recipeName":"","customText":"Kräutertee, Wasser"},\n  ... (alle 7 Tage, Frühstück/Mittag/Abend)\n]}\n\nday: 0='+DAYS[0]+' bis 6='+DAYS[6]+'\nmealType: bf=Frühstück, lu=Mittagessen, di=Abendessen\ncourseType: app=Vorspeise, main=Hauptgang, dessert=Dessert, drink=Getränk, oth=Sonstiges\nrecipeName: exakter Name aus meiner Liste oder leer ""\ncustomText: nur für courseType oth (z.B. Getränke)',
-    en:'Create a week plan for '+fmtWkRange(dates)+' for '+AIP_P+' persons.\n\nMy recipes:\n'+recList+'\n\nReturn only this JSON (no other text):\n{"weekPlan":[\n  '+exRow+',\n  ... (all 7 days, breakfast/lunch/dinner)\n]}\n\nday: 0='+DAYS[0]+' to 6='+DAYS[6]+'\nmealType: bf=Breakfast, lu=Lunch, di=Dinner\ncourseType: app=Starter, main=Main, dessert=Dessert, drink=Drink, oth=Other\nrecipeName: exact name from list or ""\ncustomText: only for courseType oth'
+    de:'Erstelle einen Menüplan für '+dayRange+' für '+AIP_P+' Personen.\n\nMeine Rezepte:\n'+recList+'\n\nErstelle nur das folgende JSON (kein Text davor oder danach):\n{"weekPlan":[\n  '+exRow+',\n  {"day":'+from+',"date":"'+dates[0]+'","mealType":"lu","courseType":"main","recipeName":"Omas Gulasch","customText":""},\n  {"day":'+from+',"date":"'+dates[0]+'","mealType":"di","courseType":"oth","recipeName":"","customText":"Kräutertee, Wasser"},\n  ... ('+dayCount+' Tag'+(dayCount>1?'e':')+', Frühstück/Mittag/Abend)\n]}\n\nday: '+from+'='+DAYS[from]+' bis '+to+'='+DAYS[to]+'\nmealType: bf=Frühstück, lu=Mittagessen, di=Abendessen\ncourseType: app=Vorspeise, soup=Suppe, main=Hauptgang, side=Beilage, des=Nachspeise, drk=Getränk, brd=Brot/Snack, oth=Sonstiges\nrecipeName: exakter Name aus meiner Liste oder leer ""\ncustomText: nur für courseType oth (z.B. Getränke, Snacks)',
+    en:'Create a meal plan for '+dayRange+' for '+AIP_P+' persons.\n\nMy recipes:\n'+recList+'\n\nReturn only this JSON (no other text):\n{"weekPlan":[\n  '+exRow+',\n  ... ('+dayCount+' day'+(dayCount>1?'s':'')+', breakfast/lunch/dinner)\n]}\n\nday: '+from+'='+DAYS[from]+' to '+to+'='+DAYS[to]+'\nmealType: bf=Breakfast, lu=Lunch, di=Dinner\ncourseType: app=Starter, soup=Soup, main=Main, side=Side, des=Dessert, drk=Drink, brd=Bread/Snack, oth=Other\nrecipeName: exact name from list or ""\ncustomText: only for courseType oth'
   };
   const txt=prompts[CL]||prompts.de;
   const box=document.getElementById('aipPromptBox');
   if(box)box.textContent=txt;
   document.getElementById('aipPersonsVal').textContent=AIP_P;
+}
+function aipSetSrc(src){
+  AIP_SRC=src;
+  document.getElementById('aipSrcAddedBtn')?.classList.toggle('on',src==='added');
+  document.getElementById('aipSrcAllBtn')?.classList.toggle('on',src==='all');
+  buildAipPrompt();
+}
+function aipSetDayRange(){
+  const f=parseInt(document.getElementById('aipDayFrom')?.value||'0',10);
+  const t=parseInt(document.getElementById('aipDayTo')?.value||'6',10);
+  AIP_DAY_FROM=Math.max(0,Math.min(6,f));
+  AIP_DAY_TO=Math.max(AIP_DAY_FROM,Math.min(6,t));
+  // To-Select auf mindestens From setzen
+  const toEl=document.getElementById('aipDayTo');
+  if(toEl&&parseInt(toEl.value,10)<AIP_DAY_FROM)toEl.value=String(AIP_DAY_FROM);
+  buildAipPrompt();
+}
+function aipInitDaySelects(){
+  const SHORT={de:['Mo','Di','Mi','Do','Fr','Sa','So'],en:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    ru:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],zh:['周一','周二','周三','周四','周五','周六','周日'],
+    es:['Lu','Ma','Mi','Ju','Vi','Sá','Do'],fr:['Lu','Ma','Me','Je','Ve','Sa','Di'],
+    it:['Lu','Ma','Me','Gi','Ve','Sa','Do'],pt:['Seg','Ter','Qua','Qui','Sex','Sáb','Dom']};
+  const days=SHORT[CL]||SHORT.de;
+  const fromEl=document.getElementById('aipDayFrom');
+  const toEl=document.getElementById('aipDayTo');
+  if(!fromEl||!toEl)return;
+  fromEl.innerHTML=days.map((d,i)=>`<option value="${i}"${i===AIP_DAY_FROM?' selected':''}>${d}</option>`).join('');
+  toEl.innerHTML=days.map((d,i)=>`<option value="${i}"${i===AIP_DAY_TO?' selected':''}>${d}</option>`).join('');
 }
 function aipCopy(){
   const txt=document.getElementById('aipPromptBox')?.textContent||'';
