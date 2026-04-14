@@ -1,6 +1,6 @@
 // Service Worker for Muttis Rezeptbuch (Hauptapp)
-const CACHE = 'mrz-v3';
-const SHELL = ['./index.html', './app-manifest.json', './icons/icon-book-192.png', './icons/icon-book-512.png'];
+const CACHE = 'mrz-v4';
+const SHELL = ['./index.html', './app-manifest.json', './icons/icon-book-blue-192.png', './icons/icon-book-blue-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
@@ -21,7 +21,11 @@ self.addEventListener('fetch', e => {
     fetch(e.request).then(res => {
       if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
       return res;
-    }).catch(() => caches.match(e.request))
+    }).catch(() =>
+      caches.match(e.request).then(r =>
+        r || (e.request.mode === 'navigate' ? caches.match('./index.html') : Response.error())
+      )
+    )
   );
 });
 
