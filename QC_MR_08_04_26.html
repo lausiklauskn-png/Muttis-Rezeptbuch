@@ -581,7 +581,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .fld-info{flex:1}
 .fld-name{font-weight:700;font-size:.82rem}
 .fld-cnt{font-size:.6rem;color:var(--br3)}
-.fld-chev{color:var(--br2,#5a3e28);font-size:1.1rem;font-weight:700;transition:transform .18s;opacity:.7;padding:12px 16px;margin:-12px -11px -12px 0;min-width:44px;display:flex;align-items:center;justify-content:center}
+.fld-chev{color:var(--br2,#5a3e28);font-size:.52rem;font-weight:600;opacity:.8;white-space:nowrap;text-align:center;padding:12px 16px;margin:-12px -11px -12px 0;min-width:44px;display:flex;align-items:center;justify-content:center}
 .fld-recs{display:none;border-top:1px solid var(--sand2)}.fld-recs.open{display:block}
 .fld-rrow{display:flex;align-items:center;gap:7px;padding:7px 11px;border-bottom:1px solid var(--sand2);cursor:grab;min-height:37px}
 .fld-rrow:last-child{border-bottom:none}
@@ -6515,7 +6515,7 @@ function renderFolders(){
           <div class="fld-cnt">${g.recipes.length} ${T('bnRec')}</div>
         </div>
         ${isFolder?`<button onclick="event.stopPropagation();deleteFolder('${fid}','${h(g.name)}')" style="background:transparent;border:none;color:var(--br3);font-size:1rem;cursor:pointer;padding:4px 6px;border-radius:6px" title="Ordner löschen">🗑</button>`:''}
-        <div class="fld-chev" title="Aufklappen / Zuklappen">›</div>
+        <div class="fld-chev" title="Aufklappen / Zuklappen">▼ aufklappen</div>
       </div>
       <div class="fld-recs">
         ${g.recipes.length?g.recipes.map(r=>`
@@ -6545,7 +6545,7 @@ function deleteFolder(fid,name){
 function tglFld(hdr){
   const recs=hdr.nextElementSibling,chev=hdr.querySelector('.fld-chev');
   const open=recs.classList.toggle('open');
-  chev.style.transform=open?'rotate(90deg)':'';
+  if(chev)chev.textContent=open?'▲ einklappen':'▼ aufklappen';
 }
 
 // ═══════════════════════════════════════════════════════
