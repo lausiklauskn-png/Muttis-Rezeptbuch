@@ -1439,13 +1439,6 @@ button:active{transform:scale(0.97)}
 .srch-inner .srch-act-btn{background:transparent;border:none;height:26px;padding:0 5px;font-size:.78rem}
 .srch-inner .srch-act-btn.add{background:var(--rust);color:#fff;border-radius:13px;padding:0 8px;border:none}
 
-/* ── Einstellungen Aktionsleiste (flacher, volle Breite) ── */
-.sett-act-bar{display:flex;gap:6px;padding:7px 12px;background:var(--parch);border-bottom:1px solid var(--sand2);justify-content:flex-end}
-.sett-act-btn{flex:1;height:26px;border-radius:8px;border:1.5px solid var(--sand2);
-  background:var(--sand);font-size:.68rem;font-weight:700;color:var(--ink);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit}
-.sett-act-btn:active{background:var(--sand2)}
-.sett-act-btn.add{border-color:var(--rust);background:var(--rusts);color:var(--rust)}
 
 /* ── Menüplaner Header-Tweaks ── */
 .menutitle{font-family:Georgia,serif;font-size:.88rem !important;line-height:1.3}
@@ -1765,11 +1758,6 @@ button:active{transform:scale(0.97)}
     <div class="upd-banner" id="updBanner">
       <div class="upd-txt">🔄 <strong>Update verfügbar!</strong><br>Neue Version bereit.</div>
       <button class="upd-btn" onclick="applyUpdate()">Jetzt laden</button>
-    </div>
-    <div class="sett-act-bar">
-      <button class="sett-act-btn" onclick="openImport()" title="Importieren">📥 Import</button>
-      <button class="sett-act-btn" onclick="openExport()" title="Exportieren">📤 Export</button>
-      <button class="sett-act-btn add" onclick="showSc('recipes');openNewPanel()">+ Rezept</button>
     </div>
     <div class="sett-sec">
       <div class="sett-head" id="sTheme">🎨 THEMA</div>
