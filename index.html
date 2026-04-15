@@ -7167,7 +7167,7 @@ function _tddRowMove(e){
   const t=e.touches[0];
   const dx=t.clientX-_tddRowPending.startX,dy=t.clientY-_tddRowPending.startY;
   if(Math.abs(dx)>12){_tddRowEnd();return;}// horizontales Scrollen – abbrechen
-  if(Math.abs(dy)>10){
+  if(Math.abs(dy)>20){
     e.preventDefault();
     const{row,rid}=_tddRowPending;
     document.removeEventListener('touchmove',_tddRowMove);
