@@ -6495,6 +6495,7 @@ function saveFolder(){
 }
 function renderFolders(){
   const tree=document.getElementById('fldTree');if(!tree)return;
+  const openGids=new Set([...tree.querySelectorAll('.fld-recs.open')].map(el=>el.closest('.fld-grp')?.dataset.gid).filter(Boolean));
   const groups=[
     ...CATS.filter(c=>c.id!=='all').map(c=>({id:'cat_'+c.id,name:c[CL]||c.de,ico:c.ico,col:c.col,
       recipes:R.filter(r=>r.cat===c.id&&r.name)})),
@@ -6526,6 +6527,13 @@ function renderFolders(){
       </div>
     </div>`;
   }).join('');
+  tree.querySelectorAll('.fld-grp').forEach(grp=>{
+    if(openGids.has(grp.dataset.gid)){
+      const recs=grp.querySelector('.fld-recs'),chev=grp.querySelector('.fld-chev');
+      if(recs)recs.classList.add('open');
+      if(chev)chev.textContent='▲ einklappen';
+    }
+  });
   setupTouchDrag();
 }
 function deleteFolder(fid,name){
