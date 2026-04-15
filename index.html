@@ -1462,7 +1462,7 @@ button:active{transform:scale(0.97)}
 @media(max-width:380px){.srch-act-btn{padding:0 5px;font-size:.6rem}}
 
 /* ── Einstellungen Aktionsleiste (flacher, volle Breite) ── */
-.sett-act-bar{display:flex;gap:8px;padding:4px 0 10px}
+.sett-act-bar{display:flex;gap:6px;padding:7px 12px;background:var(--parch);border-bottom:1px solid var(--sand2);justify-content:flex-end}
 .sett-act-btn{flex:1;height:26px;border-radius:8px;border:1.5px solid var(--sand2);
   background:var(--sand);font-size:.68rem;font-weight:700;color:var(--ink);cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit}
@@ -1626,17 +1626,17 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
   <div class="menu-top">
     <div class="menu-top-hdr">
       <div class="menutitle" id="menuTitle">🍽️ Menüplaner</div>
+      <div style="display:flex;gap:5px">
+        <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥</button>
+        <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤</button>
+        <button class="sc-act-btn add" onclick="openNewPanel()">+ Rezept</button>
+      </div>
     </div>
     <div class="menu-date-row" id="menuDate"></div>
     <div class="menu-acts">
       <div class="mact gld" onclick="openMV()">
         <div class="mico">👁️</div><div class="mlbl" id="mActView">Menü & Einkaufsliste</div>
       </div>
-    </div>
-    <div class="sc-act-row">
-      <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥 Import</button>
-      <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤 Export</button>
-      <button class="sc-act-btn add" onclick="openNewPanel()">+ Rezept</button>
     </div>
   </div>
   
@@ -1748,11 +1748,13 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 <div class="sc" id="sc-folders">
   <div class="fld-top">
-    <div class="fld-top-title" id="fldTitle">📂 Meine Ordner</div>
-    <div class="sc-act-row">
-      <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥 Import</button>
-      <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤 Export</button>
-      <button class="sc-act-btn add" onclick="showSc('recipes');openNewPanel()">+ Rezept</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <div class="fld-top-title" id="fldTitle" style="margin-bottom:0">📂 Meine Ordner</div>
+      <div style="display:flex;gap:5px">
+        <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥</button>
+        <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤</button>
+        <button class="sc-act-btn add" onclick="showSc('recipes');openNewPanel()">+ Rezept</button>
+      </div>
     </div>
     <div class="fld-acts">
       <div class="fldact t" onclick="showSc('recipes');setTimeout(()=>document.getElementById('srchIn').focus(),200)">
@@ -1768,11 +1770,13 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 <div class="sc" id="sc-backup">
   <div class="fld-top">
-    <div class="fld-top-title">🗄️ <span id="sBvScreenTitle">Backup-Tresor</span></div>
-    <div class="sc-act-row">
-      <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥 Import</button>
-      <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤 Export</button>
-      <button class="sc-act-btn add" onclick="showSc('recipes');openNewPanel()">+ Rezept</button>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="fld-top-title" style="margin-bottom:0">🗄️ <span id="sBvScreenTitle">Backup-Tresor</span></div>
+      <div style="display:flex;gap:5px">
+        <button class="sc-act-btn" onclick="openImport()" title="Importieren">📥</button>
+        <button class="sc-act-btn" onclick="openExport()" title="Exportieren">📤</button>
+        <button class="sc-act-btn add" onclick="showSc('recipes');openNewPanel()">+ Rezept</button>
+      </div>
     </div>
   </div>
   <div id="bvaultBody" style="padding:10px 12px 80px;-webkit-overflow-scrolling:touch"></div>
