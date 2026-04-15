@@ -1043,11 +1043,6 @@ html.a11y-hc body[data-theme=spektral] .bn-ico{color:#fff !important;text-shadow
   cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c4a07a'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 8px center;padding-right:22px}
-.wk-day-reset{position:absolute;top:2px;right:2px;background:none;border:none;
-  font-size:.75rem;color:var(--br3);cursor:pointer;padding:2px 4px;border-radius:4px;
-  opacity:0.6;line-height:1}
-.wk-day-reset:active{opacity:1;background:var(--rusts);color:var(--rust)}
-.wk-day-hd{position:relative}
 /* Menüplaner Drag & Drop */
 .wk-slot.wk-dragging{opacity:.35;background:var(--sand)!important}
 .wk-slot.wk-drop-before{border-top:2.5px solid var(--teal)!important;background:var(--teals)}
@@ -5854,7 +5849,7 @@ function renderWeek(){
     d+='<div class="wk-day-hdr'+(isToday?' today':'')+'"><div class="wk-day-title">';
     d+='<span class="wk-dn">'+DAYS[di]+(isToday?' ✦':'')+'</span>';
     d+='<span class="wk-dt">'+fmtDate(dateStr)+'</span></div>';
-    d+='<button class="wk-add" onclick="addDaySlot(\''+dateStr+'\')" title="Rezept hinzufügen">+</button>';d+='<button class="wk-day-reset" onclick="event.stopPropagation();resetDay(\''+dateStr+'\')" title="Tag leeren">✕</button></div>';
+    d+='<button class="wk-add" onclick="addDaySlot(\''+dateStr+'\')" title="Rezept hinzufügen">+</button></div>';
     MEALS.forEach(([mt,ico,tkey])=>{
       const mSlots=daySlots.filter(s=>s.mealType===mt);
       d+='<div class="wk-meal" data-date="'+dateStr+'" data-mt="'+mt+'" ondragover="wkMealDragOver(event,\''+dateStr+'\',\''+mt+'\')" ondragleave="wkMealDragLeave(event)" ondrop="wkMealDrop(event,\''+dateStr+'\',\''+mt+'\')">';
