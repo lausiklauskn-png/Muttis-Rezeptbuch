@@ -606,7 +606,6 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .rcard.rcard-drop-after{border-bottom:2.5px solid var(--teal)!important;background:var(--teals)}
 .ing-li.drag-over,.step-li.drag-over{background:var(--teals,#e0f2f1);border-radius:6px;outline:2px dashed var(--teal,#4caf9a)}
 .fld-rname{flex:1;font-size:.78rem;font-weight:600}
-.fld-rarr{color:var(--br2,#5a3e28);font-size:1rem;font-weight:700;opacity:.7;padding:10px 14px;margin:-10px -11px -10px 0;min-width:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* settings */
 .sett-wrap{padding:9px}
@@ -6532,10 +6531,9 @@ function renderFolders(){
       <div class="fld-recs">
         ${g.recipes.length?g.recipes.map(r=>`
           <div class="fld-rrow" data-rid="${r.id}" draggable="true" ondragstart="fldRecDragStart(event,${r.id})" ondragend="fldRecDragEnd(event)" onclick="goToRecipe(${r.id})" title="Zum Rezept: ${h(r.name)}">
-            <span class="fld-drag-hdl" data-hdl="fld" data-rid="${r.id}" data-tip="${T('dragTip')}" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
             <div style="font-size:.92rem">${catIco(r.cat)}</div>
             <div class="fld-rname">${h(r.name)}</div>
-            <div class="fld-rarr">›</div>
+            <span class="fld-drag-hdl" data-hdl="fld" data-rid="${r.id}" data-tip="${T('dragTip')}" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
           </div>`).join(''):`<div style="padding:8px 11px;font-size:.74rem;color:var(--br3);font-style:italic">${T('noRecipes')}</div>`}
       </div>
     </div>`;
