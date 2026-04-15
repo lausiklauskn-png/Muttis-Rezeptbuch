@@ -145,6 +145,13 @@ input::placeholder,textarea::placeholder{color:var(--br3);font-style:italic}
 .srch-inner input{flex:1;border:none;background:transparent;font-size:.83rem;color:var(--ink);outline:none}
 .srch-x{background:none;border:none;color:var(--br3);font-size:.9rem;padding:2px 4px;line-height:1}
 .srch-cnt{font-size:.64rem;color:var(--br3);text-align:center;padding:3px 0 4px;font-style:italic}
+.srch-row{display:flex;align-items:center;gap:7px;padding-bottom:7px}
+.srch-row .srch-inner{flex:1;margin-bottom:0}
+.srch-acts{display:flex;gap:4px;flex-shrink:0}
+.srch-act-btn{height:32px;padding:0 9px;border-radius:16px;border:1.5px solid var(--sand2);background:var(--sand);color:var(--ink);font-size:.65rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.srch-act-btn:active{background:var(--sand2)}
+.srch-act-btn.add{background:var(--rust);color:#fff;border-color:var(--rust)}
+@media(max-width:380px){.srch-act-btn{padding:0 6px;font-size:.6rem}}
 
 /* bottom nav */
 #bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);
@@ -1463,13 +1470,10 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
   <div class="logo" id="appLogo">Mein <em>Rezeptbuch</em></div><span id="appVersion" style="font-size:.55rem;font-weight:700;color:var(--br3,#a08060);background:var(--br1,#f5efe8);border:1px solid var(--br2,#c4a07a);border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.04em">v9.2</span>
   <div class="hbtns">
     <button class="hbtn" onclick="openLang()" id="langBtn" title="Sprache wählen">🌐 DE</button>
-    <button class="hbtn" onclick="openImport()" title="Importieren">📥</button>
     <button class="hbtn" id="apiKeyHdrBtn" onclick="openApiKeyOv()" title="Was ist ein API-Key?">?</button>
-    <button class="hbtn" onclick="openExport()" title="Exportieren">📤</button>
     <button class="hbtn" onclick="openHelp()" title="Hilfe · Teilen · Reparatur" id="helpHdrBtn">ℹ️</button>
 <!-- === ONBOARDING START === -->
-    <!-- === ONBOARDING END === -->
-    <button class="hbtn add" onclick="document.getElementById('newPanel').classList.contains('open')?closeNewPanel():openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
+    <!-- === ONBOARDING END -->
   </div>
 </div>
 
@@ -1557,10 +1561,17 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 <div class="sc on" id="sc-recipes">
   <div class="srch-bar">
-    <div class="srch-inner">
-      <span style="font-size:.95rem;color:var(--br3)">🔍</span>
-      <input id="srchIn" oninput="doSearch(this.value)"/>
-      <button class="srch-x" id="srchX" onclick="clearSearch()" title="Suche löschen" style="display:none">✕</button>
+    <div class="srch-row">
+      <div class="srch-inner">
+        <span style="font-size:.95rem;color:var(--br3)">🔍</span>
+        <input id="srchIn" oninput="doSearch(this.value)"/>
+        <button class="srch-x" id="srchX" onclick="clearSearch()" title="Suche löschen" style="display:none">✕</button>
+      </div>
+      <div class="srch-acts">
+        <button class="srch-act-btn" onclick="openImport()" title="Importieren">📥</button>
+        <button class="srch-act-btn" onclick="openExport()" title="Exportieren">📤</button>
+        <button class="srch-act-btn add" onclick="document.getElementById('newPanel').classList.contains('open')?closeNewPanel():openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
+      </div>
     </div>
     <div class="srch-cnt" id="srchCnt" style="display:none"></div>
   </div>
