@@ -1713,6 +1713,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         🔍 <span id="fldSearch">Suche</span>
       </div>
       <div class="fldact r" onclick="openFolderSheet()">+ <span id="fldNew">Neuer Ordner</span></div>
+      <div class="fldact" id="fldToggleAll" onclick="tglAllFld()">▼ Alle aufklappen</div>
     </div>
   </div>
   <div class="fld-tree" id="fldTree"></div>
@@ -6546,6 +6547,8 @@ function renderFolders(){
       if(chev)chev.textContent='▲ einklappen';
     }
   });
+  const btn=document.getElementById('fldToggleAll');
+  if(btn){const allOpen=[...tree.querySelectorAll('.fld-grp')].every(g=>g.querySelector('.fld-recs')?.classList.contains('open'));btn.textContent=allOpen?'▲ Alle einklappen':'▼ Alle aufklappen';}
   setupTouchDrag();
 }
 function deleteFolder(fid,name){
@@ -6564,6 +6567,20 @@ function tglFld(hdr){
   const recs=hdr.nextElementSibling,chev=hdr.querySelector('.fld-chev');
   const open=recs.classList.toggle('open');
   if(chev)chev.textContent=open?'▲ einklappen':'▼ aufklappen';
+  const btn=document.getElementById('fldToggleAll');
+  if(btn){const tree=document.getElementById('fldTree');const allOpen=tree&&[...tree.querySelectorAll('.fld-grp')].every(g=>g.querySelector('.fld-recs')?.classList.contains('open'));btn.textContent=allOpen?'▲ Alle einklappen':'▼ Alle aufklappen';}
+}
+function tglAllFld(){
+  const tree=document.getElementById('fldTree');if(!tree)return;
+  const grps=[...tree.querySelectorAll('.fld-grp')];
+  const anyClose=grps.some(g=>!g.querySelector('.fld-recs')?.classList.contains('open'));
+  grps.forEach(g=>{
+    const recs=g.querySelector('.fld-recs'),chev=g.querySelector('.fld-chev');
+    if(anyClose){recs?.classList.add('open');if(chev)chev.textContent='▲ einklappen';}
+    else{recs?.classList.remove('open');if(chev)chev.textContent='▼ aufklappen';}
+  });
+  const btn=document.getElementById('fldToggleAll');
+  if(btn)btn.textContent=anyClose?'▲ Alle einklappen':'▼ Alle aufklappen';
 }
 
 // ═══════════════════════════════════════════════════════
