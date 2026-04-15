@@ -142,7 +142,7 @@ input::placeholder,textarea::placeholder{color:var(--br3);font-style:italic}
   position:sticky;top:calc(var(--hh)+var(--st));z-index:270}
 .srch-inner{display:flex;align-items:center;gap:7px;background:var(--sand);
   border:1.5px solid var(--sand2);border-radius:19px;padding:6px 11px}
-.srch-inner input{flex:1;border:none;background:transparent;font-size:.83rem;color:var(--ink);outline:none}
+.srch-inner input{flex:1;min-width:0;border:none;background:transparent;font-size:.83rem;color:var(--ink);outline:none}
 .srch-x{background:none;border:none;color:var(--br3);font-size:.9rem;padding:2px 4px;line-height:1}
 .srch-cnt{font-size:.64rem;color:var(--br3);text-align:center;padding:3px 0 4px;font-style:italic}
 
@@ -1444,8 +1444,8 @@ button:active{transform:scale(0.97)}
 
 /* ── Such-Zeile mit Aktions-Buttons (Meine Rezepte) ── */
 .srch-inner .srch-acts{display:flex;gap:2px;margin-left:auto;flex-shrink:0}
-.srch-inner .srch-act-btn{background:transparent;border:none;height:26px;padding:0 5px;font-size:.78rem}
-.srch-inner .srch-act-btn.add{background:var(--rust);color:#fff;border-radius:13px;padding:0 8px;border:none}
+.srch-inner .srch-act-btn{background:transparent;border:none;height:26px;padding:0 5px;font-size:14px}
+.srch-inner .srch-act-btn.add{background:var(--rust);color:#fff;border-radius:13px;padding:0 8px;border:none;font-size:12px}
 
 
 /* ── Menüplaner Header-Tweaks ── */
