@@ -4359,7 +4359,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ═══════════════════════════════════════════════════════
 // DRAG & DROP — Karten, Zutaten, Schritte
 // ═══════════════════════════════════════════════════════
-let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddPending=null,_tddRowPending=null,_sliPending=null,_rcardPending=null,_autoScroll=null;
+let _dd={type:null,rid:null,iid:null,sid:null,overRow:null,overPos:null},_tdd=null,_tddPending=null,_tddRowPending=null,_sliPending=null,_rcardPending=null,_fldHdlPending=null,_autoScroll=null;
 
 function _startAutoScroll(clientY){
   const zone=80,h=window.innerHeight;
@@ -7077,9 +7077,13 @@ function setupWkTouchDrag(){
 
 // ── Touch-Drag für Zutaten & Schritte (Mobile) ────────
 function setupTouchDrag(){
-  document.querySelectorAll('.ing-drag-hdl[data-hdl],.fld-drag-hdl[data-hdl],.drag-hdl[data-hdl]').forEach(hdl=>{
+  document.querySelectorAll('.ing-drag-hdl[data-hdl],.drag-hdl[data-hdl]').forEach(hdl=>{
     hdl.removeEventListener('touchstart',_tddStart);
     hdl.addEventListener('touchstart',_tddStart,{passive:false});
+  });
+  document.querySelectorAll('.fld-drag-hdl[data-hdl]').forEach(hdl=>{
+    hdl.removeEventListener('touchstart',_fldHdlStart);
+    hdl.addEventListener('touchstart',_fldHdlStart,{passive:false});
   });
   document.querySelectorAll('.fld-rrow[data-rid]').forEach(row=>{
     row.removeEventListener('touchstart',_tddRowStart);
@@ -7196,6 +7200,65 @@ function _sliRowEnd(){
   document.removeEventListener('touchend',_sliRowEnd);
   document.removeEventListener('touchcancel',_sliRowEnd);
   _sliPending=null;
+}
+// ── Ordner-Drag-Handle: Long-Press (300 ms) wie step-li ──
+function _fldHdlStart(e){
+  if(_tdd||_fldHdlPending)return;
+  const hdl=e.currentTarget;
+  const li=hdl.closest('.fld-rrow');if(!li)return;
+  const rid=parseInt(hdl.dataset.rid);if(!rid)return;
+  const t=e.touches[0];
+  const timer=setTimeout(()=>{
+    if(!_fldHdlPending)return;
+    _fldHdlPending.ready=true;
+    li.style.transition='box-shadow .12s';
+    li.style.boxShadow='inset 0 0 0 2px var(--teal,#36706a)';
+    document.removeEventListener('touchmove',_fldHdlCheck);
+    document.addEventListener('touchmove',_fldHdlDrag,{passive:false});
+  },300);
+  _fldHdlPending={li,rid,startX:t.clientX,startY:t.clientY,timer,ready:false};
+  document.addEventListener('touchmove',_fldHdlCheck,{passive:true});
+  document.addEventListener('touchend',_fldHdlEnd,{passive:true});
+  document.addEventListener('touchcancel',_fldHdlEnd,{passive:true});
+}
+function _fldHdlCheck(e){
+  if(!_fldHdlPending||_fldHdlPending.ready)return;
+  const t=e.touches[0];
+  if(Math.abs(t.clientX-_fldHdlPending.startX)>8||Math.abs(t.clientY-_fldHdlPending.startY)>8)_fldHdlEnd();
+}
+function _fldHdlDrag(e){
+  if(!_fldHdlPending)return;
+  const t=e.touches[0];
+  if(Math.abs(t.clientX-_fldHdlPending.startX)>14){_fldHdlEnd();return;}
+  e.preventDefault();
+  const{li,rid}=_fldHdlPending;
+  li.style.boxShadow='';li.style.transition='';
+  document.removeEventListener('touchmove',_fldHdlDrag);
+  document.removeEventListener('touchend',_fldHdlEnd);
+  document.removeEventListener('touchcancel',_fldHdlEnd);
+  _fldHdlPending=null;
+  if(_tdd){_tdd.ghost?.remove();_tdd.li&&(_tdd.li.style.opacity='');_tdd=null;}
+  const rect=li.getBoundingClientRect();
+  const ghost=li.cloneNode(true);
+  ghost.id='tdd-ghost';
+  ghost.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:9999;pointer-events:none;opacity:.85;background:var(--parch);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.3);border-radius:6px;margin:0`;
+  document.body.appendChild(ghost);
+  li.style.opacity='.3';
+  _tdd={type:'fld',rid,id:rid,li,ghost,offsetY:t.clientY-rect.top};
+  document.addEventListener('touchmove',_tddMove,{passive:false});
+  document.addEventListener('touchend',_tddEnd,{passive:true});
+  document.addEventListener('touchcancel',_tddEnd,{passive:true});
+}
+function _fldHdlEnd(){
+  if(!_fldHdlPending)return;
+  clearTimeout(_fldHdlPending.timer);
+  const{li}=_fldHdlPending;
+  if(li){li.style.boxShadow='';li.style.transition='';}
+  document.removeEventListener('touchmove',_fldHdlCheck);
+  document.removeEventListener('touchmove',_fldHdlDrag);
+  document.removeEventListener('touchend',_fldHdlEnd);
+  document.removeEventListener('touchcancel',_fldHdlEnd);
+  _fldHdlPending=null;
 }
 // ── Ganze rcard-hd als Drag-Quelle (Long-Press 350ms, wie step-li) ──
 function _rcardHdStart(e){
