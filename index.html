@@ -1451,15 +1451,9 @@ button:active{transform:scale(0.97)}
 .sc-act-btn.add{border-color:var(--rust);background:var(--rusts);color:var(--rust)}
 
 /* ── Such-Zeile mit Aktions-Buttons (Meine Rezepte) ── */
-.srch-row{display:flex;align-items:center;gap:6px;padding-bottom:5px}
-.srch-row .srch-inner{flex:2;min-width:calc(50% - 6px)}
-.srch-acts{display:flex;gap:4px;flex-shrink:0}
-.srch-act-btn{height:30px;padding:0 8px;border-radius:15px;border:1.5px solid var(--sand2);
-  background:var(--sand);font-size:.65rem;font-weight:700;color:var(--ink);cursor:pointer;
-  display:flex;align-items:center;gap:3px;white-space:nowrap;font-family:inherit}
-.srch-act-btn:active{background:var(--sand2)}
-.srch-act-btn.add{border-color:var(--rust);background:var(--rusts);color:var(--rust)}
-@media(max-width:380px){.srch-act-btn{padding:0 5px;font-size:.6rem}}
+.srch-inner .srch-acts{display:flex;gap:2px;margin-left:auto;flex-shrink:0}
+.srch-inner .srch-act-btn{background:transparent;border:none;height:26px;padding:0 5px;font-size:.78rem}
+.srch-inner .srch-act-btn.add{background:var(--rust);color:#fff;border-radius:13px;padding:0 8px;border:none}
 
 /* ── Einstellungen Aktionsleiste (flacher, volle Breite) ── */
 .sett-act-bar{display:flex;gap:6px;padding:7px 12px;background:var(--parch);border-bottom:1px solid var(--sand2);justify-content:flex-end}
@@ -1586,16 +1580,14 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
 
 <div class="sc on" id="sc-recipes">
   <div class="srch-bar">
-    <div class="srch-row">
-      <div class="srch-inner">
-        <span style="font-size:.95rem;color:var(--br3)">🔍</span>
-        <input id="srchIn" oninput="doSearch(this.value)"/>
-        <button class="srch-x" id="srchX" onclick="clearSearch()" title="Suche löschen" style="display:none">✕</button>
-      </div>
+    <div class="srch-inner">
+      <span style="font-size:.95rem;color:var(--br3)">🔍</span>
+      <input id="srchIn" oninput="doSearch(this.value)"/>
+      <button class="srch-x" id="srchX" onclick="clearSearch()" title="Suche löschen" style="display:none">✕</button>
       <div class="srch-acts">
         <button class="srch-act-btn" onclick="openImport()" title="Importieren">📥</button>
         <button class="srch-act-btn" onclick="openExport()" title="Exportieren">📤</button>
-        <button class="srch-act-btn add" onclick="document.getElementById('newPanel').classList.contains('open')?closeNewPanel():openNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
+        <button class="srch-act-btn add" onclick="toggleNewPanel()">+ <span id="hAddLbl">Rezept</span></button>
       </div>
     </div>
     <div class="srch-cnt" id="srchCnt" style="display:none"></div>
@@ -6661,6 +6653,7 @@ function ensureFolderBlanks(fid){
   sv();
 }
 function closeNewPanel(){document.getElementById('newPanel').classList.remove('open');}
+function toggleNewPanel(){document.getElementById('newPanel').classList.contains('open')?closeNewPanel():openNewPanel();}
 function createRecipe(){
   const name=document.getElementById('newName').value.trim();if(!name){toast('⚠️ '+T('lName'));return;}
   const folder=document.getElementById('newFolder')?.value||'';
