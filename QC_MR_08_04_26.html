@@ -1936,8 +1936,8 @@ Vielen Dank für deine Unterstützung.</div>
   <div class="fov-body">
     <div class="fov-pane on" id="imp-img">
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
-        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px">🖼️ Bilder zu Rezepten hinzufügen</div>
-        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55">Wähle ein oder mehrere Fotos aus oder ziehe sie direkt hierher. Weise danach jedem Bild ein Rezept zu — das Foto wird dann automatisch dem gewählten Rezept zugeordnet.</div>
+        <div id="imgInfoTitle" style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px">🖼️ Bilder zu Rezepten hinzufügen</div>
+        <div id="imgInfoDesc" style="font-size:.76rem;color:#1e4a45;line-height:1.55">Wähle ein oder mehrere Fotos aus oder ziehe sie direkt hierher. Weise danach jedem Bild ein Rezept zu — das Foto wird dann automatisch dem gewählten Rezept zugeordnet.</div>
       </div>
       <div class="dropzone" onclick="document.getElementById('imgFileIn').click()">
         <span class="dz-ico">🖼️</span>
@@ -1952,11 +1952,11 @@ Vielen Dank für deine Unterstützung.</div>
     <div class="fov-pane" id="imp-scan">
 
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
-        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:6px">📸 Was der KI-Scan erkennt</div>
+        <div id="scanInfoTitle" style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:6px">📸 Was der KI-Scan erkennt</div>
         <div style="display:flex;gap:12px">
           <div style="flex:1">
-            <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Erkennbare Vorlagen</div>
-            <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+            <div id="scanInfoCol1Hdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Erkennbare Vorlagen</div>
+            <ul id="scanInfoCol1Items" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
               <li>Handgeschriebene Rezeptzettel</li>
               <li>Kochbücher &amp; Zeitschriften</li>
               <li>Rezeptkarten &amp; Ausschnitte</li>
@@ -1965,8 +1965,8 @@ Vielen Dank für deine Unterstützung.</div>
             </ul>
           </div>
           <div style="flex:1">
-            <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Wird übertragen</div>
-            <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+            <div id="scanInfoCol2Hdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Wird übertragen</div>
+            <ul id="scanInfoCol2Items" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
               <li>Rezepttitel &amp; Kategorie</li>
               <li>Zutaten mit Mengen &amp; Einheiten</li>
               <li>Zubereitungsschritte</li>
@@ -2119,7 +2119,7 @@ Vielen Dank für deine Unterstützung.</div>
           <div id="scanPhotoContent">
             <div class="scan-camera-ico">📸</div>
             <div class="scan-photo-lbl" id="scanDropLbl">Rezept-Foto oder PDF auswählen</div>
-            <div class="scan-photo-sub">Foto, Screenshot, Scan oder PDF · JPG · PNG · PDF</div>
+            <div class="scan-photo-sub" id="scanPhSub">Foto, Screenshot, Scan oder PDF · JPG · PNG · PDF</div>
           </div>
           <div id="scanPdfPrev" style="display:none;text-align:center;padding:24px 16px">
             <div style="font-size:3.2rem">📄</div>
@@ -2209,8 +2209,8 @@ Vielen Dank für deine Unterstützung.</div>
 
     <div class="fov-pane" id="imp-web">
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
-        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px">🌐 Rezept aus dem Internet laden</div>
-        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55">Gib die Adresse einer Rezeptseite ein — z.B. von Chefkoch, Allrecipes oder anderen Kochseiten. Das Rezept wird automatisch erkannt und strukturiert ins Rezeptbuch übertragen.</div>
+        <div id="webInfoTitle" style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px">🌐 Rezept aus dem Internet laden</div>
+        <div id="webInfoDesc" style="font-size:.76rem;color:#1e4a45;line-height:1.55">Gib die Adresse einer Rezeptseite ein — z.B. von Chefkoch, Allrecipes oder anderen Kochseiten. Das Rezept wird automatisch erkannt und strukturiert ins Rezeptbuch übertragen.</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
         <input id="webUrlIn" type="url"
@@ -2224,7 +2224,7 @@ Vielen Dank für deine Unterstützung.</div>
           style="width:100%;padding:0 16px;height:44px;font-size:.88rem;margin:0"
           title="Rezept von dieser Seite laden">🌐 Laden</button>
       </div>
-      <div style="font-size:.68rem;color:var(--br3);margin-bottom:12px;line-height:1.5">
+      <div id="webInfoHint" style="font-size:.68rem;color:var(--br3);margin-bottom:12px;line-height:1.5">
         💡 Funktioniert ohne KI-Schlüssel bei den meisten großen Kochseiten (Chefkoch, Allrecipes, BBC Good Food, Lecker.de u.v.m.). Für unbekannte Seiten wird ein KI-Schlüssel benötigt.
       </div>
       <div id="webStatus" class="scan-status" style="display:none"></div>
@@ -2237,8 +2237,8 @@ Vielen Dank für deine Unterstützung.</div>
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
         <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="txtTitleEl">✍️ Rezept per Text übertragen</div>
         <div style="font-size:.76rem;color:#1e4a45;line-height:1.55;margin-bottom:8px" id="txtDescEl">Kopiere oder tippe einen Rezepttext — die KI erkennt alle Felder automatisch und trägt das Rezept strukturiert ins Buch ein.</div>
-        <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mögliche Texteingaben</div>
-        <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+        <div id="txtListHdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mögliche Texteingaben</div>
+        <ul id="txtListItems" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
           <li>Kopierter Text von Webseiten oder Apps</li>
           <li>Rezepte aus Nachrichten, E-Mails &amp; Notizen</li>
           <li>Selbst getippte oder diktierte Rezepte</li>
@@ -2616,10 +2616,24 @@ const LANGS={
     bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
     impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'📥 Rezept laden',
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
+    imgInfoTitle:'🖼️ Bilder zu Rezepten hinzufügen',
+    imgInfoDesc:'Wähle ein oder mehrere Fotos aus oder ziehe sie direkt hierher. Weise danach jedem Bild ein Rezept zu — das Foto wird dann automatisch dem gewählten Rezept zugeordnet.',
+    scanInfoTitle:'📸 Was der KI-Scan erkennt',
+    scanInfoCol1Hdr:'Erkennbare Vorlagen',
+    scanInfoCol1Items:'<li>Handgeschriebene Rezeptzettel</li><li>Kochbücher &amp; Zeitschriften</li><li>Rezeptkarten &amp; Ausschnitte</li><li>Screenshots &amp; Fotos</li><li>PDF-Dateien</li>',
+    scanInfoCol2Hdr:'Wird übertragen',
+    scanInfoCol2Items:'<li>Rezepttitel &amp; Kategorie</li><li>Zutaten mit Mengen &amp; Einheiten</li><li>Zubereitungsschritte</li><li>Portionen, Temp. &amp; Garzeit</li>',
+    webInfoTitle:'🌐 Rezept aus dem Internet laden',
+    webInfoDesc:'Gib die Adresse einer Rezeptseite ein — z.B. von Chefkoch, Allrecipes oder anderen Kochseiten. Das Rezept wird automatisch erkannt und strukturiert ins Rezeptbuch übertragen.',
+    webInfoHint:'💡 Funktioniert ohne KI-Schlüssel bei den meisten großen Kochseiten (Chefkoch, Allrecipes, BBC Good Food, Lecker.de u.v.m.). Für unbekannte Seiten wird ein KI-Schlüssel benötigt.',
+    txtListHdr:'Mögliche Texteingaben',
+    txtListItems:'<li>Kopierter Text von Webseiten oder Apps</li><li>Rezepte aus Nachrichten, E-Mails &amp; Notizen</li><li>Selbst getippte oder diktierte Rezepte</li><li>Textdateien (.txt) per Drag &amp; Drop</li><li>PDF-Dateien per Drag &amp; Drop (Text wird extrahiert)</li>',
+    scanPhSub:'Foto, Screenshot, Scan oder PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ PDF wird gelesen …',pdfOk:'✅ PDF-Text extrahiert',pdfErr:'❌ PDF-Fehler: ',
     sc1T:'Rezept-Foto auswählen',sc1D:'Foto aus Galerie, Kamera oder Ordner.',
     sc2T:'KI liest das Rezept (Internet nötig)',sc2D:'Claude erkennt Zutaten, Mengen & Schritte.',
     sc3T:'Prüfen & übernehmen',sc3D:'Ergebnis kontrollieren, dann übernehmen.',
-    scanDropLbl:'Rezept-Bild auswählen',apiKeyLbl:'Claude API-Schlüssel',
+    scanDropLbl:'Rezept-Foto oder PDF auswählen',apiKeyLbl:'Claude API-Schlüssel',
     apiHint:'Nur lokal gespeichert.',scanBtn:'✨ Scannen',
     bakTitle:'📥 Rezeptsammlung laden',
     bakDesc:'Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.',
@@ -2726,10 +2740,24 @@ const LANGS={
     bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
     impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'📥 Load recipes',
     imgDropLbl:'Select images or drag here',
+    imgInfoTitle:'🖼️ Add images to recipes',
+    imgInfoDesc:'Select one or more photos or drag them here. Then assign each image to a recipe — the photo will be automatically linked to the chosen recipe.',
+    scanInfoTitle:'📸 What the AI scan recognises',
+    scanInfoCol1Hdr:'Recognisable sources',
+    scanInfoCol1Items:'<li>Handwritten recipe notes</li><li>Cookbooks &amp; magazines</li><li>Recipe cards &amp; clippings</li><li>Screenshots &amp; photos</li><li>PDF files</li>',
+    scanInfoCol2Hdr:'What gets transferred',
+    scanInfoCol2Items:'<li>Recipe title &amp; category</li><li>Ingredients with quantities &amp; units</li><li>Preparation steps</li><li>Servings, temp. &amp; cooking time</li>',
+    webInfoTitle:'🌐 Load recipe from the web',
+    webInfoDesc:'Enter the address of a recipe page — e.g. from Allrecipes, BBC Good Food or other cooking sites. The recipe is recognised automatically and transferred to your recipe book.',
+    webInfoHint:'💡 Works without an AI key for most major cooking sites (Allrecipes, BBC Good Food, etc.). An AI key is required for unknown sites.',
+    txtListHdr:'Possible text inputs',
+    txtListItems:'<li>Copied text from websites or apps</li><li>Recipes from messages, emails &amp; notes</li><li>Manually typed or dictated recipes</li><li>Text files (.txt) by drag &amp; drop</li><li>PDF files by drag &amp; drop (text is extracted)</li>',
+    scanPhSub:'Photo, screenshot, scan or PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ Reading PDF …',pdfOk:'✅ PDF text extracted',pdfErr:'❌ PDF error: ',
     sc1T:'Select recipe photo',sc1D:'Photo of a recipe from gallery, camera or folder.',
     sc2T:'AI reads the recipe (internet required)',sc2D:'Claude recognizes ingredients, quantities & steps.',
     sc3T:'Review & import',sc3D:'Check the result, then add to recipe book.',
-    scanDropLbl:'Select recipe image',apiKeyLbl:'Claude API Key',
+    scanDropLbl:'Select recipe photo or PDF',apiKeyLbl:'Claude API Key',
     apiHint:'Stored locally only.',scanBtn:'✨ Scan',
     bakTitle:'📥 Load recipe collection',
     bakDesc:'Did you back up your recipes before, want to transfer them to a new device, or did someone share their collection with you? Just select the file — all recipes will be added to your book automatically.',
@@ -2836,10 +2864,24 @@ const LANGS={
     bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
     impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'📥 Загрузить',
     imgDropLbl:'Выбрать фото или перетащить',
+    imgInfoTitle:'🖼️ Добавить фото к рецептам',
+    imgInfoDesc:'Выберите одно или несколько фото или перетащите их сюда. Затем назначьте каждому фото рецепт — фотография будет автоматически привязана к выбранному рецепту.',
+    scanInfoTitle:'📸 Что распознаёт KI-сканер',
+    scanInfoCol1Hdr:'Распознаваемые источники',
+    scanInfoCol1Items:'<li>Рукописные записи рецептов</li><li>Кулинарные книги &amp; журналы</li><li>Карточки рецептов &amp; вырезки</li><li>Скриншоты &amp; фотографии</li><li>PDF-файлы</li>',
+    scanInfoCol2Hdr:'Переносится в книгу',
+    scanInfoCol2Items:'<li>Название &amp; категория рецепта</li><li>Ингредиенты с количеством &amp; единицами</li><li>Шаги приготовления</li><li>Порции, темп. &amp; время готовки</li>',
+    webInfoTitle:'🌐 Загрузить рецепт из интернета',
+    webInfoDesc:'Введите адрес страницы с рецептом — например, с Povarenok, Allrecipes или других кулинарных сайтов. Рецепт будет автоматически распознан и перенесён в книгу рецептов.',
+    webInfoHint:'💡 Работает без ключа ИИ для большинства крупных кулинарных сайтов. Для неизвестных сайтов требуется ключ ИИ.',
+    txtListHdr:'Возможные источники текста',
+    txtListItems:'<li>Скопированный текст с сайтов или приложений</li><li>Рецепты из сообщений, писем и заметок</li><li>Вручную введённые или продиктованные рецепты</li><li>Текстовые файлы (.txt) перетаскиванием</li><li>PDF-файлы перетаскиванием (текст извлекается)</li>',
+    scanPhSub:'Фото, скриншот, скан или PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ Читаем PDF …',pdfOk:'✅ Текст PDF извлечён',pdfErr:'❌ Ошибка PDF: ',
     sc1T:'Выбрать фото рецепта',sc1D:'Фото рукописного или печатного рецепта.',
     sc2T:'ИИ читает рецепт (нужен интернет)',sc2D:'Claude распознаёт ингредиенты и шаги.',
     sc3T:'Проверить и добавить',sc3D:'Проверьте результат, затем добавьте в книгу.',
-    scanDropLbl:'Выбрать фото рецепта',apiKeyLbl:'Ключ API Claude',
+    scanDropLbl:'Выбрать фото или PDF рецепта',apiKeyLbl:'Ключ API Claude',
     apiHint:'Хранится только локально.',scanBtn:'✨ Сканировать',
     bakTitle:'📥 Загрузить коллекцию рецептов',
     bakDesc:'Вы делали резервную копию рецептов, хотите перенести их на новое устройство или кто-то поделился с вами своей коллекцией? Просто выберите файл — все рецепты автоматически добавятся в вашу книгу.',
@@ -2946,10 +2988,24 @@ const LANGS={
     bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
     impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'📥 加载食谱',
     imgDropLbl:'选择或拖拽图片至此',
+    imgInfoTitle:'🖼️ 为食谱添加图片',
+    imgInfoDesc:'选择一张或多张照片，或直接拖放至此。然后为每张图片指定一个食谱——照片将自动关联到所选食谱。',
+    scanInfoTitle:'📸 AI扫描能识别什么',
+    scanInfoCol1Hdr:'可识别的来源',
+    scanInfoCol1Items:'<li>手写食谱便条</li><li>食谱书 &amp; 杂志</li><li>食谱卡 &amp; 剪报</li><li>截图 &amp; 照片</li><li>PDF文件</li>',
+    scanInfoCol2Hdr:'将被提取的内容',
+    scanInfoCol2Items:'<li>食谱标题 &amp; 类别</li><li>食材及用量 &amp; 单位</li><li>制作步骤</li><li>份量、温度 &amp; 烹饪时间</li>',
+    webInfoTitle:'🌐 从网上加载食谱',
+    webInfoDesc:'输入食谱页面的网址——例如来自下厨房、Allrecipes或其他烹饪网站。食谱将自动识别并整理到食谱书中。',
+    webInfoHint:'💡 大多数主要烹饪网站无需AI密钥即可使用。对于未知网站，需要AI密钥。',
+    txtListHdr:'可用文字输入方式',
+    txtListItems:'<li>从网站或应用复制的文字</li><li>来自消息、邮件和笔记的食谱</li><li>手动输入或口述的食谱</li><li>拖放文本文件（.txt）</li><li>拖放PDF文件（提取文字）</li>',
+    scanPhSub:'照片、截图、扫描或PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ 正在读取PDF …',pdfOk:'✅ PDF文字已提取',pdfErr:'❌ PDF错误：',
     sc1T:'选择食谱照片',sc1D:'从相册、相机或文件夹选择食谱照片。',
     sc2T:'AI识别食谱（需要网络）',sc2D:'Claude自动识别食材、用量和步骤。',
     sc3T:'检查并导入',sc3D:'检查结果，然后直接导入食谱书。',
-    scanDropLbl:'选择食谱图片',apiKeyLbl:'Claude API密钥',
+    scanDropLbl:'选择食谱照片或PDF',apiKeyLbl:'Claude API密钥',
     apiHint:'仅本地存储。',scanBtn:'✨ 扫描',
     bakTitle:'📥 加载食谱集',
     bakDesc:'曾经备份过食谱，想把它们转移到新设备，或者有人与你分享了他们的食谱集？只需选择文件，所有食谱将自动添加到你的食谱书中。',
@@ -3056,10 +3112,24 @@ const LANGS={
     bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
     impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'📥 Cargar recetas',
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
+    imgInfoTitle:'🖼️ Añadir imágenes a recetas',
+    imgInfoDesc:'Selecciona una o varias fotos o arrástralas aquí. Luego asigna cada imagen a una receta — la foto se vinculará automáticamente a la receta elegida.',
+    scanInfoTitle:'📸 Qué reconoce el escáner IA',
+    scanInfoCol1Hdr:'Fuentes reconocibles',
+    scanInfoCol1Items:'<li>Notas de recetas escritas a mano</li><li>Libros de cocina &amp; revistas</li><li>Tarjetas de recetas &amp; recortes</li><li>Capturas de pantalla &amp; fotos</li><li>Archivos PDF</li>',
+    scanInfoCol2Hdr:'Lo que se transfiere',
+    scanInfoCol2Items:'<li>Título &amp; categoría de receta</li><li>Ingredientes con cantidades &amp; unidades</li><li>Pasos de preparación</li><li>Porciones, temp. &amp; tiempo de cocción</li>',
+    webInfoTitle:'🌐 Cargar receta de Internet',
+    webInfoDesc:'Introduce la dirección de una página de recetas — p.ej. de Allrecipes, Recetas.com u otras webs de cocina. La receta se reconoce automáticamente y se transfiere al recetario.',
+    webInfoHint:'💡 Funciona sin clave IA en la mayoría de los grandes sitios de cocina. Para sitios desconocidos se necesita una clave IA.',
+    txtListHdr:'Entradas de texto posibles',
+    txtListItems:'<li>Texto copiado de webs o apps</li><li>Recetas de mensajes, correos y notas</li><li>Recetas escritas o dictadas</li><li>Archivos de texto (.txt) por arrastrar</li><li>Archivos PDF por arrastrar (se extrae el texto)</li>',
+    scanPhSub:'Foto, captura, escaneo o PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ Leyendo PDF …',pdfOk:'✅ Texto PDF extraído',pdfErr:'❌ Error PDF: ',
     sc1T:'Seleccionar foto de receta',sc1D:'Foto de galería, cámara o carpeta.',
     sc2T:'La IA lee la receta (Internet necesario)',sc2D:'Claude reconoce ingredientes, cantidades y pasos.',
     sc3T:'Revisar y guardar',sc3D:'Controlar resultado y aceptar.',
-    scanDropLbl:'Seleccionar imagen de receta',apiKeyLbl:'Clave API de Claude',
+    scanDropLbl:'Seleccionar foto o PDF de receta',apiKeyLbl:'Clave API de Claude',
     apiHint:'Solo guardado localmente.',scanBtn:'✨ Escanear',
     bakTitle:'📥 Cargar colección de recetas',
     bakDesc:'¿Hiciste una copia de seguridad antes, quieres transferir tus recetas a un nuevo dispositivo o alguien compartió su colección contigo? Selecciona el archivo y todas las recetas se añadirán automáticamente a tu libro.',
@@ -3192,13 +3262,27 @@ const LANGS={
     impTabTxt:'📝 Texte',
     impTabJson:'📥 Charger recettes',
     imgDropLbl:'Sélectionner des images',
+    imgInfoTitle:'🖼️ Ajouter des images aux recettes',
+    imgInfoDesc:'Sélectionnez une ou plusieurs photos ou faites-les glisser ici. Associez ensuite chaque image à une recette — la photo sera automatiquement liée à la recette choisie.',
+    scanInfoTitle:'📸 Ce que le scanner IA reconnaît',
+    scanInfoCol1Hdr:'Sources reconnaissables',
+    scanInfoCol1Items:'<li>Notes de recettes manuscrites</li><li>Livres de cuisine &amp; magazines</li><li>Fiches recettes &amp; découpures</li><li>Captures d\'écran &amp; photos</li><li>Fichiers PDF</li>',
+    scanInfoCol2Hdr:'Ce qui est transféré',
+    scanInfoCol2Items:'<li>Titre &amp; catégorie de recette</li><li>Ingrédients avec quantités &amp; unités</li><li>Étapes de préparation</li><li>Portions, temp. &amp; temps de cuisson</li>',
+    webInfoTitle:'🌐 Charger une recette depuis Internet',
+    webInfoDesc:'Entrez l\'adresse d\'une page de recettes — p.ex. d\'Allrecipes, Marmiton ou d\'autres sites de cuisine. La recette est reconnue automatiquement et transférée dans votre livre.',
+    webInfoHint:'💡 Fonctionne sans clé IA sur la plupart des grands sites de cuisine. Une clé IA est nécessaire pour les sites inconnus.',
+    txtListHdr:'Sources de texte possibles',
+    txtListItems:'<li>Texte copié depuis des sites ou applis</li><li>Recettes de messages, e-mails et notes</li><li>Recettes tapées ou dictées</li><li>Fichiers texte (.txt) par glisser-déposer</li><li>Fichiers PDF par glisser-déposer (texte extrait)</li>',
+    scanPhSub:'Photo, capture, scan ou PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ Lecture du PDF …',pdfOk:'✅ Texte PDF extrait',pdfErr:'❌ Erreur PDF : ',
     sc1T:'Sélectionner photo',
     sc1D:'Photo de galerie ou caméra.',
     sc2T:'IA lit la recette',
     sc2D:'Claude reconnait ingrédients et étapes.',
     sc3T:'Vérifier et enregistrer',
     sc3D:'Contrôler et accepter.',
-    scanDropLbl:'Sélectionner image',
+    scanDropLbl:'Sélectionner photo ou PDF',
     apiKeyLbl:'Clé API Claude',
     apiHint:'Enregistré localement.',
     scanBtn:'✨ Scanner',
@@ -3411,13 +3495,27 @@ const LANGS={
     impTabTxt:'📝 Testo',
     impTabJson:'📥 Carica ricette',
     imgDropLbl:'Seleziona immagini',
+    imgInfoTitle:'🖼️ Aggiungi immagini alle ricette',
+    imgInfoDesc:'Seleziona una o più foto o trascinale qui. Poi assegna ogni immagine a una ricetta — la foto verrà collegata automaticamente alla ricetta scelta.',
+    scanInfoTitle:'📸 Cosa riconosce lo scanner IA',
+    scanInfoCol1Hdr:'Fonti riconoscibili',
+    scanInfoCol1Items:'<li>Note di ricette scritte a mano</li><li>Libri di cucina &amp; riviste</li><li>Schede ricette &amp; ritagli</li><li>Schermate &amp; foto</li><li>File PDF</li>',
+    scanInfoCol2Hdr:'Cosa viene trasferito',
+    scanInfoCol2Items:'<li>Titolo &amp; categoria ricetta</li><li>Ingredienti con quantità &amp; unità</li><li>Passi di preparazione</li><li>Porzioni, temp. &amp; tempo di cottura</li>',
+    webInfoTitle:'🌐 Carica ricetta da Internet',
+    webInfoDesc:'Inserisci l\'indirizzo di una pagina di ricette — p.es. da Giallozafferano, Allrecipes o altri siti di cucina. La ricetta viene riconosciuta automaticamente e trasferita nel ricettario.',
+    webInfoHint:'💡 Funziona senza chiave IA per la maggior parte dei grandi siti di cucina. Per siti sconosciuti è necessaria una chiave IA.',
+    txtListHdr:'Fonti di testo possibili',
+    txtListItems:'<li>Testo copiato da siti web o app</li><li>Ricette da messaggi, e-mail e note</li><li>Ricette digitate o dettate</li><li>File di testo (.txt) trascinati</li><li>File PDF trascinati (testo estratto)</li>',
+    scanPhSub:'Foto, schermata, scansione o PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ Lettura PDF …',pdfOk:'✅ Testo PDF estratto',pdfErr:'❌ Errore PDF: ',
     sc1T:'Seleziona foto ricetta',
     sc1D:'Foto da galleria o fotocamera.',
     sc2T:'IA legge la ricetta',
     sc2D:'Claude riconosce ingredienti e passi.',
     sc3T:'Controlla e salva',
     sc3D:'Controlla il risultato e accetta.',
-    scanDropLbl:'Seleziona immagine',
+    scanDropLbl:'Seleziona foto o PDF',
     apiKeyLbl:'Chiave API Claude',
     apiHint:'Salvato localmente.',
     scanBtn:'✨ Scansiona',
@@ -3630,13 +3728,27 @@ const LANGS={
     impTabTxt:'📝 Texto',
     impTabJson:'📥 Carregar receitas',
     imgDropLbl:'Selecionar imagens',
+    imgInfoTitle:'🖼️ Adicionar imagens às receitas',
+    imgInfoDesc:'Selecione uma ou mais fotos ou arraste-as para aqui. De seguida, associe cada imagem a uma receita — a foto será automaticamente ligada à receita escolhida.',
+    scanInfoTitle:'📸 O que o scanner IA reconhece',
+    scanInfoCol1Hdr:'Fontes reconhecíveis',
+    scanInfoCol1Items:'<li>Notas de receitas manuscritas</li><li>Livros de culinária &amp; revistas</li><li>Fichas de receitas &amp; recortes</li><li>Capturas de ecrã &amp; fotos</li><li>Ficheiros PDF</li>',
+    scanInfoCol2Hdr:'O que é transferido',
+    scanInfoCol2Items:'<li>Título &amp; categoria da receita</li><li>Ingredientes com quantidades &amp; unidades</li><li>Passos de preparação</li><li>Porções, temp. &amp; tempo de cozimento</li>',
+    webInfoTitle:'🌐 Carregar receita da Internet',
+    webInfoDesc:'Introduza o endereço de uma página de receitas — p.ex. do Allrecipes, Continente ou outros sites de culinária. A receita é reconhecida automaticamente e transferida para o livro.',
+    webInfoHint:'💡 Funciona sem chave de IA na maioria dos grandes sites de culinária. Para sites desconhecidos é necessária uma chave de IA.',
+    txtListHdr:'Fontes de texto possíveis',
+    txtListItems:'<li>Texto copiado de sites ou apps</li><li>Receitas de mensagens, e-mails e notas</li><li>Receitas digitadas ou ditadas</li><li>Ficheiros de texto (.txt) por arrastar</li><li>Ficheiros PDF por arrastar (texto extraído)</li>',
+    scanPhSub:'Foto, captura, digitalização ou PDF · JPG · PNG · PDF',
+    pdfReading:'⏳ A ler PDF …',pdfOk:'✅ Texto PDF extraído',pdfErr:'❌ Erro PDF: ',
     sc1T:'Selecionar foto receita',
     sc1D:'Foto de galeria ou câmara.',
     sc2T:'IA lê a receita',
     sc2D:'Claude reconhece ingredientes e passos.',
     sc3T:'Verificar e guardar',
     sc3D:'Controlar resultado e aceitar.',
-    scanDropLbl:'Selecionar imagem',
+    scanDropLbl:'Selecionar foto ou PDF',
     apiKeyLbl:'Chave API Claude',
     apiHint:'Guardado localmente.',
     scanBtn:'✨ Digitalizar',
@@ -4187,6 +4299,8 @@ function applyLang(code){
     'menuTitle','mActAdd','mActView','mvTitle','mvTabTl','mvTabSh','mvTabCk','mvTabAl','mvPrintBtn','mvCloseBtn',
     'bnRec','bnFld','bnMen','bnSet','bnBv',
     'impTitle','impTabImg','impTabWeb','impTabScan','impTabTxt','impTabJson','imgDropLbl',
+    'imgInfoTitle','imgInfoDesc','scanInfoTitle','scanInfoCol1Hdr','scanInfoCol2Hdr',
+    'webInfoTitle','webInfoDesc','webInfoHint','txtListHdr','scanPhSub',
     'txtTitleEl','txtDescEl','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
     'txtSc1T','txtSc1D','txtWebLbl','txtSc2T','txtSc3T',
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
@@ -4208,6 +4322,11 @@ function applyLang(code){
     'hlpShareBtn','hlpExportBtn','hlpImportBtn','hlpCacheBtn','hlpResetBtn',
     'hlpPwa','hlpPwaSub'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&L[id]!==undefined)el.textContent=L[id];});
+  // HTML-Keys (Listen): innerHTML statt textContent
+  ['scanInfoCol1Items','scanInfoCol2Items','txtListItems'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&L[id]!==undefined)el.innerHTML=L[id];
+  });
   const phs={srchIn:'searchPH',newName:'lName',newFlavor:'lFlavor',fldNameIn:'fldNameLbl'};
   for(const[id,k]of Object.entries(phs)){const el=document.getElementById(id);if(el)el.placeholder=L[k]||'';}
   const logo=document.getElementById('appLogo');
@@ -8759,7 +8878,7 @@ async function extractPdfText(file) {
   if (!key) { toast('⚠️ Für PDF-Erkennung wird ein API-Schlüssel benötigt.'); return; }
   if (file.size > 32 * 1024 * 1024) { toast('⚠️ PDF zu groß (max. 32 MB).'); return; }
   const st = document.getElementById('txtStatus');
-  if (st) { st.textContent = '📄 PDF wird gelesen …'; st.className = 'scan-status loading'; st.style.display = 'block'; }
+  if (st) { st.textContent = T('pdfReading'); st.className = 'scan-status loading'; st.style.display = 'block'; }
   try {
     const b64 = await new Promise((res, rej) => {
       const fr = new FileReader();
@@ -8784,9 +8903,9 @@ async function extractPdfText(file) {
     const txt = data.content.map(c => c.text || '').join('');
     const ta = document.getElementById('txtPasteArea');
     if (ta) { ta.value = txt; _txtUpdateUI(ta); }
-    setTxtSt('✅ PDF-Text extrahiert — jetzt prüfen und Rezept erkennen', 'ok');
+    setTxtSt(T('pdfOk'), 'ok');
   } catch(err) {
-    setTxtSt('⚠️ Fehler: ' + err.message, 'err');
+    setTxtSt(T('pdfErr') + err.message, 'err');
   }
 }
 
