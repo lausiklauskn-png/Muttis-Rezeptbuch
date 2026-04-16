@@ -1931,7 +1931,7 @@ Vielen Dank für deine Unterstützung.</div>
     <div class="fovtab" onclick="switchFovTab('importOv','web',this)" id="impTabWeb" title="Rezept aus dem Internet laden">🌐 Web</div>
     <div class="fovtab" onclick="switchFovTab('importOv','scan',this)" id="impTabScan" title="Rezept per KI-Scan erkennen">📄 KI-Scan</div>
     <div class="fovtab" onclick="switchFovTab('importOv','txt',this)" id="impTabTxt" title="Rezepttext eingeben">📝 Text</div>
-    <div class="fovtab" onclick="switchFovTab('importOv','json',this)" id="impTabJson" title="Backup-Datei laden">💾 Backup</div>
+    <div class="fovtab" onclick="switchFovTab('importOv','json',this)" id="impTabJson" title="Gespeicherte Rezeptsammlung laden">📥 Rezept laden</div>
   </div>
   <div class="fov-body">
     <div class="fov-pane on" id="imp-img">
@@ -2167,12 +2167,13 @@ Vielen Dank für deine Unterstützung.</div>
       </div>
     </div>
     <div class="fov-pane" id="imp-json">
+      <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="bakTitle">📥 Rezeptsammlung laden</div>
+        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55" id="bakDesc">Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.</div>
+      </div>
       <div style="background:var(--parch);border-radius:10px;border:1px solid var(--sand2);padding:13px">
-        <div style="font-family:Georgia,serif;font-size:.94rem;margin-bottom:5px" id="bakTitle">💾 Datensicherung laden</div>
-        <p style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5" id="bakDesc">
-          Eine exportierte <code style="background:var(--sand2);padding:1px 4px;border-radius:3px">.json</code>-Datei laden.
-          <strong>Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.</strong></p>
-        <button class="bigbtn grn" onclick="document.getElementById('jsonFileIn').click()" id="bakBtn" title="JSON-Backup-Datei auswählen">📂 Datei auswählen</button>
+        <p style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5">💡 Die Datei hat die Endung <code style="background:var(--sand2);padding:1px 4px;border-radius:3px">.json</code> und wurde vorher über <strong>Exportieren → Rezepte sichern</strong> erstellt. Vorhandene Rezepte bleiben erhalten – neue kommen einfach dazu.</p>
+        <button class="bigbtn grn" onclick="document.getElementById('jsonFileIn').click()" id="bakBtn" title="Rezeptsammlung auswählen">📂 Datei auswählen</button>
         <input type="file" id="jsonFileIn" accept=".json" style="display:none" onchange="importData(event)"/>
         <div id="upStatus" class="upst"></div>
       </div>
@@ -2576,15 +2577,15 @@ const LANGS={
     mvTitle:'Mein Menü',mvTabTl:'📋 Ablauf',mvTabSh:'🛒 Einkaufen',mvTabCk:'🍳 Kochen',mvTabAl:'📋 Gesamt',
     mvPrint:'🖨️ Drucken / PDF',mvClose:'Schließen',
     bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
-    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
+    impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'📥 Rezept laden',
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
     sc1T:'Rezept-Foto auswählen',sc1D:'Foto aus Galerie, Kamera oder Ordner.',
     sc2T:'KI liest das Rezept (Internet nötig)',sc2D:'Claude erkennt Zutaten, Mengen & Schritte.',
     sc3T:'Prüfen & übernehmen',sc3D:'Ergebnis kontrollieren, dann übernehmen.',
     scanDropLbl:'Rezept-Bild auswählen',apiKeyLbl:'Claude API-Schlüssel',
     apiHint:'Nur lokal gespeichert.',scanBtn:'✨ Scannen',
-    bakTitle:'💾 Datensicherung laden',
-    bakDesc:'Exportierte .json-Datei laden. Achtung: Aktuelle Daten werden überschrieben oder hinzugefügt.',
+    bakTitle:'📥 Rezeptsammlung laden',
+    bakDesc:'Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.',
     bakBtn:'📂 Datei auswählen',
     sBvScreenTitle:'Backup-Tresor',sBvLbl:'Backup-Tresor',sBvSub:'Mehrere Sicherungen verwalten',
     bvJsonT:'JSON-Backup aus Downloads laden',bvJsonD:'Gespeicherte .json-Datei vom Gerät laden',bvJsonBtn:'📂 Datei auswählen',
@@ -2686,15 +2687,15 @@ const LANGS={
     mvTitle:'My Menu',mvTabTl:'📋 Overview',mvTabSh:'🛒 Shopping',mvTabCk:'🍳 Cooking',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Print / PDF',mvClose:'Close',
     bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
-    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'💾 Backup',
+    impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'📥 Load recipes',
     imgDropLbl:'Select images or drag here',
     sc1T:'Select recipe photo',sc1D:'Photo of a recipe from gallery, camera or folder.',
     sc2T:'AI reads the recipe (internet required)',sc2D:'Claude recognizes ingredients, quantities & steps.',
     sc3T:'Review & import',sc3D:'Check the result, then add to recipe book.',
     scanDropLbl:'Select recipe image',apiKeyLbl:'Claude API Key',
     apiHint:'Stored locally only.',scanBtn:'✨ Scan',
-    bakTitle:'💾 Load backup',
-    bakDesc:'Load a previously exported .json file. Warning: current data will be overwritten or added.',
+    bakTitle:'📥 Load recipe collection',
+    bakDesc:'Did you back up your recipes before, want to transfer them to a new device, or did someone share their collection with you? Just select the file — all recipes will be added to your book automatically.',
     bakBtn:'📂 Select file',
     sBvScreenTitle:'Backup Vault',sBvLbl:'Backup Vault',sBvSub:'Manage multiple backups',
     bvJsonT:'Load JSON backup from downloads',bvJsonD:'Select a saved .json file from your device',bvJsonBtn:'📂 Select file',
@@ -2796,15 +2797,15 @@ const LANGS={
     mvTitle:'Моё меню',mvTabTl:'📋 Обзор',mvTabSh:'🛒 Покупки',mvTabCk:'🍳 Готовка',mvTabAl:'📋 Итого',
     mvPrint:'🖨️ Печать / PDF',mvClose:'Закрыть',
     bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
-    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'💾 Резерв',
+    impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'📥 Загрузить',
     imgDropLbl:'Выбрать фото или перетащить',
     sc1T:'Выбрать фото рецепта',sc1D:'Фото рукописного или печатного рецепта.',
     sc2T:'ИИ читает рецепт (нужен интернет)',sc2D:'Claude распознаёт ингредиенты и шаги.',
     sc3T:'Проверить и добавить',sc3D:'Проверьте результат, затем добавьте в книгу.',
     scanDropLbl:'Выбрать фото рецепта',apiKeyLbl:'Ключ API Claude',
     apiHint:'Хранится только локально.',scanBtn:'✨ Сканировать',
-    bakTitle:'💾 Загрузить резервную копию',
-    bakDesc:'Загрузите ранее экспортированный .json-файл. Внимание: текущие данные будут перезаписаны или дополнены.',
+    bakTitle:'📥 Загрузить коллекцию рецептов',
+    bakDesc:'Вы делали резервную копию рецептов, хотите перенести их на новое устройство или кто-то поделился с вами своей коллекцией? Просто выберите файл — все рецепты автоматически добавятся в вашу книгу.',
     bakBtn:'📂 Выбрать файл',
     sBvScreenTitle:'Архив резервных копий',sBvLbl:'Архив резервных копий',sBvSub:'Управление несколькими резервными копиями',
     bvJsonT:'Загрузить JSON-резервную копию',bvJsonD:'Выберите .json-файл с устройства',bvJsonBtn:'📂 Выбрать файл',
@@ -2906,15 +2907,15 @@ const LANGS={
     mvTitle:'我的菜单',mvTabTl:'📋 概览',mvTabSh:'🛒 购物',mvTabCk:'🍳 烹饪',mvTabAl:'📋 汇总',
     mvPrint:'🖨️ 打印 / PDF',mvClose:'关闭',
     bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
-    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'💾 备份',
+    impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'📥 加载食谱',
     imgDropLbl:'选择或拖拽图片至此',
     sc1T:'选择食谱照片',sc1D:'从相册、相机或文件夹选择食谱照片。',
     sc2T:'AI识别食谱（需要网络）',sc2D:'Claude自动识别食材、用量和步骤。',
     sc3T:'检查并导入',sc3D:'检查结果，然后直接导入食谱书。',
     scanDropLbl:'选择食谱图片',apiKeyLbl:'Claude API密钥',
     apiHint:'仅本地存储。',scanBtn:'✨ 扫描',
-    bakTitle:'💾 加载备份',
-    bakDesc:'加载之前导出的.json文件。注意：当前数据将被覆盖或添加。',
+    bakTitle:'📥 加载食谱集',
+    bakDesc:'曾经备份过食谱，想把它们转移到新设备，或者有人与你分享了他们的食谱集？只需选择文件，所有食谱将自动添加到你的食谱书中。',
     bakBtn:'📂 选择文件',
     sBvScreenTitle:'备份库',sBvLbl:'备份库',sBvSub:'管理多个备份',
     bvJsonT:'从下载中加载JSON备份',bvJsonD:'从设备选择已保存的.json文件',bvJsonBtn:'📂 选择文件',
@@ -3016,15 +3017,15 @@ const LANGS={
     mvTitle:'Mi menú',mvTabTl:'📋 Orden',mvTabSh:'🛒 Comprar',mvTabCk:'🍳 Cocinar',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimir / PDF',mvClose:'Cerrar',
     bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
-    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'💾 Copia',
+    impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'📥 Cargar recetas',
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
     sc1T:'Seleccionar foto de receta',sc1D:'Foto de galería, cámara o carpeta.',
     sc2T:'La IA lee la receta (Internet necesario)',sc2D:'Claude reconoce ingredientes, cantidades y pasos.',
     sc3T:'Revisar y guardar',sc3D:'Controlar resultado y aceptar.',
     scanDropLbl:'Seleccionar imagen de receta',apiKeyLbl:'Clave API de Claude',
     apiHint:'Solo guardado localmente.',scanBtn:'✨ Escanear',
-    bakTitle:'💾 Cargar copia de seguridad',
-    bakDesc:'Cargar archivo .json exportado. Atención: los datos actuales se sobrescribirán o añadirán.',
+    bakTitle:'📥 Cargar colección de recetas',
+    bakDesc:'¿Hiciste una copia de seguridad antes, quieres transferir tus recetas a un nuevo dispositivo o alguien compartió su colección contigo? Selecciona el archivo y todas las recetas se añadirán automáticamente a tu libro.',
     bakBtn:'📂 Seleccionar archivo',
     sBvScreenTitle:'Bóveda de copias',sBvLbl:'Bóveda de copias',sBvSub:'Gestionar múltiples copias de seguridad',
     bvJsonT:'Cargar copia JSON desde descargas',bvJsonD:'Selecciona un archivo .json guardado en tu dispositivo',bvJsonBtn:'📂 Seleccionar archivo',
@@ -3152,7 +3153,7 @@ const LANGS={
     impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Texte',
-    impTabJson:'💾 Sauvegarde',
+    impTabJson:'📥 Charger recettes',
     imgDropLbl:'Sélectionner des images',
     sc1T:'Sélectionner photo',
     sc1D:'Photo de galerie ou caméra.',
@@ -3164,8 +3165,8 @@ const LANGS={
     apiKeyLbl:'Clé API Claude',
     apiHint:'Enregistré localement.',
     scanBtn:'✨ Scanner',
-    bakTitle:'💾 Charger sauvegarde',
-    bakDesc:'Charger un fichier .json exporté. Attention : les données actuelles seront remplacées ou ajoutées.',
+    bakTitle:'📥 Charger une collection de recettes',
+    bakDesc:'Vous avez sauvegardé vos recettes auparavant, souhaitez les transférer sur un nouvel appareil ou quelqu\'un a partagé sa collection avec vous ? Sélectionnez simplement le fichier — toutes les recettes seront automatiquement ajoutées à votre livre.',
     bakBtn:'📂 Sélectionner fichier',
     sBvScreenTitle:'Coffre de sauvegardes',sBvLbl:'Coffre de sauvegardes',sBvSub:'Gérer plusieurs sauvegardes',
     bvJsonT:'Charger sauvegarde JSON',bvJsonD:'Sélectionner un fichier .json depuis l\'appareil',bvJsonBtn:'📂 Sélectionner fichier',
@@ -3371,7 +3372,7 @@ const LANGS={
     impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Testo',
-    impTabJson:'💾 Backup',
+    impTabJson:'📥 Carica ricette',
     imgDropLbl:'Seleziona immagini',
     sc1T:'Seleziona foto ricetta',
     sc1D:'Foto da galleria o fotocamera.',
@@ -3383,8 +3384,8 @@ const LANGS={
     apiKeyLbl:'Chiave API Claude',
     apiHint:'Salvato localmente.',
     scanBtn:'✨ Scansiona',
-    bakTitle:'💾 Carica backup',
-    bakDesc:'Carica un file .json esportato. Attenzione: i dati attuali verranno sovrascritti o aggiunti.',
+    bakTitle:'📥 Carica la tua collezione di ricette',
+    bakDesc:'Hai già salvato le tue ricette, vuoi trasferirle su un nuovo dispositivo o qualcuno ha condiviso la sua collezione con te? Seleziona il file e tutte le ricette verranno aggiunte automaticamente al tuo libro.',
     bakBtn:'📂 Seleziona file',
     sBvScreenTitle:'Archivio backup',sBvLbl:'Archivio backup',sBvSub:'Gestisci più backup',
     bvJsonT:'Carica backup JSON',bvJsonD:'Seleziona un file .json salvato sul dispositivo',bvJsonBtn:'📂 Seleziona file',
@@ -3590,7 +3591,7 @@ const LANGS={
     impTabWeb:'🌐 Web',
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Texto',
-    impTabJson:'💾 Cópia',
+    impTabJson:'📥 Carregar receitas',
     imgDropLbl:'Selecionar imagens',
     sc1T:'Selecionar foto receita',
     sc1D:'Foto de galeria ou câmara.',
@@ -3602,8 +3603,8 @@ const LANGS={
     apiKeyLbl:'Chave API Claude',
     apiHint:'Guardado localmente.',
     scanBtn:'✨ Digitalizar',
-    bakTitle:'💾 Carregar cópia',
-    bakDesc:'Carregar ficheiro .json exportado. Atenção: os dados atuais serão substituídos ou adicionados.',
+    bakTitle:'📥 Carregar coleção de receitas',
+    bakDesc:'Já fez uma cópia de segurança das suas receitas, quer transferi-las para um novo dispositivo ou alguém partilhou a sua coleção consigo? Selecione o ficheiro e todas as receitas serão adicionadas automaticamente ao seu livro.',
     bakBtn:'📂 Selecionar ficheiro',
     sBvScreenTitle:'Cofre de cópias',sBvLbl:'Cofre de cópias',sBvSub:'Gerir múltiplas cópias de segurança',
     bvJsonT:'Carregar cópia JSON',bvJsonD:'Selecionar ficheiro .json guardado no dispositivo',bvJsonBtn:'📂 Selecionar ficheiro',
