@@ -2159,36 +2159,33 @@ Vielen Dank für deine Unterstützung.</div>
             📁 Ganzer Ordner
           </button>
         </div>
-        <div style="font-size:.63rem;color:var(--br3);line-height:1.5;margin-top:7px;padding:7px 10px;background:var(--golds);border-radius:8px;border:1px solid rgba(168,132,30,.2)">
-          🔒 <strong>Datensicherheit:</strong> Alle Rezepte werden lokal im Browser gespeichert. Beim KI-Scan wird das Bild oder PDF verschlüsselt an Anthropic übertragen — keine Datei bleibt auf einem Server.
-          <br/>Ordner wählen: Chrome/Edge fragen einmalig nach Berechtigung → „Erlauben" klicken → alle Bilder im Ordner werden geladen. Systemdateien werden ignoriert.
-        </div>
+        <div id="scanDataSec" style="font-size:.63rem;color:var(--br3);line-height:1.5;margin-top:7px;padding:7px 10px;background:var(--golds);border-radius:8px;border:1px solid rgba(168,132,30,.2)">🔒 Datensicherheit: Alle Rezepte werden lokal im Browser gespeichert. Beim KI-Scan wird das Bild oder PDF verschlüsselt an Anthropic übertragen — keine Datei bleibt auf einem Server. Ordner wählen: Chrome/Edge fragen einmalig nach Berechtigung → „Erlauben" klicken → alle Bilder im Ordner werden geladen. Systemdateien werden ignoriert.</div>
 
         
 <!-- ── Scan-Modus Auswahl ── -->
         <div class="scan-mode-wrap" id="scanModeWrap">
-          <div class="scan-mode-title">⚙️ Scan-Qualität wählen</div>
+          <div class="scan-mode-title" id="scanModeTitle">⚙️ Scan-Qualität wählen</div>
           <div class="scan-mode-cards">
             <div class="scan-mode-card selected" id="smc-schnell" onclick="selectScanModel('schnell')" title="Schnell &amp; günstig — ideal für einfache, bekannte Gerichte">
               <div class="smc-icon">⚡</div>
-              <div class="smc-label">Schnell</div>
+              <div class="smc-label" id="smcFastLbl">Schnell</div>
               <div class="smc-stars">★★★☆☆</div>
               <div class="smc-cost">~0,001 €</div>
-              <div class="smc-desc">Bekannte Gerichte</div>
+              <div class="smc-desc" id="smcFastDesc">Bekannte Gerichte</div>
             </div>
             <div class="scan-mode-card" id="smc-standard" onclick="selectScanModel('standard')" title="Ausgewogen — gute Qualität für die meisten Rezepte">
               <div class="smc-icon">🧠</div>
-              <div class="smc-label">Standard</div>
+              <div class="smc-label" id="smcStdLbl">Standard</div>
               <div class="smc-stars">★★★★☆</div>
               <div class="smc-cost">~0,005 €</div>
-              <div class="smc-desc">Komplexe Rezepte</div>
+              <div class="smc-desc" id="smcStdDesc">Komplexe Rezepte</div>
             </div>
             <div class="scan-mode-card" id="smc-profi" onclick="selectScanModel('profi')" title="Beste Qualität — maximale Genauigkeit, auch für unleserliche Rezepte">
               <div class="smc-icon">💎</div>
-              <div class="smc-label">Profi</div>
+              <div class="smc-label" id="smcProfiLbl">Profi</div>
               <div class="smc-stars">★★★★★</div>
               <div class="smc-cost">~0,02 €</div>
-              <div class="smc-desc">Max. Genauigkeit</div>
+              <div class="smc-desc" id="smcProfiDesc">Max. Genauigkeit</div>
             </div>
           </div>
         </div>
@@ -2247,8 +2244,8 @@ Vielen Dank für deine Unterstützung.</div>
 
       
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
-        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="txtTitleEl">✍️ Rezept per Text übertragen</div>
-        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55;margin-bottom:8px" id="txtDescEl">Kopiere oder tippe einen Rezepttext — die KI erkennt alle Felder automatisch und trägt das Rezept strukturiert ins Buch ein.</div>
+        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="txtTitle">✍️ Rezept per Text übertragen</div>
+        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55;margin-bottom:8px" id="txtDesc">Kopiere oder tippe einen Rezepttext — die KI erkennt alle Felder automatisch und trägt das Rezept strukturiert ins Buch ein.</div>
         <div id="txtListHdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mögliche Texteingaben</div>
         <ul id="txtListItems" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
           <li>Kopierter Text von Webseiten oder Apps</li>
@@ -2647,6 +2644,9 @@ const LANGS={
     sc3T:'Prüfen & übernehmen',sc3D:'Ergebnis kontrollieren, dann übernehmen.',
     scanDropLbl:'Rezept-Foto oder PDF auswählen',apiKeyLbl:'Claude API-Schlüssel',
     apiHint:'Nur lokal gespeichert.',scanBtn:'✨ Scannen',
+    scanModeTitle:'⚙️ Scan-Qualität wählen',
+    scanDataSec:'🔒 Datensicherheit: Alle Rezepte werden lokal im Browser gespeichert. Beim KI-Scan wird das Bild oder PDF verschlüsselt an Anthropic übertragen — keine Datei bleibt auf einem Server. Ordner wählen: Chrome/Edge fragen einmalig nach Berechtigung → „Erlauben" klicken → alle Bilder im Ordner werden geladen. Systemdateien werden ignoriert.',
+    smcFastLbl:'Schnell',smcFastDesc:'Bekannte Gerichte',smcStdLbl:'Standard',smcStdDesc:'Komplexe Rezepte',smcProfiLbl:'Profi',smcProfiDesc:'Max. Genauigkeit',
     bakTitle:'📥 Rezeptsammlung laden',
     bakDesc:'Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.',
     bakBtn:'📂 Datei auswählen',
@@ -2772,6 +2772,9 @@ const LANGS={
     sc3T:'Review & import',sc3D:'Check the result, then add to recipe book.',
     scanDropLbl:'Select recipe photo or PDF',apiKeyLbl:'Claude API Key',
     apiHint:'Stored locally only.',scanBtn:'✨ Scan',
+    scanModeTitle:'⚙️ Choose scan quality',
+    scanDataSec:'🔒 Data security: All recipes are stored locally in the browser. During AI scan, the image or PDF is transmitted encrypted to Anthropic — no file stays on a server. Select folder: Chrome/Edge ask once for permission → click "Allow" → all images in the folder are loaded. System files are ignored.',
+    smcFastLbl:'Fast',smcFastDesc:'Common dishes',smcStdLbl:'Standard',smcStdDesc:'Complex recipes',smcProfiLbl:'Pro',smcProfiDesc:'Max. accuracy',
     bakTitle:'📥 Load recipe collection',
     bakDesc:'Did you back up your recipes before, want to transfer them to a new device, or did someone share their collection with you? Just select the file — all recipes will be added to your book automatically.',
     bakBtn:'📂 Select file',
@@ -2897,6 +2900,9 @@ const LANGS={
     sc3T:'Проверить и добавить',sc3D:'Проверьте результат, затем добавьте в книгу.',
     scanDropLbl:'Выбрать фото или PDF рецепта',apiKeyLbl:'Ключ API Claude',
     apiHint:'Хранится только локально.',scanBtn:'✨ Сканировать',
+    scanModeTitle:'⚙️ Выберите качество сканирования',
+    scanDataSec:'🔒 Безопасность данных: Все рецепты хранятся локально в браузере. При КИ-сканировании изображение или PDF передаётся в Anthropic в зашифрованном виде — никакой файл не остаётся на сервере. Выбор папки: Chrome/Edge один раз запрашивают разрешение → нажмите «Разрешить» → все изображения в папке загружаются. Системные файлы игнорируются.',
+    smcFastLbl:'Быстро',smcFastDesc:'Популярные блюда',smcStdLbl:'Стандарт',smcStdDesc:'Сложные рецепты',smcProfiLbl:'Профи',smcProfiDesc:'Макс. точность',
     bakTitle:'📥 Загрузить коллекцию рецептов',
     bakDesc:'Вы делали резервную копию рецептов, хотите перенести их на новое устройство или кто-то поделился с вами своей коллекцией? Просто выберите файл — все рецепты автоматически добавятся в вашу книгу.',
     bakBtn:'📂 Выбрать файл',
@@ -3022,6 +3028,9 @@ const LANGS={
     sc3T:'检查并导入',sc3D:'检查结果，然后直接导入食谱书。',
     scanDropLbl:'选择食谱照片或PDF',apiKeyLbl:'Claude API密钥',
     apiHint:'仅本地存储。',scanBtn:'✨ 扫描',
+    scanModeTitle:'⚙️ 选择扫描质量',
+    scanDataSec:'🔒 数据安全：所有食谱存储在浏览器本地。KI扫描时，图片或PDF加密传输至Anthropic — 没有文件留在服务器上。选择文件夹：Chrome/Edge会一次性请求权限 → 点击"允许" → 文件夹中所有图片将被加载。系统文件会被忽略。',
+    smcFastLbl:'快速',smcFastDesc:'常见菜肴',smcStdLbl:'标准',smcStdDesc:'复杂食谱',smcProfiLbl:'专业',smcProfiDesc:'最高精度',
     bakTitle:'📥 加载食谱集',
     bakDesc:'曾经备份过食谱，想把它们转移到新设备，或者有人与你分享了他们的食谱集？只需选择文件，所有食谱将自动添加到你的食谱书中。',
     bakBtn:'📂 选择文件',
@@ -3147,6 +3156,9 @@ const LANGS={
     sc3T:'Revisar y guardar',sc3D:'Controlar resultado y aceptar.',
     scanDropLbl:'Seleccionar foto o PDF de receta',apiKeyLbl:'Clave API de Claude',
     apiHint:'Solo guardado localmente.',scanBtn:'✨ Escanear',
+    scanModeTitle:'⚙️ Elegir calidad de escaneo',
+    scanDataSec:'🔒 Seguridad de datos: Todas las recetas se almacenan localmente en el navegador. Durante el escaneo IA, la imagen o PDF se transmite cifrada a Anthropic — ningún archivo queda en un servidor. Seleccionar carpeta: Chrome/Edge solicitan permiso una vez → hacer clic en "Permitir" → se cargan todas las imágenes de la carpeta. Los archivos del sistema se ignoran.',
+    smcFastLbl:'Rápido',smcFastDesc:'Platos conocidos',smcStdLbl:'Estándar',smcStdDesc:'Recetas complejas',smcProfiLbl:'Pro',smcProfiDesc:'Máx. precisión',
     bakTitle:'📥 Cargar colección de recetas',
     bakDesc:'¿Hiciste una copia de seguridad antes, quieres transferir tus recetas a un nuevo dispositivo o alguien compartió su colección contigo? Selecciona el archivo y todas las recetas se añadirán automáticamente a tu libro.',
     bakBtn:'📂 Seleccionar archivo',
@@ -3303,6 +3315,9 @@ const LANGS={
     apiKeyLbl:'Clé API Claude',
     apiHint:'Enregistré localement.',
     scanBtn:'✨ Scanner',
+    scanModeTitle:'⚙️ Choisir la qualité de scan',
+    scanDataSec:'🔒 Sécurité des données : Toutes les recettes sont stockées localement dans le navigateur. Lors du scan IA, l\'image ou le PDF est transmis chiffré à Anthropic — aucun fichier ne reste sur un serveur. Sélectionner un dossier : Chrome/Edge demandent une fois l\'autorisation → cliquer sur « Autoriser » → toutes les images du dossier sont chargées. Les fichiers système sont ignorés.',
+    smcFastLbl:'Rapide',smcFastDesc:'Plats courants',smcStdLbl:'Standard',smcStdDesc:'Recettes complexes',smcProfiLbl:'Pro',smcProfiDesc:'Précision max.',
     bakTitle:'📥 Charger une collection de recettes',
     bakDesc:'Vous avez sauvegardé vos recettes auparavant, souhaitez les transférer sur un nouvel appareil ou quelqu\'un a partagé sa collection avec vous ? Sélectionnez simplement le fichier — toutes les recettes seront automatiquement ajoutées à votre livre.',
     bakBtn:'📂 Sélectionner fichier',
@@ -3537,6 +3552,9 @@ const LANGS={
     apiKeyLbl:'Chiave API Claude',
     apiHint:'Salvato localmente.',
     scanBtn:'✨ Scansiona',
+    scanModeTitle:'⚙️ Scegli la qualità di scansione',
+    scanDataSec:'🔒 Sicurezza dati: Tutte le ricette vengono memorizzate localmente nel browser. Durante la scansione IA, l\'immagine o il PDF viene trasmesso cifrato ad Anthropic — nessun file rimane su un server. Seleziona cartella: Chrome/Edge chiedono il permesso una volta → clicca su "Consenti" → vengono caricate tutte le immagini nella cartella. I file di sistema vengono ignorati.',
+    smcFastLbl:'Veloce',smcFastDesc:'Piatti comuni',smcStdLbl:'Standard',smcStdDesc:'Ricette complesse',smcProfiLbl:'Pro',smcProfiDesc:'Precisione max.',
     bakTitle:'📥 Carica la tua collezione di ricette',
     bakDesc:'Hai già salvato le tue ricette, vuoi trasferirle su un nuovo dispositivo o qualcuno ha condiviso la sua collezione con te? Seleziona il file e tutte le ricette verranno aggiunte automaticamente al tuo libro.',
     bakBtn:'📂 Seleziona file',
@@ -3771,6 +3789,9 @@ const LANGS={
     apiKeyLbl:'Chave API Claude',
     apiHint:'Guardado localmente.',
     scanBtn:'✨ Digitalizar',
+    scanModeTitle:'⚙️ Escolher qualidade de digitalização',
+    scanDataSec:'🔒 Segurança de dados: Todas as receitas são armazenadas localmente no navegador. Durante a digitalização IA, a imagem ou PDF é transmitido cifrado para a Anthropic — nenhum ficheiro fica num servidor. Selecionar pasta: Chrome/Edge pedem permissão uma vez → clicar em "Permitir" → todas as imagens da pasta são carregadas. Os ficheiros do sistema são ignorados.',
+    smcFastLbl:'Rápido',smcFastDesc:'Pratos conhecidos',smcStdLbl:'Padrão',smcStdDesc:'Receitas complexas',smcProfiLbl:'Pro',smcProfiDesc:'Precisão máx.',
     bakTitle:'📥 Carregar coleção de receitas',
     bakDesc:'Já fez uma cópia de segurança das suas receitas, quer transferi-las para um novo dispositivo ou alguém partilhou a sua coleção consigo? Selecione o ficheiro e todas as receitas serão adicionadas automaticamente ao seu livro.',
     bakBtn:'📂 Selecionar ficheiro',
@@ -4321,9 +4342,10 @@ function applyLang(code){
     'impTitle','impTabImg','impTabWeb','impTabScan','impTabTxt','impTabJson','imgDropLbl',
     'imgInfoTitle','imgInfoDesc','scanInfoTitle','scanInfoCol1Hdr','scanInfoCol2Hdr',
     'webInfoTitle','webInfoDesc','webInfoHint','txtListHdr','scanPhSub',
-    'txtTitleEl','txtDescEl','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
+    'txtTitle','txtDesc','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
     'txtSc1T','txtSc1D','txtWebLbl','txtSc2T','txtSc3T',
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
+    'scanModeTitle','scanDataSec','smcFastLbl','smcFastDesc','smcStdLbl','smcStdDesc','smcProfiLbl','smcProfiDesc',
     'scanOpenLink','scanReadyLbl','scanChangeLbl','scanBtnLbl','pasteBtnLbl',
     'cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight',
     'bakTitle','bakDesc','bakBtn','bakHint',
