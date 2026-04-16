@@ -4378,7 +4378,7 @@ function handleImgSel(e){
 }
 function renderPendImgs(){
   const grid=document.getElementById('pimgGrid'),msg=document.getElementById('noPendMsg'),btn=document.getElementById('assignBtn');
-  const named=R.filter(r=>r.name);
+  const named=R.filter(r=>r.name).sort((a,b)=>a.name.localeCompare(b.name,'de',{sensitivity:'base'}));
   if(!pendImgs.length){grid.innerHTML='';msg.style.display='block';btn.style.display='none';return;}
   msg.style.display='none';btn.style.display='block';btn.textContent=T('assignBtn');
   grid.innerHTML=pendImgs.map((p,i)=>`
