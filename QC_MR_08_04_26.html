@@ -7931,6 +7931,43 @@ function _initTooltips(){
   if (A11Y_HC) b.classList.add('a11y-hc');
 })();
 
+// ── IMPORT-OVERLAY: Tab-Swipe ─────────────────────────
+(function(){
+  const TAB_ORDER=['img','web','scan','txt','json'];
+  const TAB_EL={img:'impTabImg',web:'impTabWeb',scan:'impTabScan',txt:'impTabTxt',json:'impTabJson'};
+  function doImportSwipe(dx){
+    const ov=document.getElementById('importOv');
+    if(!ov||ov.style.display==='none')return;
+    const active=ov.querySelector('.fov-pane.on');
+    if(!active)return;
+    const cur=active.id.replace('imp-','');
+    const idx=TAB_ORDER.indexOf(cur);
+    if(idx<0)return;
+    const next=dx<0?idx+1:idx-1;
+    if(next<0||next>=TAB_ORDER.length)return;
+    const tab=TAB_ORDER[next];
+    const el=document.getElementById(TAB_EL[tab]);
+    if(el)switchFovTab('importOv',tab,el);
+  }
+  let tx=0,ty=0,locked=false,inBody=false;
+  document.addEventListener('touchstart',function(e){
+    const fb=document.querySelector('#importOv .fov-body');
+    inBody=!!(fb&&(fb===e.target||fb.contains(e.target)));
+    tx=e.touches[0].clientX;ty=e.touches[0].clientY;locked=false;
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!inBody||locked)return;
+    const dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;
+    if(Math.abs(dy)>Math.abs(dx)*1.2)locked=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!inBody||locked)return;
+    const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    doImportSwipe(dx);
+  },{passive:true});
+})();
+
 // ── SWIPE-NAVIGATION ──────────────────────────────────
 (function(){
   const SC_ORDER=['recipes','folders','menu','backup','settings'];
