@@ -512,7 +512,8 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .pimg-thumb{width:100%;height:88px;object-fit:cover;display:block}
 .pimg-body{padding:5px 7px}
 .pimg-name{font-size:.64rem;font-weight:700;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pimg-sel{width:100%;padding:4px 5px;border:1.5px solid var(--sand2);border-radius:5px;font-size:.64rem;background:var(--sand)}
+.pimg-sel{width:100%;padding:4px 5px;border:1.5px solid var(--teal);border-radius:5px;font-size:.64rem;background:var(--sand);color:var(--ink);cursor:pointer}
+.pimg-assign-lbl{display:block;font-size:.62rem;font-weight:700;color:var(--teal);margin:3px 0 2px;letter-spacing:.01em}
 .bigbtn{width:100%;padding:11px;border:none;border-radius:9px;font-weight:700;font-size:.8rem;cursor:pointer;margin-top:3px}
 .bigbtn.grn{background:var(--grn);color:#fff}.bigbtn.grn:active{opacity:.8}
 .bigbtn.teal{background:var(--teal);color:#fff}.bigbtn.teal:active{opacity:.8}
@@ -1946,6 +1947,10 @@ Vielen Dank für deine Unterstützung.</div>
   </div>
   <div class="fov-body">
     <div class="fov-pane on" id="imp-img">
+      <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px">🖼️ Bilder zu Rezepten hinzufügen</div>
+        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55">Wähle ein oder mehrere Fotos aus oder ziehe sie direkt hierher. Weise danach jedem Bild ein Rezept zu — das Foto wird dann automatisch dem gewählten Rezept zugeordnet.</div>
+      </div>
       <div class="dropzone" onclick="document.getElementById('imgFileIn').click()">
         <span class="dz-ico">🖼️</span>
         <div class="dz-lbl" id="imgDropLbl">Bilder auswählen oder hierher ziehen</div>
@@ -4398,6 +4403,7 @@ function renderPendImgs(){
       <img class="pimg-thumb" src="${p.dataUrl}" loading="lazy"/>
       <div class="pimg-body">
         <div class="pimg-name">${h(p.name)}</div>
+        <span class="pimg-assign-lbl">▼ Rezept zuordnen</span>
         <select class="pimg-sel" onchange="pendImgs[${i}].rid=this.value?+this.value:null">
           <option value="">— ${T('recPickerTitle')} —</option>
           ${named.map(r=>`<option value="${r.id}" ${p.rid===r.id?'selected':''}>${h(r.name)}</option>`).join('')}
