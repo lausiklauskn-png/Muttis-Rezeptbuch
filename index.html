@@ -2212,7 +2212,7 @@ Vielen Dank für deine Unterstützung.</div>
         <div style="font-size:.76rem;color:#1e4a45;line-height:1.55" id="bakDesc">Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.</div>
       </div>
       <div style="background:var(--parch);border-radius:10px;border:1px solid var(--sand2);padding:13px">
-        <p style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5">💡 Die Datei hat die Endung <code style="background:var(--sand2);padding:1px 4px;border-radius:3px">.json</code> und wurde vorher über <strong>Exportieren → Rezepte sichern</strong> erstellt. Vorhandene Rezepte bleiben erhalten – neue kommen einfach dazu.</p>
+        <p id="bakHint" style="font-size:.74rem;color:var(--br3);margin-bottom:11px;line-height:1.5">💡 Die Datei hat die Endung .json und wurde vorher über Exportieren → Rezepte sichern erstellt. Vorhandene Rezepte bleiben erhalten – neue kommen einfach dazu.</p>
         <button class="bigbtn grn" onclick="document.getElementById('jsonFileIn').click()" id="bakBtn" title="Rezeptsammlung auswählen">📂 Datei auswählen</button>
         <input type="file" id="jsonFileIn" accept=".json" style="display:none" onchange="importData(event)"/>
         <div id="upStatus" class="upst"></div>
@@ -2650,6 +2650,7 @@ const LANGS={
     bakTitle:'📥 Rezeptsammlung laden',
     bakDesc:'Hast du deine Rezepte früher schon gesichert, möchtest du sie auf ein neues Gerät übertragen, oder hat dir jemand seine Rezeptsammlung geschickt? Wähle einfach die Datei aus — alle Rezepte werden automatisch in dein Buch übernommen.',
     bakBtn:'📂 Datei auswählen',
+    bakHint:'💡 Die Datei hat die Endung .json und wurde vorher über Exportieren → Rezepte sichern erstellt. Vorhandene Rezepte bleiben erhalten – neue kommen einfach dazu.',
     sBvScreenTitle:'Backup-Tresor',sBvLbl:'Backup-Tresor',sBvSub:'Mehrere Sicherungen verwalten',
     bvJsonT:'JSON-Backup aus Downloads laden',bvJsonD:'Gespeicherte .json-Datei vom Gerät laden',bvJsonBtn:'📂 Datei auswählen',
     bvIosWarn:'⚠️ <strong>iOS-Hinweis:</strong> Safari/Edge kann Daten löschen. Exportiere regelmäßig als JSON.',bvIosLast:'Letzter Export:',bvIosNone:'Noch kein Export.',
@@ -2774,6 +2775,7 @@ const LANGS={
     bakTitle:'📥 Load recipe collection',
     bakDesc:'Did you back up your recipes before, want to transfer them to a new device, or did someone share their collection with you? Just select the file — all recipes will be added to your book automatically.',
     bakBtn:'📂 Select file',
+    bakHint:'💡 The file has the .json extension and was created via Export → Create backup. Existing recipes are kept — new ones are simply added.',
     sBvScreenTitle:'Backup Vault',sBvLbl:'Backup Vault',sBvSub:'Manage multiple backups',
     bvJsonT:'Load JSON backup from downloads',bvJsonD:'Select a saved .json file from your device',bvJsonBtn:'📂 Select file',
     bvIosWarn:'⚠️ <strong>iOS note:</strong> Safari/Edge may delete data. Export regularly as JSON.',bvIosLast:'Last export:',bvIosNone:'No export yet.',
@@ -2898,6 +2900,7 @@ const LANGS={
     bakTitle:'📥 Загрузить коллекцию рецептов',
     bakDesc:'Вы делали резервную копию рецептов, хотите перенести их на новое устройство или кто-то поделился с вами своей коллекцией? Просто выберите файл — все рецепты автоматически добавятся в вашу книгу.',
     bakBtn:'📂 Выбрать файл',
+    bakHint:'💡 Файл имеет расширение .json и создан через Экспорт → Создать резервную копию. Имеющиеся рецепты сохранятся — новые просто добавятся.',
     sBvScreenTitle:'Архив резервных копий',sBvLbl:'Архив резервных копий',sBvSub:'Управление несколькими резервными копиями',
     bvJsonT:'Загрузить JSON-резервную копию',bvJsonD:'Выберите .json-файл с устройства',bvJsonBtn:'📂 Выбрать файл',
     bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge может удалять данные. Регулярно экспортируй в JSON.',bvIosLast:'Последний экспорт:',bvIosNone:'Экспорт не выполнялся.',
@@ -3022,6 +3025,7 @@ const LANGS={
     bakTitle:'📥 加载食谱集',
     bakDesc:'曾经备份过食谱，想把它们转移到新设备，或者有人与你分享了他们的食谱集？只需选择文件，所有食谱将自动添加到你的食谱书中。',
     bakBtn:'📂 选择文件',
+    bakHint:'💡 文件扩展名为 .json，通过导出 → 创建备份生成。现有食谱将保留，新食谱只是添加进来。',
     sBvScreenTitle:'备份库',sBvLbl:'备份库',sBvSub:'管理多个备份',
     bvJsonT:'从下载中加载JSON备份',bvJsonD:'从设备选择已保存的.json文件',bvJsonBtn:'📂 选择文件',
     bvIosWarn:'⚠️ <strong>iOS提示：</strong>Safari/Edge可能删除数据，请定期导出JSON。',bvIosLast:'上次导出：',bvIosNone:'尚未导出。',
@@ -3146,6 +3150,7 @@ const LANGS={
     bakTitle:'📥 Cargar colección de recetas',
     bakDesc:'¿Hiciste una copia de seguridad antes, quieres transferir tus recetas a un nuevo dispositivo o alguien compartió su colección contigo? Selecciona el archivo y todas las recetas se añadirán automáticamente a tu libro.',
     bakBtn:'📂 Seleccionar archivo',
+    bakHint:'💡 El archivo tiene extensión .json y fue creado con Exportar → Crear copia de seguridad. Las recetas existentes se conservan — las nuevas se añaden automáticamente.',
     sBvScreenTitle:'Bóveda de copias',sBvLbl:'Bóveda de copias',sBvSub:'Gestionar múltiples copias de seguridad',
     bvJsonT:'Cargar copia JSON desde descargas',bvJsonD:'Selecciona un archivo .json guardado en tu dispositivo',bvJsonBtn:'📂 Seleccionar archivo',
     bvIosWarn:'⚠️ <strong>Aviso iOS:</strong> Safari/Edge puede borrar datos. Exporta regularmente en JSON.',bvIosLast:'Último export:',bvIosNone:'Sin exportaciones.',
@@ -3301,6 +3306,7 @@ const LANGS={
     bakTitle:'📥 Charger une collection de recettes',
     bakDesc:'Vous avez sauvegardé vos recettes auparavant, souhaitez les transférer sur un nouvel appareil ou quelqu\'un a partagé sa collection avec vous ? Sélectionnez simplement le fichier — toutes les recettes seront automatiquement ajoutées à votre livre.',
     bakBtn:'📂 Sélectionner fichier',
+    bakHint:'💡 Le fichier a l\'extension .json et a été créé via Exporter → Créer une sauvegarde. Les recettes existantes sont conservées — les nouvelles s\'ajoutent simplement.',
     sBvScreenTitle:'Coffre de sauvegardes',sBvLbl:'Coffre de sauvegardes',sBvSub:'Gérer plusieurs sauvegardes',
     bvJsonT:'Charger sauvegarde JSON',bvJsonD:'Sélectionner un fichier .json depuis l\'appareil',bvJsonBtn:'📂 Sélectionner fichier',
     bvIosWarn:'⚠️ <strong>iOS :</strong> Safari/Edge peut supprimer des données. Exportez régulièrement en JSON.',bvIosLast:'Dernier export :',bvIosNone:'Aucun export.',
@@ -3534,6 +3540,7 @@ const LANGS={
     bakTitle:'📥 Carica la tua collezione di ricette',
     bakDesc:'Hai già salvato le tue ricette, vuoi trasferirle su un nuovo dispositivo o qualcuno ha condiviso la sua collezione con te? Seleziona il file e tutte le ricette verranno aggiunte automaticamente al tuo libro.',
     bakBtn:'📂 Seleziona file',
+    bakHint:'💡 Il file ha estensione .json ed è stato creato tramite Esporta → Crea backup. Le ricette esistenti vengono mantenute — quelle nuove vengono semplicemente aggiunte.',
     sBvScreenTitle:'Archivio backup',sBvLbl:'Archivio backup',sBvSub:'Gestisci più backup',
     bvJsonT:'Carica backup JSON',bvJsonD:'Seleziona un file .json salvato sul dispositivo',bvJsonBtn:'📂 Seleziona file',
     bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge può eliminare i dati. Esporta regolarmente in JSON.',bvIosLast:'Ultimo export:',bvIosNone:'Nessun export.',
@@ -3767,6 +3774,7 @@ const LANGS={
     bakTitle:'📥 Carregar coleção de receitas',
     bakDesc:'Já fez uma cópia de segurança das suas receitas, quer transferi-las para um novo dispositivo ou alguém partilhou a sua coleção consigo? Selecione o ficheiro e todas as receitas serão adicionadas automaticamente ao seu livro.',
     bakBtn:'📂 Selecionar ficheiro',
+    bakHint:'💡 O ficheiro tem a extensão .json e foi criado através de Exportar → Criar cópia de segurança. As receitas existentes são mantidas — as novas são simplesmente adicionadas.',
     sBvScreenTitle:'Cofre de cópias',sBvLbl:'Cofre de cópias',sBvSub:'Gerir múltiplas cópias de segurança',
     bvJsonT:'Carregar cópia JSON',bvJsonD:'Selecionar ficheiro .json guardado no dispositivo',bvJsonBtn:'📂 Selecionar ficheiro',
     bvIosWarn:'⚠️ <strong>iOS:</strong> Safari/Edge pode apagar dados. Exporte regularmente em JSON.',bvIosLast:'Último export:',bvIosNone:'Sem exports.',
@@ -4318,7 +4326,7 @@ function applyLang(code){
     'sc1T','sc1D','sc2T','sc2D','sc3T','sc3D','scanDropLbl','apiKeyLbl','apiHint','scanBtn',
     'scanOpenLink','scanReadyLbl','scanChangeLbl','scanBtnLbl','pasteBtnLbl',
     'cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight',
-    'bakTitle','bakDesc','bakBtn',
+    'bakTitle','bakDesc','bakBtn','bakHint',
     'sBvScreenTitle','sBvLbl','sBvSub',
     'expTitle','expPdfT','expPdfD','expPdfBtn','expFlipT','expFlipD','expFlipBtn',
     'expJsonT','expJsonD','expJsonSafe','expJsonBtn',
