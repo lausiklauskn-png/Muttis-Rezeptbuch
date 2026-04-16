@@ -1951,7 +1951,30 @@ Vielen Dank für deine Unterstützung.</div>
     </div>
     <div class="fov-pane" id="imp-scan">
 
-      
+      <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:6px">📸 Was der KI-Scan erkennt</div>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1">
+            <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Erkennbare Vorlagen</div>
+            <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+              <li>Handgeschriebene Rezeptzettel</li>
+              <li>Kochbücher &amp; Zeitschriften</li>
+              <li>Rezeptkarten &amp; Ausschnitte</li>
+              <li>Screenshots &amp; Fotos</li>
+            </ul>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Wird übertragen</div>
+            <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+              <li>Rezepttitel &amp; Kategorie</li>
+              <li>Zutaten mit Mengen &amp; Einheiten</li>
+              <li>Zubereitungsschritte</li>
+              <li>Portionen, Temp. &amp; Garzeit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <div id="scanSetup">
 
         
@@ -2206,11 +2229,19 @@ Vielen Dank für deine Unterstützung.</div>
     <div class="fov-pane" id="imp-txt">
 
       
+      <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+        <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="txtTitleEl">✍️ Rezept per Text übertragen</div>
+        <div style="font-size:.76rem;color:#1e4a45;line-height:1.55;margin-bottom:8px" id="txtDescEl">Kopiere oder tippe einen Rezepttext — die KI erkennt alle Felder automatisch und trägt das Rezept strukturiert ins Buch ein.</div>
+        <div style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mögliche Texteingaben</div>
+        <ul style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+          <li>Kopierter Text von Webseiten oder Apps</li>
+          <li>Rezepte aus Nachrichten, E-Mails &amp; Notizen</li>
+          <li>Selbst getippte oder diktierte Rezepte</li>
+          <li>Textdateien (.txt) per Drag &amp; Drop</li>
+        </ul>
+      </div>
+
       <div id="txtSetup">
-        <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
-          <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="txtTitleEl">📋 Rezeptzettel einfach einfügen</div>
-          <div style="font-size:.76rem;color:#1e4a45;line-height:1.55" id="txtDescEl">Omas handgeschriebene Notizen, kopierte Texte oder getippte Rezepte — die KI erkennt Zutaten, Mengen und Schritte automatisch und trägt alles strukturiert ins Rezeptbuch ein.</div>
-        </div>
 
         <div class="stp-card">
           <div class="stp-head" style="background:linear-gradient(135deg,#e8f0fe,#d2e3fc)">
@@ -2654,8 +2685,8 @@ const LANGS={
     ,undoEmpty:'Nichts zum Rückgängigmachen'
     ,undoDone:'Rückgängig gemacht'
     ,undoTtl:'Rückgängig'
-    ,txtTitle:'📋 Rezeptzettel einfach einfügen'
-    ,txtDesc:'Omas handgeschriebene Notizen, kopierte Texte oder getippte Rezepte — die KI erkennt Zutaten, Mengen und Schritte automatisch und trägt alles ins Rezeptbuch ein.'
+    ,txtTitle:'✍️ Rezept per Text übertragen'
+    ,txtDesc:'Kopiere oder tippe einen Rezepttext — die KI erkennt alle Felder automatisch und trägt das Rezept strukturiert ins Buch ein.'
     ,txtReadyLbl:'Text-KI aktiv'
     ,txtIntro:'Rezeptzettel, Notizen oder kopierte Texte einfügen — die KI strukturiert alles automatisch ins Rezeptbuch.'
     ,txtDropLbl:'Rezepttext eintippen oder einfügen'
