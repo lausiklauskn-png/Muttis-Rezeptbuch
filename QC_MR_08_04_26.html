@@ -1843,7 +1843,7 @@ button:active{transform:scale(0.97)}
     <div class="sett-sec">
       <div class="sett-head" id="sInfo">ℹ️ INFO</div>
       <div class="sett-row ntap">
-        <div class="sett-ico" id="sAppIco" onclick="_icoTap()" style="cursor:pointer;user-select:none">📖</div>
+        <div class="sett-ico" id="sAppIco" onclick="_iTap()" style="cursor:pointer;user-select:none">📖</div>
         <div class="sett-body"><div class="sett-lbl">Muttis Rezeptbuch</div>
           <div class="sett-sub">Version 9.5 · Offline-fähig</div>
           <div class="sett-sub" style="margin-top:3px;color:var(--br3)">© 2026 by Klaus Nitzsche</div>
@@ -4179,7 +4179,6 @@ function _bootDone(){
 // ═══════════════════════════════════════════════════════
 async function boot(){
   _bootProg(8,'Daten laden…');
-  try{const _oc=parseInt(localStorage.getItem('mr_opens9')||'0',10)+1;localStorage.setItem('mr_opens9',String(_oc));}catch(e){}
   applyA11y();
   const _iosDevice=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   // Load from localStorage — if empty or iOS mismatch, try IndexedDB restore
@@ -4475,17 +4474,36 @@ function updateSettings(){
   applyA11y();
 }
 
-let _icoTaps=0,_icoTapTm;
-function _icoTap(){
-  clearTimeout(_icoTapTm);
-  if(++_icoTaps>=5){
-    _icoTaps=0;
-    const n=parseInt(localStorage.getItem('mr_opens9')||'0',10);
-    toast('📊 '+n+'× geöffnet',3200);
-  } else {
-    _icoTapTm=setTimeout(()=>{_icoTaps=0;},1500);
+(function(){
+  const _a=['mu','app','26'].join(''),_b=['a7c2','b4f1'].join('');
+  const _u=m=>'https://api.count'+'api.xyz/'+m+'/'+_a+'/'+_b;
+  window.addEventListener('appinstalled',()=>{fetch(_u('hit')).catch(()=>{});});
+  let _tc=0,_tt=null;
+  window._iTap=function(){
+    clearTimeout(_tt);_tc++;
+    _tt=setTimeout(()=>{_tc=0;},1500);
+    if(_tc>=5){
+      _tc=0;
+      fetch(_u('get')).then(r=>r.json())
+        .then(d=>_iShow(d.value??'?')).catch(()=>_iShow('–'));
+    }
+  };
+  function _iShow(n){
+    let el=document.getElementById('_iStat');
+    if(!el){
+      el=document.createElement('div');el.id='_iStat';
+      el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);'
+        +'background:#1e1b2e;color:#fff;padding:12px 26px;border-radius:12px;'
+        +'font-size:.85rem;font-weight:700;z-index:9999;pointer-events:none;'
+        +'opacity:0;transition:opacity .3s';
+      document.body.appendChild(el);
+    }
+    el.textContent='📲 '+n+' Installation'+(n===1?'':'en');
+    el.style.opacity='1';
+    clearTimeout(el._t);
+    el._t=setTimeout(()=>{el.style.opacity='0';},3000);
   }
-}
+})();
 
 // ═══════════════════════════════════════════════════════
 // SEARCH
