@@ -5704,17 +5704,20 @@ function dlBlob(blob,fname){
   a.href=u;a.download=fname;document.body.appendChild(a);a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u);},600);
 }
-let _donateTimer=null;
+let _donateTimer=null,_donateOpenTime=0;
+const _DONATE_MIN_MS=5000,_DONATE_AUTO_MS=20000;
 function toggleDonate(){
   const panel=document.getElementById('sDonatePanel');
   const arr=document.getElementById('sDonateArr');
   if(!panel)return;
   const isOpen=panel.style.display==='block';
   if(isOpen){
+    if(Date.now()-_donateOpenTime<_DONATE_MIN_MS)return;
     panel.style.display='none';
     if(arr)arr.style.transform='';
     clearTimeout(_donateTimer);
   }else{
+    _donateOpenTime=Date.now();
     panel.style.display='block';
     if(arr)arr.style.transform='rotate(90deg)';
     _resetDonateTimer();
@@ -5730,7 +5733,7 @@ function closeDonate(){
 }
 function _resetDonateTimer(){
   clearTimeout(_donateTimer);
-  _donateTimer=setTimeout(closeDonate,10000);
+  _donateTimer=setTimeout(closeDonate,_DONATE_AUTO_MS);
 }
 function clearAll(){
   if(!confirm(T('clearConfirm')))return;
