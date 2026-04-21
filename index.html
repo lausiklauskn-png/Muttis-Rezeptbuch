@@ -7128,7 +7128,7 @@ function render(){
   const cw=c.offsetWidth;
   if(cw>=50){
     const h=Math.round(cw*4/3);
-    document.querySelectorAll('.rcard').forEach(card=>{
+    document.querySelectorAll('.rcard[data-cat="drk"]').forEach(card=>{
       const wrap=card.querySelector('.rcard-img-wrap');
       const img=card.querySelector('.rcard-img');
       if(wrap)wrap.style.setProperty('height',h+'px','important');
@@ -7244,7 +7244,7 @@ function rndCard(r){
   const stars=[1,2,3,4,5].map(n=>`<span class="star ${n<=rat.stars?'on':''}" onclick="setStars(${r.id},${n})" title="${n} Stern${n!==1?'e':''}">★</span>`).join('');
   const imps=(rat.imps||[]).map((t,i)=>`<li class="imp-li"><span class="impbull">→</span><span class="imptxt">${h(t)}</span><button class="xbtn" onclick="delImp(${r.id},${i})" title="${T('ttlDelImp')}">✕</button></li>`).join('')
     ||`<li style="padding:3px 0;color:#c4aa7a;font-size:.76rem;font-style:italic">…</li>`;
-  return`<div class="rcard ${isBlank?'blank':''}" id="c${r.id}"
+  return`<div class="rcard ${isBlank?'blank':''}" id="c${r.id}" data-cat="${r.cat}"
     draggable="true"
     ondragstart="cardDragStart(event,${r.id})"
     ondragend="cardDragEnd(${r.id})"
