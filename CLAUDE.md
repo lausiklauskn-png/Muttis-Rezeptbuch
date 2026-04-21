@@ -192,6 +192,25 @@ Das System arbeitet in drei Schichten (Priorität von oben nach unten):
 
 → **Für Mein-Rezeptbuch übernehmen** (identische Implementierung)
 
+### ⚠️ REGEL: Elementhöhe niemals per CSS calc(vw) — immer JS
+CSS `height:calc(vw)` und `padding-top`-Tricks greifen in Chrome/Android nicht zuverlässig.
+Stattdessen: `offsetWidth` messen + `element.style.setProperty('height', px, 'important')`.
+
+Beispiel (Rezeptkarten-Bildbereich, 3:4-Hochformat):
+```javascript
+const cw = cont.offsetWidth;
+if (cw >= 50) {
+  const h = Math.round(cw * 4 / 3);
+  document.querySelectorAll('.rcard').forEach(card => {
+    const wrap = card.querySelector('.rcard-img-wrap');
+    const img  = card.querySelector('.rcard-img');
+    if (wrap) wrap.style.setProperty('height', h + 'px', 'important');
+    if (img)  img.style.setProperty('height',  h + 'px', 'important');
+  });
+}
+```
+Dieser Fix läuft am Ende von `render()` – nach `c.innerHTML=html`, wenn der Container bereits sichtbar ist.
+
 ### Swipe / Touch / Drag & Drop
 - Swipe-Handler: IIFE ab `// ── SWIPE-NAVIGATION ──` (kurz vor `boot()`)
 - Touch-Drag: `setupTouchDrag()` und `setupWkTouchDrag()`
