@@ -7128,7 +7128,12 @@ function render(){
   const cw=c.offsetWidth;
   if(cw>=50){
     const h=Math.round(cw*4/3);
-    document.querySelectorAll('.rcard[data-cat="drk"]').forEach(card=>{
+    const drkCats=new Set(['drk']);
+    if(typeof FD!=='undefined'&&FD){
+      FD.forEach(f=>{if(/getr|drink|bever|bevande|boisson|bebida|напит/i.test(f.name))drkCats.add('fld_'+f.id);});
+    }
+    document.querySelectorAll('.rcard').forEach(card=>{
+      if(!drkCats.has(card.dataset.cat))return;
       const wrap=card.querySelector('.rcard-img-wrap');
       const img=card.querySelector('.rcard-img');
       if(wrap)wrap.style.setProperty('height',h+'px','important');
