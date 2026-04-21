@@ -7125,16 +7125,6 @@ function render(){
     if(!grp.length)html+=`<div class="empty-state"><div class="empty-state__icon">🍽️</div><h3 class="empty-state__title">${T('noRecipes')}</h3></div>`;
   }
   c.innerHTML=html;renderCatNav();badge();restoreTranslPanels();setupTouchDrag();
-  const cw=c.offsetWidth;
-  if(cw>=50){
-    const h=Math.round(cw*4/3);
-    document.querySelectorAll('.rcard').forEach(card=>{
-      const wrap=card.querySelector('.rcard-img-wrap');
-      const img=card.querySelector('.rcard-img');
-      if(wrap)wrap.style.setProperty('height',h+'px','important');
-      if(img)img.style.setProperty('height',h+'px','important');
-    });
-  }
 }
 function rndDiv(cat,grp){
   const filled=grp.filter(r=>r.name).length,name=cat[CL]||cat.de;
