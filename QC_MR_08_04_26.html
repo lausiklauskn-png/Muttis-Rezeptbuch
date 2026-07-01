@@ -1806,6 +1806,23 @@ button:active{transform:scale(0.97)}
           <div class="sett-sub" id="sApiKeySub">Zugangscode verwalten</div></div>
         <div class="sett-arr">›</div>
       </div>
+      <div class="sett-row" onclick="toggleMistralKeyField()">
+        <div class="sett-ico">📄</div>
+        <div class="sett-body"><div class="sett-lbl">Mistral-Schlüssel (EU)</div>
+          <div class="sett-sub">Für Texterkennung im KI-Scan</div></div>
+        <div class="sett-arr" id="mistralKeyArr">›</div>
+      </div>
+      <div id="mistralKeyPanel" style="display:none;padding:12px 16px 14px;border-bottom:1px solid var(--sand2);background:var(--sand)">
+        <div style="font-size:.72rem;color:var(--br3);line-height:1.5;margin-bottom:9px">Wird für die Text-Erkennung (OCR, EU) im KI-Scan verwendet, wenn du dort „Mistral (EU)" wählst. Das Einordnen ins Rezept macht weiterhin Claude.</div>
+        <div style="font-size:.72rem;line-height:1.5;margin-bottom:9px">🔑 Schlüssel erstellen: <a href="https://console.mistral.ai/api-keys" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline">console.mistral.ai/api-keys</a></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="scan-key-in" id="mistralKeyIn" type="password" placeholder="Mistral-Schlüssel …" style="flex:1"
+            oninput="onMistralKeyInput(this.value)"
+            onkeydown="if(event.key==='Enter')saveMistralKey()"/>
+          <button class="paste-btn" onclick="saveMistralKey()" title="Mistral-Schlüssel speichern">💾 Speichern</button>
+        </div>
+        <div class="scan-key-note" style="margin-top:8px">🔒 Bleibt nur auf deinem Gerät — wird niemals weitergegeben</div>
+      </div>
     </div>
     <div class="sett-sec" id="a11ySec">
       <div class="sett-head" id="sA11yHead">♿ BARRIEREFREIHEIT</div>
@@ -2181,6 +2198,13 @@ Vielen Dank für deine Unterstützung.</div>
         <div id="scanResultWrap"></div>
 
         
+        <div id="scanProviderRow" style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem">
+          <span style="color:var(--br3)">Anbieter:</span>
+          <select id="scanProviderSel" onchange="setScanProvider(this.value)" style="flex:1;min-width:180px;padding:7px 9px;border:1px solid var(--sand2);border-radius:8px;background:var(--parch);color:var(--ink);font-size:.78rem">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="mistral">Mistral (EU) — Texterkennung</option>
+          </select>
+        </div>
         <div id="scanActions" style="display:none;margin-top:4px">
           <button class="bigbtn teal" id="scanBtn" onclick="triggerScan()" title="Rezept per KI vom Foto erkennen">
             ✨ <span id="scanBtnLbl">Rezept automatisch erkennen</span>
@@ -4996,6 +5020,14 @@ function selectScanModel(key){
 // ── SCAN: KEY MANAGEMENT ──────────────────────────────
 function getSavedKey(){return localStorage.getItem('claudeKey9')||'';}
 
+// ── SCAN: ANBIETER (Anthropic/Claude vs. Mistral-OCR) ──
+function getScanProvider(){const p=localStorage.getItem('scanProvider9');return p==='mistral'?'mistral':'anthropic';}
+function setScanProvider(v){const p=(v==='mistral')?'mistral':'anthropic';localStorage.setItem('scanProvider9',p);const sel=document.getElementById('scanProviderSel');if(sel)sel.value=p;}
+function getMistralKey(){return localStorage.getItem('mistralKey9')||'';}
+function onMistralKeyInput(v){const inp=document.getElementById('mistralKeyIn');if(inp)inp.style.borderColor=v.trim().length>=20?'var(--grn)':'var(--sand2)';}
+function saveMistralKey(){const v=document.getElementById('mistralKeyIn')?.value?.trim()||'';if(v){localStorage.setItem('mistralKey9',v);toast('✅ Mistral-Schlüssel gespeichert!');}else{localStorage.removeItem('mistralKey9');toast('Mistral-Schlüssel entfernt');}}
+function toggleMistralKeyField(){const p=document.getElementById('mistralKeyPanel');const arr=document.getElementById('mistralKeyArr');if(!p)return;const open=p.style.display==='none'||!p.style.display;p.style.display=open?'block':'none';if(arr)arr.textContent=open?'⌄':'›';if(open){const inp=document.getElementById('mistralKeyIn');if(inp){inp.value=getMistralKey();onMistralKeyInput(inp.value);setTimeout(()=>inp.focus(),80);}}}
+
 function onApiKeyInput(v){
   const btn=document.getElementById('scanSaveBtn');
   if(btn)btn.disabled=v.trim().length<10;
@@ -5076,6 +5108,8 @@ function switchToScanMain(){
 }
 
 function initScanPane(){
+  const sel=document.getElementById('scanProviderSel');
+  if(sel)sel.value=getScanProvider();
   if(getSavedKey()){
     switchToScanMain();
   }else{
@@ -5145,6 +5179,9 @@ function handleScanFile(e){
 async function runBatchScan(files){
   const key=getSavedKey();
   if(!key){showKeySetup();return;}
+  const provider=getScanProvider();
+  const mkey=provider==='mistral'?getMistralKey():'';
+  if(provider==='mistral'&&!mkey){setScanSt('Mistral-Schlüssel fehlt — bitte in den Einstellungen ⚙️ eintragen.','err');return;}
   // Hide normal scan UI, show batch progress
   const zone=document.getElementById('scanPhotoZone');
   const acts=document.getElementById('scanActions');
@@ -5168,37 +5205,37 @@ async function runBatchScan(files){
     try{
       const filePdf=files[i].type==='application/pdf'||files[i].name.toLowerCase().endsWith('.pdf');
       const origData=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.onerror=rej;fr.readAsDataURL(files[i]);});
-      let b64,mime,storeData,contentBlock;
-      if(filePdf){
-        b64=origData.split(',')[1];
-        mime='application/pdf';
-        storeData='';
-        contentBlock={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};
+      let b64,mime,storeData,contentBlock,prompt;
+      if(provider==='mistral'){
+        // OCR liest den Text; Claude sortiert ein. Bei Bildern Rezeptbild speichern.
+        if(filePdf){
+          mime='application/pdf';
+          storeData='';
+        }else{
+          const imgStore=await resizeImage(origData,800,0.75);
+          mime=origData.split(';')[0].split(':')[1]||'image/jpeg';
+          storeData=imgStore;
+        }
+        const r=await window.SbkimOcr.recognize(origData,{provider:'mistral',apiKey:mkey,mimeType:mime});
+        if(!r||!r.available)throw new Error((r&&r.reason)||'Mistral OCR fehlgeschlagen');
+        contentBlock={type:'text',text:r.text};
+        prompt=_SCAN_PROMPT_INTRO_TXT+'\n'+_SCAN_PROMPT_SCHEMA;
       }else{
-        const[apiData,imgStore]=await Promise.all([resizeImage(origData,1200,0.90),resizeImage(origData,800,0.75)]);
-        b64=apiData.split(',')[1];
-        mime=apiData.split(';')[0].split(':')[1]||'image/jpeg';
-        storeData=imgStore;
-        contentBlock={type:'image',source:{type:'base64',media_type:mime,data:b64}};
+        if(filePdf){
+          b64=origData.split(',')[1];
+          mime='application/pdf';
+          storeData='';
+          contentBlock={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};
+        }else{
+          const[apiData,imgStore]=await Promise.all([resizeImage(origData,1200,0.90),resizeImage(origData,800,0.75)]);
+          b64=apiData.split(',')[1];
+          mime=apiData.split(';')[0].split(':')[1]||'image/jpeg';
+          storeData=imgStore;
+          contentBlock={type:'image',source:{type:'base64',media_type:mime,data:b64}};
+        }
+        prompt=`You are a recipe extraction expert. Look at this recipe ${filePdf?'document':'image'} carefully and extract ALL information.
+`+_SCAN_PROMPT_SCHEMA;
       }
-      const prompt=`You are a recipe extraction expert. Look at this recipe ${filePdf?'document':'image'} carefully and extract ALL information.
-Return ONLY a valid JSON object — no markdown, no explanation, just the raw JSON:
-{
-  "name": "recipe name",
-  "servings": 4,
-  "category": "fleisch|fisch|vegi|suppe|vorsp|kuchen|dessert",
-  "flavor": "one short flavor description",
-  "ingredients": [{"amt": "amount as string", "unit": "unit", "name": "ingredient name"}],
-  "steps": ["step 1 text", "step 2 text"]
-}
-Rules:
-- Extract every ingredient with exact amounts and units
-- Write each preparation step as a complete sentence
-- Choose the closest category from the list
-- If amounts use fractions like 1/2, write them as-is
-- Correct ALL spelling mistakes in the extracted text
-- Do NOT change proper nouns, brand names, dialect words or intentional artistic names
-- CRITICAL: Preserve the ORIGINAL language of the recipe EXACTLY. Do NOT translate.`;
       const resp=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -5263,20 +5300,9 @@ function resetScan(){
 }
 
 // ── SCAN: AI RECOGNITION ──────────────────────────────
-async function triggerScan(){
-  if(!scanData){document.getElementById('scanFileIn')?.click();return;}
-  const key=getSavedKey();
-  if(!key){showKeySetup();return;}
-  const btn=document.getElementById('scanBtn');
-  if(btn){btn.disabled=true;}
-  setScanSt(T('scanLoading'),'loading');
-  document.getElementById('scanResultWrap').innerHTML='';
-  document.getElementById('scanActions').style.display='block';
-  const isPdf=scanData.startsWith('data:application/pdf');
-  const b64=scanData.split(',')[1];
-  const mime=isPdf?'application/pdf':(scanData.split(';')[0].split(':')[1]||'image/jpeg');
-  const prompt=`You are a recipe extraction expert. Look at this recipe ${isPdf?'document':'image'} carefully and extract ALL information.
-Return ONLY a valid JSON object — no markdown, no explanation, just the raw JSON:
+// Prompt-Bausteine geteilt zwischen Bild-Pfad (Anthropic) und OCR-Pfad (Mistral).
+const _SCAN_PROMPT_INTRO_TXT=`You are a recipe extraction expert. Here is recipe text extracted via OCR. Read it carefully and extract ALL information.`;
+const _SCAN_PROMPT_SCHEMA=`Return ONLY a valid JSON object — no markdown, no explanation, just the raw JSON:
 {
   "name": "recipe name",
   "servings": 4,
@@ -5293,10 +5319,38 @@ Rules:
 - Correct ALL spelling mistakes in the extracted text
 - Do NOT change proper nouns, brand names, dialect words or intentional artistic names
 - CRITICAL: Preserve the ORIGINAL language of the recipe EXACTLY. Do NOT translate. If Russian → respond in Russian. If Italian → respond in Italian.`;
-  const contentBlock=isPdf
-    ?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}
-    :{type:'image',source:{type:'base64',media_type:mime,data:b64}};
+
+async function triggerScan(){
+  if(!scanData){document.getElementById('scanFileIn')?.click();return;}
+  const key=getSavedKey();
+  if(!key){showKeySetup();return;}
+  const provider=getScanProvider();
+  const btn=document.getElementById('scanBtn');
+  if(btn){btn.disabled=true;}
+  setScanSt(T('scanLoading'),'loading');
+  document.getElementById('scanResultWrap').innerHTML='';
+  document.getElementById('scanActions').style.display='block';
+  const isPdf=scanData.startsWith('data:application/pdf');
+  const b64=scanData.split(',')[1];
+  const mime=isPdf?'application/pdf':(scanData.split(';')[0].split(':')[1]||'image/jpeg');
   try{
+    let contentBlock,prompt;
+    if(provider==='mistral'){
+      const mkey=getMistralKey();
+      if(!mkey){setScanSt('Mistral-Schlüssel fehlt — bitte in den Einstellungen ⚙️ eintragen.','err');if(btn){btn.disabled=false;}return;}
+      setScanSt('📷 Mistral OCR liest den Text …','loading');
+      const r=await window.SbkimOcr.recognize(scanData,{provider:'mistral',apiKey:mkey,mimeType:mime});
+      if(!r||!r.available){setScanSt('⚠️ '+((r&&r.reason)||'Mistral OCR fehlgeschlagen'),'err');if(btn){btn.disabled=false;}return;}
+      contentBlock={type:'text',text:r.text};
+      prompt=_SCAN_PROMPT_INTRO_TXT+'\n'+_SCAN_PROMPT_SCHEMA;
+      setScanSt('✅ Mistral OCR '+(r.model||'')+' fertig — Claude sortiert ein …','loading');
+    }else{
+      contentBlock=isPdf
+        ?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}
+        :{type:'image',source:{type:'base64',media_type:mime,data:b64}};
+      prompt=`You are a recipe extraction expert. Look at this recipe ${isPdf?'document':'image'} carefully and extract ALL information.
+`+_SCAN_PROMPT_SCHEMA;
+    }
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -10951,6 +11005,366 @@ function helpAction(type){
     }
   }, 150);
 }
+</script>
+
+<script>
+/*
+ * SBKIM — Modul 24 — OCR-/Bild-Eingabe (image / handwriting → text)
+ *
+ * Eine input-agnostische Bild-Eingabe-Schicht für das SBKIM-Such-Werkzeug —
+ * Geschwister von Modul 21 (Spracheingabe). Sie liefert nur Text; die eigentliche
+ * Suche (Modul 03 Embedding + Modul 04 queryLocal/hybridMatch) bleibt unberührt.
+ * Muster 1:1 wie Modul 21: input-agnostisch, fail-soft, Anbieter-steckbar, BYOK,
+ * EU-Politik per Knoten.
+ *
+ * Drei umschaltbare Anbieter (kein Bundler, kein Laufzeit-CDN):
+ *   - mistral : Mistral OCR (mistral-ocr-latest), EU (Frankreich), BYOK. FAVORIT.
+ *   - google  : Google Cloud Vision, EU-Endpunkt (eu-vision.googleapis.com), BYOK.
+ *   - browser : Shape Detection API (TextDetector), experimentell, keine EU-Garantie.
+ *
+ * EU-Politik (per Knoten konfigurierbar, wie Modul 21):
+ *   - "bindend" : nur EU-Anbieter erlaubt (mistral/google) — z.B. BookLedgerPro.
+ *   - "frei"    : alle Anbieter, EU als WÄHLBARE Option (Default für Sage /
+ *                 Mein-Mixarium / Mein-Rezeptbuch).
+ *
+ * Konsequent fail-soft: kein Schlüssel / kein Bild / Netz weg / HTTP-Fehler →
+ * klarer deutscher Hinweis ({ available:false, reason }), NIE ein Throw (außer
+ * InvalidEuPolicyError bei klarer Aufrufer-Konfig). Das Textfeld bleibt nutzbar.
+ * Kosten unkritisch (~2–4 $/1000 Seiten). Kein Schlüssel im Code.
+ *
+ * Public surface (registered on window.SbkimOcr):
+ *   init(config?) -> meta                              (setzt euPolicy)
+ *   getProviders() -> Array<{id,label,region,needsKey}>
+ *   availableProviders(euPolicy?) -> Array<id>
+ *   pickProvider(euPolicy?, preferred?) -> id | null
+ *   isFileSupported(mimeType) -> boolean
+ *   isBrowserOcrSupported() -> boolean
+ *   recognize(image, options?) -> Promise<{ available, text|reason, provider }>
+ *   recognizeBrowser(image, options?) -> Promise<{ available, text|reason }>
+ *   ocrErrorHint(err) -> string (deutsch, user-facing)
+ *   InvalidEuPolicyError -> ErrorFactory (sync throw bei klarer Aufrufer-Konfig)
+ *
+ * Self-check: emits a console.info line on script load (synchronous).
+ * Spec: docs/components/24_ocr_eingabe.md.
+ */
+(function (global) {
+  "use strict";
+
+  // --- Konstanten ---
+  var EU_POLICIES = ["bindend", "frei"];
+  var EU_POLICY_DEFAULT = "frei";
+  var FAVORITE_PROVIDER = "mistral"; // Klaus' Favorit (Brief 2026-07-01).
+
+  var MISTRAL_OCR_URL = "https://api.mistral.ai/v1/ocr";
+  var MISTRAL_DEFAULT_MODEL = "mistral-ocr-latest";
+  var GOOGLE_EU_VISION_URL = "https://eu-vision.googleapis.com/v1/images:annotate";
+  var OCR_TIMEOUT_MS = 30000;
+
+  // Vom Anbieter unterstützte Bild-/Dokument-Typen (Mistral kann auch PDF).
+  var SUPPORTED_MIME = [
+    "image/png", "image/jpeg", "image/jpg", "image/webp", "image/heic", "application/pdf",
+  ];
+
+  // Laufzeit-Konfig (über init gesetzt).
+  var _euPolicy = EU_POLICY_DEFAULT;
+
+  function makeError(name, message, cause) {
+    var e = new Error(message);
+    e.name = name;
+    if (cause !== undefined) e.cause = cause;
+    return e;
+  }
+  function InvalidEuPolicyError(message) {
+    return makeError("InvalidEuPolicyError", message);
+  }
+
+  function normalizeEuPolicy(p) {
+    if (p === undefined || p === null) return _euPolicy;
+    if (EU_POLICIES.indexOf(p) === -1) {
+      throw InvalidEuPolicyError(
+        "euPolicy muss 'bindend' oder 'frei' sein, war: " + JSON.stringify(p),
+      );
+    }
+    return p;
+  }
+
+  // --- Anbieter-Abstraktion (analog Modul 04 HYBRID_PROVIDERS) ---
+  var PROVIDERS = {
+    mistral: {
+      id: "mistral", label: "Mistral OCR (EU)", region: "eu", needsKey: true,
+      build: function (b64, mime, opts) {
+        return {
+          url: MISTRAL_OCR_URL,
+          init: {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + opts.apiKey,
+            },
+            body: JSON.stringify({
+              model: opts.model || MISTRAL_DEFAULT_MODEL,
+              document: {
+                type: "image_url",
+                image_url: "data:" + (mime || "image/png") + ";base64," + b64,
+              },
+            }),
+          },
+        };
+      },
+      extract: function (data) {
+        // Mistral OCR liefert { pages: [{ markdown | text }] }.
+        if (data && Array.isArray(data.pages)) {
+          return data.pages.map(function (p) {
+            return (p && (p.markdown || p.text)) || "";
+          }).join("\n\n").trim();
+        }
+        if (data && typeof data.text === "string") return data.text.trim();
+        return "";
+      },
+    },
+    google: {
+      id: "google", label: "Google Vision (EU-Endpunkt)", region: "eu", needsKey: true,
+      build: function (b64, mime, opts) {
+        return {
+          url: GOOGLE_EU_VISION_URL + "?key=" + encodeURIComponent(opts.apiKey),
+          init: {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              requests: [{
+                image: { content: b64 },
+                features: [{ type: "DOCUMENT_TEXT_DETECTION" }],
+              }],
+            }),
+          },
+        };
+      },
+      extract: function (data) {
+        if (data && Array.isArray(data.responses) && data.responses[0]) {
+          var r0 = data.responses[0];
+          if (r0.fullTextAnnotation && typeof r0.fullTextAnnotation.text === "string") {
+            return r0.fullTextAnnotation.text.trim();
+          }
+          if (Array.isArray(r0.textAnnotations) && r0.textAnnotations[0]) {
+            return String(r0.textAnnotations[0].description || "").trim();
+          }
+        }
+        return "";
+      },
+    },
+    browser: {
+      id: "browser", label: "Browser (Shape Detection, experimentell)", region: "browser", needsKey: false,
+    },
+  };
+
+  function getProviders() {
+    return Object.keys(PROVIDERS).map(function (id) {
+      var p = PROVIDERS[id];
+      return { id: p.id, label: p.label, region: p.region, needsKey: !!p.needsKey };
+    });
+  }
+
+  // "bindend" → nur EU-Anbieter (browser ohne EU-Residenz raus).
+  // "frei"    → alle Anbieter.
+  function availableProviders(euPolicy) {
+    var p = normalizeEuPolicy(euPolicy);
+    return Object.keys(PROVIDERS).filter(function (id) {
+      return p === "bindend" ? PROVIDERS[id].region === "eu" : true;
+    });
+  }
+
+  // Favorit zuerst (mistral), sonst erster erlaubter. preferred gewinnt, wenn erlaubt.
+  function pickProvider(euPolicy, preferred) {
+    var allowed = availableProviders(euPolicy);
+    if (preferred && allowed.indexOf(preferred) !== -1) return preferred;
+    if (allowed.indexOf(FAVORITE_PROVIDER) !== -1) return FAVORITE_PROVIDER;
+    return allowed.length ? allowed[0] : null;
+  }
+
+  function isFileSupported(mimeType) {
+    if (typeof mimeType !== "string") return false;
+    return SUPPORTED_MIME.indexOf(mimeType.toLowerCase()) !== -1;
+  }
+
+  function isBrowserOcrSupported() {
+    return typeof global.TextDetector === "function";
+  }
+
+  // Akzeptiert base64-String, data-URL oder { content, mimeType }.
+  function toBase64Image(image) {
+    if (typeof image === "string") {
+      var comma = image.indexOf(",");
+      if (image.indexOf("data:") === 0 && comma !== -1) return image.slice(comma + 1);
+      return image;
+    }
+    if (image && typeof image.content === "string") {
+      var c = image.content;
+      var cm = c.indexOf(",");
+      if (c.indexOf("data:") === 0 && cm !== -1) return c.slice(cm + 1);
+      return c;
+    }
+    return null;
+  }
+
+  function mimeOf(image, options) {
+    if (options && typeof options.mimeType === "string") return options.mimeType;
+    if (image && typeof image.mimeType === "string") return image.mimeType;
+    if (typeof image === "string" && image.indexOf("data:") === 0) {
+      var m = image.slice(5).split(";")[0];
+      if (m) return m;
+    }
+    return "image/png";
+  }
+
+  // Bekannte Fehler-Formen → ruhiger deutscher Hinweis. Wirft nie.
+  function ocrErrorHint(err) {
+    var name = err && err.name ? String(err.name) : "";
+    var msg = err && err.message ? String(err.message)
+      : (typeof err === "string" ? err : "");
+    if (name === "AbortError") {
+      return "Texterkennung hat zu lange gedauert — bitte nochmal oder tippen.";
+    }
+    if (/network|fetch|ENOTFOUND|failed to fetch/i.test(msg) || name === "TypeError") {
+      return "Netz nicht erreichbar — Texterkennung gerade nicht möglich, bitte tippen.";
+    }
+    if (/401|403|unauthor|forbidden|api key|invalid.*key/i.test(msg)) {
+      return "Schlüssel fehlt oder ist ungültig — bitte prüfen oder tippen.";
+    }
+    if (/429|rate/i.test(msg)) {
+      return "Zu viele Anfragen — kurz warten und nochmal, oder tippen.";
+    }
+    return "Texterkennung gerade nicht möglich — du kannst tippen.";
+  }
+
+  // Browser-only: Shape Detection API (experimentell). Fail-soft, wenn nicht
+  // verfügbar. Erwartet ein detektierbares Objekt (Blob/ImageBitmap/…) in
+  // options.source ODER image (wenn kein String).
+  async function recognizeBrowser(image, options) {
+    options = options || {};
+    if (!isBrowserOcrSupported()) {
+      return { available: false, reason: "Browser-Texterkennung nicht verfügbar — bitte tippen." };
+    }
+    var source = options.source || (typeof image !== "string" && image && image.content === undefined ? image : null);
+    if (!source) {
+      return { available: false, reason: "Kein Bild-Objekt für die Browser-Erkennung übergeben (options.source)." };
+    }
+    try {
+      var detector = new global.TextDetector();
+      var blocks = await detector.detect(source);
+      var text = Array.isArray(blocks)
+        ? blocks.map(function (b) { return (b && b.rawValue) || ""; }).join("\n").trim()
+        : "";
+      return { available: true, text: text };
+    } catch (e) {
+      return { available: false, reason: ocrErrorHint(e) };
+    }
+  }
+
+  // Kern: OCR über den gewählten (oder Politik-Default-) Anbieter. Fail-soft.
+  async function recognize(image, options) {
+    options = options || {};
+    var euPolicy = normalizeEuPolicy(options.euPolicy); // sync throw nur bei Unfug
+    var allowed = availableProviders(euPolicy);
+    var providerId = options.provider || pickProvider(euPolicy, options.provider);
+    if (!providerId || allowed.indexOf(providerId) === -1) {
+      return {
+        available: false, provider: providerId || null,
+        reason: providerId
+          ? ("Anbieter '" + providerId + "' bei EU-Politik '" + euPolicy + "' nicht erlaubt — bitte tippen.")
+          : "Kein OCR-Anbieter verfügbar — bitte tippen.",
+      };
+    }
+    var provider = PROVIDERS[providerId];
+
+    if (providerId === "browser") {
+      var br = await recognizeBrowser(image, options);
+      br.provider = "browser";
+      return br;
+    }
+
+    if (provider.needsKey && (!options.apiKey || typeof options.apiKey !== "string")) {
+      return { available: false, provider: providerId, reason: "Kein Schlüssel hinterlegt — Texterkennung (" + provider.label + ") deaktiviert." };
+    }
+    var b64 = toBase64Image(image);
+    if (!b64) {
+      return { available: false, provider: providerId, reason: "Keine Bild-Daten (base64) übergeben." };
+    }
+    var mime = mimeOf(image, options);
+    if (options.enforceMime === true && !isFileSupported(mime)) {
+      return { available: false, provider: providerId, reason: "Dateityp '" + mime + "' wird nicht unterstützt." };
+    }
+
+    var req = provider.build(b64, mime, options);
+    var controller = (typeof AbortController === "function") ? new AbortController() : null;
+    var timer = controller
+      ? setTimeout(function () { controller.abort(); }, options.timeoutMs || OCR_TIMEOUT_MS)
+      : null;
+    try {
+      if (controller) req.init.signal = controller.signal;
+      var res = await global.fetch(req.url, req.init);
+      if (timer) clearTimeout(timer);
+      if (!res || !res.ok) {
+        return { available: false, provider: providerId, reason: "Texterkennung HTTP " + (res ? res.status : "?") + " — bitte tippen." };
+      }
+      var data = await res.json();
+      var text = provider.extract(data);
+      // Tatsächlich benutzte Modell-Version aus der API-Antwort (Mistral OCR
+      // liefert das datierte Modell, z.B. "mistral-ocr-2505") — sichtbar machen,
+      // damit klar ist, welche Version lief. Fällt auf die angeforderte Version
+      // zurück (mistral-ocr-latest), wenn die Antwort keine nennt.
+      var usedModel = (data && typeof data.model === "string" && data.model)
+        ? data.model
+        : (providerId === "mistral" ? (options.model || MISTRAL_DEFAULT_MODEL) : null);
+      return { available: true, provider: providerId, text: text, model: usedModel };
+    } catch (e) {
+      if (timer) clearTimeout(timer);
+      return { available: false, provider: providerId, reason: ocrErrorHint(e) };
+    }
+  }
+
+  function init(config) {
+    config = config || {};
+    if (config.euPolicy !== undefined && config.euPolicy !== null) {
+      _euPolicy = normalizeEuPolicy(config.euPolicy);
+    }
+    return SbkimOcr._meta;
+  }
+
+  var SbkimOcr = {
+    init: init,
+    getProviders: getProviders,
+    availableProviders: availableProviders,
+    pickProvider: pickProvider,
+    isFileSupported: isFileSupported,
+    isBrowserOcrSupported: isBrowserOcrSupported,
+    recognize: recognize,
+    recognizeBrowser: recognizeBrowser,
+    ocrErrorHint: ocrErrorHint,
+    InvalidEuPolicyError: InvalidEuPolicyError,
+    _meta: {
+      providers: getProviders(),
+      favoriteProvider: FAVORITE_PROVIDER,
+      euPolicies: EU_POLICIES.slice(),
+      get euPolicy() { return _euPolicy; },
+      euPolicyDefault: EU_POLICY_DEFAULT,
+      supportedMime: SUPPORTED_MIME.slice(),
+      mistralOcrUrl: MISTRAL_OCR_URL,
+      mistralDefaultModel: MISTRAL_DEFAULT_MODEL,
+      googleEuVisionUrl: GOOGLE_EU_VISION_URL,
+      ocrTimeoutMs: OCR_TIMEOUT_MS,
+    },
+  };
+
+  global.SbkimOcr = SbkimOcr;
+
+  if (typeof console !== "undefined" && console.info) {
+    console.info(
+      "MODUL 24 OCR-EINGABE bereit, Funktionen: getProviders/availableProviders/pickProvider/" +
+        "isFileSupported/recognize/recognizeBrowser/ocrErrorHint, Favorit: " + FAVORITE_PROVIDER +
+        ", EU-Politik-Default: " + EU_POLICY_DEFAULT + ", Anbieter: " + Object.keys(PROVIDERS).length,
+    );
+  }
+})(typeof window !== "undefined" ? window : globalThis);
 </script>
 
 </body>
