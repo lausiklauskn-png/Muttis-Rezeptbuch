@@ -6081,7 +6081,19 @@ function renderCatNav(){
   if(fldSel)fldSel.innerHTML=`<option value="">— ${T('noFolder')} —</option>`+
     FD.map(f=>`<option value="${f.id}">${f.ico} ${h(f.name)}</option>`).join('');
 }
-function setCAT(id){CAT=id;render();window.scrollTo(0,0);}
+function setCAT(id){
+  CAT=id;
+  // Eine aktive Suche überstimmt die Kategorie-Ansicht (render() prüft SQ zuerst).
+  // Tippt der Nutzer bewusst einen Kategorie-Chip an, wird die Suche gelöscht,
+  // damit die gewählte Kategorie sichtbar wird — sonst wirkt die Nav blockiert.
+  if(SQ){
+    SQ='';
+    const si=document.getElementById('srchIn');if(si)si.value='';
+    const sx=document.getElementById('srchX');if(sx)sx.style.display='none';
+    const sc=document.getElementById('srchCnt');if(sc)sc.style.display='none';
+  }
+  render();window.scrollTo(0,0);
+}
 
 // ═══════════════════════════════════════════════════════
 // BADGE
