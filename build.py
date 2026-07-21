@@ -54,7 +54,7 @@ def build():
         '<!--\n'
         '  ╔═════════════════════════════════════════════════════════════════╗\n'
         '  ║  Muttis Rezeptbuch  v9.2  ©  2026  Klaus Nitzsche            ║\n'
-        '  ║  klaus-nitzsche@t-online.de                                     ║\n'
+        '  ║  info@family-projekt.de                                     ║\n'
         '  ║  Alle Rechte vorbehalten. Unautorisierte Vervielfaeltigung,     ║\n'
         '  ║  Verbreitung oder Bearbeitung ist untersagt.                    ║\n'
         '  ║  All rights reserved. Unauthorized reproduction prohibited.     ║\n'
