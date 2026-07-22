@@ -1926,6 +1926,15 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         <div class="scan-key-note" style="margin-top:8px">🔒 Bleibt nur auf deinem Gerät — wird niemals weitergegeben</div>
       </div>
     </div>
+    <div class="sett-sec">
+      <div class="sett-head" id="sReloadHead">🔄 APP</div>
+      <div class="sett-row" onclick="hardReloadApp()">
+        <div class="sett-ico">↻</div>
+        <div class="sett-body"><div class="sett-lbl" id="sReloadLbl">Aktualisieren &amp; neu laden</div>
+          <div class="sett-sub" id="sReloadSub">Cache leeren, neueste Version holen</div></div>
+        <div class="sett-arr">›</div>
+      </div>
+    </div>
     <div class="sett-sec" id="a11ySec">
       <div class="sett-head" id="sA11yHead">♿ BARRIEREFREIHEIT</div>
       <div class="a11y-sec">
@@ -2851,6 +2860,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Fragen und Hilfe zum API-Key'
     ,sManualHead:'📚 HANDBUCH'
     ,sManualLbl:'Bedienungsanleitung'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Aktualisieren & neu laden',sReloadSub:'Cache leeren, neueste Version holen'
     ,sManualSub:'Alle Funktionen erklärt · PDF-Download'
     ,manOvTitle:'📚 Handbuch'
     ,manPdfLbl:'PDF'
@@ -2979,6 +2989,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Questions & help about the API Key'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'User Guide'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Refresh & reload',sReloadSub:'Clear cache, get the latest version'
     ,sManualSub:'All features explained · PDF download'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -3107,6 +3118,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Вопросы и помощь по API-ключу'
     ,sManualHead:'📚 РУКОВОДСТВО'
     ,sManualLbl:'Руководство пользователя'
+    ,sReloadHead:'🔄 ПРИЛОЖЕНИЕ',sReloadLbl:'Обновить и перезагрузить',sReloadSub:'Очистить кэш, загрузить новую версию'
     ,sManualSub:'Все функции объяснены · Скачать PDF'
     ,manOvTitle:'📚 Руководство'
     ,manPdfLbl:'PDF'
@@ -3235,6 +3247,7 @@ const LANGS={
     ,apiKeyHelpTtl:'关于API密钥的问题与帮助'
     ,sManualHead:'📚 手册'
     ,sManualLbl:'用户手册'
+    ,sReloadHead:'🔄 应用',sReloadLbl:'刷新并重新加载',sReloadSub:'清除缓存，获取最新版本'
     ,sManualSub:'所有功能说明 · PDF下载'
     ,manOvTitle:'📚 手册'
     ,manPdfLbl:'PDF'
@@ -3361,6 +3374,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Preguntas y ayuda sobre el API Key'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'Manual de usuario'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Actualizar y recargar',sReloadSub:'Vaciar caché, obtener la última versión'
     ,sManualSub:'Todas las funciones explicadas · Descargar PDF'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -3598,6 +3612,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Questions et aide sur la clé API'
     ,sManualHead:'📚 MANUEL'
     ,sManualLbl:'Guide d\'utilisation'
+    ,sReloadHead:'🔄 APPLI',sReloadLbl:'Actualiser et recharger',sReloadSub:'Vider le cache, obtenir la dernière version'
     ,sManualSub:'Toutes les fonctions expliquées · Télécharger PDF'
     ,manOvTitle:'📚 Manuel'
     ,manPdfLbl:'PDF'
@@ -3835,6 +3850,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Domande e aiuto sulla chiave API'
     ,sManualHead:'📚 MANUALE'
     ,sManualLbl:'Manuale utente'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Aggiorna e ricarica',sReloadSub:'Svuota la cache, scarica l\'ultima versione'
     ,sManualSub:'Tutte le funzioni spiegate · Scarica PDF'
     ,manOvTitle:'📚 Manuale'
     ,manPdfLbl:'PDF'
@@ -4067,6 +4083,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Perguntas e ajuda sobre a chave API'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'Manual do utilizador'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Atualizar e recarregar',sReloadSub:'Limpar cache, obter a versão mais recente'
     ,sManualSub:'Todas as funções explicadas · Baixar PDF'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -4473,6 +4490,7 @@ function applyLang(code){
     'sTheme','sLang','sData','sImpLbl','sImpSub','sExpLbl','sExpSub',
     'sInfo','sStore','sClear','sClearSub',
     'sManualHead','sManualLbl','sManualSub','manOvTitle','manPdfLbl',
+    'sReloadHead','sReloadLbl','sReloadSub',
     'fldTitle','fldSearch','fldNew','fldShTitle','fldNameLbl','fldIconLbl','fldCancel','fldSave',
     'cshTitle','csCancel','csConfirm','pwaText','pwaBtn','updText','updBtn','sUpdLbl','sDonateTitle','sDonateSub','sDonateText','sDonateBtn','sDonateNote','sImprintLbl','sImprintSub','sImprintFooter',
     'hAddLbl',
@@ -10820,6 +10838,25 @@ function showUpdBanner(worker){
 function applyUpdate(){
   const b = document.getElementById('updBanner');
   if(b && b._worker) b._worker.postMessage({type:'SKIP_WAITING'});
+}
+// Harter Neu-Laden: Service-Worker abmelden + alle Caches leeren + neu laden.
+// Fail-soft: jeder Schritt darf scheitern, spätestens nach 2,5 s wird reloadet.
+function hardReloadApp(){
+  const done=()=>{ try{location.reload(true);}catch(_e){try{location.reload();}catch(__e){}} };
+  let fired=false;
+  const go=()=>{ if(fired)return; fired=true; done(); };
+  try{
+    const to=setTimeout(go,2500);
+    const tasks=[];
+    if('serviceWorker' in navigator){
+      tasks.push(navigator.serviceWorker.getRegistrations()
+        .then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{}));
+    }
+    if(window.caches && caches.keys){
+      tasks.push(caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))).catch(()=>{}));
+    }
+    Promise.all(tasks).then(()=>{ clearTimeout(to); go(); }).catch(()=>{ clearTimeout(to); go(); });
+  }catch(_e){ go(); }
 }
 </script>
 <script>/* qrcode-generator by kazuhikoarase – MIT License */
