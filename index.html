@@ -114,6 +114,96 @@
 [data-theme=spektral] .mv-hdr{background:linear-gradient(90deg,rgba(255,0,0,.8),rgba(255,119,0,.8),rgba(255,229,0,.8),rgba(0,204,0,.8),rgba(0,204,255,.8),rgba(0,68,255,.8),rgba(136,0,255,.8))}
 [data-theme=spektral] .mv-tabs{background:linear-gradient(90deg,rgba(255,0,0,.8),rgba(255,119,0,.8),rgba(255,229,0,.8),rgba(0,204,0,.8),rgba(0,204,255,.8),rgba(0,68,255,.8),rgba(136,0,255,.8));border-top:1px solid rgba(255,255,255,.12)}
 [data-theme=spektral] .lang-chip.on{background:linear-gradient(135deg,#8800FF,#0044FF);border-color:#8800FF}
+/* ═══ PORT VOM MEIN-REZEPTBUCH — Animations-Treiber + 5 neue Themen (2026-07-22) ═══ */
+@property --rot{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes mx-sunset-drift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes mx-iridescent-rotate{to{--rot:360deg}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FÜNF NEUE THEMEN — additiv zu den bestehenden Slots
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* COCKTAIL — Drink-Spectrum Farben */
+[data-theme=cocktail]{
+  --sand:#fff8f0;--sand2:#ffe0c2;--parch:#ffffff;--ink:#1a1a2e;
+  --br:#f57c00;--br2:#ff9933;--br3:#ffb866;
+  --rust:#3e2723;--rusts:#efe2dc;
+  --grn:#43a047;--grns:#d8eed4;
+  --teal:#283593;--teals:#d4d8f0;
+  --gold:#ffd166;--golds:#fff3cf;
+}
+[data-theme=cocktail] .top-hdr{
+  background:linear-gradient(90deg,#ff5a5f,#43a047,#ffd166,#283593,#ff5a5f) !important;
+  background-size:300% 100% !important;
+}
+
+/* BRASS & BOTANICAL — Forest + Messing (passt perfekt zum Rezeptbuch) */
+[data-theme=brass]{
+  --sand:#f4f1e8;--sand2:#d8d0bc;--parch:#faf8f0;--ink:#1d3528;
+  --br:#1b5e20;--br2:#357a3a;--br3:#6da669;
+  --rust:#5d4037;--rusts:#ece2dc;
+  --grn:#aed581;--grns:#e8f5d9;
+  --teal:#bf9b30;--teals:#f7eed1;
+  --gold:#d4a017;--golds:#faecc4;
+}
+[data-theme=brass] .top-hdr{
+  background:conic-gradient(from var(--rot,0deg) at 50% 50%,
+    #bf9b30,#d4a017,#f0d878,#bf9b30,#8b6914,#bf9b30) !important;
+  animation:mx-iridescent-rotate 60s linear infinite !important;
+}
+
+/* IRIDESCENT GLASS — Holografisch */
+[data-theme=iridescent]{
+  --sand:#fefefe;--sand2:#f0e6f7;--parch:#ffffff;--ink:#2c1e3e;
+  --br:#a78bfa;--br2:#c4b0fe;--br3:#ddd0ff;
+  --rust:#2c1e3e;--rusts:#e8e0f0;
+  --grn:#5eead4;--grns:#d0f7f0;
+  --teal:#fb7185;--teals:#fce0e6;
+  --gold:#fcd34d;--golds:#fff5d4;
+}
+[data-theme=iridescent] .top-hdr{
+  background:conic-gradient(from var(--rot,0deg) at 50% 50%,
+    #ffd6e0 0%,#ffefb5 16%,#d8ffec 32%,#cce8ff 48%,#e6d4ff 64%,#ffd6e0 80%,#ffefb5 100%) !important;
+  animation:mx-iridescent-rotate 24s linear infinite !important;
+}
+
+/* WARM NEON — Cream + Magenta */
+[data-theme=warm-neon]{
+  --sand:#fff8ed;--sand2:#ffe9c2;--parch:#fffdf6;--ink:#1a1a2e;
+  --br:#ec4899;--br2:#f472b6;--br3:#fbcfe8;
+  --rust:#1a1a2e;--rusts:#d8d8e6;
+  --grn:#3ddc97;--grns:#d4f7e8;
+  --teal:#3ddc97;--teals:#d4f7e8;
+  --gold:#ffd166;--golds:#fff3cf;
+}
+[data-theme=warm-neon] .top-hdr{
+  background:linear-gradient(90deg,#ff5a5f 0%,#7e3ff2 50%,#3ddc97 100%) !important;
+  background-size:200% 100% !important;
+  box-shadow:0 0 20px rgba(255,90,95,.45),0 4px 16px rgba(126,63,242,.25) !important;
+}
+
+/* ATELIER — Twilight-Lila + Mint */
+[data-theme=atelier]{
+  --sand:#f5f0fb;--sand2:#e0d4f0;--parch:#fafaff;--ink:#1a1a3a;
+  --br:#8b5cf6;--br2:#a78bfa;--br3:#c4b5fd;
+  --rust:#1a1a3a;--rusts:#e0deea;
+  --grn:#2dd4bf;--grns:#d4f7f1;
+  --teal:#2dd4bf;--teals:#d4f7f1;
+  --gold:#ffd166;--golds:#fff3cf;
+}
+[data-theme=atelier] .top-hdr{
+  background:linear-gradient(90deg,
+    rgba(139,92,246,.92) 0%,
+    rgba(236,72,153,.85) 35%,
+    rgba(45,212,191,.85) 70%,
+    rgba(255,209,102,.85) 100%) !important;
+  background-size:240% 100% !important;
+  animation:mx-sunset-drift 14s ease-in-out infinite !important;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:system-ui,sans-serif;background:var(--sand);color:var(--ink);
@@ -4016,6 +4106,11 @@ const COURSES=[
 const THEMES=[
   {id:'spektral',de:'Spektral',en:'Spectral',ru:'Спектр',zh:'光谱',es:'Espectral',fr:'Spectral',it:'Spettrale',pt:'Espectral',strips:['#FF0000','#FFE500','#00CC00','#8800FF']},
   {id:'default',de:'Landhaus',en:'Country',ru:'Деревенск.',zh:'乡村',es:'Rural',fr:'Campagne',it:'Campagna',pt:'Campo',strips:['#f9f4ec','#7a5840','#b85535','#4e7040']},
+  {id:'cocktail',de:'Cocktail',en:'Cocktail',ru:'Коктейль',zh:'鸡尾酒',es:'Cóctel',fr:'Cocktail',it:'Cocktail',pt:'Coquetel',strips:['#f57c00','#43a047','#283593','#ffd166']},
+  {id:'brass',de:'Brass',en:'Brass',ru:'Латунь',zh:'黄铜',es:'Latón',fr:'Laiton',it:'Ottone',pt:'Latão',strips:['#1b5e20','#bf9b30','#aed581','#5d4037']},
+  {id:'iridescent',de:'Holografisch',en:'Iridescent',ru:'Радужный',zh:'虹彩',es:'Iridiscente',fr:'Iridescent',it:'Iridescente',pt:'Iridescente',strips:['#a78bfa','#5eead4','#fcd34d','#fb7185']},
+  {id:'warm-neon',de:'Neon Warm',en:'Warm Neon',ru:'Тёплый неон',zh:'暖霓虹',es:'Neón cálido',fr:'Néon chaud',it:'Neon caldo',pt:'Néon quente',strips:['#ec4899','#3ddc97','#7e3ff2','#ffd166']},
+  {id:'atelier',de:'Atelier',en:'Atelier',ru:'Ателье',zh:'工坊',es:'Atelier',fr:'Atelier',it:'Atelier',pt:'Atelier',strips:['#8b5cf6','#2dd4bf','#ec4899','#ffd166']},
   {id:'spring',de:'Frühling',en:'Spring',ru:'Весна',zh:'春天',es:'Primavera',fr:'Printemps',it:'Primavera',pt:'Primavera',strips:['#f4f9f0','#437230','#c05858','#287858']},
   {id:'night',de:'Nacht',en:'Night',ru:'Ночь',zh:'夜晚',es:'Noche',fr:'Nuit',it:'Notte',pt:'Noite',strips:['#181410','#c8a480','#e07050','#68a848']},
   {id:'modern',de:'Modern',en:'Modern',ru:'Модерн',zh:'现代',es:'Moderno',fr:'Moderne',it:'Moderno',pt:'Moderno',strips:['#f3f5fa','#284880','#c83858','#228048']},
@@ -4304,7 +4399,7 @@ async function boot(){
   if(!MS.length){MS=[{id:Date.now(),lbl:courseName('main'),ico:'🍲',rid:0}];svM();}
   _bootProg(65,'Sprache & Thema…');
   // Apply theme
-  const th=localStorage.getItem('mtheme9')||'spektral';
+  const th=localStorage.getItem('mtheme9')||'iridescent';
   if(th!=='default')document.body.setAttribute('data-theme',th);
   // Apply API key
   const key=localStorage.getItem('claudeKey9');
@@ -4439,7 +4534,7 @@ function setTheme(id){
 }
 function renderThemeGrid(){
   const g=document.getElementById('themeGrid');if(!g)return;
-  const cur=localStorage.getItem('mtheme9')||'default';
+  const cur=localStorage.getItem('mtheme9')||'iridescent';
   g.innerHTML=THEMES.map(t=>`
     <div class="theme-chip ${t.id===cur?'on':''}" onclick="setTheme('${t.id}')">
       <div class="theme-prev">${t.strips.map(c=>`<div class="theme-strip" style="background:${c}"></div>`).join('')}</div>
