@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="goldRingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#FFF6C8"/>
+      <stop offset="15%"  stop-color="#FFE066"/>
+      <stop offset="40%"  stop-color="#F4C430"/>
+      <stop offset="70%"  stop-color="#A67C00"/>
+      <stop offset="100%" stop-color="#5B3D00"/>
+    </linearGradient>
+    <linearGradient id="goldText" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#FFF1A8"/>
+      <stop offset="35%"  stop-color="#FFD700"/>
+      <stop offset="55%"  stop-color="#E5B312"/>
+      <stop offset="85%"  stop-color="#8B6914"/>
+      <stop offset="100%" stop-color="#5B3D00"/>
+    </linearGradient>
+    <linearGradient id="goldRibbonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#FFE873"/>
+      <stop offset="50%"  stop-color="#D4A017"/>
+      <stop offset="100%" stop-color="#7A5800"/>
+    </linearGradient>
+    <linearGradient id="goldShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#FFE066"/>
+      <stop offset="100%" stop-color="#A67C00"/>
+    </linearGradient>
+    <radialGradient id="navyDeep" cx="50%" cy="40%" r="70%">
+      <stop offset="0%"   stop-color="#1A2C5C"/>
+      <stop offset="60%"  stop-color="#0E1A40"/>
+      <stop offset="100%" stop-color="#050A1F"/>
+    </radialGradient>
+    <radialGradient id="gemGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#9BC4FF"/>
+      <stop offset="35%"  stop-color="#3A6FE8"/>
+      <stop offset="100%" stop-color="#0B1F70"/>
+    </radialGradient>
+    <radialGradient id="treeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#FFF1A8" stop-opacity="1"/>
+      <stop offset="60%"  stop-color="#F4C430" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#F4C430" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="darkDropShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5"/>
+      <feOffset dx="3" dy="5" result="shadow"/>
+      <feComponentTransfer><feFuncA type="linear" slope="1.0"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="embossShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="3" result="off"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.65"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+      <feOffset dx="0" dy="5" result="off"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.8"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Korona-Blur (Akkretions-Disk-Stil aus Sage-Page .bh-disk).
+         stdDeviation=22 entspricht in etwa dem `filter: blur(10px)` der
+         CSS-Variante bei 280-px-Skalierung; im 1024-Viewbox stärker
+         dosiert, damit die zwölf farbigen Arc-Segmente zu einem
+         weichen Conic-Gradient verschmelzen. -->
+    <filter id="bhCorona" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="22"/>
+    </filter>
+    <filter id="bhCoronaInner" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14"/>
+    </filter>
+    <path id="topArc" d="M 141.1 412.6 A 384 384 0 0 1 882.9 412.6" fill="none"/>
+  </defs>
+
+  <rect width="1024" height="1024" fill="#050505"/>
+
+  <!-- Akkretions-Disk-Korona (Vorbild: .bh-disk auf Sage-Page).
+       Conic-Gradient orange → gold → magenta → blau → türkis → orange
+       als zwölf Arc-Segmente (je 30°) um den Siegel-Außenrand
+       (Radius 475, knapp außerhalb des Gold-Rings r=444), mit
+       feGaussianBlur stdDeviation=22 → smoothe Conic-Anmutung.
+       Innerer Ring (Radius 460, schmaler Stroke, weniger Blur)
+       entspricht .bh-disk-2 — dezente zweite Schicht. -->
+  <g filter="url(#bhCorona)" opacity="0.78">
+    <path d="M 512 37 A 475 475 0 0 1 749.5 100.6"        fill="none" stroke="#ff7a00" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 749.5 100.6 A 475 475 0 0 1 923.4 274.5"   fill="none" stroke="#ffaf36" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 923.4 274.5 A 475 475 0 0 1 987 512"       fill="none" stroke="#f7c569" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 987 512 A 475 475 0 0 1 923.4 749.5"       fill="none" stroke="#dd8598" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 923.4 749.5 A 475 475 0 0 1 749.5 923.4"   fill="none" stroke="#bf50c1" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 749.5 923.4 A 475 475 0 0 1 512 987"       fill="none" stroke="#8754c8" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 512 987 A 475 475 0 0 1 274.5 923.4"       fill="none" stroke="#4f57ce" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 274.5 923.4 A 475 475 0 0 1 100.6 749.5"   fill="none" stroke="#2a80c2" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 100.6 749.5 A 475 475 0 0 1 37 512"        fill="none" stroke="#0cb4af" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 37 512 A 475 475 0 0 1 100.6 274.5"        fill="none" stroke="#2abc8b" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 100.6 274.5 A 475 475 0 0 1 274.5 100.6"   fill="none" stroke="#71a65d" stroke-width="60" stroke-linecap="butt"/>
+    <path d="M 274.5 100.6 A 475 475 0 0 1 512 37"        fill="none" stroke="#b8902e" stroke-width="60" stroke-linecap="butt"/>
+  </g>
+  <g filter="url(#bhCoronaInner)" opacity="0.55">
+    <path d="M 512 52 A 460 460 0 0 1 742 113"            fill="none" stroke="#ff7a00" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 742 113 A 460 460 0 0 1 911 282"           fill="none" stroke="#ffaf36" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 911 282 A 460 460 0 0 1 972 512"           fill="none" stroke="#f7c569" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 972 512 A 460 460 0 0 1 911 742"           fill="none" stroke="#dd8598" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 911 742 A 460 460 0 0 1 742 911"           fill="none" stroke="#bf50c1" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 742 911 A 460 460 0 0 1 512 972"           fill="none" stroke="#8754c8" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 512 972 A 460 460 0 0 1 282 911"           fill="none" stroke="#4f57ce" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 282 911 A 460 460 0 0 1 113 742"           fill="none" stroke="#2a80c2" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 113 742 A 460 460 0 0 1 52 512"            fill="none" stroke="#0cb4af" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 52 512 A 460 460 0 0 1 113 282"            fill="none" stroke="#2abc8b" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 113 282 A 460 460 0 0 1 282 113"           fill="none" stroke="#71a65d" stroke-width="32" stroke-linecap="butt"/>
+    <path d="M 282 113 A 460 460 0 0 1 512 52"            fill="none" stroke="#b8902e" stroke-width="32" stroke-linecap="butt"/>
+  </g>
+
+  <!-- Drop shadow under seal -->
+  <circle cx="512" cy="520" r="444" fill="#000" opacity="0.5"/>
+
+  <!-- Gold ring + navy interior -->
+  <circle cx="512" cy="512" r="444" fill="url(#goldRingGrad)"/>
+  <circle cx="512" cy="512" r="368" fill="url(#navyDeep)"/>
+  <circle cx="512" cy="512" r="372" fill="none" stroke="url(#goldRingGrad)" stroke-width="4"/>
+  <circle cx="512" cy="512" r="367" fill="none" stroke="#3D2914" stroke-width="1" opacity="0.5"/>
+  <circle cx="512" cy="512" r="441" fill="none" stroke="#3D2914" stroke-width="1" opacity="0.4"/>
+  <circle cx="512" cy="512" r="445" fill="none" stroke="#FFE066" stroke-width="1" opacity="0.5"/>
+
+  <!-- Engraved dots on inner border -->
+  <g fill="#3A2A0A" opacity="0.55">
+    <circle cx="512.0" cy="120.0" r="1.5"/><circle cx="539.3" cy="121.0" r="1.5"/><circle cx="566.6" cy="123.8" r="1.5"/><circle cx="593.5" cy="128.6" r="1.5"/><circle cx="620.0" cy="135.2" r="1.5"/><circle cx="646.1" cy="143.6" r="1.5"/><circle cx="671.4" cy="153.9" r="1.5"/><circle cx="696.0" cy="165.9" r="1.5"/><circle cx="719.7" cy="179.6" r="1.5"/><circle cx="742.4" cy="194.9" r="1.5"/><circle cx="764.0" cy="211.7" r="1.5"/><circle cx="784.3" cy="230.0" r="1.5"/><circle cx="803.3" cy="249.7" r="1.5"/><circle cx="820.9" cy="270.7" r="1.5"/><circle cx="837.0" cy="292.8" r="1.5"/><circle cx="851.5" cy="316.0" r="1.5"/><circle cx="864.3" cy="340.2" r="1.5"/><circle cx="875.5" cy="365.2" r="1.5"/><circle cx="884.8" cy="390.9" r="1.5"/><circle cx="892.4" cy="417.2" r="1.5"/><circle cx="898.0" cy="443.9" r="1.5"/><circle cx="901.9" cy="471.0" r="1.5"/><circle cx="903.8" cy="498.3" r="1.5"/><circle cx="903.8" cy="525.7" r="1.5"/><circle cx="901.9" cy="553.0" r="1.5"/><circle cx="898.0" cy="580.1" r="1.5"/><circle cx="892.4" cy="606.8" r="1.5"/><circle cx="884.8" cy="633.1" r="1.5"/><circle cx="875.5" cy="658.8" r="1.5"/><circle cx="864.3" cy="683.8" r="1.5"/><circle cx="851.5" cy="708.0" r="1.5"/><circle cx="837.0" cy="731.2" r="1.5"/><circle cx="820.9" cy="753.3" r="1.5"/><circle cx="803.3" cy="774.3" r="1.5"/><circle cx="784.3" cy="794.0" r="1.5"/><circle cx="764.0" cy="812.3" r="1.5"/><circle cx="742.4" cy="829.1" r="1.5"/><circle cx="719.7" cy="844.4" r="1.5"/><circle cx="696.0" cy="858.1" r="1.5"/><circle cx="671.4" cy="870.1" r="1.5"/><circle cx="646.1" cy="880.4" r="1.5"/><circle cx="620.0" cy="888.8" r="1.5"/><circle cx="593.5" cy="895.4" r="1.5"/><circle cx="566.6" cy="900.2" r="1.5"/><circle cx="539.3" cy="903.0" r="1.5"/><circle cx="512.0" cy="904.0" r="1.5"/><circle cx="484.7" cy="903.0" r="1.5"/><circle cx="457.4" cy="900.2" r="1.5"/><circle cx="430.5" cy="895.4" r="1.5"/><circle cx="404.0" cy="888.8" r="1.5"/><circle cx="377.9" cy="880.4" r="1.5"/><circle cx="352.6" cy="870.1" r="1.5"/><circle cx="328.0" cy="858.1" r="1.5"/><circle cx="304.3" cy="844.4" r="1.5"/><circle cx="281.6" cy="829.1" r="1.5"/><circle cx="260.0" cy="812.3" r="1.5"/><circle cx="239.7" cy="794.0" r="1.5"/><circle cx="220.7" cy="774.3" r="1.5"/><circle cx="203.1" cy="753.3" r="1.5"/><circle cx="187.0" cy="731.2" r="1.5"/><circle cx="172.5" cy="708.0" r="1.5"/><circle cx="159.7" cy="683.8" r="1.5"/><circle cx="148.5" cy="658.8" r="1.5"/><circle cx="139.2" cy="633.1" r="1.5"/><circle cx="131.6" cy="606.8" r="1.5"/><circle cx="126.0" cy="580.1" r="1.5"/><circle cx="122.1" cy="553.0" r="1.5"/><circle cx="120.2" cy="525.7" r="1.5"/><circle cx="120.2" cy="498.3" r="1.5"/><circle cx="122.1" cy="471.0" r="1.5"/><circle cx="126.0" cy="443.9" r="1.5"/><circle cx="131.6" cy="417.2" r="1.5"/><circle cx="139.2" cy="390.9" r="1.5"/><circle cx="148.5" cy="365.2" r="1.5"/><circle cx="159.7" cy="340.2" r="1.5"/><circle cx="172.5" cy="316.0" r="1.5"/><circle cx="187.0" cy="292.8" r="1.5"/><circle cx="203.1" cy="270.7" r="1.5"/><circle cx="220.7" cy="249.7" r="1.5"/><circle cx="239.7" cy="230.0" r="1.5"/><circle cx="260.0" cy="211.7" r="1.5"/><circle cx="281.6" cy="194.9" r="1.5"/><circle cx="304.3" cy="179.6" r="1.5"/><circle cx="328.0" cy="165.9" r="1.5"/><circle cx="352.6" cy="153.9" r="1.5"/><circle cx="377.9" cy="143.6" r="1.5"/><circle cx="404.0" cy="135.2" r="1.5"/><circle cx="430.5" cy="128.6" r="1.5"/><circle cx="457.4" cy="123.8" r="1.5"/><circle cx="484.7" cy="121.0" r="1.5"/>
+  </g>
+
+  <!-- OFFIZIELLE BESTÄTIGUNG -->
+  <text font-family="Georgia, 'Times New Roman', serif" font-size="62" font-weight="bold" fill="url(#goldText)" letter-spacing="1" filter="url(#darkDropShadow)">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">OFFIZIELLE BESTÄTIGUNG</textPath>
+  </text>
+
+  <!-- SBKIM -->
+  <g filter="url(#strongShadow)">
+    <text x="512" y="500" font-family="Georgia, 'Times New Roman', serif" font-size="190" font-weight="bold" fill="url(#goldText)" text-anchor="middle" stroke="#3D2914" stroke-width="2.5" letter-spacing="2">SBKIM</text>
+  </g>
+
+  <!-- SIEGEL -->
+  <g filter="url(#embossShadow)">
+    <text x="512" y="620" font-family="Georgia, 'Times New Roman', serif" font-size="110" font-weight="bold" fill="url(#goldText)" text-anchor="middle" stroke="#3D2914" stroke-width="2" letter-spacing="6">SIEGEL</text>
+  </g>
+
+  <!-- Left medallion (Schild) -->
+  <g>
+    <circle cx="188" cy="555" r="84" fill="#3D2914" opacity="0.85"/>
+    <circle cx="188" cy="555" r="80" fill="url(#goldRingGrad)"/>
+    <circle cx="188" cy="555" r="70" fill="url(#navyDeep)"/>
+    <circle cx="188" cy="555" r="70" fill="none" stroke="#D4A017" stroke-width="1.5" opacity="0.7"/>
+    <g transform="translate(188 555)">
+      <path d="M -34 -36 L 34 -36 C 34 0, 22 30, 0 44 C -22 30, -34 0, -34 -36 Z" fill="url(#goldShieldGrad)" stroke="#3D2914" stroke-width="2"/>
+      <path d="M -16 0 L -4 14 L 20 -12" fill="none" stroke="#6B4A00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <circle cx="188" cy="643" r="11" fill="#3D2914"/>
+    <circle cx="188" cy="643" r="9" fill="url(#gemGrad)"/>
+    <ellipse cx="185.3" cy="639.4" rx="3.15" ry="1.98" fill="#B8DCFF" opacity="0.85"/>
+    <circle cx="184.4" cy="638.5" r="1.17" fill="#FFFFFF" opacity="0.9"/>
+  </g>
+
+  <!-- Right medallion (Mycel) -->
+  <g>
+    <circle cx="836" cy="555" r="84" fill="#3D2914" opacity="0.85"/>
+    <circle cx="836" cy="555" r="80" fill="url(#goldRingGrad)"/>
+    <circle cx="836" cy="555" r="70" fill="url(#navyDeep)"/>
+    <circle cx="836" cy="555" r="70" fill="none" stroke="#D4A017" stroke-width="1.5" opacity="0.7"/>
+    <g transform="translate(836 555)">
+      <circle cx="0" cy="-10" r="14" fill="url(#treeGlow)"/>
+      <line x1="0" y1="40" x2="0" y2="-10" stroke="#F4C430" stroke-width="4" stroke-linecap="round"/>
+      <line x1="0" y1="-10" x2="-37.6" y2="-23.7" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-37.6" y1="-23.7" x2="-55.5" y2="-22.1" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-55.5" cy="-22.1" r="2.2" fill="#FFE873"/>
+      <line x1="-37.6" y1="-23.7" x2="-50.3" y2="-36.4" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-50.3" cy="-36.4" r="2.2" fill="#FFE873"/>
+      <circle cx="-37.6" cy="-23.7" r="2.5" fill="#FFE873"/>
+      <line x1="0" y1="-10" x2="-28.3" y2="-38.3" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-28.3" y1="-38.3" x2="-45.2" y2="-44.4" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-45.2" cy="-44.4" r="2.2" fill="#FFE873"/>
+      <line x1="-28.3" y1="-38.3" x2="-34.4" y2="-55.2" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-34.4" cy="-55.2" r="2.2" fill="#FFE873"/>
+      <circle cx="-28.3" cy="-38.3" r="2.5" fill="#FFE873"/>
+      <line x1="0" y1="-10" x2="-13.7" y2="-47.6" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-13.7" y1="-47.6" x2="-26.4" y2="-60.3" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-26.4" cy="-60.3" r="2.2" fill="#FFE873"/>
+      <line x1="-13.7" y1="-47.6" x2="-12.1" y2="-65.5" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="-12.1" cy="-65.5" r="2.2" fill="#FFE873"/>
+      <circle cx="-13.7" cy="-47.6" r="2.5" fill="#FFE873"/>
+      <line x1="0" y1="-10" x2="13.7" y2="-47.6" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="13.7" y1="-47.6" x2="12.1" y2="-65.5" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="12.1" cy="-65.5" r="2.2" fill="#FFE873"/>
+      <line x1="13.7" y1="-47.6" x2="26.4" y2="-60.3" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="26.4" cy="-60.3" r="2.2" fill="#FFE873"/>
+      <circle cx="13.7" cy="-47.6" r="2.5" fill="#FFE873"/>
+      <line x1="0" y1="-10" x2="28.3" y2="-38.3" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="28.3" y1="-38.3" x2="34.4" y2="-55.2" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="34.4" cy="-55.2" r="2.2" fill="#FFE873"/>
+      <line x1="28.3" y1="-38.3" x2="45.2" y2="-44.4" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="45.2" cy="-44.4" r="2.2" fill="#FFE873"/>
+      <circle cx="28.3" cy="-38.3" r="2.5" fill="#FFE873"/>
+      <line x1="0" y1="-10" x2="37.6" y2="-23.7" stroke="#F4C430" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="37.6" y1="-23.7" x2="50.3" y2="-36.4" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="50.3" cy="-36.4" r="2.2" fill="#FFE873"/>
+      <line x1="37.6" y1="-23.7" x2="55.5" y2="-22.1" stroke="#F4C430" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="55.5" cy="-22.1" r="2.2" fill="#FFE873"/>
+      <circle cx="37.6" cy="-23.7" r="2.5" fill="#FFE873"/>
+    </g>
+    <circle cx="836" cy="643" r="11" fill="#3D2914"/>
+    <circle cx="836" cy="643" r="9" fill="url(#gemGrad)"/>
+    <ellipse cx="833.3" cy="639.4" rx="3.15" ry="1.98" fill="#B8DCFF" opacity="0.85"/>
+    <circle cx="832.4" cy="638.5" r="1.17" fill="#FFFFFF" opacity="0.9"/>
+  </g>
+
+  <!-- Infinity medallion -->
+  <g>
+    <circle cx="512" cy="750" r="84" fill="#3D2914" opacity="0.85"/>
+    <circle cx="512" cy="750" r="80" fill="url(#goldRingGrad)"/>
+    <circle cx="512" cy="750" r="70" fill="url(#navyDeep)"/>
+    <circle cx="512" cy="750" r="70" fill="none" stroke="#D4A017" stroke-width="1.5" opacity="0.7"/>
+    <path d="M 470.2 750 C 470.2 727.2, 500.6 727.2, 512 750 C 523.4 772.8, 553.8 772.8, 553.8 750 C 553.8 727.2, 523.4 727.2, 512 750 C 500.6 772.8, 470.2 772.8, 470.2 750 Z" fill="none" stroke="url(#goldRingGrad)" stroke-width="10" stroke-linejoin="round"/>
+    <g fill="#FFE873">
+      <circle cx="460" cy="710" r="2.5"/>
+      <circle cx="564" cy="710" r="2.5"/>
+      <circle cx="452" cy="786" r="2"/>
+      <circle cx="572" cy="786" r="2"/>
+    </g>
+  </g>
+
+  <!-- Bottom ribbon SELF-INSCRIBING -->
+  <g>
+    <path d="M 28 880 L 200 850 L 200 925 L 28 945 Z" fill="url(#goldRibbonGrad)" stroke="#3D2914" stroke-width="2"/>
+    <path d="M 28 880 L 70 905 L 28 945 Z" fill="#7A5800"/>
+    <path d="M 996 880 L 824 850 L 824 925 L 996 945 Z" fill="url(#goldRibbonGrad)" stroke="#3D2914" stroke-width="2"/>
+    <path d="M 996 880 L 954 905 L 996 945 Z" fill="#7A5800"/>
+    <path d="M 180 850 Q 512 935, 844 850 L 844 940 Q 512 1018, 180 940 Z" fill="url(#goldRibbonGrad)" stroke="#3D2914" stroke-width="2.5"/>
+    <path d="M 200 870 Q 512 950, 824 870" fill="none" stroke="#FFE873" stroke-width="1.2" opacity="0.55"/>
+    <path d="M 200 920 Q 512 995, 824 920" fill="none" stroke="#3D2914" stroke-width="1" opacity="0.5"/>
+    <path id="ribbonText" d="M 222 902 Q 512 980, 802 902" fill="none"/>
+    <text font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="bold" fill="#3D2914" letter-spacing="3">
+      <textPath href="#ribbonText" startOffset="50%" text-anchor="middle">MEIN-REZEPTBUCH</textPath>
+    </text>
+  </g>
+</svg>
