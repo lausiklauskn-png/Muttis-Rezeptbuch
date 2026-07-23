@@ -4218,6 +4218,20 @@ function _idbGet(k){
   })).catch(()=>null);
 }
 
+// ── Persistenten Speicher anfordern (Parität mit Mein-Rezeptbuch v10) ──
+// Schützt localStorage (Rezepte) + IndexedDB (Bild-Backup MrzBackup1) davor,
+// vom Browser bei Speicherdruck stillschweigend gelöscht zu werden. Rein
+// additiv + fail-soft: kein Prompt für leere Neu-Nutzer (erst bei echten Daten
+// aufgerufen), jeder Fehler wird verschluckt — die App läuft unverändert weiter.
+async function _initPersistentStorage(){
+  try{
+    if(navigator.storage&&navigator.storage.persist){
+      const already=navigator.storage.persisted?await navigator.storage.persisted():false;
+      if(!already)await navigator.storage.persist();
+    }
+  }catch(e){}
+}
+
 // ── Bild-Komprimierung via Canvas ────────────────────────
 function resizeImage(dataUrl,maxW,quality){
   return new Promise(resolve=>{
@@ -4416,6 +4430,9 @@ async function boot(){
       R.forEach(r=>{if(imgMap[r.id])r.img=imgMap[r.id];});
     }
   }catch(e){}
+  // Persistenten Speicher erst anfordern, wenn echte Daten vorhanden sind
+  // (kein Permission-Prompt für brandneue, leere Nutzer in z.B. Firefox).
+  if(R.some(r=>!r.blank&&r.name))_initPersistentStorage();
   // Seed blank slots on first run (nur echte Rezepte zählen)
   if(!R.some(r=>!r.blank)){
     const BLANKS={vorsp:10,suppe:10,fleisch:10,fisch:10,vegi:10,kuchen:10,dessert:10};
