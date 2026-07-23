@@ -1451,6 +1451,7 @@ h4.man-sub{font-family:Georgia,serif;font-size:.81rem;font-weight:700;color:var(
 #boot-splash .bs-lbl{font-size:.72rem;color:var(--br3,#a08060);min-height:1em}
 #bs-wrap{width:190px;height:5px;background:var(--sand2,#e8dccf);border-radius:3px;overflow:hidden}
 #bs-bar{height:100%;width:5%;background:var(--br,#6a4c36);border-radius:3px;transition:width .35s ease}
+#boot-err{display:none;margin-top:12px;padding:10px 14px;background:#fde8ee;color:#a00;border:1.5px solid #f08;border-radius:8px;font-size:.68rem;max-width:88vw;word-break:break-all;text-align:left}
 
 /* ═══════════════════════════════════════════════════
    UI/UX REFACTOR v9.5 — Reorganized UI Layout
@@ -1557,7 +1558,22 @@ button:active{transform:scale(0.97)}
   <div class="bs-ico">📖</div>
   <div id="bs-wrap"><div id="bs-bar"></div></div>
   <div class="bs-lbl" id="bs-lbl">Wird geladen…</div>
+  <div id="boot-err"></div>
 </div>
+<!-- Globaler Fehler-Fänger (Parität mit Mein-Rezeptbuch v10): zeigt einen JS-
+     Fehler sichtbar statt Weißbild. Rein additiv — läuft nur IM Fehlerfall. -->
+<script>(function(){
+  function _showBootErr(msg){
+    var el=document.getElementById('boot-err');
+    if(el){el.style.display='block';el.textContent='⚠️ '+msg;}
+  }
+  window.onerror=function(msg,src,line,col,err){
+    _showBootErr((err?err.message:msg)+' ('+src+':'+line+')');
+  };
+  window.addEventListener('unhandledrejection',function(e){
+    _showBootErr('Promise: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason)));
+  });
+})();</script>
 
 <div class="top-hdr">
   <div class="logo" id="appLogo">Mein <em>Rezeptbuch</em></div>
