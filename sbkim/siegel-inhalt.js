@@ -53,6 +53,17 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
+  // Sprechender Download-Name für die Spore (Klaus 2026-07-23, netzweit): statt
+  // immer nur "spore.json" wird der App-Name (WIZ.nodeName) + Datum eingesetzt —
+  // z.B. "Muttis_Rezeptbuch_spore_23_07_26.json". So muss die Datei nicht jedes
+  // Mal von Hand umbenannt werden. Ziel im Repo bleibt weiterhin sbkim/spore.json.
+  function sporeFileName() {
+    var d = new Date();
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    var stamp = p(d.getDate()) + "_" + p(d.getMonth() + 1) + "_" + String(d.getFullYear()).slice(-2);
+    var base = String(WIZ.nodeName || "SBKIM").replace(/[^\w\-]+/g, "_").replace(/^_+|_+$/g, "");
+    return base + "_spore_" + stamp + ".json";
+  }
   function autoGrow(ta) { if (!ta) return; ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; }
 
   // ---- Injektion ins Siegel-Modal -----------------------------------------
@@ -170,7 +181,7 @@
         });
       })
       .then(function (spore) {
-        lastSpore = spore; downloadJson("spore.json", spore);
+        lastSpore = spore; downloadJson(sporeFileName(), spore);
         say("Spore neu signiert + ⬇  ·  nodeId=" + spore.id + ". Datei nach sbkim/spore.json committen.");
       })
       .catch(function (e) { say("Fehler: " + (e && e.message || e), true); })
@@ -312,7 +323,7 @@
             domainVector: r.arr, snippetVectors: r.snippetVectors,
             stammCategories: WIZ.stammCategories, guestCategories: WIZ.guestCategories,
           }); })
-        .then(function (spore) { lastSpore = spore; downloadJson("spore.json", spore);
+        .then(function (spore) { lastSpore = spore; downloadJson(sporeFileName(), spore);
           out("#sbwiz-o2", "Spore erzeugt + ⬇ (nodeId=" + spore.id + "). Nach sbkim/spore.json committen.");
           dlg.querySelector("#sbwiz-s3").disabled = false; })
         .catch(function (e) { out("#sbwiz-o2", "Fehler: " + (e && e.message || e), true); b.disabled = false; })
