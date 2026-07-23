@@ -1,28 +1,50 @@
 {
   "node": "Muttis-Rezeptbuch",
   "updated": "2026-07-23",
-  "updatedNote": "Muttis-Rezeptbuch als EIGENER SBKIM-Endknoten aufgebaut (Klaus-Entscheid 2026-07-23). Module byte-1:1 aus Mein-Rezeptbuch/Sage, eigener dbSuffix 'muttisrezeptbuch' (getrennte Schublade -> eigene, von Mein-Rezeptbuch getrennte Identitaet). Die LIVE-Identitaet (nodeId + privater Schluessel) wird von Klaus EINMAL im Browser erzeugt (der oeffentliche 'Mit dem Netz verbinden'-Knopf bzw. __sbkimErzeugeSpore) und als sbkim/spore.json committet - sie liegt bewusst NICHT im Code (kein PII, Schluessel bleibt im Browser).",
+  "updatedNote": "Muttis-Rezeptbuch als eigener SBKIM-Endknoten LIVE. Klaus hat die Identitaet im Browser erzeugt (nodeId 8TVDCTAc..., Ed25519 signiert, id==SHA256(pub) VALID). Spore v0.2 mit echtem e5-domainVector + 5 Satz-Schnipseln. Reziprok verifiziert: verified-match zu ALLEN Nachbarn (Sage 0.877, Schwester Mein-Rezeptbuch 0.878, Mixarium 0.845, SB-KIMTool-Point 0.864, Tresore 0.839, BookLedgerPro 0.823).",
   "identity": {
-    "nodeId": null,
-    "stage": "Code integriert, Identitaet noch NICHT erzeugt (wartet auf Klaus' Browser-Lauf)",
+    "nodeId": "8TVDCTAcPLg4Lbe3ecbvXoICLCEQNd90YYIw4dPN3mg",
+    "stage": "live — Identitaet im Browser erzeugt, Spore v0.2 committet, reziprok verifiziert (verified-match)",
     "spore": "sbkim/spore.json",
     "sporeUrl": "https://raw.githubusercontent.com/lausiklauskn-png/Muttis-Rezeptbuch/main/sbkim/spore.json",
     "dbSuffix": "muttisrezeptbuch",
     "domainVectorDims": 384,
     "embeddingModel": "Xenova/multilingual-e5-small",
     "protocolVersion": "0.2",
-    "verified": false,
-    "honestNote": "Eigene, von Mein-Rezeptbuch GETRENNTE Identitaet (dbSuffix 'muttisrezeptbuch' != 'rezeptbuch' -> keine geteilte-Origin-Kollision, siehe Skill saubere-netz-anmeldung). Domaene = Kochrezepte (wie Mein-Rezeptbuch) -> Muttis und Mein sind semantisch nahe Schwestern-Knoten (erwarteter hoher Match). nodeId wird gefuellt, sobald Klaus die Spore im Browser erzeugt hat."
+    "verified": true,
+    "honestNote": "Eigene, von Mein-Rezeptbuch GETRENNTE Identitaet (dbSuffix 'muttisrezeptbuch' != 'rezeptbuch'). Ed25519 im Browser signiert (id==SHA256(pub) VALID). Muttis<->Mein-Rezeptbuch 0.878 = Schwestern-Knoten (gleiche Koch-Domaene), sauber getrennte Identitaeten. TODO Klaus: verschluesseltes Backup der Identitaet anlegen (Andock-Wizard), damit 8TVDCTAc stabil bleibt.",
+    "matchScoreToSage": 0.8766
   },
   "modules": {
     "sourceOfTruth": "Sage-Protokol src/modules + Mein-Rezeptbuch sbkim/ (byte-1:1 kopiert)",
-    "list": ["00","01","02","03","04","05","05b","06","07","08","15","16","17","18","20","21","23","23_ui"],
-    "glue": ["sbkim-init.js (dbSuffix/nodeName/Endpoint/Korpus angepasst)", "siegel-inhalt.js (WIZ-Config angepasst)"]
+    "list": [
+      "00",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "05b",
+      "06",
+      "07",
+      "08",
+      "15",
+      "16",
+      "17",
+      "18",
+      "20",
+      "21",
+      "23",
+      "23_ui"
+    ],
+    "glue": [
+      "sbkim-init.js (dbSuffix/nodeName/Endpoint/Korpus angepasst)",
+      "siegel-inhalt.js (WIZ-Config angepasst)"
+    ]
   },
   "todo": [
-    "Klaus (Browser): Identitaet/Spore erzeugen -> sbkim/spore.json committen",
-    "Danach: Eintrag in Sage status.json + sage-knoten-korpus.js (mit echter nodeId)",
+    "Klaus: verschluesseltes Identitaets-Backup anlegen (Andock-Wizard Schritt 3), damit die nodeId stabil bleibt",
     "Optional: app-sw.js sbkim-Precache + Briefkasten (SIGNAL/AUSTAUSCH) nachziehen",
-    "Klaus: Browser-Sichttest (App laeuft weiter, 🌐-Knopf sichtbar, Siegel-Badge)"
+    "Klaus: Browser-Sichttest (App laeuft weiter, 🌐-Knopf, Siegel, Wer-ist-im-Raum)"
   ]
 }
