@@ -733,6 +733,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .a11y-toggle input:checked+.a11y-track{background:var(--teal,#36706a)}
 .a11y-track::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .a11y-toggle input:checked+.a11y-track::after{transform:translateX(18px)}
+.a11y-tip-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-top:1px solid var(--sand2,#ede5d8)}
 .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 11px 10px}
 .theme-chip{border-radius:8px;padding:7px 4px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .12s}
 .theme-chip.on{border-color:var(--br)}
@@ -1981,6 +1982,13 @@ button:active{transform:scale(0.97)}
               <span class="a11y-a-lg">A</span>
             </div>
           </div>
+        </div>
+        <div class="a11y-tip-row">
+          <div class="a11y-label">Tooltips</div>
+          <label class="a11y-toggle">
+            <input type="checkbox" id="a11yTipsToggle" checked onchange="setTipsShow(this.checked)">
+            <span class="a11y-track"></span>
+          </label>
         </div>
       </div>
     </div>
@@ -8400,6 +8408,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════════════════
 var A11Y_SIZE = localStorage.getItem('a11ySize9') || 'md';
 var A11Y_HC   = localStorage.getItem('a11yHc9') === '1';
+// Tooltips (Hinweis-Blasen) ausschaltbar (Klaus 2026-07-24). Default AN.
+var TIPS_OFF  = localStorage.getItem('tipsOff9') === '1';
 var _A11Y_MAP = ['sm','md','lg'];
 // ─── GLOBAL TOOLTIP ──────────────────────────────────────────────────────
 // (_initTooltips / #_jstip entfernt 2026-07-24 — war das zweite, parallele
@@ -8861,6 +8871,8 @@ function applyA11y() {
   }
   var hc = document.getElementById('a11yHcToggle');
   if (hc) hc.checked = A11Y_HC;
+  var tt = document.getElementById('a11yTipsToggle');
+  if (tt) tt.checked = !TIPS_OFF;
 }
 
 function setA11ySize(v) {
@@ -8873,6 +8885,12 @@ function setA11yContrast(on) {
   A11Y_HC = !!on;
   localStorage.setItem('a11yHc9', on ? '1' : '0');
   applyA11y();
+}
+
+// Tooltips an/aus (on=true → Tooltips zeigen). Das #_qtip-System prüft TIPS_OFF.
+function setTipsShow(on) {
+  TIPS_OFF = !on;
+  localStorage.setItem('tipsOff9', TIPS_OFF ? '1' : '0');
 }
 
 
@@ -10124,6 +10142,7 @@ ${steps}`;
     return tip;
   }
   function show(el,txt){
+    if(window.TIPS_OFF)return;   // Tooltips per Barrierefreiheit-Schalter aus
     clearTimeout(_showTid);
     clearTimeout(_hideTid);
     _showTid=setTimeout(()=>{
