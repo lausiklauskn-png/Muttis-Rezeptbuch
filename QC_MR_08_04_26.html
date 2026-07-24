@@ -1089,7 +1089,7 @@ html.a11y-hc .sett-head{background:#f5f5dc !important;color:#2a0e00 !important}
 html.a11y-hc input,html.a11y-hc textarea{border:2px solid #2a0e00 !important;background:#fff !important;color:#000 !important}
 html.a11y-hc .toast{background:#1a0800 !important;color:#fffff0 !important}
 /* ── Hoher Kontrast: Tooltip – heller Text auf dunklem Hintergrund ── */
-html.a11y-hc #_qtip,html.a11y-hc #_jstip{color:#f5edd8 !important;border:1px solid #8b5e3c !important}
+html.a11y-hc #_qtip{color:#f5edd8 !important;border:1px solid #8b5e3c !important}
 /* ── Hoher Kontrast: Overlay-Header und Tabs ── */
 html.a11y-hc .fov-hdr,html.a11y-hc .fov-hdr *{color:#f5e8d0 !important}
 html.a11y-hc .fovtab{color:rgba(245,232,208,.75) !important}
@@ -4491,8 +4491,9 @@ async function boot(){
   if(_iosDevice){try{_showIosExportReminder();}catch(e){}}
   // Geteiltes Rezept aus URL-Hash importieren
   _checkShareUrl().catch(()=>{});
-  // Globale Tooltips für alle icon-only Buttons
-  _initTooltips();
+  // Tooltips: EIN System (das Floating-Tooltip #_qtip weiter unten). Das
+  // frühere zweite System (_initTooltips / #_jstip) ist entfernt — es zeigte
+  // parallel eine zweite Box → doppelte Tooltips (Klaus 2026-07-24).
   _bootDone();
 }
 
@@ -8401,30 +8402,9 @@ var A11Y_SIZE = localStorage.getItem('a11ySize9') || 'md';
 var A11Y_HC   = localStorage.getItem('a11yHc9') === '1';
 var _A11Y_MAP = ['sm','md','lg'];
 // ─── GLOBAL TOOLTIP ──────────────────────────────────────────────────────
-function _initTooltips(){
-  const tip=document.createElement('div');
-  tip.id='_jstip';
-  tip.style.cssText='position:fixed;background:rgba(20,12,5,.83);color:#fff;font-size:.67rem;font-weight:700;padding:4px 10px;border-radius:12px;white-space:nowrap;pointer-events:none;z-index:99999;box-shadow:0 2px 8px rgba(0,0,0,.32);display:none';
-  document.body.appendChild(tip);
-  let _hov=null;
-  document.body.addEventListener('mouseenter',e=>{
-    const btn=e.target.closest('button[title]');
-    if(!btn||btn===_hov)return;
-    _hov=btn;
-    tip.textContent=btn.getAttribute('title');
-    tip.style.display='block';
-    const r=btn.getBoundingClientRect();
-    const x=Math.min(Math.max(r.left+r.width/2,50),window.innerWidth-50);
-    const above=r.top>44;
-    tip.style.left=x+'px';
-    if(above){tip.style.top=(r.top-8)+'px';tip.style.transform='translate(-50%,-100%)';}
-    else{tip.style.top=(r.bottom+8)+'px';tip.style.transform='translate(-50%,0)';}
-  },true);
-  document.body.addEventListener('mouseleave',e=>{
-    if(e.target.closest('button[title]')){_hov=null;tip.style.display='none';}
-  },true);
-  document.body.addEventListener('click',()=>{tip.style.display='none';_hov=null;},true);
-}
+// (_initTooltips / #_jstip entfernt 2026-07-24 — war das zweite, parallele
+//  Tooltip-System und verursachte doppelte Tooltips. Das einzige Tooltip-System
+//  ist jetzt die Floating-Tooltip-IIFE (#_qtip) weiter unten.)
 
 // A11Y sofort anwenden – vor boot() damit kein Flash
 (function(){
