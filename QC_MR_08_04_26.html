@@ -11437,6 +11437,21 @@ function helpAction(type){
     }
   }
 
+  // Putzt den Markdown-Rausch aus OCR-Text (Mistral OCR liefert Markdown):
+  // Bild-Platzhalter ![alt](url) raus, Link [Text](url) -> nur Text,
+  // Überschriften-Marker ## am Zeilenanfang weg, Mehrfach-Leerraum zusammen.
+  // Text bleibt vollständig, fail-soft; Google/Browser-Klartext = No-Op.
+  function cleanOcrText(text) {
+    if (!text || typeof text !== "string") return text || "";
+    return text
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/(^|\n)[ \t]{0,3}#{1,6}[ \t]+/g, "$1")
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
   // Kern: OCR über den gewählten (oder Politik-Default-) Anbieter. Fail-soft.
   async function recognize(image, options) {
     options = options || {};
@@ -11484,7 +11499,7 @@ function helpAction(type){
         return { available: false, provider: providerId, reason: "Texterkennung HTTP " + (res ? res.status : "?") + " — bitte tippen." };
       }
       var data = await res.json();
-      var text = provider.extract(data);
+      var text = cleanOcrText(provider.extract(data));
       // Tatsächlich benutzte Modell-Version aus der API-Antwort (Mistral OCR
       // liefert das datierte Modell, z.B. "mistral-ocr-2505") — sichtbar machen,
       // damit klar ist, welche Version lief. Fällt auf die angeforderte Version
@@ -11516,6 +11531,7 @@ function helpAction(type){
     isBrowserOcrSupported: isBrowserOcrSupported,
     recognize: recognize,
     recognizeBrowser: recognizeBrowser,
+    cleanOcrText: cleanOcrText,
     ocrErrorHint: ocrErrorHint,
     InvalidEuPolicyError: InvalidEuPolicyError,
     _meta: {
