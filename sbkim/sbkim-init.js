@@ -374,7 +374,11 @@ window.__sbkimErzeugeSpore = async function (description) {
           nodeName: displayNodeName("Muttis Rezeptbuch"),
           dbSuffix: "muttisrezeptbuch",
           createIdentity: function () { return window.__sbkimErzeugeSpore(); },
-          ensureIdentity: true,
+          // ensureIdentity ABSICHTLICH NICHT (Stufe 0b, 2026-07-30): Modus A legte
+          // beim Seiten-Start WORTLOS eine neue Kennung an, wenn die Schublade leer
+          // war. Aus einem Speicher-Problem wurde so unbemerkt ein Identitaets-
+          // Wechsel. Die Kennung entsteht jetzt nur auf ausdrueckliche Nutzer-
+          // Entscheidung im Netz-Panel (neu anlegen ODER Sicherung einspielen).
         });
       } catch (e) { if (window.console && console.warn) console.warn("[MR-SBKIM] Rendezvous (Modus A) übersprungen:", e); }
     }
