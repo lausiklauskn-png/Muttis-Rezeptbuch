@@ -1601,8 +1601,9 @@ button:active{transform:scale(0.97)}
      "die dunklen Pillen dezenter, mehr Hintergrund durchlassen". Statt einer
      satten Flaeche jetzt ein leichter Schleier + Lichtkante + Schrift-Saum.
      Der Saum traegt die Lesbarkeit, damit der Schleier duenn bleiben darf.
-     Drei Durchgaenge auf Klaus' Wunsch: .62 -> .42 -> .21 -> .07, also das Grau
-     praktisch raus; die Lichtkante bleibt nur im Holo-Thema. Getragen wird die
+     Vier Durchgaenge auf Klaus' Wunsch: .62 -> .42 -> .21 -> .07, also das Grau
+     praktisch raus; die Lichtkante ist ueberall weg, auch im Holo-Thema. Dort
+     bleibt die helle Flaeche als Form, sonst gar nichts. Getragen wird die
      Schrift jetzt fast allein vom Saum. Frueher hiess es hier: halbiert, Saum
      dafuer verstaerkt. EHRLICH nachgerechnet: ueber einer dunklen oder mittleren
      Kopfleiste (Standard, Nacht, Modern, Fruehling, Bunt, Pastell) traegt die
@@ -1627,7 +1628,7 @@ button:active{transform:scale(0.97)}
   --hdr-scrim:none;
   --hdr-pill-bg:rgba(255,255,255,.62);
   --hdr-pill-fg:#2c1e3e;
-  --hdr-pill-line:1px solid rgba(44,30,62,.22);   /* Lichtkante NUR hier - Klaus 2026-08-01 */
+  --hdr-pill-line:none;   /* Lichtkante ueberall raus - Klaus 2026-08-01, dritte Runde */
   --hdr-pill-halo:0 1px 1px rgba(255,255,255,.9);
 }
 .top-hdr::before{
