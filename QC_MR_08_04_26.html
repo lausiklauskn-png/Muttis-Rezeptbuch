@@ -1165,19 +1165,25 @@ html.a11y-hc body[data-theme=spektral] .bn-ico{color:#fff !important;text-shadow
 .wk-drag-hdl:active{cursor:grabbing;opacity:.8}
 
 /* ── Text-Import Pane ── */
-.txt-import-zone{border:2.5px dashed var(--sand2);border-radius:14px;padding:18px 14px;
+/* Hier fehlte die schliessende Klammer (gefunden 2026-08-01). Folge: der
+   Browser las ALLES danach als Inhalt dieser einen Regel - 468 Zeilen CSS
+   bis zum Ende des Stilblocks waren still wirkungslos. Nichts stuerzte ab,
+   nichts meldete einen Fehler; es sah nur so aus, als wuerden Aenderungen
+   "nicht ankommen". In Mein-Rezeptbuch und Mein-Mixarium ist dieselbe
+   Regel korrekt geschlossen. */
+.txt-import-zone{border:2.5px dashed var(--sand2);border-radius:14px;padding:18px 14px}
 .txt-import-zone.drag{border-color:var(--teal);background:var(--teals)}
 .txt-import-ico{font-size:2.4rem;text-align:center;margin-bottom:7px}
 .txt-import-lbl{font-size:.88rem;font-weight:700;color:var(--br);text-align:center;margin-bottom:3px}
 .txt-import-sub{font-size:.65rem;color:var(--dim);text-align:center;margin-bottom:12px;line-height:1.5}
-.txt-paste-area{width:100%;min-height:160px;padding:10px 12px;border:1.5px solid var(--sand2);
+.txt-paste-area{width:100%;min-height:160px;padding:10px 12px;border:1.5px solid var(--sand2)}
 .txt-paste-area:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(54,112,106,.12)}
 .txt-paste-area.drag{border-color:var(--teal);background:var(--teals)}
-.txt-hint{font-size:.63rem;color:var(--dim);margin:6px 0 10px;line-height:1.4;display:flex;
-.txt-analyze-btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;
+.txt-hint{font-size:.63rem;color:var(--dim);margin:6px 0 10px;line-height:1.4;display:flex}
+.txt-analyze-btn{display:block;width:100%;padding:13px;border:none;border-radius:12px}
 .txt-analyze-btn:active{opacity:.8}
 .txt-analyze-btn:disabled{opacity:.5;cursor:not-allowed}
-.txt-reset-btn{display:block;width:100%;margin-top:7px;background:none;border:1.5px solid var(--sand2);
+.txt-reset-btn{display:block;width:100%;margin-top:7px;background:none;border:1.5px solid var(--sand2)}
 .txt-status{padding:8px 10px;border-radius:8px;font-size:.74rem;margin-bottom:9px;display:none}
 .txt-status.loading{background:var(--golds);color:var(--gold);display:block}
 .txt-status.ok{background:var(--grns);color:var(--grn);display:block}
