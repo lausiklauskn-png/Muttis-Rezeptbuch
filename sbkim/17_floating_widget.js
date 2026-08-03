@@ -76,10 +76,24 @@
   // localStorage-Schlüssel (Karte 17 § Persistenz / § localStorage-Schema).
   // Pflege 17 UX 2026-05-25: dritter Schlüssel `sbkim_widget_minimized`
   // für den Drei-Zustand-Pfad full / minimized / hidden.
-  // Pro-App-Namensraum (Fix 2026-06-28, Klaus): die Schlüssel tragen den
-  // App-Pfad (z.B. "Mein-Rezeptbuch"), damit Geschwister-Apps auf demselben
-  // Origin (lausiklauskn-png.github.io) sich NICHT denselben Widget-Zustand
-  // teilen. Vorher führte ein Schließen in EINER App zum Verschwinden in ALLEN.
+  //
+  // Pro-App-Namensraum (Fix 2026-06-28, Klaus — 2026-08-03 in den Kanon geholt):
+  // Die Schlüssel tragen den App-Pfad (z.B. "Mein-Mixarium"), damit Geschwister-
+  // Apps auf demselben Origin (lausiklauskn-png.github.io) sich NICHT denselben
+  // Widget-Zustand teilen. Vorher führte ein Schließen in EINER App zum
+  // Verschwinden in ALLEN.
+  //
+  // Warum das hier erst jetzt steht: der Fix wurde 2026-06-28 direkt in
+  // Mein-Rezeptbuch, Muttis-Rezeptbuch und Mein-Mixarium eingebaut und nie in
+  // den Kanon zurückgeholt. Beim Modul-17-Rollout am 2026-08-03 fiel auf, dass
+  // die drei Apps deshalb eine EIGENE Fassung trugen — ein byte-1:1-Rollout
+  // hätte den Fix stillschweigend wieder ausgebaut. Jetzt ist der Kanon die
+  // Obermenge, und die übrigen zehn Träger bekommen den Fix mit dazu.
+  // (Verlangt so auch CLAUDE.md § Fremdnutzer-Brille: „localStorage-Schlüssel
+  // app-spezifisch (Suffix), damit Geschwister-Apps sich nicht stören".)
+  //
+  // Einmaliger Nebeneffekt: gemerkte Position/Minimierung starten einmal neu,
+  // weil die Schlüssel neu heißen. Das Widget selbst ist danach sofort wieder da.
   var WIDGET_SCOPE = (function () {
     try {
       var p = (typeof location !== "undefined" && location.pathname) ? location.pathname : "";
@@ -98,7 +112,8 @@
   var EVENT_FREMD_ALERT = "sbkim:fremd-alert";
   var EVENT_SIEGEL_CERTIFIED = "sbkim:siegel-certified";
   // Stufe 2 (2026-06-27): Auto-Lauschen am Nostr-Relais. `sbkim:nostr-listening`
-  // {active:true} → VERKEHR leuchtet ruhig grün ("am Relais verbunden, lauscht").
+  // {active:true} → VERKEHR leuchtet ruhig grün ("am Relais verbunden, lauscht");
+  // {active:false} → aus. Echter Handschlag pulst weiterhin obendrauf.
   var EVENT_NOSTR_LISTENING = "sbkim:nostr-listening";
 
   // Slot-IDs (Karte 17 § Vier-Slot-Layout).
@@ -134,6 +149,15 @@
   // Erlaubte Corner-Werte (Karte 17 § Schnittstelle).
   var ALLOWED_CORNERS = ["top-left", "top-right", "bottom-left", "bottom-right"];
   var ALLOWED_THEMES = ["auto", "dark", "light", "transparent"];
+
+  // Pflege 17 Stufen-Render 2026-05-26 (Sub-(e)-Sichttest-Befund 1):
+  // Sichtbarer SIEGEL-Slot bekommt `data-siegel-stufe`-Attribut, damit
+  // Bronze (im Mycel, ruhend) vs. Gold (im Mycel, aktiv) visuell unterscheidbar
+  // wird. Modul 16 setzt `data-stufe` am unsichtbaren Proxy-Span — das
+  // griff bisher nur am Proxy, nicht am sichtbaren Slot-Button.
+  var SIEGEL_STUFE_BRONZE = "bronze";
+  var SIEGEL_STUFE_GOLD = "gold";
+  var SIEGEL_STUFENWECHSEL_MS = 600;
 
   // ---- Modul-Zustand (Closure) ----
 
@@ -179,7 +203,8 @@
     siegelCertified: 0,
   };
 
-  // Stufe 2: lauscht der Knoten gerade am Nostr-Relais? Hält VERKEHR ruhig grün.
+  // Stufe 2: lauscht der Knoten gerade am Nostr-Relais? Hält VERKEHR ruhig
+  // grün, auch ohne aktuellen Verkehr (Dauerzustand "Empfangsmodus aktiv").
   var nostrListening = false;
 
   // Listener-Referenzen (für sauberes Re-Init).
@@ -199,6 +224,11 @@
   var siegelCertifiedAt = null;
   var siegelRepoUrl = null;
   var fremdBufferSize = 0;
+  // Pflege 17 Stufen-Render 2026-05-26: was der sichtbare SIEGEL-Slot
+  // gerade rendert. null wenn SIEGEL noch nicht gemountet. Sonst
+  // "bronze" oder "gold". Diagnose-Anker für _meta.
+  var siegelStufeRendered = null;
+  var siegelStufenwechselTimerId = null;
 
   // ---- Hilfsfunktionen ----
 
@@ -232,12 +262,13 @@
   }
 
   function loadVisibleFromLs() {
-    // Fix 2026-06-28 (Klaus): KEIN dauerhaftes Verstecken mehr. Das X schließt
-    // das Widget nur für die laufende Sitzung; beim nächsten Seitenstart ist es
-    // WIEDER da. Vorher blieb ein (auch versehentliches) Schließen gemerkt, bis
-    // man die Browserdaten löschte — und über den geteilten Origin in ALLEN Apps.
-    // Beim Seitenstart darum immer sichtbar.
-    visibleFlag = true;
+    if (!optRememberHidden) {
+      visibleFlag = true;
+      return;
+    }
+    var raw = lsGet(LS_KEY_VISIBLE);
+    if (raw === "false") visibleFlag = false;
+    else visibleFlag = true;
   }
 
   function persistVisible() {
@@ -323,16 +354,35 @@
     // CSS-Variablen auf `:root` definiert — PWA kann sie via eigenem
     // `:root`-Block überschreiben (Hintergrund/Akzent-Farben/Text-Farbe).
     // Theme-Option `"transparent"` setzt den Hintergrund auf `transparent`
-    // (für PWAs mit eigenem Outer-Frame). Default folgt dem Sage-Page-
-    // Wert `rgba(0,0,0,0.45)` direkt.
+    // (für PWAs mit eigenem Outer-Frame).
+    //
+    // LESBARKEIT (Lighthouse-Runde 2026-08-01, nachgerechnet):
+    // Der Hintergrund stand auf `rgba(0, 0, 0, 0.45)` — dem Sage-Page-Wert. Das
+    // Widget wurde für die DUNKLE Sage-Page entworfen; in einer hellen PWA kippt
+    // die Rechnung, weil 45 % Schwarz über Weiß nur ein Mittelgrau ergibt:
+    //
+    //              Untergrund        helle Schrift   abgeblendete
+    //   vorher     helle Seite       3,09:1          1,97:1     <- beide unter der Norm
+    //   vorher     dunkle Seite     18,58:1          5,86:1
+    //   nachher    helle Seite      11,57:1          7,27:1
+    //   nachher    dunkle Seite     17,33:1          9,96:1
+    //
+    // (WCAG verlangt 4,5:1 für normalen Text. Gerechnet über die relative
+    // Leuchtdichte, nicht geschätzt.)
+    //
+    // Der Grund ist jetzt fast deckend und damit unabhängig von der Seite
+    // darunter. Der Glas-Eindruck bleibt — der `backdrop-filter` ist unberührt,
+    // er wird nur satter. Die Variablen bleiben ausdrücklich `:root`-Variablen,
+    // damit eine PWA sie weiterhin überschreiben kann; geändert wird nur der
+    // Standard, nicht diese Möglichkeit.
     return [
       "/* SBKIM Modul 17 Floating-Widget — 1:1 Sage-Page-Stil (Pflege UX 2026-05-25). */",
       "/* CSS-Variablen auf :root für PWA-Override. Eigene PWA setzt z.B. */",
       "/*   :root { --sbkim-widget-bg: var(--meine-pwa-card-bg); }       */",
       ":root {",
-      "  --sbkim-widget-bg: rgba(0, 0, 0, 0.45);",
+      "  --sbkim-widget-bg: rgba(18, 18, 24, 0.86);",
       "  --sbkim-widget-fg: #F5F5FF;",
-      "  --sbkim-widget-fg-dim: rgba(245, 245, 255, 0.55);",
+      "  --sbkim-widget-fg-dim: rgba(245, 245, 255, 0.75);",
       "  --sbkim-widget-line: rgba(255, 255, 255, 0.18);",
       "  --sbkim-widget-lamp-bg: rgba(255, 255, 255, 0.12);",
       "  --sbkim-widget-accent-green: #6EE7D3;",
@@ -430,6 +480,19 @@
       "  background: transparent;",
       "  border: none;",
       "  padding: 4px 6px;",
+      // BERUEHRUNGSZIEL (Lighthouse-Runde 2026-08-03, gemessen):
+      // Die Lampen-Knoepfe waren 54,5 x 18,6 px. Die Norm verlangt 24 x 24 px
+      // — wer mit dem Finger tippt (und nicht mit der Maus zielt), trifft
+      // 18 px schlecht. Gemessen an BookLedgerPro, mobil:
+      //
+      //   LEBT      54,5 x 18,6      VERKEHR   75,5 x 18,6
+      //   FREMD     61,5 x 18,6      SIEGEL    51,9 x 44,2   (war schon gross genug)
+      //
+      // Die Breite passt ueberall, nur die Hoehe fehlte. Darum NUR min-height
+      // — ein min-width wuerde das Zusammenschieben im minimierten Zustand
+      // kaputtmachen (dort steht max-width: 0). Die Pille waechst dadurch um
+      // rund 5 px; das Aussehen bleibt sonst unveraendert.
+      "  min-height: 24px;",
       "  margin: 0;",
       "  cursor: pointer;",
       "  display: inline-flex;",
@@ -542,6 +605,30 @@
       "#" + WIDGET_ID + " .sbkim-widget-slot.siegel.siegel-first-boot::before {",
       "  animation: sbkim-widget-siegel-first-boot 600ms ease-out;",
       "}",
+      // Pflege 17 Stufen-Render 2026-05-26 (Sub-(e)-Sichttest-Befund 1):
+      // Bronze („im Mycel, ruhend") = Surface-Check grün, aber noch kein
+      // Cross-Knoten-Handshake; Gold („im Mycel, aktiv") = mind. ein
+      // sbkim:handshake outcome:"established" empfangen. Spiegelt das
+      // Spec-Pattern aus index.html § Sub (e) (dort wirkt der Filter am
+      // 40 px Wappen-SVG; hier am 22 px Gold-Medaillon + ★-Glyph).
+      "#" + WIDGET_ID + " .sbkim-widget-slot.siegel[data-siegel-stufe=\"bronze\"]::before,",
+      "#" + WIDGET_ID + " .sbkim-widget-slot.siegel[data-siegel-stufe=\"bronze\"] .sbkim-widget-siegel-glyph {",
+      "  filter: saturate(0.6) brightness(0.85);",
+      "}",
+      "#" + WIDGET_ID + " .sbkim-widget-slot.siegel[data-siegel-stufe=\"bronze\"]:hover::before {",
+      "  filter: saturate(0.6) brightness(0.85);",
+      "  box-shadow: 0 0 8px rgba(140, 110, 47, 0.55);",
+      "}",
+      "#" + WIDGET_ID + " .sbkim-widget-slot.siegel[data-siegel-stufe=\"gold\"] { /* Default-Render — keine Override */ }",
+      // Bronze→Gold-Animation 600 ms (analog index.html § siegel-stufenwechsel-gold).
+      "#" + WIDGET_ID + " .sbkim-widget-slot.siegel.sbkim-widget-siegel-stufenwechsel::before {",
+      "  animation: sbkim-widget-siegel-stufenwechsel-gold 600ms ease-out;",
+      "}",
+      "@keyframes sbkim-widget-siegel-stufenwechsel-gold {",
+      "  0%   { transform: scale(1.00); box-shadow: 0 0 0 0 rgba(201, 169, 97, 0.55); }",
+      "  40%  { transform: scale(1.15); box-shadow: 0 0 18px 4px rgba(201, 169, 97, 0.55); }",
+      "  100% { transform: scale(1.00); box-shadow: 0 0 6px rgba(201, 169, 97, 0.5); }",
+      "}",
       // Stern-Glyph zentriert über der Lampe-::before (per absoluten Span).
       "#" + WIDGET_ID + " .sbkim-widget-siegel-glyph {",
       "  position: absolute;",
@@ -609,8 +696,14 @@
       "}",
       // Minimize-/Close-Knöpfe: kleine Icon-Buttons rechts. Touch-Größe 18 px.
       "#" + WIDGET_ID + " .sbkim-widget-btn {",
-      "  width: 18px;",
-      "  height: 18px;",
+      // BERUEHRUNGSZIEL (Lighthouse-Runde 2026-08-03): die beiden kleinen
+      // Knoepfe "−" (minimieren) und "✕" (schliessen) massen 18 x 18 px und
+      // lagen damit unter der Norm von 24 x 24 px. Gerade diese beiden trifft
+      // man mit dem Finger am haeufigsten daneben — und ein Fehlgriff auf "✕"
+      // blendet die Leiste aus. Das Glyph bleibt gleich gross (font-size
+      // unveraendert), nur die Trefferflaeche waechst.
+      "  width: 24px;",
+      "  height: 24px;",
       "  border-radius: 50%;",
       "  background: rgba(255, 255, 255, 0.08);",
       "  color: var(--sbkim-widget-fg);",
@@ -694,7 +787,9 @@
       "  font-size: 0.86rem;",
       "  font-family: 'Geist Mono', ui-monospace, monospace;",
       "}",
-      ".sbkim-widget-lebt-grid dt { color: var(--sbkim-widget-fg-dim, rgba(245,245,255,0.55)); }",
+      // Der Ersatzwert muss dieselbe Rechnung tragen wie die Variable (0.75),
+      // sonst fällt die Lesbarkeit genau dann zurück, wenn die Variable fehlt.
+      ".sbkim-widget-lebt-grid dt { color: var(--sbkim-widget-fg-dim, rgba(245,245,255,0.75)); }",
       ".sbkim-widget-lebt-grid dd { margin: 0; }",
     ].join("\n");
   }
@@ -799,6 +894,11 @@
         root.appendChild(siegelBtn);
         slotElements[slotId] = siegelBtn;
         siegelMounted = true;
+        // Pflege 17 Stufen-Render 2026-05-26: initial-Stufe-Attribut
+        // direkt nach Mount setzen (Modul 16 hat dann bereits init()
+        // gelaufen, sonst wären wir nicht in diesem Zweig — fail-soft
+        // Default ist "bronze").
+        applySiegelStufeToSlot(getSiegelStufe());
         continue;
       }
       var btn = buildSlotButton(doc, slotId);
@@ -1224,7 +1324,8 @@
 
   // Stufe 2: Auto-Lauschen-Status. VERKEHR ruhig grün, solange der Knoten am
   // Relais lauscht — sichtbar auch ohne aktuellen Verkehr. Echter Handschlag
-  // pulst weiterhin über onHandshake.
+  // pulst weiterhin über onHandshake. Verkehr bleibt aktiv, solange entweder
+  // schon Verkehr gesehen wurde ODER der Lausch-Kanal offen ist.
   function onNostrListening(ev) {
     var detail = (ev && ev.detail) || {};
     nostrListening = (detail.active !== false);
@@ -1245,6 +1346,17 @@
     setSlotActive("verkehr", true);
     pulseSlot("verkehr", "verkehr-pulse", VERKEHR_PULSE_MS);
     refreshVerkehrModalIfOpen();
+    // Pflege 17 Stufen-Render 2026-05-26 (Sub-(e)-Sichttest-Befund 1):
+    // bei established-Handshake den sichtbaren SIEGEL-Slot von Bronze
+    // auf Gold umschalten + 600 ms Stufenwechsel-Animation. Idempotent:
+    // wenn schon Gold, no-op (kein Re-Animate-Spam). Slot muss
+    // gemountet sein (sonst gibt's nichts zu re-stylen).
+    if (detail.outcome === "established" && siegelMounted) {
+      if (siegelStufeRendered !== SIEGEL_STUFE_GOLD) {
+        applySiegelStufeToSlot(SIEGEL_STUFE_GOLD);
+        playSiegelStufenwechselAnimation();
+      }
+    }
   }
 
   function onPostmessage(ev) {
@@ -1317,6 +1429,10 @@
     }
     slotElements.siegel = btn;
     siegelMounted = true;
+    // Pflege 17 Stufen-Render 2026-05-26: initial-Stufe-Attribut direkt
+    // nach Mount setzen. Modul 16 hat zu diesem Zeitpunkt
+    // `_meta.siegelStufe` gesetzt (Bau 16 Sub e).
+    applySiegelStufeToSlot(getSiegelStufe());
     // Pflege 17 UX 2026-05-25: SIEGEL ist jetzt da — wenn das Widget
     // minimiert war (mit data-fallback="lebt"), data-fallback entfernen,
     // damit SIEGEL zum sichtbaren Slot wird.
@@ -1341,6 +1457,54 @@
     if (!siegel || typeof siegel.isCertified !== "function") return false;
     try { return siegel.isCertified() === true; }
     catch (_e) { return false; }
+  }
+
+  // Pflege 17 Stufen-Render 2026-05-26: lookup auf
+  // SbkimSiegel._meta.siegelStufe (Modul-16-Getter aus Bau 16 Sub (e)).
+  // Fail-soft Default = "bronze" (sicheres minus). Architektur-Pfad (ii)
+  // aus dem Brief — robust gegen Event-Reihenfolge.
+  function getSiegelStufe() {
+    var siegel = global.SbkimSiegel;
+    if (!siegel || !siegel._meta) return SIEGEL_STUFE_BRONZE;
+    try {
+      var s = siegel._meta.siegelStufe;
+      if (s === SIEGEL_STUFE_GOLD) return SIEGEL_STUFE_GOLD;
+    } catch (_e) { /* fail-soft */ }
+    return SIEGEL_STUFE_BRONZE;
+  }
+
+  // Schreibt data-siegel-stufe ans sichtbare Slot-Element. Idempotent +
+  // fail-soft. Ruft KEIN Modul 16 auf.
+  function applySiegelStufeToSlot(stufe) {
+    var el = slotElements.siegel;
+    if (!el) return;
+    try {
+      el.setAttribute("data-siegel-stufe", stufe);
+      siegelStufeRendered = stufe;
+    } catch (err) {
+      warn("data-siegel-stufe konnte nicht gesetzt werden.", err);
+    }
+  }
+
+  // Bronze→Gold-Stufenwechsel-Animation am sichtbaren Slot (600 ms).
+  function playSiegelStufenwechselAnimation() {
+    var el = slotElements.siegel;
+    if (!el || !el.classList) return;
+    try {
+      el.classList.add("sbkim-widget-siegel-stufenwechsel");
+      if (siegelStufenwechselTimerId !== null) {
+        clearTimeout(siegelStufenwechselTimerId);
+      }
+      siegelStufenwechselTimerId = setTimeout(function () {
+        if (el && el.classList) {
+          try { el.classList.remove("sbkim-widget-siegel-stufenwechsel"); }
+          catch (_e) { /* nb */ }
+        }
+        siegelStufenwechselTimerId = null;
+      }, SIEGEL_STUFENWECHSEL_MS);
+    } catch (err) {
+      warn("Siegel-Stufenwechsel-Animation fehlgeschlagen.", err);
+    }
   }
 
   function nowIso() { return new Date().toISOString(); }
@@ -1791,6 +1955,9 @@
       get lebtNodeIdPrefix()   { return lebtNodeIdPrefix; },
       get siegelCertifiedAt()  { return siegelCertifiedAt; },
       get siegelRepoUrl()      { return siegelRepoUrl; },
+      // Pflege 17 Stufen-Render 2026-05-26: was der sichtbare SIEGEL-Slot
+      // gerade anzeigt ("bronze" | "gold" | null). null = nicht gemountet.
+      get siegelStufeRendered() { return siegelStufeRendered; },
       get visibleFlag()        { return visibleFlag; },
       get optAllowClose()      { return optAllowClose; },
       get optAllowDrag()       { return optAllowDrag; },
