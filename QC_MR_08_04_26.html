@@ -10969,8 +10969,17 @@ if('serviceWorker' in navigator){
         });
       });
     }).catch(()=>{});
-    // Wenn neuer SW übernimmt → Seite neu laden
+    // Wenn neuer SW übernimmt → Seite neu laden.
+    // ABER: beim ERSTEN Besuch gibt es noch keinen Controller. Der frisch
+    // installierte SW übernimmt via skipWaiting()+clients.claim() sofort,
+    // controllerchange feuerte — und die 2,1-MB-Seite wurde komplett ein
+    // zweites Mal geladen, obwohl es gar keinen alten Code zu ersetzen gab.
+    // Nur bei einer ECHTEN Aktualisierung neu laden.
+    const hatteSchonController = !!navigator.serviceWorker.controller;
+    let ladeNeu = false;
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(!hatteSchonController) return;    // Erstinstallation → kein Reload
+      if(ladeNeu) return; ladeNeu = true;  // Doppel-Reload verhindern
       window.location.reload();
     });
   });
