@@ -1,5 +1,5 @@
 // Service Worker for Muttis Rezeptbuch (Hauptapp)
-const CACHE = 'mrz-v11';
+const CACHE = 'mrz-v12';
 const SHELL = ['./index.html', './app-manifest.json', './icons/icon-book-blue-192.png', './icons/icon-book-blue-512.png'];
 
 self.addEventListener('install', e => {
