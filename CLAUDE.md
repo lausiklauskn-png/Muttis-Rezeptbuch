@@ -147,20 +147,47 @@ for s in [72,96,120,128,144,152,180,192,384,512]:
                      output_width=s, output_height=s)
 ```
 
-### Icons in HTML einbetten (Favicon-Caching-Lösung)
-Browser cachen externe Favicon-URLs aggressiv – selbst nach Cache-Leeren bleibt das alte Icon.
-**Lösung:** Alle Icons als Base64-Data-URL direkt in die HTML-Datei einbetten:
+### ⚠️ REGEL GEÄNDERT 2026-08-08: Icons als DATEI mit Versionsnummer
+
+**Bis dahin galt:** alle Icons als Base64 in die HTML einbetten, weil Browser
+externe Favicon-URLs aggressiv cachen — selbst nach Cache-Leeren blieb das alte
+Icon stehen.
+
+**Das Problem war echt, der Preis war zu hoch.** Gemessen am 2026-08-08: die
+eingebetteten Symbole machten **1.119 KB** der Quelldatei aus (darunter ein
+625-KB-SVG). Sie lagen damit bei **jedem** Seitenaufruf auf dem kritischen Pfad,
+obwohl sie während des Ladens **niemand sieht** — es sind Tab- und
+Startbildschirm-Symbole.
+
+| | vorher | nachher |
+|---|---|---|
+| Quelldatei | 1.929 K | **810 K** |
+| erster Anstrich | 6,7 · 6,5 s | **2,5 · 2,3 s** |
+| Leistung (Handy, lokal) | 56 · 51 | **90 · 90** |
+
+**Neue Regel:** Icons als Datei verlinken, mit **Versionsnummer in der Adresse**:
 
 ```html
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,...">
-<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,...">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-book-192.png?v=1">
 ```
 
-- Kein separater HTTP-Request, kein separater Cache-Eintrag
-- Icon aktualisiert sich automatisch wenn die HTML-Datei geändert wird
-- Auch apple-touch-icons und PWA-Manifest-Icons sind eingebettet (JS-Blob)
+Die Versionsnummer löst dasselbe Problem wie die Einbettung: eine geänderte
+Adresse ist für den Cache ein **anderes** Bild, das alte kann er nicht mehr
+liefern. Nur kostet sie keine Bytes im Dokument.
 
-Nach Icon-Änderung: Base64-Strings in QC-Datei neu generieren (Python-Script), dann `build.py`.
+**Nach jeder Icon-Änderung `?v=` um eins hochzählen** — in der QC-Datei und in
+`app-sw.js`. Beide müssen **dieselbe** Adresse nennen, sonst holt der
+Offline-Vorrat ein anderes Bild als die Seite.
+
+**Pflicht dabei:** jedes verlinkte Icon gehört in den `SHELL`-Vorrat von
+`app-sw.js`, sonst fehlen die Symbole offline. Vorher lag das Problem nicht vor,
+weil sie im Dokument steckten.
+
+**Bleibt es bei einer eingebetteten Icon-Datei, obwohl das Icon sich ändert und
+der Browser das alte zeigt?** Dann ist die stärkere Fassung ein echter
+Dateiname-Wechsel (`icon-book-192-v2.png`) statt der `?v=`-Angabe.
+
+Die Icons selbst erzeugt weiterhin `generate_icons.py` aus `icons/icon-book.svg`.
 
 ---
 
