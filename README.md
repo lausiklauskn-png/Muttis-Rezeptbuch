@@ -94,3 +94,11 @@ v9.1 – Aktuelle stabile Version mit:
 Die private Nutzung der App ist gestattet.
 Vervielfältigung, Veränderung oder Weitergabe des Quellcodes
 – auch auszugsweise – sind ohne ausdrückliche Genehmigung untersagt.
+
+---
+
+## Rechte
+
+Rechteinhaber ist Klaus Nitzsche. Welche Lizenz gilt und welche Rolle die
+KI-Werkzeuge hatten, steht in [`RECHTE.md`](RECHTE.md); der Lizenztext in
+[`LICENSE`](LICENSE).
