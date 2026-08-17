@@ -325,7 +325,16 @@
           }); })
         .then(function (spore) { lastSpore = spore; downloadJson(sporeFileName(), spore);
           out("#sbwiz-o2", "Spore erzeugt + ⬇ (nodeId=" + spore.id + "). Nach sbkim/spore.json committen.");
-          dlg.querySelector("#sbwiz-s3").disabled = false; })
+          dlg.querySelector("#sbwiz-s3").disabled = false;
+          // Auch hier nachziehen: der Wechsler zeigt je Fach die Kennung, und
+          // die steht erst nach der Spore fest.
+          refreshWizardIdentities();
+          // Und die alte Meldung aus Schritt 3 wegräumen. Sie stammt aus einem
+          // Klick VOR der Identität und blieb danach als Fehler stehen — das
+          // Backup war längst möglich, nur sagte die Zeile weiter das Gegenteil.
+          var o3 = dlg.querySelector("#sbwiz-o3");
+          if (o3 && /Keine Identit/.test(o3.textContent || "")) o3.textContent = "";
+        })
         .catch(function (e) { out("#sbwiz-o2", "Fehler: " + (e && e.message || e), true); b.disabled = false; })
         .then(function () { window.removeEventListener("sbkim:embedding-progress", onProg); });
     });
