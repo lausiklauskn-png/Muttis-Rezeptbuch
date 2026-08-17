@@ -246,3 +246,23 @@ Dieser Fix läuft am Ende von `render()` – nach `c.innerHTML=html`, wenn der C
 ### Sprache hinzufügen
 - Im `LANGS`-Objekt neuen Sprachblock ergänzen
 - `CL`-Variable und `T(k)`-Funktion funktionieren automatisch
+
+---
+
+## 🏷️ Gerätename gehört ins Verbinden-Panel (netzweite Bauregel, Klaus 2026-08-16)
+
+Wer ein Panel „Mit dem Netz verbinden" hat, hat auch das **Gerätenamen-Feld darin** —
+an derselben Stelle wie in jeder anderen App. Verbindliche Fassung mit Begründung:
+[`Sage-Protokol/docs/INTERFACES.md` §11.7](https://github.com/lausiklauskn-png/Sage-Protokol/blob/main/docs/INTERFACES.md),
+Rezept mit Code: Skill `geraetename`.
+
+Die drei Punkte, an denen es hier schon einmal schiefging:
+
+- Das Feld wird vom **app-eigenen Glue** ins Panel gehängt (`rendezvous-init.js` bzw.
+  `sbkim-init.js`) — **niemals** in `23_rendezvous_ui.js` / `sbkim-rendezvous-ui.js`
+  schreiben, das sind byte-1:1-Kopien mit Drift-Guard.
+- Jedes Namensfeld trägt `data-sbkim-geraetename`; die Doppel-Prüfung sucht **nur im
+  Panel**. Ändert sich der Name, gleichen sich **alle** markierten Felder ab.
+- Der Name geht **nur** an Anzeige und Anmeldung, **nie** an `generateOwnSpore` — kein
+  Spore-Re-Sign. Und er ist ein Hinweis, kein Vertrauens-Beweis: immer zusammen mit der
+  Kennung anzeigen.

@@ -338,17 +338,32 @@ window.__sbkimErzeugeSpore = async function (description) {
   // Anmeldung hängen — NICHT an generateOwnSpore (kein Spore-Re-Sign). Sicherheit:
   // nur Hinweis, die Kennung im Raum bleibt daneben. Skill: geraetename.
   function geraetename() { try { return (localStorage.getItem("sbkim_geraetename") || "").trim().slice(0, 40); } catch (_e) { return ""; } }
+  // Alle Namensfelder der Seite gleichziehen (Panel + app-eigenes Feld schreiben
+  // denselben Speicher). Programmatisches Setzen von .value löst kein "input"
+  // aus — deshalb keine Schleife.
+  function syncGeraetenameFields() {
+    try {
+      var v = geraetename();
+      var list = document.querySelectorAll("[data-sbkim-geraetename]");
+      for (var i = 0; i < list.length; i++) { if (list[i].value !== v) list[i].value = v; }
+    } catch (_e) {}
+  }
   function displayNodeName(base) { var g = geraetename(); return g ? (base + " · " + g) : base; }
   // Namensfeld per Glue ins geteilte Rendezvous-Panel (#sbkim-rdv-panel, byte-1:1)
   // injizieren — so bleibt index.html/QC/build.py unangetastet (Rezeptbuch-Build-Regel).
   function injectGeraetenameField() {
     function tryInject() {
       var panel = document.getElementById("sbkim-rdv-panel");
-      if (!panel || document.getElementById("sbkim-geraetename")) return false;
+      if (!panel) return false;
+      // Erkennungs-Marke statt fester id, und bewusst NUR im Panel gesucht: ein
+      // app-eigenes Feld an anderer Stelle bleibt erlaubt (es zieht per
+      // syncGeraetenameFields mit), aber im Panel steht nie ein zweites.
+      if (panel.querySelector("[data-sbkim-geraetename]")) return true;
       var wrap = document.createElement("div");
       wrap.style.cssText = "margin:8px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap";
       var lab = document.createElement("span"); lab.textContent = "🏷️ Gerätename:"; lab.style.cssText = "color:#9aa7b6;font-size:.85rem";
       var inp = document.createElement("input"); inp.id = "sbkim-geraetename"; inp.type = "text"; inp.maxLength = 40;
+      inp.setAttribute("data-sbkim-geraetename", "1");
       inp.placeholder = "z. B. Klaus-Handy (frei wählbar)"; inp.value = geraetename();
       inp.style.cssText = "flex:1;min-width:120px;padding:4px 6px;border-radius:6px;border:1px solid #33414f;background:#0d1520;color:#dfeaf2;font:inherit";
       inp.title = "Nur ein Anzeige-Hinweis, kein Vertrauens-Beweis — die Kennung bleibt daneben.";
@@ -396,6 +411,7 @@ window.__sbkimErzeugeSpore = async function (description) {
     injectGeraetenameField();
     try {
       window.addEventListener("sbkim:geraetename-changed", function () {
+        syncGeraetenameFields();
         try { if (window.SbkimRendezvous && window.SbkimRendezvous.configure) window.SbkimRendezvous.configure({ nodeName: displayNodeName("Muttis Rezeptbuch") }); } catch (_e) {}
       });
     } catch (_e) {}
