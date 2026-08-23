@@ -1,7 +1,7 @@
 /*
  * KANONISCHER Siegel-Modal-Inhalt — das Andock-Werkzeug IM Siegel (1:1-Vorlage).
  *
- * Quelle der Wahrheit: extrahiert aus Sage index.html (#sage-andock-modal:
+ * Quelle: extrahiert aus Sage index.html (#sage-andock-modal:
  * andockStep1Identity/andockStep2Spore/andockStep3Backup/andockStep4Restore +
  * refreshAndockIdentities/andockSwitchIdentity) und aus der bewährten Ein-Datei-
  * Extraktion Kim-Bell/assets/siegel-inhalt.js. Diese Datei ist der EINE Bauplan,
