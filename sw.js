@@ -1,6 +1,12 @@
 // Service Worker for Muttis Rezeptbuch – Handbuch
 // Cache name: bump version string to force cache refresh on updates
 const CACHE_NAME = 'handbuch-v1';
+// Nur EIGENE Vorraete aufraeumen: `caches` gehoert dem Ursprung, nicht dem Pfad.
+// Auf lausiklauskn-png.github.io liegen rund zwanzig Apps. Dieser Worker wird
+// von keiner Seite registriert (index.html registriert app-sw.js; gemessen
+// 2026-09-08) — der Filter steht trotzdem, damit die Datei nicht ohne ihn
+// weiterkopiert wird. Sage-Protokol/tests/vorrat_wirkung.mjs.
+const VORRAT_PRAEFIX = 'handbuch-';
 const ASSETS = [
   './handbuch.html',
   './manifest.json'
@@ -26,7 +32,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => name.startsWith(VORRAT_PRAEFIX) && name !== CACHE_NAME)
           .map((name) => {
             console.log('[SW] Deleting old cache:', name);
             return caches.delete(name);
