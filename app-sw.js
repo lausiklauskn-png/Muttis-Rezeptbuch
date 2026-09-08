@@ -1,5 +1,14 @@
 // Service Worker for Muttis Rezeptbuch (Hauptapp)
-const CACHE = 'mrz-v13';
+const CACHE = 'muttisrezeptbuch-v14';
+
+/* ⚠ NUR EIGENE VORRAETE AUFRAEUMEN — `caches` gehoert dem URSPRUNG, nicht dem
+ * Pfad. Auf lausiklauskn-png.github.io liegen rund zwanzig Apps; ein Filter,
+ * der nur "ist nicht meiner" fragt, laesst ALLE fremden durch und loescht sie.
+ * Gemessen am 2026-09-08 an zwei echten Apps
+ * (Sage-Protokol/tests/vorrat_wirkung.mjs). Praefix ABGELESEN aus der
+ * Vorrat-Konstante, nicht geraten. Muster aus Tomys-Hub/bookledger/sw.js.
+ * Es muss BEIDES tun: fremde stehen lassen UND eigene alte weiter wegraeumen. */
+const VORRAT_PRAEFIX = "muttisrezeptbuch-";
 const SHELL = [
   './index.html',
   './app-manifest.json',
@@ -35,7 +44,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    Promise.all(keys.filter(k => k.startsWith(VORRAT_PRAEFIX) && k !== CACHE).map(k => caches.delete(k)))
   ));
   self.clients.claim();
 });
