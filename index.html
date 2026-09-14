@@ -826,13 +826,14 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 
 /* ── NEW SCAN UI ─────────────────────────────────── */
 /* ── SCAN SETUP UI ── */
-/* Step cards */
-.stp-card{border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:0 2px 10px var(--sh)}
-.stp-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--parch)}
 .stp-bubble{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff;flex-shrink:0}
-.stp-title{font-weight:700;font-size:.88rem;flex:1;line-height:1.3}
-.stp-status{font-size:1rem;flex-shrink:0}
-.stp-body{background:var(--parch);padding:11px 14px;border-top:1px solid var(--sand2)}
+/* Zugangscode-Erklärung: ein ruhiger Kasten, kein Bild */
+.key-how{background:var(--parch);border:1px solid var(--sand2);border-radius:12px;padding:12px 13px;margin-bottom:12px}
+.key-how-step{display:flex;gap:10px;align-items:flex-start}
+.key-how-n{width:21px;height:21px;border-radius:50%;background:var(--teal);color:#fff;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.key-how-txt{flex:1;font-size:.74rem;color:var(--dim);line-height:1.5}
+.key-how-txt b{display:block;font-size:.80rem;color:var(--ink);margin-bottom:2px}
+.key-how-ok{font-size:.95rem;flex-shrink:0;line-height:1.2}
 /* Website button */
 .btn-website{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px 14px;background:linear-gradient(135deg,#5585cc,#3366aa);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;margin:6px 0;box-shadow:0 3px 12px rgba(51,102,170,.35)}
 .btn-website:active{opacity:.85;transform:scale(.98)}
@@ -840,19 +841,6 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .btn-website .bw-text{text-align:left}
 .btn-website .bw-lbl{display:block;font-size:.86rem}
 .btn-website .bw-sub{display:block;font-size:.64rem;opacity:.8;margin-top:1px}
-/* Mock browser */
-.mock-browser{background:#f0f0f0;border-radius:8px;overflow:hidden;margin:8px 0;border:1px solid #ddd}
-.mock-bar{background:#e0e0e0;padding:5px 9px;display:flex;align-items:center;gap:6px}
-.mock-dots{display:flex;gap:4px}
-.mock-dot{width:8px;height:8px;border-radius:50%}
-.mock-url{flex:1;background:#fff;border-radius:10px;padding:3px 8px;font-size:.6rem;color:#666;font-family:monospace}
-.mock-body{padding:9px 10px}
-.mock-row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid #eee}
-.mock-row:last-child{border-bottom:none}
-.mock-icon-box{width:26px;height:26px;background:#e8f0fe;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
-.mock-txt{flex:1;font-size:.65rem;color:#444}
-.mock-btn{font-size:.6rem;background:#1a73e8;color:#fff;border:none;border-radius:4px;padding:3px 7px;font-weight:700}
-.mock-highlight{background:#fff3cd;border-radius:3px;padding:1px 3px;font-weight:700;color:#856404}
 /* Paste box */
 .paste-box{background:var(--parch);border:2px solid var(--teal);border-radius:12px;padding:12px;position:relative}
 .paste-box-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:flex;align-items:center;gap:5px}
@@ -2253,75 +2241,39 @@ Vielen Dank für deine Unterstützung.</div>
 
       <div id="scanSetup">
 
-        
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,#e8f0fe,#d2e3fc)">
-            <div class="stp-bubble" style="background:#1a73e8">1</div>
-            <div class="stp-title" id="sc1T">Website öffnen & kostenlosen Account anlegen</div>
-            <div class="stp-status" id="stepDone1"></div>
+        <!-- Zugangscode: EIN ruhiger Kasten statt drei Karten mit Farbverlauf-
+             Kopf, und ohne das nachgebaute Browser-Bild. Klaus 2026-09-14:
+             "nicht so Bild- und Container-überladen". Jeder Text hängt am
+             SELBEN Sprach-Schlüssel wie vorher — es ändert sich nur die Gestalt. -->
+        <div class="key-how">
+          <div class="key-how-step">
+            <span class="key-how-n">1</span>
+            <div class="key-how-txt">
+              <b id="sc1T">Website öffnen & kostenlosen Account anlegen</b>
+              <span id="sc1D">Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.</span>
+            </div>
+            <span class="key-how-ok" id="stepDone1"></span>
           </div>
-          <div class="stp-body">
-            <p style="font-size:.74rem;color:var(--dim);margin-bottom:9px;line-height:1.5" id="sc1D">
-              Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.
-            </p>
-            <a class="btn-website" href="https://console.anthropic.com/settings/keys" target="_blank" id="scanOpenLink" onclick="markStep1()">
-              <span class="bw-ico">🌐</span>
-              <span class="bw-text">
-                <span class="bw-lbl" id="txtWebLbl">Zur Anthropic-Website →</span>
-                <span class="bw-sub">console.anthropic.com/settings/keys</span>
-              </span>
-            </a>
-          </div>
-        </div>
 
-        
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2)">
-            <div class="stp-bubble" style="background:#e65100">2</div>
-            <div class="stp-title" id="sc2T">Zugangscode erstellen & kopieren</div>
-            <div class="stp-status" id="stepDone2"></div>
-          </div>
-          <div class="stp-body">
-            <p style="font-size:.74rem;color:var(--dim);margin-bottom:8px;line-height:1.5" id="sc2D">
-              Auf der Website auf <strong style="color:#e65100">„Create Key"</strong> klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code <strong>kopieren</strong> (📋 Button).
-            </p>
-            
-            <div class="mock-browser">
-              <div class="mock-bar">
-                <div class="mock-dots">
-                  <div class="mock-dot" style="background:#ff5f56"></div>
-                  <div class="mock-dot" style="background:#ffbd2e"></div>
-                  <div class="mock-dot" style="background:#27c93f"></div>
-                </div>
-                <div class="mock-url">console.anthropic.com/settings/keys</div>
-              </div>
-              <div class="mock-body" style="background:#fff">
-                <div style="font-size:.62rem;font-weight:700;color:#333;margin-bottom:6px">API Keys</div>
-                <div class="mock-row">
-                  <div class="mock-icon-box">🔑</div>
-                  <div class="mock-txt"><span class="mock-highlight">Create Key</span> → Name eingeben → Erstellen</div>
-                  <div class="mock-btn">+ New</div>
-                </div>
-                <div class="mock-row" style="background:#f0fff4;border-radius:5px;padding:5px 7px;margin-top:4px;border:1.5px solid #86efac">
-                  <div style="font-size:.6rem;font-family:monospace;color:#166534;flex:1">sk-ant-api03-XXXX…XXXX</div>
-                  <div class="mock-btn" style="background:#166534">📋 Kopieren</div>
-                </div>
-                <div style="font-size:.58rem;color:#888;margin-top:4px;text-align:center">⚠️ Nur jetzt sichtbar — sofort kopieren!</div>
-              </div>
+          <a class="btn-website" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" onclick="markStep1()">
+            <span class="bw-ico">🌐</span>
+            <span class="bw-text">
+              <span class="bw-lbl" id="scanOpenLink">Zur Anthropic-Website →</span>
+              <span class="bw-sub">console.anthropic.com/settings/keys</span>
+            </span>
+          </a>
+
+          <div class="key-how-step">
+            <span class="key-how-n">2</span>
+            <div class="key-how-txt">
+              <b id="sc2T">Zugangscode erstellen & kopieren</b>
+              <span id="sc2D">Auf der Website auf „Create Key" klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code kopieren (📋 Button).</span>
             </div>
           </div>
         </div>
 
-        
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,var(--teals),#c8e8e6)">
-            <div class="stp-bubble" style="background:var(--teal)">3</div>
-            <div class="stp-title" id="sc3T">Code hier einfügen — fertig!</div>
-            <div class="stp-status" id="stepDone3"></div>
-          </div>
-          <div class="stp-body">
-            <div class="paste-box">
-              <div class="paste-box-label">🔑 <span id="apiKeyLbl">Zugangscode einfügen</span></div>
+        <div class="paste-box">
+              <div class="paste-box-label">🔑 <span id="apiKeyLbl">Zugangscode einfügen</span> <span class="key-how-ok" id="stepDone3"></span></div>
               <div class="paste-row">
                 <input class="scan-key-in" id="apiKeyIn" type="password"
                   placeholder="sk-ant-…"
@@ -2338,8 +2290,6 @@ Vielen Dank für deine Unterstützung.</div>
                 🔒 <span id="apiHint">Bleibt nur auf deinem Gerät — wird niemals weitergegeben</span>
               </div>
             </div>
-          </div>
-        </div>
 
         <div class="scan-faq">
           <button class="scan-faq-toggle" onclick="toggleScanFaq()" id="scanFaqBtn">
@@ -2623,63 +2573,37 @@ Vielen Dank für deine Unterstützung.</div>
 
       <div id="txtSetup">
 
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,#e8f0fe,#d2e3fc)">
-            <div class="stp-bubble" style="background:#1a73e8">1</div>
-            <div class="stp-title" id="txtSc1T">Website öffnen & kostenlosen Account anlegen</div>
+        <!-- Zugangscode: EIN ruhiger Kasten statt drei Karten mit Farbverlauf-
+             Kopf, und ohne das nachgebaute Browser-Bild. Klaus 2026-09-14:
+             "nicht so Bild- und Container-überladen". Jeder Text hängt am
+             SELBEN Sprach-Schlüssel wie vorher — es ändert sich nur die Gestalt. -->
+        <div class="key-how">
+          <div class="key-how-step">
+            <span class="key-how-n">1</span>
+            <div class="key-how-txt">
+              <b id="txtSc1T">Website öffnen & kostenlosen Account anlegen</b>
+              <span id="txtSc1D">Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.</span>
+            </div>
           </div>
-          <div class="stp-body">
-            <p style="font-size:.74rem;color:var(--dim);margin-bottom:9px;line-height:1.5" id="txtSc1D">Tippe auf den blauen Button — er öffnet die Website. Registriere dich kostenlos mit deiner E-Mail-Adresse.</p>
-            <a class="btn-website" href="https://console.anthropic.com/settings/keys" target="_blank" onclick="markStep1()">
-              <span class="bw-ico">🌐</span>
-              <span class="bw-text">
-                <span class="bw-lbl">Zur Anthropic-Website →</span>
-                <span class="bw-sub">console.anthropic.com/settings/keys</span>
-              </span>
-            </a>
-          </div>
-        </div>
 
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2)">
-            <div class="stp-bubble" style="background:#e65100">2</div>
-            <div class="stp-title" id="txtSc2T">Zugangscode erstellen & kopieren</div>
-          </div>
-          <div class="stp-body">
-            <p style="font-size:.74rem;color:var(--dim);margin-bottom:8px;line-height:1.5">Auf der Website auf <strong style="color:#e65100">„Create Key"</strong> klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code <strong>kopieren</strong> (📋 Button).</p>
-            <div class="mock-browser">
-              <div class="mock-bar">
-                <div class="mock-dots">
-                  <div class="mock-dot" style="background:#ff5f56"></div>
-                  <div class="mock-dot" style="background:#ffbd2e"></div>
-                  <div class="mock-dot" style="background:#27c93f"></div>
-                </div>
-                <div class="mock-url">console.anthropic.com/settings/keys</div>
-              </div>
-              <div class="mock-body" style="background:#fff">
-                <div style="font-size:.62rem;font-weight:700;color:#333;margin-bottom:6px">API Keys</div>
-                <div class="mock-row">
-                  <div class="mock-icon-box">🔑</div>
-                  <div class="mock-txt"><span class="mock-highlight">Create Key</span> → Name eingeben → Erstellen</div>
-                  <div class="mock-btn">+ New</div>
-                </div>
-                <div class="mock-row" style="background:#f0fff4;border-radius:5px;padding:5px 7px;margin-top:4px;border:1.5px solid #86efac">
-                  <div style="font-size:.6rem;font-family:monospace;color:#166534;flex:1">sk-ant-api03-XXXX…XXXX</div>
-                  <div class="mock-btn" style="background:#166534">📋 Kopieren</div>
-                </div>
-                <div style="font-size:.58rem;color:#888;margin-top:4px;text-align:center">⚠️ Nur jetzt sichtbar — sofort kopieren!</div>
-              </div>
+          <a class="btn-website" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" onclick="markStep1()">
+            <span class="bw-ico">🌐</span>
+            <span class="bw-text">
+              <span class="bw-lbl" id="txtWebLbl">Zur Anthropic-Website →</span>
+              <span class="bw-sub">console.anthropic.com/settings/keys</span>
+            </span>
+          </a>
+
+          <div class="key-how-step">
+            <span class="key-how-n">2</span>
+            <div class="key-how-txt">
+              <b id="txtSc2T">Zugangscode erstellen & kopieren</b>
+              <span id="txtSc2D">Auf der Website auf „Create Key" klicken, einen Namen eingeben (z.B. „Rezeptbuch"), dann den langen Code kopieren (📋 Button).</span>
             </div>
           </div>
         </div>
 
-        <div class="stp-card">
-          <div class="stp-head" style="background:linear-gradient(135deg,var(--teals),#c8e8e6)">
-            <div class="stp-bubble" style="background:var(--teal)">3</div>
-            <div class="stp-title" id="txtSc3T">Code hier einfügen — fertig!</div>
-          </div>
-          <div class="stp-body">
-            <div class="paste-box">
+        <div class="paste-box">
               <div class="paste-box-label">🔑 Zugangscode einfügen</div>
               <div class="paste-row">
                 <input class="scan-key-in" id="txtApiKeyIn" type="password"
@@ -2693,8 +2617,6 @@ Vielen Dank für deine Unterstützung.</div>
               </button>
               <div class="scan-key-note">🔒 Bleibt nur auf deinem Gerät — wird niemals weitergegeben</div>
             </div>
-          </div>
-        </div>
       </div>
 
       
@@ -4802,6 +4724,17 @@ function applyLang(code){
     'hlpShareBtn','hlpExportBtn','hlpImportBtn','hlpCacheBtn','hlpResetBtn',
     'hlpPwa','hlpPwaSub'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&L[id]!==undefined)el.textContent=L[id];});
+  // Zwillinge: dieselbe Aussage an zwei Stellen, EIN Sprach-Schlüssel.
+  // Der rechte greift NUR ein, wenn der linke in dieser Sprache fehlt —
+  // sonst überschriebe er eine vorhandene Übersetzung still.
+  // Ohne das stünde die Erklärung im Text-Tab teils auf Deutsch:
+  // txtSc2D kennt gar keine Sprache, und Portugiesisch kennt die
+  // übrigen vier nicht.
+  const _zwill={txtSc2D:'sc2D',txtSc1T:'sc1T',txtSc1D:'sc1D',txtSc2T:'sc2T',txtWebLbl:'scanOpenLink'};
+  for(const[id,k]of Object.entries(_zwill)){
+    if(L[id]!==undefined)continue;
+    const el=document.getElementById(id);if(el&&L[k]!==undefined)el.textContent=L[k];
+  }
   // HTML-Keys (Listen): innerHTML statt textContent
   ['scanInfoCol1Items','scanInfoCol2Items','txtListItems','imggenHowToEl','imggenInfoCol1Items','imggenInfoCol2Items'].forEach(id=>{
     const el=document.getElementById(id);
@@ -5995,7 +5928,7 @@ async function saveAndStartScan(){
   try{
     await validateApiKey(v);
     localStorage.setItem('claudeKey9',v);
-    document.getElementById('stepDone3').textContent='✅';
+    const _d3=document.getElementById('stepDone3');if(_d3)_d3.textContent='✅';
     switchToScanMain();
     initTxtPane();
     toast('🚀 '+T('scanReadyLbl')+'!');
