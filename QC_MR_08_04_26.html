@@ -367,6 +367,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .ra.gld{background:var(--golds);border:1px solid var(--gold);color:var(--gold)}
 .ra.del{background:transparent;border:1px solid rgba(0,0,0,.08);color:var(--dim)}
 .ra.imgr{background:var(--teals);border:1px solid var(--teal);color:var(--teal)}
+.ra-cam{background:var(--teals);border:1px solid var(--teal);color:var(--teal);width:26px;padding:0;border-radius:50%}
 .ra:active{opacity:.65}
 .blank-add-btn{display:block;width:100%;padding:7px;border:none;
   background:var(--rust);color:#fff;font-size:.72rem;font-weight:700;
@@ -2029,6 +2030,12 @@ button:active{transform:scale(0.97)}
           <div class="sett-sub" id="sApiKeySub">Zugangscode verwalten</div></div>
         <div class="sett-arr">›</div>
       </div>
+            <div class="sett-row" onclick="openImport();switchFovTab('importOv','imggen',document.getElementById('impTabImgGen'))">
+        <div class="sett-ico">🎨</div>
+        <div class="sett-body"><div class="sett-lbl" id="sImgGenLbl">OpenAI-Bildschlüssel</div>
+          <div class="sett-sub" id="sImgGenSub">Für KI-Bilder zu deinen Rezepten</div></div>
+        <div class="sett-arr">›</div>
+      </div>
       <div class="sett-row" onclick="toggleMistralKeyField()">
         <div class="sett-ico">📄</div>
         <div class="sett-body"><div class="sett-lbl">Mistral-Schlüssel (EU)</div>
@@ -2187,6 +2194,7 @@ Vielen Dank für deine Unterstützung.</div>
     <div class="fovtab" onclick="switchFovTab('importOv','scan',this)" id="impTabScan" title="Rezept per KI-Scan erkennen">📄 KI-Scan</div>
     <div class="fovtab" onclick="switchFovTab('importOv','txt',this)" id="impTabTxt" title="Rezepttext eingeben">📝 Text</div>
     <div class="fovtab" onclick="switchFovTab('importOv','json',this)" id="impTabJson" title="Gespeicherte Rezeptsammlung laden">📥 Rezept laden</div>
+    <div class="fovtab" onclick="switchFovTab('importOv','imggen',this)" id="impTabImgGen" title="KI-Bild für ein Rezept erzeugen">🎨 KI-Bild</div>
   </div>
   <div class="fov-body">
     <div class="fov-pane on" id="imp-img">
@@ -2453,6 +2461,101 @@ Vielen Dank für deine Unterstützung.</div>
 
       </div>
     </div>
+    <div class="fov-pane" id="imp-imggen">
+      <div id="imggenSetup">
+        <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+          <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:6px" id="imggenSetupTitleEl">🎨 KI-Bildgenerierung einrichten</div>
+          <div style="font-size:.76rem;color:#1e4a45;line-height:1.55" id="imggenSetupDescEl">Erzeugt automatisch ein appetitliches Foto für jedes Rezept — mit OpenAI DALL·E 3. Du brauchst dafür einen eigenen OpenAI API-Schlüssel.</div>
+        </div>
+        <div class="paste-box" style="margin-bottom:12px">
+          <div class="paste-box-label">🔑 <span id="imggenKeyLblEl">OpenAI API-Schlüssel</span></div>
+          <div class="paste-row">
+            <input class="scan-key-in" id="imggenKeyIn" type="password"
+              placeholder="sk-…"
+              oninput="onImgGenKeyInput(this.value)"
+              onkeydown="if(event.key==='Enter')saveAndActivateImgGen()"/>
+            <button class="paste-btn" onclick="pasteImgGenKey()" id="imggenPasteBtn" title="Schlüssel aus Zwischenablage einfügen">📋 Einfügen</button>
+          </div>
+          <button class="scan-key-btn" id="imggenSaveBtn" onclick="saveAndActivateImgGen()" disabled title="OpenAI-Schlüssel speichern und aktivieren">🚀 <span id="imggenSaveBtnLbl">Speichern & aktivieren</span></button>
+          <div class="scan-key-note">🔒 <span id="imggenHintEl">Bleibt nur auf deinem Gerät — wird niemals weitergegeben</span></div>
+        </div>
+        <div style="background:var(--sand2);border-radius:8px;padding:10px 12px;font-size:.74rem;color:var(--dim);line-height:1.65" id="imggenHowToEl">
+          <strong>So erhältst du deinen Schlüssel:</strong><br>
+          1. <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" style="color:var(--teal)">platform.openai.com/api-keys</a> → „Create new secret key"<br>
+          2. Schlüssel kopieren (beginnt mit <code style="background:rgba(0,0,0,.07);padding:1px 4px;border-radius:3px;font-size:.68rem">sk-…</code>)<br>
+          3. Hier einfügen &amp; speichern<br>
+          <br>💡 Ein Bild kostet ~0,04 € · Abrechnung direkt bei OpenAI
+        </div>
+      </div>
+
+      <div id="imggenMain" style="display:none">
+        <div id="imggenSingleWrap" style="display:none;margin-bottom:14px;background:var(--sand);border:1.5px solid var(--sand2);border-radius:10px;padding:12px 14px">
+          <div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:9px" id="imggenSingleTitle">📸 Neues KI-Bild erstellen</div>
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:11px">
+            <img id="imggenSinglePreview" src="" style="width:76px;height:57px;object-fit:cover;border-radius:8px;border:1px solid var(--sand2);display:none;flex-shrink:0"/>
+            <div style="font-size:.72rem;color:var(--dim);line-height:1.6">Aktuelles Bild wird ersetzt<br>Kosten: <strong style="color:var(--teal)">~0,04 €</strong> · Abrechnung bei OpenAI</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="scan-key-btn" style="flex:1;margin:0;padding:10px" onclick="startImgGenSingle()">🎨 Jetzt generieren</button>
+            <button id="imggenSingleDlBtn" style="display:none;flex:0 0 auto;padding:0 14px;background:var(--sand);border:1.5px solid var(--teal);border-radius:8px;font-size:.78rem;font-weight:600;color:var(--teal);cursor:pointer;font-family:inherit" onclick="downloadImg(_imgGenSingleRid)" title="Aktuelles Bild herunterladen">💾</button>
+            <button style="flex:0 0 auto;padding:0 16px;background:var(--sand);border:1.5px solid var(--sand2);border-radius:8px;font-size:.78rem;font-weight:600;color:var(--dim);cursor:pointer;font-family:inherit" onclick="closeImport()">↩ Zurück</button>
+          </div>
+        </div>
+        <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
+          <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:6px" id="imggenInfoTitle">🎨 KI-Bilder für deine Rezepte</div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1">
+              <div id="imggenInfoCol1Hdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Was erzeugt wird</div>
+              <ul id="imggenInfoCol1Items" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+                <li>Appetitliches Rezeptfoto</li>
+                <li>Passend zum Gericht</li>
+                <li>KI-generiert mit DALL·E 3</li>
+                <li>Sofort im Rezept gespeichert</li>
+              </ul>
+            </div>
+            <div style="flex:1">
+              <div id="imggenInfoCol2Hdr" style="font-size:.66rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Was du brauchst</div>
+              <ul id="imggenInfoCol2Items" style="margin:0;padding-left:15px;font-size:.73rem;color:#1e4a45;line-height:1.75">
+                <li>OpenAI API-Schlüssel</li>
+                <li>Ca. 0,04 € pro Bild</li>
+                <li>Abrechnung direkt bei OpenAI</li>
+                <li>Bilder exportierbar als JSON</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="scan-ready-bar">
+          <div class="scan-ready-ico">🎨</div>
+          <div class="scan-ready-txt">
+            <div class="scan-ready-lbl" id="imggenReadyLbl">KI-Bild aktiv</div>
+            <div class="scan-ready-sub" id="imggenReadySub">Schlüssel gespeichert</div>
+          </div>
+          <button class="scan-key-change" onclick="showImgGenSetup()" id="imggenChangeLbl" title="Schlüssel ändern">ändern</button>
+        </div>
+        <div id="imggenInfo" style="font-size:.74rem;color:var(--dim);margin:10px 0 8px"></div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--ink);margin-bottom:6px;cursor:pointer;padding:8px 10px;background:var(--sand);border-radius:8px;border:1px solid var(--sand2)">
+          <input type="checkbox" id="imggenReplaceAll" onchange="onImgReplaceToggle()" style="accent-color:var(--teal);width:16px;height:16px">
+          <span>Vorhandene Bilder ersetzen</span>
+        </label>
+        <div id="imggenReplacePanel" style="display:none;margin-bottom:10px;border:1.5px solid var(--sand2);border-radius:10px;overflow:hidden"></div>
+        <button class="scan-key-btn" id="igGenBtn" onclick="startImgGen()">🎨 KI-Bilder generieren</button>
+        <button class="scan-key-btn" id="igStopBtn" onclick="stopImgGen()" style="display:none;background:#c0392b;margin-top:6px">⏹ Generierung stoppen</button>
+        <div id="igProgWrap" style="display:none;margin-top:12px">
+          <div style="background:var(--sand2);border-radius:8px;height:10px;overflow:hidden;margin-bottom:7px">
+            <div id="igFill" style="width:0%;height:100%;background:linear-gradient(90deg,var(--teal),var(--grn));border-radius:8px;transition:width .4s ease"></div>
+          </div>
+          <div id="igProgLbl" style="font-size:.78rem;color:var(--ink);text-align:center;font-weight:600"></div>
+          <div id="igCostLbl" style="font-size:.74rem;color:var(--teal);margin-top:5px;text-align:center;font-weight:600"></div>
+          <button class="scan-key-btn" id="igSaveBtn" onclick="closeImport()" style="display:none;background:var(--grn);margin-top:10px">✅ Bilder im Rezeptbuch – schließen</button>
+          <div id="igFehlerBox" style="display:none;margin-top:10px;background:#fdecea;border:1.5px solid #c0392b;border-radius:9px;padding:10px 12px;font-size:.76rem;color:#7b241c;line-height:1.6"></div>
+        </div>
+        <div id="igBackupHint" style="display:none;margin-top:12px;background:#fff3cd;border:1.5px solid #e6a817;border-radius:10px;padding:11px 13px;font-size:.76rem;color:#5a3e00;line-height:1.6">
+          💰 <strong>Diese Bilder haben Geld gekostet</strong> — sichere sie jetzt! Beim Löschen des Browser-Caches oder auf einem neuen Gerät sind sie sonst weg.<br>
+          <button onclick="closeImport();openExport();" style="margin-top:9px;width:100%;padding:9px;background:#e6a817;color:#fff;border:none;border-radius:8px;font-size:.80rem;font-weight:700;cursor:pointer;letter-spacing:.01em">📤 Jetzt sichern &amp; exportieren</button>
+        </div>
+      </div>
+    </div>
+
     <div class="fov-pane" id="imp-json">
       <div style="background:var(--teals);border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--teal)">
         <div style="font-size:.94rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;margin-bottom:4px" id="bakTitle">📥 Rezeptsammlung laden</div>
@@ -2879,6 +2982,7 @@ const LANGS={
     mvPrint:'🖨️ Drucken / PDF',mvClose:'Schließen',
     bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
     impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'📥 Rezept laden',
+    impTabImgGen:"🎨 KI-Bild",imggenInfoTitle:"🎨 KI-Bilder für deine Rezepte",imggenInfoCol1Hdr:"Was erzeugt wird",imggenInfoCol1Items:"<li>Appetitliches Rezeptfoto</li><li>Passend zum Gericht</li><li>KI-generiert mit DALL·E 3</li><li>Sofort im Rezept gespeichert</li>",imggenInfoCol2Hdr:"Was du brauchst",imggenInfoCol2Items:"<li>OpenAI API-Schlüssel</li><li>Ca. 0,04 € pro Bild</li><li>Abrechnung direkt bei OpenAI</li><li>Bilder exportierbar als JSON</li>",sImgGenLbl:"DALL-E Bildschlüssel",sImgGenSub:"OpenAI-Key für KI-Bilder",igBildErzeugen:"KI-Bild erzeugen",igNeuesBild:"Neues KI-Bild erstellen",
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
     imgInfoTitle:'🖼️ Bilder zu Rezepten hinzufügen',
     imgInfoDesc:'Wähle ein oder mehrere Fotos aus oder ziehe sie direkt hierher. Weise danach jedem Bild ein Rezept zu — das Foto wird dann automatisch dem gewählten Rezept zugeordnet.',
@@ -3008,6 +3112,7 @@ const LANGS={
     mvPrint:'🖨️ Print / PDF',mvClose:'Close',
     bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
     impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'📥 Load recipes',
+    impTabImgGen:"🎨 AI Image",imggenInfoTitle:"🎨 AI Images for Your Recipes",imggenInfoCol1Hdr:"What gets created",imggenInfoCol1Items:"<li>Appetising recipe photo</li><li>Matching the dish</li><li>AI-generated with DALL·E 3</li><li>Saved directly to the recipe</li>",imggenInfoCol2Hdr:"What you need",imggenInfoCol2Items:"<li>OpenAI API key</li><li>Approx. €0.04 per image</li><li>Billed directly by OpenAI</li><li>Images exportable as JSON</li>",sImgGenLbl:"DALL-E Image Key",sImgGenSub:"OpenAI key for AI images",igBildErzeugen:"Create an AI image",igNeuesBild:"Create a new AI image",
     imgDropLbl:'Select images or drag here',
     imgInfoTitle:'🖼️ Add images to recipes',
     imgInfoDesc:'Select one or more photos or drag them here. Then assign each image to a recipe — the photo will be automatically linked to the chosen recipe.',
@@ -3137,6 +3242,7 @@ const LANGS={
     mvPrint:'🖨️ Печать / PDF',mvClose:'Закрыть',
     bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
     impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'📥 Загрузить',
+    impTabImgGen:"🎨 ИИ-Фото",imggenInfoTitle:"🎨 ИИ-фото для ваших рецептов",imggenInfoCol1Hdr:"Что создаётся",imggenInfoCol1Items:"<li>Аппетитное фото рецепта</li><li>Соответствует блюду</li><li>Генерируется с DALL·E 3</li><li>Сохраняется прямо в рецепте</li>",imggenInfoCol2Hdr:"Что нужно",imggenInfoCol2Items:"<li>API-ключ OpenAI</li><li>Ок. 0,04 € за изображение</li><li>Оплата напрямую через OpenAI</li><li>Экспорт изображений в JSON</li>",sImgGenLbl:"DALL-E ключ",sImgGenSub:"OpenAI-ключ для изображений",igBildErzeugen:"Создать ИИ-фото",igNeuesBild:"Создать новое ИИ-фото",
     imgDropLbl:'Выбрать фото или перетащить',
     imgInfoTitle:'🖼️ Добавить фото к рецептам',
     imgInfoDesc:'Выберите одно или несколько фото или перетащите их сюда. Затем назначьте каждому фото рецепт — фотография будет автоматически привязана к выбранному рецепту.',
@@ -3266,6 +3372,7 @@ const LANGS={
     mvPrint:'🖨️ 打印 / PDF',mvClose:'关闭',
     bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
     impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'📥 加载食谱',
+    impTabImgGen:"🎨 AI图片",imggenInfoTitle:"🎨 为您的食谱生成AI图片",imggenInfoCol1Hdr:"生成内容",imggenInfoCol1Items:"<li>精美的食谱照片</li><li>与菜肴相匹配</li><li>DALL·E 3 AI生成</li><li>直接保存到食谱中</li>",imggenInfoCol2Hdr:"所需条件",imggenInfoCol2Items:"<li>OpenAI API密钥</li><li>每张图片约0.04€</li><li>直接通过OpenAI计费</li><li>图片可导出为JSON</li>",sImgGenLbl:"DALL-E 图片密钥",sImgGenSub:"用于AI图片的OpenAI密钥",igBildErzeugen:"生成 AI 图片",igNeuesBild:"生成新的 AI 图片",
     imgDropLbl:'选择或拖拽图片至此',
     imgInfoTitle:'🖼️ 为食谱添加图片',
     imgInfoDesc:'选择一张或多张照片，或直接拖放至此。然后为每张图片指定一个食谱——照片将自动关联到所选食谱。',
@@ -3395,6 +3502,7 @@ const LANGS={
     mvPrint:'🖨️ Imprimir / PDF',mvClose:'Cerrar',
     bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
     impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'📥 Cargar recetas',
+    impTabImgGen:"🎨 IA Imagen",imggenInfoTitle:"🎨 Imágenes IA para tus recetas",imggenInfoCol1Hdr:"Qué se crea",imggenInfoCol1Items:"<li>Foto apetitosa de la receta</li><li>Acorde al plato</li><li>Generada con DALL·E 3</li><li>Guardada directamente en la receta</li>",imggenInfoCol2Hdr:"Lo que necesitas",imggenInfoCol2Items:"<li>Clave API de OpenAI</li><li>Aprox. 0,04 € por imagen</li><li>Facturado por OpenAI</li><li>Imágenes exportables en JSON</li>",sImgGenLbl:"Clave DALL-E",sImgGenSub:"Clave OpenAI para imágenes IA",igBildErzeugen:"Crear imagen IA",igNeuesBild:"Crear una nueva imagen IA",
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
     imgInfoTitle:'🖼️ Añadir imágenes a recetas',
     imgInfoDesc:'Selecciona una o varias fotos o arrástralas aquí. Luego asigna cada imagen a una receta — la foto se vinculará automáticamente a la receta elegida.',
@@ -3550,6 +3658,7 @@ const LANGS={
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Texte',
     impTabJson:'📥 Charger recettes',
+    impTabImgGen:"🎨 IA Image",imggenInfoTitle:"🎨 Images IA pour vos recettes",imggenInfoCol1Hdr:"Ce qui est créé",imggenInfoCol1Items:"<li>Photo appétissante de la recette</li><li>Adaptée au plat</li><li>Générée avec DALL·E 3</li><li>Sauvegardée directement dans la recette</li>",imggenInfoCol2Hdr:"Ce dont vous avez besoin",imggenInfoCol2Items:"<li>Clé API OpenAI</li><li>Env. 0,04 € par image</li><li>Facturé directement par OpenAI</li><li>Images exportables en JSON</li>",sImgGenLbl:"Clé DALL-E",sImgGenSub:"Clé OpenAI pour images IA",igBildErzeugen:"Créer une image IA",igNeuesBild:"Créer une nouvelle image IA",
     imgDropLbl:'Sélectionner des images',
     imgInfoTitle:'🖼️ Ajouter des images aux recettes',
     imgInfoDesc:'Sélectionnez une ou plusieurs photos ou faites-les glisser ici. Associez ensuite chaque image à une recette — la photo sera automatiquement liée à la recette choisie.',
@@ -3788,6 +3897,7 @@ const LANGS={
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Testo',
     impTabJson:'📥 Carica ricette',
+    impTabImgGen:"🎨 IA Immagine",imggenInfoTitle:"🎨 Immagini IA per le tue ricette",imggenInfoCol1Hdr:"Cosa viene creato",imggenInfoCol1Items:"<li>Foto appetitosa della ricetta</li><li>Adatta al piatto</li><li>Generata con DALL·E 3</li><li>Salvata direttamente nella ricetta</li>",imggenInfoCol2Hdr:"Di cosa hai bisogno",imggenInfoCol2Items:"<li>Chiave API OpenAI</li><li>Circa 0,04 € per immagine</li><li>Fatturato direttamente da OpenAI</li><li>Immagini esportabili in JSON</li>",sImgGenLbl:"Chiave DALL-E",sImgGenSub:"Chiave OpenAI per immagini IA",igBildErzeugen:"Crea immagine IA",igNeuesBild:"Crea una nuova immagine IA",
     imgDropLbl:'Seleziona immagini',
     imgInfoTitle:'🖼️ Aggiungi immagini alle ricette',
     imgInfoDesc:'Seleziona una o più foto o trascinale qui. Poi assegna ogni immagine a una ricetta — la foto verrà collegata automaticamente alla ricetta scelta.',
@@ -4026,6 +4136,7 @@ const LANGS={
     impTabScan:'📄 Scan IA',
     impTabTxt:'📝 Texto',
     impTabJson:'📥 Carregar receitas',
+    impTabImgGen:"🎨 IA Imagem",imggenInfoTitle:"🎨 Imagens IA para as suas receitas",imggenInfoCol1Hdr:"O que é criado",imggenInfoCol1Items:"<li>Foto apetitosa da receita</li><li>Adequada ao prato</li><li>Gerada com DALL·E 3</li><li>Guardada diretamente na receita</li>",imggenInfoCol2Hdr:"O que precisa",imggenInfoCol2Items:"<li>Chave API OpenAI</li><li>Aprox. 0,04 € por imagem</li><li>Faturado diretamente pela OpenAI</li><li>Imagens exportáveis em JSON</li>",sImgGenLbl:"Chave DALL-E",sImgGenSub:"Chave OpenAI para imagens IA",igBildErzeugen:"Criar imagem IA",igNeuesBild:"Criar uma nova imagem IA",
     imgDropLbl:'Selecionar imagens',
     imgInfoTitle:'🖼️ Adicionar imagens às receitas',
     imgInfoDesc:'Selecione uma ou mais fotos ou arraste-as para aqui. De seguida, associe cada imagem a uma receita — a foto será automaticamente ligada à receita escolhida.',
@@ -4653,6 +4764,7 @@ function applyLang(code){
     'menuTitle','mActAdd','mActView','mvTitle','mvTabTl','mvTabSh','mvTabCk','mvTabAl','mvPrintBtn','mvCloseBtn',
     'bnRec','bnFld','bnMen','bnSet','bnBv',
     'impTitle','impTabImg','impTabWeb','impTabScan','impTabTxt','impTabJson','imgDropLbl',
+    'impTabImgGen','imggenSetupTitleEl','imggenSetupDescEl','imggenKeyLblEl','imggenSaveBtnLbl','imggenHintEl','imggenInfoTitle','imggenInfoCol1Hdr','imggenInfoCol2Hdr','imggenReadyLbl','imggenReadySub','imggenChangeLbl','sImgGenLbl','sImgGenSub',
     'imgInfoTitle','imgInfoDesc','scanInfoTitle','scanInfoCol1Hdr','scanInfoCol2Hdr',
     'webInfoTitle','webInfoDesc','webInfoHint','txtListHdr','scanPhSub',
     'txtTitle','txtDesc','txtReadyLblEl','txtIntroEl','txtDropLblEl','txtDropSubEl','txtScanBtnLbl','txtResetBtn','txtPasteBtnLbl','txtSaveLblEl',
@@ -4679,7 +4791,7 @@ function applyLang(code){
     'hlpPwa','hlpPwaSub'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&L[id]!==undefined)el.textContent=L[id];});
   // HTML-Keys (Listen): innerHTML statt textContent
-  ['scanInfoCol1Items','scanInfoCol2Items','txtListItems'].forEach(id=>{
+  ['scanInfoCol1Items','scanInfoCol2Items','txtListItems','imggenHowToEl','imggenInfoCol1Items','imggenInfoCol2Items'].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&L[id]!==undefined)el.innerHTML=L[id];
   });
@@ -4893,12 +5005,507 @@ function renderApiKeyOv(){
 <button class="api-key-row-btn" style="width:100%;justify-content:center;background:var(--teal);color:#fff;border-color:var(--teal);font-size:.88rem;padding:12px 0" onclick="closeApiKeyOv();openImport();switchFovTab('importOv','scan',document.getElementById('impTabScan'))">${t.cta}</button>
 </div>`;
 }
+
+// ═══════════════════════════════════════════════════════
+// KI-BILD (DALL·E 3) — Foto für ein Rezept erzeugen
+//
+// Übernommen aus Mein-Rezeptbuch am 2026-09-14 (dort seit PR #383 repariert).
+// ⚠ Die Richtung ist hier AUSNAHMSWEISE umgekehrt: sonst entsteht zuerst hier
+// und wandert dann hinüber. Diese Funktion gab es nur drüben.
+//
+// Der Schlüssel ist ein OPENAI-Schlüssel und hat mit claudeKey9 (KI-Scan)
+// nichts zu tun: Claude erzeugt keine Bilder.
+// ═══════════════════════════════════════════════════════
+// ── Sequenzieller Bildgenerator-Queue ────────────────────────────────────────
+// Nie alle Bilder gleichzeitig generieren – immer nur 1 Rezept aktiv im RAM.
+// rids      : Array von Rezept-IDs in Verarbeitungsreihenfolge
+// genFn     : async (rid, recipe) → dataUrl  (z.B. DALL-E-3-API-Call)
+// onProgress: ({done, total, ok, fail, rid}) → void
+// opts.useIdb: true → Stufe 3: Bild in IDB statt r.img (RAM frei halten)
+var _imgGenAborted=false;
+var _imgGenSingleRid=null;
+async function _runImgQueue(rids, genFn, onProgress, opts){
+  const total=rids.length;
+  const useIdb=opts?.useIdb===true;
+  let done=0,ok=0,fail=0,letzterFehler=null;
+  for(const rid of rids){
+    if(_imgGenAborted) break;
+    const r=R.find(r=>r.id===rid);
+    if(r){
+      try{
+        let raw=await genFn(rid,r);             // 1. Bild generieren (ein Call)
+        let comp=await resizeImage(raw,1024,0.82);   // Muttis verkleinert mit resizeImage
+        raw=null;                               // 3. Rohbild aus RAM löschen
+        if(useIdb){
+          await _idbSet('img_'+rid,comp);       // Stufe 3: in IDB sichern
+          comp=null;                            // komprimiertes Bild aus RAM
+          // r.img bleibt leer → erst beim PDF-Bau laden
+        }else{
+          r.img=comp;comp=null;
+        }
+        sv();                                   // 4. Ins Dokument schreiben
+        ok++;
+      }catch(err){
+        fail++;
+        letzterFehler=err;              // der Grund muss aus der Schleife heraus
+        console.warn('_runImgQueue rid='+rid,err);
+      }
+    }
+    done++;
+    if(onProgress) onProgress({done,total,ok,fail,rid});
+  }
+  return{ok,fail,total,aborted:_imgGenAborted,letzterFehler};
+}
+
+// ── Bildcache-Zugriff (Stufe 3 / IndexedDB) ──────────────────────────────────
+function _idbSetImg(rid,dataUrl){return _idbSet('img_'+rid,dataUrl);}
+function _idbGetImg(rid){return _idbGet('img_'+rid);}
+
+// ── OpenAI-Schlüssel ──────────────────────────────────────────────────────────
+function getSavedOpenAiKey(){return localStorage.getItem('openaiImgKey9')||'';}
+function setSavedOpenAiKey(k){if(k){localStorage.setItem('openaiImgKey9',k);}else{localStorage.removeItem('openaiImgKey9');}}
+
+// ── DALL-E-3 Prompt-Builder ───────────────────────────────────────────────────
+function _buildDallePrompt(recipe){
+  const name=recipe.name||'dish';
+  const ings=(recipe.ings||[]).slice(0,5).map(i=>i.name).filter(Boolean).join(', ');
+  const stepHints=(recipe.steps||[]).slice(0,2).map(s=>(s.txt||'').slice(0,80)).filter(Boolean).join('; ');
+  return `Food photography: a beautifully plated "${name}"${ings?', featuring '+ings:''}${stepHints?'. Preparation: '+stepHints:''}. Natural light, appetizing, rustic wooden or marble surface, no text, no labels.`;
+}
+
+// ── EINE Naht für JEDEN Bild-Aufruf dieser App ──────────────────────────────
+//
+// ⚠ response_format WIRD NICHT MEHR ANGENOMMEN. Gemessen an Klaus' Gerät am
+// 2026-09-11 (in Mein Mixarium, gleicher Aufruf): „Unknown parameter:
+// 'response_format'." OpenAI hat den Parameter aus /v1/images/generations
+// entfernt — und genau daran ist hier JEDER Bild-Versuch gescheitert, an
+// beiden Stellen: bei den Rezeptbildern und bei der Food-Zine.
+//
+// Der Parameter fällt weg. Damit ist das Antwortformat nicht mehr festgelegt:
+// b64_json ODER eine url kommt zurück, beides wird gelesen.
+//
+// Und es gibt jetzt EINE Stelle statt zwei. Zwei Fassungen desselben Aufrufs
+// sind zwei Stellen, an denen derselbe Fehler wiederkommt — hier ist er
+// wirklich zweimal aufgetreten.
+const _IMG_MODELLE=[
+  {model:'dall-e-3'},
+  {model:'gpt-image-1'},     // liefert immer b64_json, braucht nie einen Parameter
+];
+
+async function _einBildVersuch(key,prompt,variante,size){
+  const resp=await fetch('https://api.openai.com/v1/images/generations',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({model:variante.model,prompt,n:1,size:size||'1024x1024'})
+  });
+  if(!resp.ok){
+    const e=await resp.json().catch(()=>({}));
+    const err=new Error(e.error?.message||'HTTP '+resp.status);
+    err.status=resp.status;
+    // Ein 400 oder 404 heißt: DIESER Aufruf passt nicht zu DIESEM Modell — da
+    // kann ein anderes helfen. Ein Test auf das Wort „model" im Fehlertext wäre
+    // zu eng: „Unknown parameter" enthält es nicht.
+    err.andresModellKoennteHelfen=(resp.status===400||resp.status===404);
+    throw err;
+  }
+  const data=await resp.json();
+  const eintrag=data.data?.[0]||{};
+  if(eintrag.b64_json)return 'data:image/png;base64,'+eintrag.b64_json;
+  // Nur eine Adresse bekommen: das Bild noch holen und einpacken. Es muss als
+  // data:-URL im Rezept landen — eine fremde Adresse verfällt (OpenAI gibt sie
+  // nur kurz heraus), und offline wäre sie ohnehin tot.
+  if(eintrag.url){
+    const bild=await fetch(eintrag.url);
+    if(!bild.ok)throw new Error('Bild-Adresse nicht abrufbar (HTTP '+bild.status+')');
+    const blob=await bild.blob();
+    return await new Promise((ja,nein)=>{
+      const fr=new FileReader();
+      fr.onload=()=>ja(fr.result);
+      fr.onerror=()=>nein(new Error('Bild konnte nicht gelesen werden'));
+      fr.readAsDataURL(blob);
+    });
+  }
+  throw new Error('Kein Bild erhalten');
+}
+
+async function _bildHolen(prompt,size){
+  const key=getOpenAiImgKey()||getSavedOpenAiKey();
+  if(!key)throw new Error('Kein OpenAI-Schlüssel');
+  let ersterFehler=null;
+  for(let i=0;i<_IMG_MODELLE.length;i++){
+    try{
+      return await _einBildVersuch(key,prompt,_IMG_MODELLE[i],size);
+    }catch(err){
+      if(i===0)ersterFehler=err;
+      // Ein abgelehnter Schlüssel, ein Limit oder fehlendes Guthaben ändern
+      // sich durch ein anderes Modell nicht — dort wäre ein zweiter Versuch
+      // nur eine zweite Rechnung.
+      if(!err.andresModellKoennteHelfen)throw err;
+    }
+  }
+  throw ersterFehler||new Error('Kein Bild erhalten');
+}
+
+// ── DALL-E-3 genFn (für _runImgQueue) ────────────────────────────────────────
+async function _dalleGenImg(rid,recipe){
+  return await _bildHolen(_buildDallePrompt(recipe),'1024x1024');
+}
+
+// ── Warum ein Fehlschlag stumm blieb ────────────────────────────────────────
+// Der Grund ging in ein console.warn; auf dem Schirm stand nur „1 Fehler". Ein
+// Fehlschlag ohne Grund ist von einem kaputten Knopf nicht zu unterscheiden —
+// und genau deshalb hat die Ursache (response_format) so lange gebraucht.
+function _imgFehlerText(err){
+  const m=String((err&&err.message)||err||'');
+  // Der Browser meldet „Failed to fetch", wenn er die Anfrage GAR NICHT
+  // hinausgelassen hat. Für einen Menschen ist dieser Satz keine Auskunft.
+  if(/failed to fetch|load failed|networkerror|network request failed/i.test(m))
+    return 'Der Browser konnte OpenAI gar nicht erst fragen. Das heißt: kein Internet, oder dein Netz lässt den Aufruf nicht durch. Der Schlüssel ist damit weder bestätigt noch widerlegt.';
+  if(/401|invalid[_ ]api[_ ]key|incorrect api key/i.test(m))
+    return 'OpenAI hat den Schlüssel abgelehnt. Prüfe, ob er vollständig kopiert ist und noch gültig.';
+  if(/quota|billing|insufficient|402/i.test(m))
+    return 'Auf dem OpenAI-Konto ist kein Guthaben. Ein Schlüssel allein genügt nicht — bei OpenAI muss Guthaben aufgeladen sein.';
+  if(/429|rate.?limit/i.test(m))
+    return 'OpenAI hat zu viele Anfragen gemeldet. Kurz warten und noch einmal versuchen.';
+  if(/\b400\b|unknown parameter|model/i.test(m))
+    return 'OpenAI hat die Anfrage abgelehnt — '+m;
+  return m||'Unbekannter Fehler — mehr steht in der Entwickler-Konsole.';
+}
+
+// ── KI-BILD-TAB ──────────────────────────────────────────────────────────────
+function updateImgGenInfo(){
+  var replaceChecked=!!(document.getElementById('imggenReplaceAll')&&document.getElementById('imggenReplaceAll').checked);
+  var panelVisible=replaceChecked&&document.getElementById('imggenReplacePanel')&&document.getElementById('imggenReplacePanel').style.display!=='none';
+  var all=R.filter(function(r){return r.name&&!r.blank;});
+  var eligible;
+  if(panelVisible){
+    // Panel aktiv: Rezepte ohne Foto + explizit ausgewählte
+    var withoutImg=all.filter(function(r){return!r.img;});
+    var selectedWithImg=all.filter(function(r){return r.img&&_igrSel.has(r.id);});
+    eligible=withoutImg.concat(selectedWithImg.filter(function(r){return!withoutImg.find(function(x){return x.id===r.id;});}));
+  }else if(replaceChecked){
+    eligible=all;
+  }else{
+    eligible=all.filter(function(r){return!r.img;});
+  }
+  var el=document.getElementById('imggenInfo');
+  var btn=document.getElementById('igGenBtn');
+  if(el){
+    if(!all.length){
+      el.innerHTML='<span style="color:var(--dim)">ℹ️ Keine Rezepte im Buch</span>';
+    }else if(!eligible.length&&!replaceChecked){
+      el.innerHTML='<span style="color:var(--grn)">✅ Alle Rezepte haben bereits ein KI-Foto</span>';
+    }else if(!eligible.length){
+      el.innerHTML='<span style="color:var(--dim)">ℹ️ Keine Rezepte ausgewählt</span>';
+    }else{
+      var noImg=eligible.filter(function(r){return!r.img;}).length;
+      var toReplace=eligible.filter(function(r){return r.img;}).length;
+      var parts=[];
+      if(noImg)parts.push(noImg+' ohne Foto');
+      if(toReplace)parts.push(toReplace+' werden ersetzt');
+      var cost=(eligible.length*0.04).toFixed(2).replace('.',',');
+      el.textContent=parts.join(' · ')+' · ~'+cost+' €';
+    }
+  }
+  if(btn)btn.disabled=(!eligible.length);
+}
+
+// ── Auswahl-Panel für "Vorhandene Bilder ersetzen" ───────────────────────────
+var _igrSel=new Set();
+
+function onImgReplaceToggle(){
+  var cb=document.getElementById('imggenReplaceAll');
+  var panel=document.getElementById('imggenReplacePanel');
+  if(!cb||!panel)return;
+  if(cb.checked){
+    _renderIgrPanel();
+    panel.style.display='block';
+  }else{
+    panel.style.display='none';
+    _igrSel.clear();
+  }
+  updateImgGenInfo();
+}
+
+function _renderIgrPanel(){
+  var panel=document.getElementById('imggenReplacePanel');
+  if(!panel)return;
+  _igrSel.clear();
+  var named=R.filter(function(r){return r.name&&!r.blank;});
+  named.forEach(function(r){_igrSel.add(r.id);});
+  var cats=CATS.filter(function(c){return c.id!=='all';});
+  var html='<div style="padding:7px 10px;background:var(--parch);border-bottom:1px solid var(--sand2);display:flex;justify-content:space-between;align-items:center"><span style="font-size:.72rem;font-weight:700;color:var(--dim)">Rezepte auswählen</span><span style="display:flex;gap:5px"><button onclick="igrAllRecipes(true)" style="font-size:.65rem;padding:2px 7px;border-radius:5px;border:1px solid var(--sand2);background:var(--sand);color:var(--ink);cursor:pointer">Alle</button><button onclick="igrAllRecipes(false)" style="font-size:.65rem;padding:2px 7px;border-radius:5px;border:1px solid var(--sand2);background:var(--sand);color:var(--ink);cursor:pointer">Keine</button></span></div>';
+  cats.forEach(function(cat){
+    var recs=named.filter(function(r){return r.cat===cat.id;});
+    if(!recs.length)return;
+    html+='<div style="border-bottom:1px solid var(--sand2)">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--sand);cursor:pointer" onclick="igrToggleCat(\''+cat.id+'\',this)">';
+    html+='<span style="font-size:.75rem;font-weight:700;color:var(--ink)">'+cat.ico+' '+cat.de+'</span>';
+    html+='<span style="display:flex;gap:5px"><button onclick="event.stopPropagation();igrCatAll(\''+cat.id+'\',true)" style="font-size:.63rem;padding:2px 6px;border-radius:5px;border:1px solid var(--sand2);background:var(--parch);color:var(--ink);cursor:pointer">Alle</button><button onclick="event.stopPropagation();igrCatAll(\''+cat.id+'\',false)" style="font-size:.63rem;padding:2px 6px;border-radius:5px;border:1px solid var(--sand2);background:var(--parch);color:var(--ink);cursor:pointer">Keine</button></span></div>';
+    html+='<div class="igr-cat-items" style="padding:4px 10px 6px">';
+    recs.forEach(function(r){
+      var hasImg=r.img?'🖼️ ':'';
+      html+='<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:.74rem;color:var(--ink);cursor:pointer">';
+      html+='<input type="checkbox" class="igr-cb" data-rid="'+r.id+'" checked onchange="igrOnChange()" style="accent-color:var(--teal);width:14px;height:14px;flex-shrink:0">';
+      html+='<span>'+hasImg+(r.name||'')+'</span></label>';
+    });
+    html+='</div></div>';
+  });
+  // Rezepte ohne Kategorie (oder unbekannte Kategorie)
+  var knownCatIds=cats.map(function(c){return c.id;});
+  var other=named.filter(function(r){return!r.cat||!knownCatIds.includes(r.cat);});
+  if(other.length){
+    html+='<div style="border-bottom:1px solid var(--sand2)">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--sand)">';
+    html+='<span style="font-size:.75rem;font-weight:700;color:var(--ink)">📁 Sonstige</span>';
+    html+='<span style="display:flex;gap:5px"><button onclick="igrCatAll(\'__other\',true)" style="font-size:.63rem;padding:2px 6px;border-radius:5px;border:1px solid var(--sand2);background:var(--parch);color:var(--ink);cursor:pointer">Alle</button><button onclick="igrCatAll(\'__other\',false)" style="font-size:.63rem;padding:2px 6px;border-radius:5px;border:1px solid var(--sand2);background:var(--parch);color:var(--ink);cursor:pointer">Keine</button></span></div>';
+    html+='<div class="igr-cat-items" style="padding:4px 10px 6px">';
+    other.forEach(function(r){
+      var hasImg=r.img?'🖼️ ':'';
+      html+='<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:.74rem;color:var(--ink);cursor:pointer">';
+      html+='<input type="checkbox" class="igr-cb" data-rid="'+r.id+'" checked onchange="igrOnChange()" style="accent-color:var(--teal);width:14px;height:14px;flex-shrink:0">';
+      html+='<span>'+hasImg+(r.name||'')+'</span></label>';
+    });
+    html+='</div></div>';
+  }
+  panel.innerHTML=html;
+}
+
+function igrOnChange(){
+  _igrSel.clear();
+  var cbs=document.querySelectorAll('#imggenReplacePanel .igr-cb');
+  cbs.forEach(function(cb){if(cb.checked)_igrSel.add(Number(cb.dataset.rid));});
+  updateImgGenInfo();
+}
+
+function igrCatAll(catId,checked){
+  var panel=document.getElementById('imggenReplacePanel');
+  if(!panel)return;
+  var knownCatIds=CATS.filter(function(c){return c.id!=='all';}).map(function(c){return c.id;});
+  var cbs=panel.querySelectorAll('.igr-cb');
+  cbs.forEach(function(cb){
+    var rid=Number(cb.dataset.rid);
+    var r=R.find(function(x){return x.id===rid;});
+    if(!r)return;
+    var inCat=catId==='__other'?(!r.cat||!knownCatIds.includes(r.cat)):r.cat===catId;
+    if(inCat)cb.checked=checked;
+  });
+  igrOnChange();
+}
+
+function igrAllRecipes(checked){
+  var cbs=document.querySelectorAll('#imggenReplacePanel .igr-cb');
+  cbs.forEach(function(cb){cb.checked=checked;});
+  igrOnChange();
+}
+
+function stopImgGen(){_imgGenAborted=true;}
+async function startImgGen(){
+  _imgGenAborted=false;
+  var replaceChecked=!!(document.getElementById('imggenReplaceAll')&&document.getElementById('imggenReplaceAll').checked);
+  var panelVisible=replaceChecked&&document.getElementById('imggenReplacePanel')&&document.getElementById('imggenReplacePanel').style.display!=='none';
+  var all=R.filter(function(r){return r.name&&!r.blank;});
+  var rids;
+  if(panelVisible){
+    var withoutImg=all.filter(function(r){return!r.img;});
+    var selectedWithImg=all.filter(function(r){return r.img&&_igrSel.has(r.id);});
+    rids=withoutImg.concat(selectedWithImg).map(function(r){return r.id;});
+  }else{
+    rids=all.filter(function(r){return replaceChecked||!r.img;}).map(function(r){return r.id;});
+  }
+  if(!rids.length){toast('ℹ️ Keine Rezepte zum Generieren');return;}
+  var btn=document.getElementById('igGenBtn');
+  var stopBtn=document.getElementById('igStopBtn');
+  var wrap=document.getElementById('igProgWrap');
+  var fill=document.getElementById('igFill');
+  var lbl=document.getElementById('igProgLbl');
+  var costLbl=document.getElementById('igCostLbl');
+  var saveBtn=document.getElementById('igSaveBtn');
+  if(btn){btn.style.display='none';}
+  if(stopBtn){stopBtn.style.display='flex';}
+  if(saveBtn){saveBtn.style.display='none';}
+  if(wrap)wrap.style.display='block';
+  if(fill)fill.style.width='0%';
+  if(lbl)lbl.textContent='Starte …';
+  if(costLbl){costLbl.textContent='Kosten bisher: 0,00 €';costLbl.style.display='block';}
+  var res=await _runImgQueue(rids,_dalleGenImg,function(p){
+    var pct=Math.round(p.done/p.total*100);
+    if(fill)fill.style.width=pct+'%';
+    var r=R.find(function(x){return x.id===p.rid;});
+    if(lbl)lbl.textContent=p.done+' / '+p.total+(r?' · '+(r.name||''):'')+(p.fail?' · '+p.fail+' ✗':'');
+    if(costLbl)costLbl.textContent='Kosten bisher: ~'+(p.ok*0.04).toFixed(2).replace('.',',')+' €';
+  },{useIdb:false});
+  if(fill)fill.style.width='100%';
+  var stopTxt=res.aborted?' · gestoppt':'';
+  if(lbl)lbl.textContent=(res.aborted?'⏹':'✅')+' '+res.ok+' Bild'+(res.ok===1?'':'er')+' gespeichert'+(res.fail?' · '+res.fail+' Fehler':'')+stopTxt;
+  if(costLbl)costLbl.textContent='Gesamt: ~'+(res.ok*0.04).toFixed(2).replace('.',',')+' €';
+  if(stopBtn){stopBtn.style.display='none';}
+  if(btn){btn.style.display='flex';}
+  if(saveBtn&&res.ok>0){saveBtn.style.display='flex';}
+  const fbox=document.getElementById('igFehlerBox');
+  if(fbox){
+    if(res.fail&&res.letzterFehler){fbox.textContent='⚠️ '+_imgFehlerText(res.letzterFehler);fbox.style.display='block';}
+    else{fbox.style.display='none';}
+  }
+  if(res.ok>0){
+    toast('✅ '+res.ok+' KI-Bild'+(res.ok===1?'':'er')+' im Rezeptbuch gespeichert');
+    var hint=document.getElementById('igBackupHint');
+    if(hint)hint.style.display='block';
+  }
+  if(typeof render==='function')render();
+  updateImgGenInfo();
+}
+
+function openImgGenForRecipe(rid){
+  _imgGenSingleRid=rid;
+  openImport();
+  switchFovTab('importOv','imggen',document.getElementById('impTabImgGen'));
+  const r=R.find(r=>r.id===rid);
+  const sw=document.getElementById('imggenSingleWrap');
+  const title=document.getElementById('imggenSingleTitle');
+  const preview=document.getElementById('imggenSinglePreview');
+  const rl=document.getElementById('imggenReplaceAll')?.closest('label');
+  const gb=document.getElementById('igGenBtn');
+  if(sw)sw.style.display='block';
+  if(title&&r)title.textContent='📸 Neues KI-Bild für: '+r.name;
+  if(preview&&r&&r.img){preview.src=r.img;preview.style.display='block';}
+  else if(preview)preview.style.display='none';
+  const dlBtn=document.getElementById('imggenSingleDlBtn');
+  if(dlBtn)dlBtn.style.display=(r&&r.img)?'block':'none';
+  if(rl)rl.style.display='none';
+  if(gb)gb.style.display='none';
+}
+async function startImgGenSingle(){
+  const rid=_imgGenSingleRid;if(!rid)return;
+  const r=R.find(r=>r.id===rid);if(!r)return;
+  const sw=document.getElementById('imggenSingleWrap');if(sw)sw.style.display='none';
+  const stopBtn=document.getElementById('igStopBtn');
+  const progWrap=document.getElementById('igProgWrap');
+  const fill=document.getElementById('igFill');
+  const lbl=document.getElementById('igProgLbl');
+  const costLbl=document.getElementById('igCostLbl');
+  const saveBtn=document.getElementById('igSaveBtn');
+  if(stopBtn)stopBtn.style.display='flex';
+  if(saveBtn)saveBtn.style.display='none';
+  if(progWrap)progWrap.style.display='block';
+  if(fill)fill.style.width='0%';
+  if(lbl)lbl.textContent='Generiere …';
+  if(costLbl){costLbl.textContent='Kosten: ~0,04 €';costLbl.style.display='block';}
+  const res=await _runImgQueue([rid],_dalleGenImg,function(p){
+    if(fill)fill.style.width='100%';
+    if(lbl)lbl.textContent=p.ok?'✅ Bild gespeichert':'❌ Fehler';
+  },{useIdb:false});
+  if(stopBtn)stopBtn.style.display='none';
+  if(lbl)lbl.textContent=res.ok?'✅ Bild für „'+r.name+'" gespeichert':'❌ Es hat nicht geklappt — der Grund steht darunter';
+  const fbox1=document.getElementById('igFehlerBox');
+  if(fbox1){
+    if(res.fail&&res.letzterFehler){fbox1.textContent='⚠️ '+_imgFehlerText(res.letzterFehler);fbox1.style.display='block';}
+    else{fbox1.style.display='none';}
+  }
+  // Fehlgeschlagen: der Knopf muss wiederkommen, sonst steht der Nutzer vor
+  // einem Fenster ohne Ausweg.
+  if(!res.ok&&sw)sw.style.display='block';
+  if(res.ok>0){
+    if(saveBtn)saveBtn.style.display='flex';
+    toast('✅ KI-Bild für „'+r.name+'" gespeichert');
+    if(typeof render==='function')render();
+    updateImgGenInfo();
+  }
+  _imgGenSingleRid=null;
+}
+
+// ── IMGGEN: KEY MANAGEMENT ────────────────────────────
+const OPENAI_IMG_KEY_LS='openaiImgKey9';   // eigen — NICHT der von Mein-Rezeptbuch (geteilte Adresse)
+function getOpenAiImgKey(){return localStorage.getItem(OPENAI_IMG_KEY_LS)||'';}
+function saveOpenAiImgKey(key){if(key){localStorage.setItem(OPENAI_IMG_KEY_LS,key.trim());}else{localStorage.removeItem(OPENAI_IMG_KEY_LS);}}
+
+async function validateOpenAiImgKey(key){
+  const resp=await fetch('https://api.openai.com/v1/models',{
+    headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'}
+  });
+  if(!resp.ok){
+    const e=await resp.json().catch(()=>({}));
+    if(resp.status===401)throw new Error('auth');
+    if(resp.status===429)throw new Error('ratelimit');
+    if(resp.status===402)throw new Error('billing');
+    throw new Error(e.error?.message||'HTTP '+resp.status);
+  }
+  return true;
+}
+
+function onImgGenKeyInput(v){
+  const btn=document.getElementById('imggenSaveBtn');
+  if(btn)btn.disabled=v.trim().length<20;
+  const inp=document.getElementById('imggenKeyIn');
+  if(inp)inp.style.borderColor=v.trim().startsWith('sk-')&&v.length>20?'var(--grn)':'var(--sand2)';
+}
+
+async function pasteImgGenKey(){
+  try{
+    const txt=await navigator.clipboard.readText();
+    const inp=document.getElementById('imggenKeyIn');
+    if(inp){inp.value=txt.trim();onImgGenKeyInput(txt.trim());inp.focus();}
+    if(txt.trim().startsWith('sk-'))toast('✅ Zugangscode eingefügt!');
+  }catch(e){
+    const inp=document.getElementById('imggenKeyIn');
+    if(inp){inp.focus();inp.select();}
+    toast('📋 Strg+V / Cmd+V zum Einfügen');
+  }
+}
+
+async function saveAndActivateImgGen(){
+  const v=document.getElementById('imggenKeyIn')?.value?.trim()||'';
+  if(!v)return;
+  saveOpenAiImgKey(v);
+  toast('✅ OpenAI-Schlüssel gespeichert!');
+  switchToImgGenMain();
+}
+
+function switchToImgGenMain(){
+  document.getElementById('imggenSetup').style.display='none';
+  document.getElementById('imggenMain').style.display='block';
+  const key=getOpenAiImgKey();
+  const sub=document.getElementById('imggenReadySub');
+  if(sub&&key)sub.textContent=key.slice(0,7)+'…'+key.slice(-4);
+  updateImgGenInfo();
+}
+
+function showImgGenSetup(){
+  document.getElementById('imggenSetup').style.display='block';
+  document.getElementById('imggenMain').style.display='none';
+  setTimeout(()=>{const inp=document.getElementById('imggenKeyIn');if(inp){inp.value='';inp.focus();}},100);
+}
+
+function initImgGenPane(){
+  if(getOpenAiImgKey()){switchToImgGenMain();}
+  else{document.getElementById('imggenSetup').style.display='block';document.getElementById('imggenMain').style.display='none';}
+}
+
+// Das erzeugte Bild herausholen — es ist bezahlt, es gehört dem Nutzer.
+function downloadImg(rid){
+  const r=R.find(x=>x.id===rid);
+  if(!r||!r.img)return;
+  const a=document.createElement('a');
+  a.href=r.img;
+  a.download=(r.name||'bild')+(r.img.startsWith('data:image/png')?'.png':'.jpg');
+  a.click();
+}
+
 function openImport(){
   document.getElementById('importOv').style.display='flex';
   initScanPane();
   initTxtPane();
+  initImgGenPane();
 }
-function closeImport(){document.getElementById('importOv').style.display='none';}
+function closeImport(){
+  document.getElementById('importOv').style.display='none';
+  // Den Einzel-Modus zurücknehmen — sonst steht beim nächsten Öffnen noch das
+  // vorige Rezept da und der Sammel-Knopf bleibt verschwunden.
+  _imgGenSingleRid=null;
+  const sw=document.getElementById('imggenSingleWrap');if(sw)sw.style.display='none';
+  const rl=document.getElementById('imggenReplaceAll')?.closest('label');if(rl)rl.style.display='';
+  const gb=document.getElementById('igGenBtn');if(gb)gb.style.display='';
+}
 function openExport(){document.getElementById('exportOv').style.display='flex';}
 function closeExport(){document.getElementById('exportOv').style.display='none';}
 function switchFovTab(ovId,tab,el){
@@ -4909,6 +5516,7 @@ function switchFovTab(ovId,tab,el){
   document.getElementById('imp-'+tab)?.classList.add('on');
   if(tab==='scan')initScanPane();
   if(tab==='txt')initTxtPane();
+  if(tab==='imggen')initImgGenPane();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -7626,6 +8234,7 @@ function rndCard(r){
         ${r.name?`<div class="rcard-acts" onclick="event.stopPropagation()">
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();startRename(${r.id})" title="${T('ttlRename')}">✏️</button>`:''}
           ${r.name?`<button class="ra imgr" onclick="pickImgForCard(${r.id})" title="${T('addImg')}">🖼️</button>`:''}
+          ${r.name?`<button class="ra ra-cam" onclick="event.stopPropagation();openImgGenForRecipe(${r.id})" title="${r.img?T('igNeuesBild'):T('igBildErzeugen')}">📸✨</button>`:''}
           ${r.name?`<button class="ra ${inMenu?'gld':'out'}" onclick="event.stopPropagation();${inMenu?`removeFromMenu(${r.id})`:`openCSheet(${r.id})`}" title="${inMenu?T('inMenuRm'):T('addToMenu')}">${inMenu?mSlot.ico+' ✓':T('addToMenu')}</button>`:''}
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();spellCheckCard(${r.id})" title="${T('ttlSpell')}" style="background:var(--golds);border-color:var(--gold);color:var(--gold)">✨</button>`:''}
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();shareRecipeQR(${r.id})" title="${T('shareTtl')}" style="background:var(--teals);border-color:var(--teal);color:var(--teal)">📤</button>`:''}
@@ -8566,8 +9175,8 @@ var _A11Y_MAP = ['sm','md','lg'];
 
 // ── IMPORT-OVERLAY: Tab-Swipe ─────────────────────────
 (function(){
-  const TAB_ORDER=['img','web','scan','txt','json'];
-  const TAB_EL={img:'impTabImg',web:'impTabWeb',scan:'impTabScan',txt:'impTabTxt',json:'impTabJson'};
+  const TAB_ORDER=['img','web','scan','txt','json','imggen'];
+  const TAB_EL={img:'impTabImg',web:'impTabWeb',scan:'impTabScan',txt:'impTabTxt',json:'impTabJson',imggen:'impTabImgGen'};
   function doImportSwipe(dx){
     const ov=document.getElementById('importOv');
     if(!ov||ov.style.display==='none')return;
