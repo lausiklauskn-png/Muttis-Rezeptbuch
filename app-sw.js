@@ -1,5 +1,5 @@
 // Service Worker for Muttis Rezeptbuch (Hauptapp)
-const CACHE = 'muttisrezeptbuch-v15';
+const CACHE = 'muttisrezeptbuch-v16';
 
 /* ⚠ NUR EIGENE VORRAETE AUFRAEUMEN — `caches` gehoert dem URSPRUNG, nicht dem
  * Pfad. Auf lausiklauskn-png.github.io liegen rund zwanzig Apps; ein Filter,
