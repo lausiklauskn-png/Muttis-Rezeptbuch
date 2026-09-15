@@ -7171,7 +7171,7 @@ function renderCatNav(){
     const dragEvts=c.id!=='all'?`ondragover="pillDragOver(event,'${c.id}')" ondragleave="pillDragLeave(event)" ondrop="pillDrop(event,'${c.id}')"` :'';
     return`<div class="cpill ${CAT===c.id?'on':''}" onclick="setCAT('${c.id}')" ${dragEvts}>${c.id==='all'?c.ico:katSymbol(c)} ${h(c.id==='all'?(c[CL]||c.de):katBeschriftung(c))} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;
   }).join('');
-  if(FD&&FD.length){pills+=FD.map(f=>{const fid='fld_'+f.id;const cnt=R.filter(r=>r.folder===String(f.id)&&r.name).length;return`<div class="cpill ${CAT===fid?'on':''}" onclick="setCAT('${fid}')">${f.ico} ${f.name} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;}).join('');}
+  if(FD&&FD.length){pills+=FD.map(f=>{const fid='fld_'+f.id;const cnt=R.filter(r=>(r.folder===String(f.id)||r.cat===fid)&&r.name).length;return`<div class="cpill ${CAT===fid?'on':''}" onclick="setCAT('${fid}')">${f.ico} ${f.name} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;}).join('');}
   el.innerHTML=pills;
   const catSel=document.getElementById('newCat');
   if(catSel)catSel.innerHTML=`<option value="">— ${T('lCat')} —</option>`+
@@ -7203,8 +7203,8 @@ function badge(){
   const rc=R.filter(r=>!r.blank).length,rb=document.getElementById('recBadge');
   if(rb){rb.style.display=rc?'block':'none';rb.textContent=rc;}
   const fc=[
-    ...CATS.filter(c=>c.id!=='all').filter(c=>R.some(r=>r.cat===c.id&&r.name)),
-    ...FD.filter(f=>R.some(r=>r.folder===String(f.id)&&r.name))
+    ...catsAlle().filter(c=>R.some(r=>katVonRezept(r)===c.id&&r.name)),
+    ...FD.filter(f=>R.some(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name))
   ].length,fb=document.getElementById('fldBadge');
   if(fb){fb.style.display=fc?'block':'none';fb.textContent=fc;}
 }
@@ -8189,9 +8189,9 @@ function renderFolders(){
   const openGids=new Set([...tree.querySelectorAll('.fld-recs.open')].map(el=>el.closest('.fld-grp')?.dataset.gid).filter(Boolean));
   const groups=[
     ...catsAlle().map(c=>({id:'cat_'+c.id,name:katBeschriftung(c),ico:katSymbol(c),col:c.col,
-      recipes:R.filter(r=>r.cat===c.id&&r.name)})),
+      recipes:R.filter(r=>katVonRezept(r)===c.id&&r.name)})),
     ...FD.map(f=>({id:'cfd_'+f.id,name:f.name,ico:f.ico,col:'#7a5840',
-      recipes:R.filter(r=>r.folder===String(f.id)&&r.name)}))
+      recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))
   ];
   tree.innerHTML=groups.map(g=>{
     const isFolder=g.id.startsWith('cfd_');

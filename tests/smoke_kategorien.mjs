@@ -256,6 +256,60 @@ ok("und OHNE Heimatlose gibt es den Reiter nicht", await seite.evaluate(()=>{
    const sich=R.slice(); R=R.filter(r=>!/^Heimatlos/.test(r.name||""));
    const weg=catsAlle().some(c=>c.id===KAT_OHNE); R=sich; return !weg; }));
 
+console.log("\n── 13 · Ordner-Ansicht und Kategorie-Leiste zaehlen DIESELBE Zahl ──");
+/* ⚠ Klaus 2026-09-16: „Sushi steht in den Ordnern mit null Rezepten, obwohl
+   mindestens sechs drin sind. Oben in der Kategorie-Leiste steht Sushi mit
+   sechs." Zwei Stellen zaehlten dieselbe Sache verschieden — die Leiste ueber
+   `katVonRezept`, der Ordner-Baum ueber das ROHE Feld `r.cat`.
+   ⚠ GEMESSEN WIRD DIE UEBEREINSTIMMUNG, NICHT EINE ZAHL. Ein Waechter auf
+   „der Ordner zeigt 6" waere blind, sobald sich die Leiste bewegt — und
+   genau diese Sorte Fehler (zwei Stellen, eine Wahrheit) ist hier schon
+   dreimal zugeschnappt. */
+const paare = await seite.evaluate(()=>{
+  CAT="all"; renderCatNav(); renderFolders();
+  const leiste={};
+  document.querySelectorAll("#catNav .cpill").forEach(e=>{
+    const m=/setCAT\('([^']+)'\)/.exec(e.getAttribute("onclick")||"");
+    const s=e.querySelector("span");
+    if(m&&s)leiste[m[1]]=Number(s.textContent.trim());
+  });
+  const out=[];
+  document.querySelectorAll("#fldTree .fld-grp").forEach(g=>{
+    const gid=g.dataset.gid||"";
+    const c=g.querySelector(".fld-cnt");
+    if(!c)return;
+    const id=gid.startsWith("cat_")?gid.slice(4):(gid.startsWith("cfd_")?"fld_"+gid.slice(4):null);
+    if(!id)return;
+    out.push({id:id, ordner:parseInt(c.textContent,10)||0, leiste:leiste[id]||0});
+  });
+  return out;
+});
+const uneins = paare.filter(p=>p.ordner!==p.leiste);
+ok("jede Gruppe zeigt in beiden Ansichten dieselbe Zahl",
+   paare.length>0 && uneins.length===0);
+if(uneins.length)console.log("     uneins: "+uneins.map(p=>`${p.id} ${p.ordner}≠${p.leiste}`).join(", "));
+/* ⚠ UND DIE GEGENRICHTUNG: ohne eine fremde Kategorie MIT Inhalt misst der
+   Waechter oben nichts — alle Zahlen waeren 0 und stimmten trivial ueberein. */
+ok("… und eine mitgebrachte Kategorie ist wirklich dabei",
+   paare.some(p=>p.id==="sushi" && p.ordner>0));
+/* ⚠ EIN ORDNER, DEN ES NOCH GIBT, ZAEHLT IN BEIDEN ANSICHTEN GLEICH.
+   Die Leiste zaehlt `r.folder ODER r.cat==='fld_…'`, der Baum zaehlte nur
+   `r.folder` — dieselbe Sorte Abweichung, nur eine Zeile tiefer. */
+ok("ein Rezept, das nur ueber r.cat im Ordner liegt, faellt nirgends heraus",
+   await seite.evaluate(()=>{
+     const sich=JSON.parse(JSON.stringify(R)), sichF=JSON.parse(JSON.stringify(FD));
+     FD.push({id:"9911",name:"Probe-Ordner",ico:"📁"});
+     R.push({id:99110,name:"Nur-ueber-cat",cat:"fld_9911",folder:"",blank:false});
+     renderCatNav(); renderFolders();
+     const p=[...document.querySelectorAll("#catNav .cpill")]
+       .find(e=>/setCAT\('fld_9911'\)/.test(e.getAttribute("onclick")||""));
+     const g=document.querySelector('#fldTree .fld-grp[data-gid="cfd_9911"] .fld-cnt');
+     const a=p?Number(p.querySelector("span").textContent.trim()):-1;
+     const b=g?parseInt(g.textContent,10):-2;
+     R=sich; FD=sichF; renderCatNav(); renderFolders();
+     return a===1 && b===1;
+   }));
+
 await browser.close(); server.close();
 console.log(`\n${gruen} grün · ${rot} ROT`);
 process.exit(rot?1:0);

@@ -146,6 +146,13 @@ fall "die Alle-Ansicht fragt wieder das rohe Feld" "zeichnet das Rezept ohne Kat
 fall "die Getraenke-Symbole verschwinden wieder" "eigene Getraenke-Symbole" \
 '"🍶","🍼","🚰","⚗️","🫧","🍋‍🟩",@@@'
 
+# ── Die Ordner-Ansicht zaehlt wieder anders als die Leiste (Klaus 2026-09-16) ──
+fall "der Ordner-Baum fragt wieder das rohe Feld" "dieselbe Zahl" \
+"      recipes:R.filter(r=>katVonRezept(r)===c.id&&r.name)})),@@@      recipes:R.filter(r=>r.cat===c.id&&r.name)})),"
+
+fall "ein Ordner-Rezept ohne r.folder faellt im Baum wieder heraus" "faellt nirgends heraus" \
+"      recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))@@@      recipes:R.filter(r=>r.folder===String(f.id)&&r.name)}))"
+
 echo
 echo "$gefangen gefangen · $durch durchgerutscht · $falsch aus falschem Grund · $tot tote Anker"
 cd /; rm -rf "$(dirname "$KOPIE")"
