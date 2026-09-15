@@ -399,6 +399,65 @@ die Gegenprobe selbst `1` zurückgab. **`| tail` ist zum Lesen da, nicht zum
 Urteilen** — dieselbe Falle wie netzweit aufgeschrieben, nur in noch einem
 Kostüm. Die Zahl steht in der Schlusszeile, nicht im Rückgabewert der Pipe.
 
+### ⚠ EINE KENNUNG IST KEIN NAME — und ein Rezept ohne Kategorie hatte kein Zuhause (Klaus 2026-09-16)
+
+Zwei Befunde aus einem Durchgang, beide von derselben Sorte: **die Auskunft war
+da, nur nicht dort, wo jemand hinsieht.**
+
+**1 · `AFCKT, was ist das?`** Aus einem Import der Schwester-App kamen Kennungen
+wie `afckt`, `mock`, `bowle`, `smooth` — und die Ordner-Liste zeigte sie **roh**
+an. Der Reiter war da (das war die Reparatur vom Vortag), aber niemand weiß, was
+`afckt` sein soll.
+
+⚠ **UND DIE NAMEN LAGEN SCHON IN DER APP.** Die Spore kündigt seit jeher
+*„Alkfr. Cocktails, Mocktails, Bowlen, Smoothies & Shakes"* als Gast-Kategorien
+an (`guestCategories` in `sbkim/sbkim-init.js`) — eine Liste von **Namen ohne
+Kennungen**. Sie half der Oberfläche deshalb nichts. *Zwei Listen derselben
+Sache, und die eine kennt die andere nicht.*
+
+**`KAT_FAMILIE`** ist jetzt das Wörterbuch: Kennung → Symbol + Name in 8
+Sprachen, **aus den CATS-Blöcken der drei Apps abgeleitet, nicht abgetippt**.
+18 Kennungen. Ein eigener Name (`CATS_EIGEN`) gewinnt weiterhin über alles.
+
+⚠ **Eine unbekannte Kennung wird NICHT erfunden.** Steht sie nicht im
+Wörterbuch, bleibt sie sichtbar wie sie ist und trägt die Marke `unbekannt`.
+*Einen Namen zu raten wäre schlimmer als eine Kennung zu zeigen.*
+
+**2 · Die Sushi, die nur die Suche fand.** Klaus: *„gebe ich oben im Suchfeld
+Sushi ein, taucht plötzlich Sushi auf … Sushi taucht immer nicht auf."* Gemessen
+im Code, nicht geraten:
+
+| | Befund |
+|---|---|
+| `catsFremd()` | stieg bei **leerer** Kennung mit `continue` aus |
+| die „Alle"-Ansicht | läuft über `catsAlle()` — zeichnete sie also auch nicht |
+| der Reiter „Alle" | zählte `R.filter(r=>r.name&&!r.blank)`, also **alle** |
+
+**Die Zahl versprach 52, gezeichnet wurden weniger.** Nicht der Import war
+schuld — die Rezepte waren da, gespeichert und exportiert, nur ohne Zuhause.
+
+⚠ **UND EIN ORDNER, DEN ES NICHT MEHR GIBT, IST AUCH KEIN ZUHAUSE.** Eine
+Kennung `fld_…` wird übersprungen, weil Ordner ihren eigenen Weg haben — steht
+der Ordner aber nicht mehr in `FD`, fällt das Rezept durch dieselbe Lücke.
+
+Sie werden jetzt als **eigene Kategorie** geführt (`KAT_OHNE`, „Ohne
+Kategorie"), nicht repariert: **welche Kategorie sie bekommen sollen,
+entscheidet Klaus, nicht die App.** Der Reiter erscheint nur, wenn es ihn
+braucht — ein Sammel-Reiter, der immer leer dasteht, wäre ein toter Knopf mit
+Beschriftung.
+
+### ⚠ Und die drei Apps standen dabei NICHT gleich da
+
+Gemessen am 2026-09-16: **Mein Rezeptbuch trägt alle 18 Familien-Kennungen
+selbst** (Essen *und* Getränke), Muttis Rezeptbuch nur die sieben
+Essens-Kategorien. Klaus' `afckt`-Befund ist deshalb ein **Muttis**-Befund; in
+Mein Rezeptbuch kommt aus dem Mixarium gar nichts als „fremd" an.
+
+**Die Wächter sagen in jeder App, was DORT gilt** — in Mein Rezeptbuch steht als
+benannte Grenze, dass das Wörterbuch hier nie feuert, und gemessen wird
+stattdessen, dass die eigenen Kategorien die Familie abdecken. *Drei Apps
+dieselbe Zusicherung behaupten zu lassen wäre in einer davon eine Lüge.*
+
 ### Geprüft
 
 ```bash
