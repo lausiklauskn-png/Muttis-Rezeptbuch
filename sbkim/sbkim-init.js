@@ -254,6 +254,34 @@ var SBKIM_REZEPTBUCH_DESCRIPTION =
 // DevTools-Fallback: Spore manuell erzeugen. Ab Bau 2026-06-07 ist der
 // optionale `description`-Parameter (Default: reicher Rezeptbuch-Text) der
 // Embedding-Eingang — gleiche Logik wie das Semantik-Textfeld im Siegel.
+/* ⚠ AUF DATEI-EBENE, NICHT MEHR IN __sbkimErzeugeSpore — und zwar wegen des
+   ZWEITEN Weges zur Spore. Bis zum 2026-09-15 rechnete nur die stille
+   Erst-Anmeldung aus dem Inhalt; das Siegel bettete immer die Beschreibung
+   ein. Wer dort neu signierte, VERLOR seinen Inhalts-Vektor und bekam die
+   Beschreibung der App — bei einem fremden Nutzer also ein fremdes Thema.
+   Der Kanon (Modul 16b) liest die Stichprobe jetzt über
+   SBKIM_SIEGEL_WIZ.sampleContent. Sie steht hier EINMAL: zwei Fassungen
+   derselben Stichprobe ergäben zwei verschiedene Vektoren für denselben
+   Knoten, je nachdem, welchen Weg der Nutzer nimmt. */
+function sampleContent() {
+  var out = [];
+  try {
+    var arr = (typeof window !== "undefined" && Array.isArray(window.R)) ? window.R : [];
+    for (var i = 0; i < arr.length && out.length < 32; i++) {
+      var r = arr[i];
+      if (!r || r.blank) continue;
+      var name = (typeof r.name === "string") ? r.name.trim() : "";
+      var cat = (typeof r.cat === "string") ? r.cat.trim() : "";
+      var t = (cat + " " + name).trim();
+      if (t.length) out.push(t);
+    }
+  } catch (e) { /* fail-soft */ }
+  return out;
+}
+/* Dem Siegel-Weg dieselbe Stichprobe geben wie der stillen Erst-Anmeldung. */
+if (window.SBKIM_SIEGEL_WIZ) { window.SBKIM_SIEGEL_WIZ.sampleContent = sampleContent; }
+else { window.SBKIM_SAMPLE_CONTENT = sampleContent; }
+
 window.__sbkimErzeugeSpore = async function (description) {
   console.info("Lade Embedding-Modell (~30 MB einmalig, dann gecacht)...");
   await SbkimEmbedding.init();
@@ -269,21 +297,6 @@ window.__sbkimErzeugeSpore = async function (description) {
   // (Rezept-Name + Kategorie) statt der Selbstbeschreibung. sampleContent liefert
   // NUR unkritische Labels (Rezept-Namen/Kategorien) — kein PII. Fail-soft: kein
   // Inhalt / Fehler / explizite Beschreibung → Beschreibungs-Vektor (Hülle).
-  function sampleContent() {
-    var out = [];
-    try {
-      var arr = (typeof window !== "undefined" && Array.isArray(window.R)) ? window.R : [];
-      for (var i = 0; i < arr.length && out.length < 32; i++) {
-        var r = arr[i];
-        if (!r || r.blank) continue;
-        var name = (typeof r.name === "string") ? r.name.trim() : "";
-        var cat = (typeof r.cat === "string") ? r.cat.trim() : "";
-        var t = (cat + " " + name).trim();
-        if (t.length) out.push(t);
-      }
-    } catch (e) { /* fail-soft */ }
-    return out;
-  }
 
   var vec = null;
   var source = "description";
