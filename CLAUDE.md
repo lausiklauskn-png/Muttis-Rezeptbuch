@@ -263,6 +263,85 @@ Dieser Fix läuft am Ende von `render()` – nach `c.innerHTML=html`, wenn der C
 
 ---
 
+## 🏷️ KATEGORIEN SIND UMBENENNBAR — mit eigenem Symbol (Klaus 2026-09-15)
+
+Übertragen aus **Mein Mixarium**. Klaus: *„diese Möglichkeit des Umbenennens
+der Kategorien bitte in mein Rezeptbuch und Muttis Rezeptbuch übertragen."*
+
+Der Weg: 📂 **Ordner** → in der Knopfzeile **✎ Kategorien umbenennen**. Je Zeile
+ein Symbol und ein Name; ein Tipp aufs Symbol öffnet ein Raster mit 107
+Emojis. Leer lassen heisst Vorgabe, ↺ setzt eine Zeile zurück.
+
+### Drei Sachen, die man wissen muss, bevor man daran baut
+
+- ⚠ **Gespeichert wird NUR die Beschriftung, nie die Kennung.** `c.id` bleibt
+  `fleisch`, auch wenn dort „Hauptgerichte" steht. Jedes Rezept zeigt über
+  `r.cat` auf diese Kennung — wer sie umbenennt, nimmt allen Rezepten ihr
+  Zuhause.
+- ⚠ **Der Speicher-Schlüssel ist app-eigen.** Beide Rezeptbücher liegen auf
+  derselben `github.io`-Adresse und teilen sich den localStorage. Mein
+  Rezeptbuch schreibt `mrz9m`, Muttis `mrz9` — der neue Schlüssel folgt genau
+  dieser Trennung (`mrzcats9m` bzw. `mrzcats9`). Eine Probe besteht darauf,
+  dass der Schlüssel des ANDEREN Buches leer bleibt.
+- ⚠ **Ein eigener Name gilt in allen 8 Sprachen.** Er ist selbst geschrieben;
+  ihn zu übersetzen hiesse raten. Das steht im Dialog, sonst wäre es eine
+  stille Entscheidung.
+
+### Fremde Kategorien verschwinden nicht mehr still
+
+`catsFremd()` sammelt Kennungen, die in `R` vorkommen und die `CATS` nicht
+kennt — etwa aus einem Import der Schwester-App. Solche Rezepte lagen bisher
+in `R`, wurden gespeichert und mitexportiert und **nie gezeichnet**, auch nicht
+unter „Alle": die Alle-Ansicht lief über `CATS`. Zu finden waren sie nur über
+die Suche. Sie bekommen jetzt einen eigenen Reiter, tragen im Dialog die Marke
+„mitgebracht" und sind umbenennbar wie jede andere.
+
+### ⚠ Die Namen sind mit Bedacht anders als `catName`/`catIco`
+
+`katBeschriftung(c)` und `katSymbol(c)` nehmen das **Objekt**, die alten
+`catName(id)`/`catIco(id)` eine **Kennung**. In Mixarium hiess `katSymbol`
+zuerst `catIco` — Funktions-Deklarationen werden hochgezogen, die spätere
+gewinnt, und jeder Aufruf landete in der falschen. **Vor dem Ergänzen
+nachsehen, ob es den Namen schon gibt.**
+
+### ⚠ Und die Emoji-Auswahl machte sich zuerst selbst wieder zu
+
+`scrollIntoView` beim Öffnen verschob die Liste unter dem Finger; zwischen
+`focus` und `click` wanderte das Feld weg, der Klick landete woanders, und der
+„Tipp daneben"-Riegel schloss sofort. **Gemessen: drei Läufe derselben Datei,
+zweimal offen, einmal zu.** Kein Proben-Artefakt — am Tablet schnappt dasselbe
+zu. Das Scrollen ist raus, und ein Wächter auf die **Ursache** steht daneben:
+ein Verhaltens-Wächter allein war in zwei von drei Läufen grün.
+
+### ⚠ UND HIER FEHLTE `window.R` — die Stufe vom selben Tag war tot
+
+`sbkim/sbkim-init.js` rechnet den Inhalts-Vektor aus `window.R`. Ein
+top-level `let R` hängt aber **nicht** am window-Objekt, und dieses Buch hat
+die Brücke nie bekommen — Mein Rezeptbuch schon, am 2026-07-02.
+
+**Gemessen am 2026-09-15:** `window.R` kam hier **null Mal** vor, in Mein
+Rezeptbuch vier Mal. Folge: `sampleContent()` gab eine leere Liste zurück, der
+Vektor fiel auf die Beschreibung zurück, und die Zeile *„Dein Vektor kommt aus
+deinen eigenen Inhalten"* konnte im Siegel **gar nicht erscheinen**.
+
+Die Brücke steht jetzt — ein Getter, wortgleich aus Mein Rezeptbuch. `R` wird
+beim Laden neu zugewiesen, eine feste Zuweisung zeigte danach aufs alte Feld.
+Eine Probe misst den **Wert**, nicht die Anwesenheit der Zeile:
+`sampleContent()` muss die echten Rezepte erreichen.
+
+### Geprüft
+
+```bash
+node tests/smoke_kategorien.mjs        # echter Browser, an der GEBAUTEN index.html
+bash tests/gegenprobe_kategorien.sh    # Wegwerf-Kopie, MIT Bau-Schritt
+```
+
+⚠ **Die Gegenprobe baut zwischen Sabotage und Messung neu.** Ohne
+`python3 build.py` misst sie die alte `index.html`, und jeder Fall wäre „nicht
+gefangen".
+
+---
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue

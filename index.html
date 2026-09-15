@@ -652,6 +652,31 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .share-btn-p{width:100%;background:var(--grn);color:#fff;border:none;border-radius:9px;padding:11px;font-size:.83rem;font-weight:700;cursor:pointer;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:7px}
 .share-btn-s{width:100%;background:transparent;border:1.5px solid var(--sand2);border-radius:9px;padding:10px;font-size:.8rem;color:var(--br2);cursor:pointer;margin-bottom:6px}
 .share-btn-cl{width:100%;background:transparent;border:none;font-size:.75rem;color:var(--dim);cursor:pointer;padding:4px}
+
+/* ── Kategorien umbenennen (2026-09-15) ────────────────────────────────
+   .kat-box setzt die Zeilen-Darstellung aus der Medienabfrage weiter unten
+   ausdruecklich zurueck: dort wird .share-box ab 560px zu einer WAAGERECHTEN
+   Reihe, und dieser Dialog braucht eine Liste untereinander. Ohne das
+   staende die Liste neben dem Titel und liefe aus dem Kasten. */
+.kat-box{max-width:420px;width:94%;display:block !important;flex-direction:column !important;text-align:left !important;align-items:stretch !important}
+.kat-list{max-height:46vh;overflow-y:auto;margin:10px 0 8px;display:flex;flex-direction:column;gap:6px}
+.kat-row{display:flex;align-items:center;gap:6px}
+.kat-ico{width:52px;flex:0 0 52px;text-align:center;font-size:1rem;padding:7px 2px;border:1px solid var(--line,#d8cdbb);border-radius:8px;background:var(--card,#fff);color:var(--ink)}
+.kat-name{flex:1 1 auto;min-width:0;font-size:.82rem;padding:7px 8px;border:1px solid var(--line,#d8cdbb);border-radius:8px;background:var(--card,#fff);color:var(--ink)}
+.kat-reset{flex:0 0 auto;min-width:34px;min-height:34px;border:0;border-radius:8px;background:transparent;color:var(--dim);font-size:.95rem;cursor:pointer}
+.kat-reset:disabled{opacity:.28;cursor:default}
+.kat-fremd{flex:0 0 auto;font-size:.6rem;color:var(--dim);background:rgba(0,0,0,.06);padding:2px 6px;border-radius:6px}
+.kat-note{font-size:.68rem;line-height:1.45;color:var(--dim);text-align:left;margin:0 0 12px}
+/* Emoji-Auswahl: ein Raster, das unter die bearbeitete Zeile wandert.
+   44px Berührungshöhe — Klaus bedient das mit dem Finger am Tablet. */
+.kat-emoji-raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;
+  max-height:30vh;overflow-y:auto;padding:6px;margin:2px 0 4px;
+  background:rgba(0,0,0,.05);border-radius:10px}
+.kat-emoji-raster[hidden]{display:none}
+.kat-emoji{min-width:40px;min-height:40px;border:0;border-radius:8px;background:transparent;
+  font-size:1.25rem;line-height:1;cursor:pointer;padding:0}
+.kat-emoji:hover,.kat-emoji:focus{background:rgba(0,0,0,.10);outline:none}
+.kat-ico{cursor:pointer}
 @media (max-height:540px),(orientation:landscape) and (max-height:680px){
   .share-box{max-width:520px;display:flex;flex-direction:row;align-items:center;gap:16px;text-align:left;padding:14px 18px}
   .share-box-sub{margin-bottom:10px}
@@ -1949,6 +1974,7 @@ const _CR=Object.freeze({c:'© 2026 Klaus Nitzsche',r:'All rights reserved',v:'v
         🔍 <span id="fldSearch">Suche</span>
       </div>
       <div class="fldact r" onclick="openFolderSheet()">+ <span id="fldNew">Neuer Ordner</span></div>
+      <div class="fldact" onclick="openKatUmbenennen()">✎ <span id="fldKatRename">Kategorien umbenennen</span></div>
       <div class="fldact" id="fldToggleAll" onclick="tglAllFld()">▼ Alle aufklappen</div>
     </div>
   </div>
@@ -4340,9 +4366,59 @@ const THEMES=[
   {id:'neon',de:'Neon',en:'Neon',ru:'Неон',zh:'霓虹',es:'Neón',fr:'Néon',it:'Neon',pt:'Néon',strips:['#0d0d1a','#9d5cff','#ff3f9a','#00d68f']},
   {id:'pastel',de:'Pastell',en:'Pastel',ru:'Пастель',zh:'粉彩',es:'Pastel',fr:'Pastel',it:'Pastello',pt:'Pastel',strips:['#fff0f9','#c050c8','#ff6090','#4ec888']},
 ];
-function catName(id){if(id&&id.startsWith('fld_')){const f=FD.find(f=>String(f.id)===id.slice(4));return f?f.name:id;}const c=CATS.find(x=>x.id===id);if(!c)return id;return c[CL]||c.de;}
-function catCol(id){if(id&&id.startsWith('fld_')){return'#7a5840';}return CATS.find(x=>x.id===id)?.col||'#7a5840';}
-function catIco(id){if(id&&id.startsWith('fld_')){const f=FD.find(f=>String(f.id)===id.slice(4));return f?f.ico:'📁';}return CATS.find(x=>x.id===id)?.ico||'📖';}
+/* ══ EIGENE KATEGORIE-NAMEN + EMOJI-AUSWAHL ══════════════════════════════
+   Uebertragen aus Mein Mixarium (2026-09-15). Klaus: „diese Moeglichkeit des
+   Umbenennens der Kategorien bitte in mein Rezeptbuch und Muttis Rezeptbuch
+   uebertragen."
+
+   ⚠ GESPEICHERT WIRD NUR DIE BESCHRIFTUNG, NIE DIE KENNUNG. `c.id` bleibt
+   `fleisch`, auch wenn dort „Hauptgerichte" steht. Jedes Rezept zeigt ueber
+   `r.cat` auf diese Kennung; wer sie umbenennt, nimmt allen Rezepten ihr
+   Zuhause.
+
+   ⚠ DER SPEICHER-SCHLUESSEL IST APP-EIGEN. Beide Rezeptbuecher liegen auf
+   derselben github.io-Adresse und teilen sich den localStorage. Mein
+   Rezeptbuch schreibt `mrz9m`, Muttis `mrz9` — der Schluessel hier folgt
+   genau dieser Trennung, sonst haetten beide Buecher dieselben Namen. */
+const CATS_KEY='mrzcats9';
+let CATS_EIGEN={};
+function ladeCatsEigen(){try{const r=JSON.parse(localStorage.getItem(CATS_KEY)||'{}');CATS_EIGEN=(r&&typeof r==='object')?r:{};}catch(e){CATS_EIGEN={};}}
+function svCatsEigen(){try{localStorage.setItem(CATS_KEY,JSON.stringify(CATS_EIGEN));}catch(e){}}
+ladeCatsEigen();
+/* EINE Stelle fuer den angezeigten Namen. Zwei Stellen liefen auseinander,
+   und dann stuende im Reiter etwas anderes als in der Auswahlliste.
+   ⚠ Die Namen sind mit Bedacht anders als `catName`/`catIco`: die gibt es
+   seit jeher und sie nehmen eine KENNUNG, diese hier nehmen das OBJEKT. In
+   Mixarium hiess katSymbol zuerst catIco — Funktions-Deklarationen werden
+   hochgezogen, die spaetere gewann, und jeder Aufruf landete in der
+   falschen. */
+function katBeschriftung(c){if(!c)return'';const e=CATS_EIGEN[c.id];if(e&&e.name)return e.name;return c[CL]||c.de||c.id;}
+function katSymbol(c){if(!c)return'📦';const e=CATS_EIGEN[c.id];if(e&&e.ico)return e.ico;return c.ico||'📦';}
+
+/* ══ FREMDE KATEGORIEN SICHTBAR MACHEN ═══════════════════════════════════
+   Ein Import aus einer Schwester-App bringt Kennungen mit, die dieses Buch
+   nicht kennt. Solche Rezepte lagen bisher in R, wurden gespeichert und
+   mitexportiert — und NIE gezeichnet, auch nicht unter „Alle". Zu finden
+   waren sie nur ueber die Suche. Ein Wert, den die App haelt und nie zeigt,
+   ist die stillste Sorte Verlust. */
+function catsFremd(){
+  const bekannt=new Set(CATS.map(c=>c.id));
+  const out=[],gesehen=new Set();
+  const arr=(typeof R!=='undefined'&&Array.isArray(R))?R:[];
+  for(const r of arr){
+    const id=(r&&typeof r.cat==='string')?r.cat:'';
+    if(!id||bekannt.has(id)||gesehen.has(id))continue;
+    if(id.indexOf('fld_')===0)continue;
+    gesehen.add(id);
+    out.push({id:id,ico:'📦',de:id,col:'#7a5840',fremd:true});
+  }
+  return out;
+}
+function catsAlle(){return CATS.filter(c=>c.id!=='all').concat(catsFremd());}
+
+function catName(id){if(typeof id==='string'&&id.indexOf('fld_')===0){const f=FD.find(f=>String(f.id)===id.slice(4));return f?f.name:id;}const c=catsAlle().find(x=>x.id===id);if(!c)return id;return katBeschriftung(c);}
+function catCol(id){if(typeof id==='string'&&id.indexOf('fld_')===0){return'#7a5840';}return catsAlle().find(x=>x.id===id)?.col||'#7a5840';}
+function catIco(id){if(typeof id==='string'&&id.indexOf('fld_')===0){const f=FD.find(f=>String(f.id)===id.slice(4));return f?f.ico:'📁';}const c=catsAlle().find(x=>x.id===id);return c?katSymbol(c):'📖';}
 function courseName(id){const c=COURSES.find(x=>x.id===id);if(!c)return id;return c[CL]||c.de;}
 function themeName(id){const t=THEMES.find(x=>x.id===id);if(!t)return id;return t[CL]||t.de;}
 function h(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -4351,6 +4427,20 @@ function h(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 // STATE
 // ═══════════════════════════════════════════════════════
 let R=[],MS=[],FD=[];
+// SBKIM (2026-09-15): R als LIVE window.R exponieren — wortgleich uebernommen
+// aus Mein Rezeptbuch (dort seit 2026-07-02). Ein top-level `let` haengt NICHT
+// am window-Objekt; `sbkim/sbkim-init.js` liest aber `window.R`, um aus den
+// echten Rezepten den Inhalts-Vektor zu rechnen (sampleContent).
+//
+// ⚠ OHNE DIESE ZEILE WAR DIE STUFE VON HEUTE HIER TOT. `sampleContent()` gab
+// eine leere Liste zurueck, der Vektor fiel auf die Beschreibung zurueck, und
+// die Zeile „Dein Vektor kommt aus deinen eigenen Inhalten" konnte im Siegel
+// GAR NICHT erscheinen. Gemessen am 2026-09-15: `window.R` kam in diesem Buch
+// null Mal vor, in Mein Rezeptbuch vier Mal.
+//
+// Getter statt Einmal-Zuweisung: R wird beim Laden neu zugewiesen (R=[]),
+// eine feste Zuweisung zeigte danach auf das alte Feld.
+try{Object.defineProperty(window,'R',{get:function(){return R;},configurable:true});}catch(e){}
 let CAT='all',SQ='',MVT='tl';
 let EN={},EI={},ES={},CST={rid:null,slotId:null,sel:null};
 let DoneS={},DoneI={},DoneAL={};
@@ -4745,6 +4835,11 @@ function applyLang(code){
   const logo=document.getElementById('appLogo');
   if(logo){const t=L.appTitle||'Muttis Rezeptbuch';const sp=t.indexOf(' ');logo.innerHTML=sp>-1?h(t.slice(0,sp))+' <em>'+h(t.slice(sp+1))+'</em>':h(t);}
   const lb=document.getElementById('langBtn');if(lb)lb.textContent='🌐 '+code.toUpperCase();
+  /* Der Knopf „Kategorien umbenennen" holt seinen Text aus KAT_TXT statt aus
+     LANGS: acht Sprachen fuer einen Dialog, ohne die grosse Tabelle
+     anzufassen — die i18n-Pruefung sieht LANGS und bleibt unberuehrt. */
+  const _kbn=document.getElementById('fldKatRename');
+  if(_kbn)_kbn.textContent=((typeof KAT_TXT!=='undefined'&&(KAT_TXT[code]||KAT_TXT.de))||{}).t?.replace(/^✎\s*/,'')||'Kategorien umbenennen';
   // API-Key Overlay – Titel und Tooltip-Texte aktualisieren
   const _akb=document.getElementById('apiKeyHdrBtn');if(_akb)_akb.title=L.apiKeyOvTitle||'';
   const _aktEl=document.getElementById('apiKeyOvTitleEl');if(_aktEl)_aktEl.textContent=L.apiKeyOvTitle||'';
@@ -6968,16 +7063,16 @@ h1 em{color:#c9a882}
 function renderCatNav(){
   const el=document.getElementById('catNav');if(!el)return;
   // Kategorien
-  let pills=CATS.map(c=>{
+  let pills=CATS.filter(c=>c.id==='all').concat(catsAlle()).map(c=>{
     const cnt=c.id==='all'?R.filter(r=>r.name).length:R.filter(r=>r.cat===c.id&&r.name).length;
     const dragEvts=c.id!=='all'?`ondragover="pillDragOver(event,'${c.id}')" ondragleave="pillDragLeave(event)" ondrop="pillDrop(event,'${c.id}')"` :'';
-    return`<div class="cpill ${CAT===c.id?'on':''}" onclick="setCAT('${c.id}')" ${dragEvts}>${c.ico} ${c[CL]||c.de} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;
+    return`<div class="cpill ${CAT===c.id?'on':''}" onclick="setCAT('${c.id}')" ${dragEvts}>${c.id==='all'?c.ico:katSymbol(c)} ${h(c.id==='all'?(c[CL]||c.de):katBeschriftung(c))} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;
   }).join('');
   if(FD&&FD.length){pills+=FD.map(f=>{const fid='fld_'+f.id;const cnt=R.filter(r=>r.folder===String(f.id)&&r.name).length;return`<div class="cpill ${CAT===fid?'on':''}" onclick="setCAT('${fid}')">${f.ico} ${f.name} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;}).join('');}
   el.innerHTML=pills;
   const catSel=document.getElementById('newCat');
   if(catSel)catSel.innerHTML=`<option value="">— ${T('lCat')} —</option>`+
-    CATS.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${c.ico} ${c[CL]||c.de}</option>`).join('');
+    catsAlle().map(c=>`<option value="${c.id}">${katSymbol(c)} ${h(katBeschriftung(c))}</option>`).join('');
   const fldSel=document.getElementById('newFolder');
   if(fldSel)fldSel.innerHTML=`<option value="">— ${T('noFolder')} —</option>`+
     FD.map(f=>`<option value="${f.id}">${f.ico} ${h(f.name)}</option>`).join('');
@@ -7759,6 +7854,175 @@ function doPrint(){
 // FOLDERS
 // ═══════════════════════════════════════════════════════
 function openFolderSheet(){document.getElementById('folderSheet').style.display='block';}
+
+/* ══ KATEGORIEN UMBENENNEN ═══════════════════════════════════════════════
+   Die Texte stehen hier lokal statt in LANGS — dasselbe Muster wie `prompts`
+   weiter unten. Acht Sprachen fuer einen Dialog, ohne die grosse Tabelle
+   anzufassen; `check_i18n` prueft LANGS und bleibt unberuehrt. */
+const KAT_TXT={
+  de:{t:'✎ Kategorien umbenennen',s:'Gib den Kategorien deine eigenen Namen und Symbole. Aus „Mocktails" wird deine „Salatbar".',
+      n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',
+      f:'mitgebracht',z:'↺ zuruecksetzen',ok:'Speichern',ab:'Abbrechen',g:'✅ Kategorien gespeichert'},
+  en:{t:'✎ Rename categories',s:'Give the categories your own names and icons. “Mocktails” becomes your “Salad bar”.',
+      n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',
+      f:'imported',z:'↺ reset',ok:'Save',ab:'Cancel',g:'✅ Categories saved'},
+  ru:{t:'✎ Переименовать категории',s:'Дайте категориям свои названия и значки.',
+      n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',
+      f:'импортировано',z:'↺ сбросить',ok:'Сохранить',ab:'Отмена',g:'✅ Сохранено'},
+  zh:{t:'✎ 重命名分类',s:'为分类设置你自己的名称和图标。',
+      n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',
+      f:'导入',z:'↺ 重置',ok:'保存',ab:'取消',g:'✅ 已保存'},
+  es:{t:'✎ Renombrar categorías',s:'Da a las categorías tus propios nombres e iconos.',
+      n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',
+      f:'importado',z:'↺ restablecer',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'},
+  fr:{t:'✎ Renommer les catégories',s:'Donnez aux catégories vos propres noms et icônes.',
+      n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',
+      f:'importé',z:'↺ réinitialiser',ok:'Enregistrer',ab:'Annuler',g:'✅ Enregistré'},
+  it:{t:'✎ Rinomina categorie',s:'Dai alle categorie i tuoi nomi e le tue icone.',
+      n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',
+      f:'importato',z:'↺ ripristina',ok:'Salva',ab:'Annulla',g:'✅ Salvato'},
+  pt:{t:'✎ Renomear categorias',s:'Dê às categorias os seus próprios nomes e ícones.',
+      n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',
+      f:'importado',z:'↺ repor',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'}
+};
+/* ══ EMOJI-AUSWAHL (Klaus 2026-09-15) ════════════════════════════════════
+   „Einmal anklicken, Emojis aussuchen." Ein Symbol von Hand zu tippen setzt
+   voraus, dass man eine Emoji-Tastatur findet — auf dem Tablet ist das ein
+   Umweg ueber drei Menues.
+
+   ⚠ DIE REITER-LEISTE SELBST OEFFNET SIE NICHT. Ein Tipp auf eine
+   Kategorie-Pille wechselt die Kategorie; ein zweiter Zweck am selben Griff
+   waere eine Regel, die niemand lernt. Die Auswahl haengt am Symbol-Feld im
+   Umbenennen-Dialog — dort, wo man ohnehin gerade umbenennt.
+
+   ⚠ TIPPEN BLEIBT MOEGLICH. Das Raster ist eine Abkuerzung, kein Riegel:
+   wer ein Emoji braucht, das hier fehlt, gibt es weiter von Hand ein. Ein
+   Raster, das die Eingabe SPERRT, waere ein Rueckschritt fuer jeden, dessen
+   Kategorie hier nicht vorkommt. */
+const KAT_EMOJIS = [
+  "🥗","🥦","🥕","🌽","🍅","🥑","🫛","🍆","🥬","🧄",
+  "🍖","🥩","🍗","🥓","🌭","🍔","🧆","🥟","🍝","🍕",
+  "🐟","🍤","🦐","🦑","🦞","🍣","🍱","🐙",
+  "🍜","🥘","🍲","🫕","🥣","🍛","🌮","🌯","🥙","🫔",
+  "🍰","🎂","🧁","🥧","🍪","🍩","🍫","🍬","🍮","🍨",
+  "🍦","🍧","🥞","🧇","🍯","🥐","🥖","🍞","🥨","🧀",
+  "🍹","🍸","🍷","🍺","🍻","🥂","🥃","🧉","🍾","🫗",
+  "🥤","🧋","🧃","☕","🍵","🫖","🥛","🧊","💧",
+  "🍿","🥜","🌰","🍢","🍡","🥠","🥡","🧂","🫙","🍽️",
+  "🌿","🌶️","🍋","🍊","🍓","🍉","🍇","🍍","🥥","🍏",
+  "📦","⭐","❤️","🔥","✨","🏠","🎁","🧪","🍀","🌸"
+];
+function katEmojiRaster(){
+  return '<div class="kat-emoji-raster" id="katEmojiRaster" hidden>'
+    + KAT_EMOJIS.map(function(e){
+        return '<button type="button" class="kat-emoji" onclick="katEmojiWaehlen(\''+e+'\')">'+e+'</button>';
+      }).join('')
+    + '</div>';
+}
+/* Das Raster steht EINMAL im Dialog und wandert unter die Zeile, an der
+   gerade gearbeitet wird. Dreizehn eigene Raster waeren dreizehn Stellen,
+   die auseinanderlaufen — und dreizehnmal dieselben hundert Knoepfe im DOM. */
+var _katZiel = null;
+/* ⚠ DIESE FUNKTION OEFFNET NUR — sie schaltet NICHT um. Als Umschalter
+   gebaut hat sie sich selbst wieder zugemacht: am Symbol-Feld haengen
+   `onfocus` UND `onclick`, und ein Fingertipp loest beide aus. Das erste
+   oeffnete, das zweite sah „schon offen" und schloss. Gemessen im Browser:
+   das Raster war nach einem Tipp zu, obwohl es an der richtigen Stelle
+   stand. Ein Umschalter, den zwei Ereignisse bedienen, ist keiner.
+   Geschlossen wird jetzt an benannten Stellen: nach der Wahl, beim Tipp
+   daneben, mit Esc. */
+function katEmojiOeffnen(feld){
+  var raster=document.getElementById('katEmojiRaster');
+  if(!raster||!feld)return;
+  var zeile=feld.closest('.kat-row');
+  _katZiel=feld;
+  if(zeile&&zeile.parentNode)zeile.parentNode.insertBefore(raster,zeile.nextSibling);
+  raster.hidden=false;
+  /* ⚠ HIER STAND `raster.scrollIntoView({block:'nearest'})`, UND ES HAT DIE
+     AUSWAHL SOFORT WIEDER ZUGEMACHT. Am Symbol-Feld haengen focus und click;
+     focus oeffnet, das Scrollen verschiebt die Liste unter dem Finger, und
+     der danach folgende click landet auf einem ANDEREN Element — worauf der
+     „Tipp daneben"-Riegel schliesst. Gemessen: drei Laeufe derselben Datei,
+     zweimal offen, einmal zu. Ein Flatterfehler, der am Tablet genauso
+     zuschnappt. Das Raster steht ohnehin direkt unter der angetippten
+     Zeile; wer tippt, sieht es. */
+}
+function katEmojiSchliessen(){
+  var raster=document.getElementById('katEmojiRaster');
+  if(raster)raster.hidden=true;
+  _katZiel=null;
+}
+function katEmojiWaehlen(e){
+  if(_katZiel){
+    _katZiel.value=e;
+    var zeile=_katZiel.closest('.kat-row');
+    var zur=zeile&&zeile.querySelector('.kat-reset');
+    if(zur)zur.disabled=false;
+  }
+  katEmojiSchliessen();
+}
+function openKatUmbenennen(){
+  const X=KAT_TXT[CL]||KAT_TXT.de;
+  const liste=catsAlle();
+  const ov=document.createElement('div');
+  ov.id='katRenameOv';ov.className='share-ov';
+  const zeilen=liste.map(c=>{
+    const eigen=CATS_EIGEN[c.id]||{};
+    const hatEigen=!!(eigen.name||eigen.ico);
+    /* Der VORGABE-Name steht als Platzhalter da, nicht als Wert. Stuende er
+       als Wert drin, koennte man einen eigenen Namen nicht mehr von der
+       Vorgabe unterscheiden — und „zuruecksetzen" haette nichts zu tun. */
+    return `<div class="kat-row" data-kid="${h(c.id)}">
+      <input class="kat-ico" value="${h(eigen.ico||'')}" placeholder="${h(c.ico||'📦')}" maxlength="4" aria-label="${h(X.sym)}" title="${h(X.sym)}" onclick="katEmojiOeffnen(this)" onfocus="katEmojiOeffnen(this)">
+      <input class="kat-name" value="${h(eigen.name||'')}" placeholder="${h(c[CL]||c.de||c.id)}" aria-label="Name">
+      <button class="kat-reset" onclick="katZuruecksetzen('${h(c.id)}')" ${hatEigen?'':'disabled'} title="${h(X.z)}">↺</button>
+      ${c.fremd?`<span class="kat-fremd">${h(X.f)}</span>`:''}
+    </div>`;
+  }).join('');
+  ov.innerHTML=`<div class="share-box kat-box">
+    <div class="share-box-title">${h(X.t)}</div>
+    <div class="share-box-sub">${h(X.s)}</div>
+    <div class="kat-list">${zeilen}${katEmojiRaster()}</div>
+    <div class="kat-note">${h(X.n)}</div>
+    <button class="share-btn-p" onclick="katSpeichern()">${h(X.ok)}</button>
+    <button class="share-btn-cl" onclick="document.getElementById('katRenameOv').remove()">${h(X.ab)}</button>
+  </div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+  /* Ein Tipp irgendwo sonst im Dialog macht die Auswahl zu. Ohne das bliebe
+     sie stehen, waehrend man in einem anderen Feld schreibt — und verdeckte
+     genau die Zeile, an der man arbeitet. */
+  ov.addEventListener('click',function(e){
+    if(e.target.closest('.kat-emoji-raster'))return;
+    if(e.target.classList&&e.target.classList.contains('kat-ico'))return;
+    katEmojiSchliessen();
+  },true);
+  ov.addEventListener('keydown',function(e){ if(e.key==='Escape')katEmojiSchliessen(); });
+  document.body.appendChild(ov);
+}
+function katZuruecksetzen(id){
+  const row=document.querySelector('#katRenameOv .kat-row[data-kid="'+id+'"]');
+  if(!row)return;
+  row.querySelector('.kat-ico').value='';
+  row.querySelector('.kat-name').value='';
+  row.querySelector('.kat-reset').disabled=true;
+}
+function katSpeichern(){
+  const ov=document.getElementById('katRenameOv');if(!ov)return;
+  const neu={};
+  ov.querySelectorAll('.kat-row').forEach(row=>{
+    const id=row.dataset.kid;
+    const nm=(row.querySelector('.kat-name').value||'').trim();
+    const ic=(row.querySelector('.kat-ico').value||'').trim();
+    /* Leer heisst „Vorgabe", nicht „leerer Name". Wer alles leert, bekommt
+       die Werkseinstellung zurueck — und der Eintrag verschwindet ganz,
+       statt als leeres Objekt liegen zu bleiben. */
+    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;}
+  });
+  CATS_EIGEN=neu;svCatsEigen();
+  ov.remove();
+  renderCatNav();render();if(typeof renderFolders==='function')renderFolders();
+  toast((KAT_TXT[CL]||KAT_TXT.de).g);
+}
 function closeFolderSheet(){document.getElementById('folderSheet').style.display='none';}
 function saveFolder(){
   const nm=document.getElementById('fldNameIn').value.trim();if(!nm){toast('⚠️ '+T('fldNameLbl'));return;}
@@ -7771,7 +8035,7 @@ function renderFolders(){
   const tree=document.getElementById('fldTree');if(!tree)return;
   const openGids=new Set([...tree.querySelectorAll('.fld-recs.open')].map(el=>el.closest('.fld-grp')?.dataset.gid).filter(Boolean));
   const groups=[
-    ...CATS.filter(c=>c.id!=='all').map(c=>({id:'cat_'+c.id,name:c[CL]||c.de,ico:c.ico,col:c.col,
+    ...catsAlle().map(c=>({id:'cat_'+c.id,name:katBeschriftung(c),ico:katSymbol(c),col:c.col,
       recipes:R.filter(r=>r.cat===c.id&&r.name)})),
     ...FD.map(f=>({id:'cfd_'+f.id,name:f.name,ico:f.ico,col:'#7a5840',
       recipes:R.filter(r=>r.folder===String(f.id)&&r.name)}))
@@ -8003,7 +8267,7 @@ function render(){
     const cnt=document.getElementById('srchCnt');if(cnt)cnt.textContent=`${named.length} ${T('srchResults')}`;
     html=named.length?named.map(r=>rndCard(r)).join(''):`<div class="empty-state empty-state--search"><div class="empty-state__icon">🔍</div><h3 class="empty-state__title">${T('noResults')}</h3></div>`;
   }else if(CAT==='all'){
-    for(const cat of CATS.filter(c=>c.id!=='all')){
+    for(const cat of catsAlle()){
       const grp=R.filter(r=>r.cat===cat.id);if(!grp.length)continue;
       html+=rndDiv(cat,grp)+grp.map(r=>rndCard(r)).join('');
     }
@@ -8055,7 +8319,7 @@ function render(){
   }
 }
 function rndDiv(cat,grp){
-  const filled=grp.filter(r=>r.name).length,name=cat[CL]||cat.de;
+  const filled=grp.filter(r=>r.name).length,name=katBeschriftung(cat);
   return`<div style="margin-bottom:5px">
     <div class="cdiv-hd" style="border-left-color:${cat.col}">
       <div style="font-size:1.05rem">${cat.ico}</div>
