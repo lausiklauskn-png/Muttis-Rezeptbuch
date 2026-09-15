@@ -458,6 +458,42 @@ benannte Grenze, dass das Wörterbuch hier nie feuert, und gemessen wird
 stattdessen, dass die eigenen Kategorien die Familie abdecken. *Drei Apps
 dieselbe Zusicherung behaupten zu lassen wäre in einer davon eine Lüge.*
 
+### ⚠ ZWEI STELLEN ZÄHLTEN DIESELBE SACHE VERSCHIEDEN (Klaus 2026-09-16)
+
+Klaus mit Bild: *„Sushi steht in den Ordnern mit null Rezepten, obwohl
+mindestens sechs drin sind. Oben in der Kategorie-Leiste in dem oberen Bereich
+bei Rezepte steht Sushi mit sechs."*
+
+**Beide Zahlen waren richtig gerechnet — sie rechneten nur aus verschiedenen
+Quellen:**
+
+| | fragte | Sushi |
+|---|---|---|
+| Kategorie-Leiste (`renderCatNav`) | `katVonRezept(r)` | **6** |
+| Ordner-Baum (`renderFolders`) | das **rohe** Feld `r.cat` | **0** |
+
+⚠ **DAS IST DER PREIS EINER HALBEN UMSTELLUNG.** Am Vortag ist `katVonRezept`
+an **drei** Anzeige-Stellen eingesetzt worden (Reiter-Zahl, „Alle", Einzel-
+Kategorie) — der Ordner-Baum blieb absichtlich unangetastet, weil er „nur
+anzeigt". *Eine Kennung, die an einer Stelle gedeutet und an der anderen roh
+gelesen wird, ist zwei verschiedene Kennungen.* Dieselbe Lücke traf auch
+**„Ohne Kategorie"**: der Reiter zählte zwei, der Ordner-Eintrag null.
+
+⚠ **UND EINE ZEILE TIEFER DASSELBE NOCH EINMAL.** Die Ordner-Gruppe zählte
+`r.folder===…`, die Ordner-Pille `r.folder ODER r.cat==='fld_…'`. Ein Rezept,
+das nur über `r.cat` in einem Ordner liegt, fiel im Baum heraus. Zwei Zeilen
+untereinander, zwei Wahrheiten.
+
+**Umgestellt sind jetzt alle Zähl- und Zeichen-Stellen**, die eine Kategorie
+meinen — Ordner-Baum, Ordner-Zähler im Reiter-Abzeichen, und in Mein Rezeptbuch
+zusätzlich die Gruppen des KI-Buchs und die Lieblingsrezept-Auswahl.
+
+⚠ **DER WÄCHTER MISST DIE ÜBEREINSTIMMUNG, NICHT EINE ZAHL.** „Der Ordner zeigt
+6" wäre blind, sobald sich die Leiste bewegt. Gemessen wird Gruppe für Gruppe,
+dass **beide Ansichten dieselbe Zahl nennen** — plus die Gegenrichtung, dass
+überhaupt eine mitgebrachte Kategorie mit Inhalt dabei ist (sonst wären alle
+Zahlen 0 und stimmten trivial überein).
+
 ### Geprüft
 
 ```bash
