@@ -28,6 +28,12 @@ const BESTAND = [
   { id:1, name:"Gulasch",       cat:"fleisch", shut:true, ings:[], steps:[] },
   { id:2, name:"Maki-Rolle",    cat:"sushi",   shut:true, ings:[], steps:[] },
   { id:3, name:"Gurkensalat",   cat:"salat",   shut:true, ings:[], steps:[] },
+  /* ⚠ ZWEI HEIMATLOSE: der erste hat GAR KEINE Kategorie, der zweite zeigt
+     auf einen Ordner, den es nicht gibt. Beide waren bisher nur ueber die
+     Suche zu finden — genau Klaus' Sushi-Befund vom 2026-09-16. */
+  { id:4, name:"Heimatlos-Ohne", cat:"", shut:true, ings:[], steps:[] },
+  { id:5, name:"Heimatlos-Ordner", cat:"fld_999", shut:true, ings:[], steps:[] },
+  { id:6, name:"Mitgebracht-Bekannt", cat:"afckt", shut:true, ings:[], steps:[] },
 ];
 
 const browser = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
@@ -206,6 +212,49 @@ ok("sampleContent() erreicht die Rezepte (" + (proben ? proben.length : "nicht e
    Array.isArray(proben) && proben.length >= 3);
 ok("… und liefert Kategorie + Name, kein PII",
    Array.isArray(proben) && proben.some(t=>/Gulasch/.test(t)));
+
+/* ⚠ „bietet eine Auswahl an (mindestens 40)" WAR ZU LOSE. Die Gegenprobe hat
+   es gefangen: sechs Getraenke-Symbole zu entfernen faellt unter 40 nicht auf.
+   Eine Untergrenze, die weit unter dem Bestand liegt, misst den Bestand nicht.
+   Gemessen wird jetzt die Zusicherung: es SIND Getraenke-Symbole dabei. */
+ok("die Auswahl traegt eigene Getraenke-Symbole (Klaus 2026-09-16)", await seite.evaluate(()=>
+   ["🍶","🍼","🚰","🫧"].every(e=>KAT_EMOJIS.indexOf(e)>=0)
+   && KAT_EMOJIS.length>=130
+   && new Set(KAT_EMOJIS).size===KAT_EMOJIS.length));
+
+console.log("\n── 11 · Klartext statt Kennung ──");
+const reiterN = await seite.evaluate(()=>{ CATS_EIGEN={}; svCatsEigen(); renderCatNav();
+  return [...document.querySelectorAll("#catNav .cpill")].map(e=>e.textContent.trim()); });
+/* ⚠ GEMESSEN WIRD DER NAME, NICHT DIE ANWESENHEIT. Eine rohe Kennung im
+   Reiter war der halbe Weg: sichtbar ja, verstaendlich nein. Klaus am
+   2026-09-15 vor der Ordner-Liste: „AFCKT, was ist das?" */
+ok("eine bekannte fremde Kennung steht im KLARTEXT da", await seite.evaluate(()=>{
+   const c=catsFremd().find(x=>x.id==="afckt");
+   return !!c && c.de==="Alkfr. Cocktails" && c.ico==="🍸" && !c.unbekannt; }));
+/* ⚠ UND DIE GEGENRICHTUNG: eine unbekannte Kennung wird NICHT erfunden.
+   Ohne diesen Waechter waere auch ein Woerterbuch gruen, das raet. */
+ok("… eine UNBEKANNTE Kennung bekommt keinen erfundenen Namen", await seite.evaluate(()=>{
+   const c=catsFremd().find(x=>x.id==="sushi"); return !!c && c.unbekannt===true && c.de===c.id && c.ico==="📦"; }));
+ok("das Woerterbuch deckt beide Schwester-Apps ab", await seite.evaluate(()=>
+   KAT_FAMILIE.length===18 && ["afckt","mock","bowle","smooth","vorsp","fleisch","drk"]
+     .every(k=>KAT_FAMILIE.some(x=>x.id===k))));
+
+console.log("\n── 12 · Rezepte ohne Zuhause werden als eigene Kategorie gefuehrt ──");
+ok("ein Reiter sammelt sie ein", reiterN.some(t=>/Ohne Kategorie/.test(t)));
+ok("… und er zaehlt BEIDE (ohne Kategorie + toter Ordner)", await seite.evaluate(()=>{
+   const p=[...document.querySelectorAll("#catNav .cpill")].find(e=>/Ohne Kategorie/.test(e.textContent));
+   return !!p && /(^|\D)2(\D|$)/.test(p.textContent); }));
+const alleN = await seite.evaluate(()=>{ CAT="all"; render(); return document.getElementById("rcont").textContent; });
+ok("„Alle“ zeichnet das Rezept ohne Kategorie", /Heimatlos-Ohne/.test(alleN));
+ok("„Alle“ zeichnet das Rezept mit totem Ordner", /Heimatlos-Ordner/.test(alleN));
+/* ⚠ EIN REITER, DER SICH OEFFNEN LAESST UND NICHTS ZEIGT, IST EIN TOTER
+   KNOPF MIT BESCHRIFTUNG — die schlimmere Sorte. */
+const ohneAnsicht = await seite.evaluate(()=>{ CAT=KAT_OHNE; render(); return document.getElementById("rcont").textContent; });
+ok("der Reiter selbst zeigt sie auch",
+   /Heimatlos-Ohne/.test(ohneAnsicht) && /Heimatlos-Ordner/.test(ohneAnsicht));
+ok("und OHNE Heimatlose gibt es den Reiter nicht", await seite.evaluate(()=>{
+   const sich=R.slice(); R=R.filter(r=>!/^Heimatlos/.test(r.name||""));
+   const weg=catsAlle().some(c=>c.id===KAT_OHNE); R=sich; return !weg; }));
 
 await browser.close(); server.close();
 console.log(`\n${gruen} grün · ${rot} ROT`);

@@ -4411,16 +4411,97 @@ function katSymbol(c){if(!c)return'📦';const e=CATS_EIGEN[c.id];if(e&&e.ico)re
    mitexportiert — und NIE gezeichnet, auch nicht unter „Alle". Zu finden
    waren sie nur ueber die Suche. Ein Wert, den die App haelt und nie zeigt,
    ist die stillste Sorte Verlust. */
+/* ⚠ EIN REZEPT OHNE KATEGORIE HATTE KEIN ZUHAUSE — und war nur ueber die
+   Suche zu finden. Klaus am 2026-09-16: „gebe ich oben im Suchfeld Sushi
+   ein, taucht ploetzlich Sushi auf … Sushi taucht immer nicht auf."
+   Gemessen im Code: `catsFremd` stieg bei leerer Kennung mit `continue` aus,
+   und die Alle-Ansicht laeuft ueber `catsAlle()` — also zeichnete auch sie
+   nichts. In den Rezeptbuechern zaehlte der Reiter „Alle" trotzdem ALLE
+   Rezepte: die Zahl versprach 52, gezeichnet wurden weniger.
+   ⚠ UND EIN ORDNER, DEN ES NICHT MEHR GIBT, IST AUCH KEIN ZUHAUSE. Eine
+   Kennung `fld_…` wird uebersprungen, weil Ordner ihren eigenen Weg haben —
+   steht der Ordner aber nicht mehr in FD, faellt das Rezept durch dieselbe
+   Luecke. Genau die Sorte, die kein Fehler ist und niemandem auffaellt.
+   Sie werden jetzt als EIGENE Kategorie gefuehrt, nicht repariert: welche
+   Kategorie sie bekommen sollen, entscheidet Klaus, nicht die App. */
+const KAT_OHNE='__ohne';
+function katVonRezept(r){
+  var id=(r&&typeof r.cat==='string')?r.cat.trim():'';
+  if(!id)return KAT_OHNE;
+  if(id.indexOf('fld_')===0){
+    var fid=id.slice(4);
+    var da=(typeof FD!=='undefined'&&Array.isArray(FD))&&FD.some(function(f){return String(f.id)===fid;});
+    return da?id:KAT_OHNE;
+  }
+  return id;
+}
+/* ⚠ EINE KENNUNG IST KEIN NAME. Klaus am 2026-09-15, vor der Ordner-Liste:
+   „AFCKT, was ist das?" — aus einem Import der Schwester-App kamen `afckt`,
+   `mock`, `bowle`, `smooth`, und die Oberflaeche zeigte sie ROH an.
+   ⚠ UND DIE NAMEN LAGEN SCHON IN DER APP, nur ohne Zuordnung: die Spore
+   kuendigt seit jeher „Alkfr. Cocktails, Mocktails, Bowlen, Smoothies &
+   Shakes" als Gast-Kategorien an (`guestCategories` in sbkim-init.js) — eine
+   Liste von NAMEN ohne KENNUNGEN. Sie half der Oberflaeche deshalb nichts.
+   KAT_FAMILIE ist das Woerterbuch: Kennung → Symbol + Name in 8 Sprachen.
+   Es ist aus den CATS-Bloecken der drei Apps ABGELEITET, nicht abgetippt —
+   zwei Listen derselben Namen laufen auseinander.
+   Ein eigener Name (CATS_EIGEN) gewinnt weiterhin ueber alles. */
+const KAT_FAMILIE=[
+  {id:'smooth',ico:'🥤',de:'Smoothies & Shakes',en:'Smoothies',ru:'Смузи',zh:'奶昔',es:'Batidos',fr:'Smoothies',it:'Frullati',pt:'Batidos'},
+  {id:'mock',ico:'🍹',de:'Mocktails',en:'Mocktails',ru:'Мокт.',zh:'无酒',es:'Mocktails',fr:'Mocktails',it:'Mocktail',pt:'Mocktail'},
+  {id:'afckt',ico:'🍸',de:'Alkfr. Cocktails',en:'Alcohol-free',ru:'Безалк.',zh:'无酒鸡尾',es:'Sin alcohol',fr:'Sans alcool',it:'Analcolici',pt:'Sem álcool'},
+  {id:'limo',ico:'🍋',de:'Limonaden',en:'Lemonades',ru:'Лимонады',zh:'柠檬水',es:'Limonadas',fr:'Limonades',it:'Limoniate',pt:'Limonadas'},
+  {id:'tee',ico:'☕',de:'Tees & Kaffees',en:'Teas & Coffees',ru:'Чаи & Кофе',zh:'茶 & 咖啡',es:'Tés & Cafés',fr:'Thés & Cafés',it:'Tè & Caffè',pt:'Chás & Cafés'},
+  {id:'ckt',ico:'🍸',de:'Cocktails',en:'Cocktails',ru:'Коктейли',zh:'鸡尾酒',es:'Cócteles',fr:'Cocktails',it:'Cocktail',pt:'Coquetéis'},
+  {id:'bowle',ico:'🍶',de:'Bowlen',en:'Punches',ru:'Пунши',zh:'宾治',es:'Ponches',fr:'Punchs',it:'Punch',pt:'Ponches'},
+  {id:'sirup',ico:'🫙',de:'Sirup & Basis',en:'Syrups & Base',ru:'Сиропы',zh:'糖浆',es:'Siropes',fr:'Sirops',it:'Sciroppi',pt:'Xaropes'},
+  {id:'knab',ico:'🥨',de:'Knabbereien',en:'Snacks',ru:'Снэки',zh:'小吃',es:'Aperitivos',fr:'Grignotages',it:'Stuzzichini',pt:'Petiscos'},
+  {id:'finger',ico:'🍢',de:'Fingerfood',en:'Finger food',ru:'Закуски',zh:'指食',es:'Tapas',fr:'Amuse-bouches',it:'Finger food',pt:'Petiscos'},
+  {id:'vorsp',ico:'🥗',de:'Vorspeisen',en:'Starters',ru:'Закуски',zh:'前菜',es:'Entrantes',fr:'Entrées',it:'Antipasti',pt:'Entradas'},
+  {id:'suppe',ico:'🍜',de:'Suppen',en:'Soups',ru:'Супы',zh:'汤',es:'Sopas',fr:'Soupes',it:'Zuppe',pt:'Sopas'},
+  {id:'fleisch',ico:'🍲',de:'Fleisch',en:'Meat',ru:'Мясо',zh:'肉类',es:'Carne',fr:'Viande',it:'Carne',pt:'Carne'},
+  {id:'fisch',ico:'🐟',de:'Fisch',en:'Fish',ru:'Рыба',zh:'鱼类',es:'Pescado',fr:'Poisson',it:'Pesce',pt:'Peixe'},
+  {id:'vegi',ico:'🥦',de:'Vegetarisch',en:'Vegetarian',ru:'Вегет.',zh:'素食',es:'Vegetariano',fr:'Végétarien',it:'Vegetariano',pt:'Vegetariano'},
+  {id:'kuchen',ico:'🍰',de:'Kuchen',en:'Cakes',ru:'Выпечка',zh:'蛋糕',es:'Pasteles',fr:'Gâteaux',it:'Torte',pt:'Bolos'},
+  {id:'dessert',ico:'🍮',de:'Desserts',en:'Desserts',ru:'Десерты',zh:'甜点',es:'Postres',fr:'Desserts',it:'Dolci',pt:'Sobremesas'},
+  {id:'drk',ico:'🍷',de:'Getränke',en:'Drinks',ru:'Напитки',zh:'饮料',es:'Bebidas',fr:'Boissons',it:'Bevande',pt:'Bebidas'},
+];
+function katFamilie(id){
+  for(var i=0;i<KAT_FAMILIE.length;i++)if(KAT_FAMILIE[i].id===id)return KAT_FAMILIE[i];
+  return null;
+}
 function catsFremd(){
   const bekannt=new Set(CATS.map(c=>c.id));
   const out=[],gesehen=new Set();
   const arr=(typeof R!=='undefined'&&Array.isArray(R))?R:[];
+  let ohne=0;
   for(const r of arr){
+    if(r&&!r.blank&&r.name&&String(r.name).trim()&&katVonRezept(r)===KAT_OHNE)ohne++;
     const id=(r&&typeof r.cat==='string')?r.cat:'';
     if(!id||bekannt.has(id)||gesehen.has(id))continue;
     if(id.indexOf('fld_')===0)continue;
     gesehen.add(id);
-    out.push({id:id,ico:'📦',de:id,col:'#7a5840',fremd:true});
+    const bk=katFamilie(id);
+    if(bk){
+      const e={id:id,ico:bk.ico,col:'#7a5840',fremd:true};
+      /* alle acht Sprachen mitnehmen — katBeschriftung liest c[CL] */
+      e.de=bk.de;e.en=bk.en;e.ru=bk.ru;e.zh=bk.zh;e.es=bk.es;e.fr=bk.fr;e.it=bk.it;e.pt=bk.pt;
+      out.push(e);
+    }else{
+      /* ⚠ EINE UNBEKANNTE KENNUNG WIRD NICHT ERFUNDEN. Steht sie nicht im
+         Woerterbuch, bleibt sie sichtbar wie sie ist — und traegt die Marke.
+         Einen Namen zu raten waere schlimmer als eine Kennung zu zeigen. */
+      out.push({id:id,ico:'📦',de:id,col:'#7a5840',fremd:true,unbekannt:true});
+    }
+  }
+  /* ⚠ DER REITER ERSCHEINT NUR, WENN ES IHN BRAUCHT. Ein Sammel-Reiter, der
+     immer dasteht und leer ist, waere ein toter Knopf mit Beschriftung. */
+  if(ohne>0){
+    const X=(typeof KAT_TXT!=='undefined'&&(KAT_TXT[CL]||KAT_TXT.de))||{};
+    const lbl=X.ohne||'Ohne Kategorie';
+    const e={id:KAT_OHNE,ico:'❓',de:lbl,col:'#7a5840',fremd:true,ohne:true};
+    e[CL]=lbl;
+    out.push(e);
   }
   return out;
 }
@@ -5286,7 +5367,7 @@ function _renderIgrPanel(){
   var cats=CATS.filter(function(c){return c.id!=='all';});
   var html='<div style="padding:7px 10px;background:var(--parch);border-bottom:1px solid var(--sand2);display:flex;justify-content:space-between;align-items:center"><span style="font-size:.72rem;font-weight:700;color:var(--dim)">Rezepte auswählen</span><span style="display:flex;gap:5px"><button onclick="igrAllRecipes(true)" style="font-size:.65rem;padding:2px 7px;border-radius:5px;border:1px solid var(--sand2);background:var(--sand);color:var(--ink);cursor:pointer">Alle</button><button onclick="igrAllRecipes(false)" style="font-size:.65rem;padding:2px 7px;border-radius:5px;border:1px solid var(--sand2);background:var(--sand);color:var(--ink);cursor:pointer">Keine</button></span></div>';
   cats.forEach(function(cat){
-    var recs=named.filter(function(r){return r.cat===cat.id;});
+    var recs=named.filter(function(r){return katVonRezept(r)===cat.id;});
     if(!recs.length)return;
     html+='<div style="border-bottom:1px solid var(--sand2)">';
     html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--sand);cursor:pointer" onclick="igrToggleCat(\''+cat.id+'\',this)">';
@@ -7074,7 +7155,7 @@ function renderCatNav(){
   const el=document.getElementById('catNav');if(!el)return;
   // Kategorien
   let pills=CATS.filter(c=>c.id==='all').concat(catsAlle()).map(c=>{
-    const cnt=c.id==='all'?R.filter(r=>r.name).length:R.filter(r=>r.cat===c.id&&r.name).length;
+    const cnt=c.id==='all'?R.filter(r=>r.name).length:R.filter(r=>katVonRezept(r)===c.id&&r.name).length;
     const dragEvts=c.id!=='all'?`ondragover="pillDragOver(event,'${c.id}')" ondragleave="pillDragLeave(event)" ondrop="pillDrop(event,'${c.id}')"` :'';
     return`<div class="cpill ${CAT===c.id?'on':''}" onclick="setCAT('${c.id}')" ${dragEvts}>${c.id==='all'?c.ico:katSymbol(c)} ${h(c.id==='all'?(c[CL]||c.de):katBeschriftung(c))} <span style="opacity:.65;font-size:.6rem">${cnt}</span></div>`;
   }).join('');
@@ -7871,28 +7952,28 @@ function openFolderSheet(){document.getElementById('folderSheet').style.display=
    anzufassen; `check_i18n` prueft LANGS und bleibt unberuehrt. */
 const KAT_TXT={
   de:{t:'✎ Kategorien umbenennen',s:'Gib den Kategorien deine eigenen Namen und Symbole. Aus „Mocktails" wird deine „Salatbar".',
-      n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',fuer:'Symbol fuer',
+      n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',fuer:'Symbol fuer',ohne:'Ohne Kategorie',
       f:'mitgebracht',z:'↺ zuruecksetzen',ok:'Speichern',ab:'Abbrechen',g:'✅ Kategorien gespeichert'},
   en:{t:'✎ Rename categories',s:'Give the categories your own names and icons. “Mocktails” becomes your “Salad bar”.',
-      n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',fuer:'Icon for',
+      n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',fuer:'Icon for',ohne:'No category',
       f:'imported',z:'↺ reset',ok:'Save',ab:'Cancel',g:'✅ Categories saved'},
   ru:{t:'✎ Переименовать категории',s:'Дайте категориям свои названия и значки.',
-      n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',fuer:'Значок для',
+      n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',fuer:'Значок для',ohne:'Без категории',
       f:'импортировано',z:'↺ сбросить',ok:'Сохранить',ab:'Отмена',g:'✅ Сохранено'},
   zh:{t:'✎ 重命名分类',s:'为分类设置你自己的名称和图标。',
-      n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',fuer:'图标：',
+      n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',fuer:'图标：',ohne:'未分类',
       f:'导入',z:'↺ 重置',ok:'保存',ab:'取消',g:'✅ 已保存'},
   es:{t:'✎ Renombrar categorías',s:'Da a las categorías tus propios nombres e iconos.',
-      n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',fuer:'Icono para',
+      n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',fuer:'Icono para',ohne:'Sin categoría',
       f:'importado',z:'↺ restablecer',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'},
   fr:{t:'✎ Renommer les catégories',s:'Donnez aux catégories vos propres noms et icônes.',
-      n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',fuer:'Icône pour',
+      n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',fuer:'Icône pour',ohne:'Sans catégorie',
       f:'importé',z:'↺ réinitialiser',ok:'Enregistrer',ab:'Annuler',g:'✅ Enregistré'},
   it:{t:'✎ Rinomina categorie',s:'Dai alle categorie i tuoi nomi e le tue icone.',
-      n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',fuer:'Icona per',
+      n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',fuer:'Icona per',ohne:'Senza categoria',
       f:'importato',z:'↺ ripristina',ok:'Salva',ab:'Annulla',g:'✅ Salvato'},
   pt:{t:'✎ Renomear categorias',s:'Dê às categorias os seus próprios nomes e ícones.',
-      n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',fuer:'Ícone para',
+      n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',fuer:'Ícone para',ohne:'Sem categoria',
       f:'importado',z:'↺ repor',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'}
 };
 /* ══ EMOJI-AUSWAHL (Klaus 2026-09-15) ════════════════════════════════════
@@ -7918,6 +7999,9 @@ const KAT_EMOJIS = [
   "🍦","🍧","🥞","🧇","🍯","🥐","🥖","🍞","🥨","🧀",
   "🍹","🍸","🍷","🍺","🍻","🥂","🥃","🧉","🍾","🫗",
   "🥤","🧋","🧃","☕","🍵","🫖","🥛","🧊","💧",
+  "🍶","🍼","🚰","⚗️","🫧","🍋‍🟩","🥄","🍴","🥢","🔪",
+  "🍎","🍐","🍑","🍒","🥝","🍈","🍌","🫐","🥭","🫒",
+  "🌱","🍃","🧅","🫚","🌾","🥒","🫑","🍠","🥔","🍳",
   "🍿","🥜","🌰","🍢","🍡","🥠","🥡","🧂","🫙","🍽️",
   "🌿","🌶️","🍋","🍊","🍓","🍉","🍇","🍍","🥥","🍏",
   "📦","⭐","❤️","🔥","✨","🏠","🎁","🧪","🍀","🌸"
@@ -8325,7 +8409,7 @@ function render(){
     html=named.length?named.map(r=>rndCard(r)).join(''):`<div class="empty-state empty-state--search"><div class="empty-state__icon">🔍</div><h3 class="empty-state__title">${T('noResults')}</h3></div>`;
   }else if(CAT==='all'){
     for(const cat of catsAlle()){
-      const grp=R.filter(r=>r.cat===cat.id);if(!grp.length)continue;
+      const grp=R.filter(r=>katVonRezept(r)===cat.id);if(!grp.length)continue;
       html+=rndDiv(cat,grp)+grp.map(r=>rndCard(r)).join('');
     }
     // Ordner-Gruppen in Alle-Ansicht
@@ -8353,7 +8437,7 @@ function render(){
     if(!grpAll.length)html+=`<div class="empty-state"><div class="empty-state__icon">📂</div><h3 class="empty-state__title">${T('noRecipes')}</h3></div>`;
   }else{
     const cat=CATS.find(c=>c.id===CAT);
-    const grp=R.filter(r=>r.cat===CAT);
+    const grp=R.filter(r=>katVonRezept(r)===CAT);
     if(cat)html+=rndDiv(cat,grp);
     html+=grp.map(r=>rndCard(r)).join('');
     if(!grp.length)html+=`<div class="empty-state"><div class="empty-state__icon">🍽️</div><h3 class="empty-state__title">${T('noRecipes')}</h3></div>`;

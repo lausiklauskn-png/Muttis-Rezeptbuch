@@ -125,6 +125,27 @@ fall "das Scrollen beim Oeffnen kommt zurueck" "verschiebt die Liste nicht" \
   raster.hidden=false;
 }"
 
+fall "das Woerterbuch wird uebergangen — die rohe Kennung kommt zurueck" "steht im KLARTEXT da" \
+"    const bk=katFamilie(id);@@@    const bk=null;"
+
+fall "ein Name wird erfunden, wo das Woerterbuch schweigt" "keinen erfundenen Namen" \
+"      out.push({id:id,ico:'📦',de:id,col:'#7a5840',fremd:true,unbekannt:true});@@@      out.push({id:id,ico:'🍹',de:'Erfunden',col:'#7a5840',fremd:true,unbekannt:true});"
+
+fall "ein Rezept ohne Kategorie faellt wieder durch" "zaehlt BEIDE" \
+"  if(!id)return KAT_OHNE;@@@  if(!id)return '';"
+
+fall "ein toter Ordner gilt wieder als Zuhause" "zaehlt BEIDE" \
+"    return da?id:KAT_OHNE;@@@    return id;"
+
+fall "der Sammel-Reiter steht auch ohne Heimatlose da" "OHNE Heimatlose gibt es den Reiter nicht" \
+"  if(ohne>0){@@@  if(ohne>=0){"
+
+fall "die Alle-Ansicht fragt wieder das rohe Feld" "zeichnet das Rezept ohne Kategorie" \
+"      const grp=R.filter(r=>katVonRezept(r)===cat.id);if(!grp.length)continue;@@@      const grp=R.filter(r=>r.cat===cat.id);if(!grp.length)continue;"
+
+fall "die Getraenke-Symbole verschwinden wieder" "eigene Getraenke-Symbole" \
+'"🍶","🍼","🚰","⚗️","🫧","🍋‍🟩",@@@'
+
 echo
 echo "$gefangen gefangen · $durch durchgerutscht · $falsch aus falschem Grund · $tot tote Anker"
 cd /; rm -rf "$(dirname "$KOPIE")"
