@@ -329,6 +329,76 @@ beim Laden neu zugewiesen, eine feste Zuweisung zeigte danach aufs alte Feld.
 Eine Probe misst den **Wert**, nicht die Anwesenheit der Zeile:
 `sampleContent()` muss die echten Rezepte erreichen.
 
+### ⚠ Die Auswahl war „nicht vollkommen aufgeklappt" — 12 px statt 529 (Klaus 2026-09-15)
+
+Klaus hat es an allen drei Apps gesehen: unter der angetippten Zeile stand nur
+ein flacher Streifen. **Gemessen im Browser: 12 px hoch, bei 598 px Inhalt und
+107 Knöpfen — nicht eine einzige Reihe.**
+
+**Die Ursache ist eine Zeile CSS, und sie hat nichts mit dem Raster zu tun.**
+`.kat-list` ist ein Flex-Container. Ein Flex-Kind mit `overflow-y:auto`
+bekommt `min-height:auto` = **0** — es wird plattgedrückt, sobald die Liste
+überläuft (gemessen: 773 px Inhalt in 529 px Fenster). Die Zeilen darüber
+halten stand, weil ihre Eingabefelder eine Mindesthöhe haben; das Raster nicht.
+
+⚠ **UND DER ALTE WÄCHTER WAR DABEI GRÜN.** Er hieß „steht DIREKT unter der
+bearbeiteten Zeile" und fragte, **WO** das Raster hängt — nie, **WIE HOCH** es
+ist. *Ein Wächter auf die Lage misst nicht die Sichtbarkeit.* Die Zusicherung
+ist ersetzt, nicht stillschweigend getauscht (Tafel-Evolutions-Klausel).
+
+### Was jetzt gilt
+
+Das Raster steht **außerhalb** der scrollenden Liste und legt sich als
+Überlagerung **genau über sie** — gemessen gegen die echte Lage der Liste,
+nicht gegen einen geratenen Abstand. Die bearbeitete Zeile wird markiert, die
+Kopfzeile nennt sie beim Namen, ein × schließt ohne Wahl.
+
+| | vorher | nachher |
+|---|---|---|
+| Höhe des Rasters | **12 px** | **529 px** (Tablet hoch) · 368 · 421 |
+| sichtbare Reihen | 0,3 | **13,2** · 9,2 · 10,5 |
+| Liste beim Öffnen | — | **bewegt sich nicht** (529 → 529) |
+
+### ⚠ Drei Anläufe, und die ersten zwei bewegten das Layout
+
+Jeder wurde von einer Probe gefangen, keiner vom Nachdenken:
+
+1. **Die Liste schrumpfen lassen** (46vh → 22vh), damit der Dialog nicht über
+   den Schirm wächst. Dabei wandert die angetippte Zeile unter dem Finger weg,
+   der folgende `click` landet auf einer **anderen** Zeile — **vier Wächter
+   fielen um.** Das ist wortgleich derselbe Fehler wie `scrollIntoView` am
+   selben Tag, nur mit einer anderen Ursache für dieselbe Bewegung.
+   **Ein Auswahl-Feld darf das Layout nicht bewegen.**
+2. **Die Überlagerung über den ganzen Dialog** — sie deckte „Speichern" mit ab.
+   Ein Tipp dort war wirkungslos: ein toter Knopf, den man sieht. Sie deckt
+   jetzt genau die Liste ab.
+3. **`onfocus` öffnete mit.** `focus` feuert beim **Mausdruck**, das Raster
+   erscheint also noch **während** des Fingertipps unter dem Finger — und das
+   Loslassen landet auf einem Emoji-Knopf darin. Gemessen: der erste Tipp
+   suchte ein zufälliges Symbol aus. Es hängt jetzt **nur am Klick**, und der
+   feuert erst nach dem Loslassen.
+
+⚠ **DER WÄCHTER MISST SEITDEM DIE BEWEGUNG, NICHT DIE FOLGE:** die angetippte
+Zeile muss vor und nach dem Öffnen an derselben Stelle stehen. Ein
+Verhaltens-Wächter allein war beim ersten Mal in zwei von drei Läufen grün.
+
+⚠ **UND EIN NEUER WÄCHTER WAR SELBST BLIND.** „Mehrere ganze Reihen hoch"
+maß `hoehe >= 3 * knopfhoehe` — legt man das Gitter auf `display:none`, ist
+die **Knopfhöhe 0**, und `hoehe >= 0` ist immer wahr. *Ein Maßstab, der selbst
+verschwinden kann, misst nichts.* Gefangen hat es die Gegenprobe.
+### ⚠ Und die Gegenprobe lief zweier Läufe wegen ins Leere
+
+Zwei Läufe **nebeneinander** teilten sich feste Ablagen unter `/tmp` — sie
+haben einander die Quelldatei überschrieben. Gemessen: **15 Fälle „rot aus
+falschem Grund"**, und es sah aus wie ein Fehler im Code. Die Ablagen liegen
+jetzt **in der Wegwerf-Kopie**.
+
+⚠ **Und ich habe den Rückgabewert einmal von `tail` abgelesen.** Der Aufruf
+war `bash tests/gegenprobe_*.sh | tail -28`; gemeldet wurde `exit 0`, während
+die Gegenprobe selbst `1` zurückgab. **`| tail` ist zum Lesen da, nicht zum
+Urteilen** — dieselbe Falle wie netzweit aufgeschrieben, nur in noch einem
+Kostüm. Die Zahl steht in der Schlusszeile, nicht im Rückgabewert der Pipe.
+
 ### Geprüft
 
 ```bash

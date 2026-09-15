@@ -658,7 +658,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
    ausdruecklich zurueck: dort wird .share-box ab 560px zu einer WAAGERECHTEN
    Reihe, und dieser Dialog braucht eine Liste untereinander. Ohne das
    staende die Liste neben dem Titel und liefe aus dem Kasten. */
-.kat-box{max-width:420px;width:94%;display:block !important;flex-direction:column !important;text-align:left !important;align-items:stretch !important}
+.kat-box{position:relative;max-width:420px;width:94%;display:block !important;flex-direction:column !important;text-align:left !important;align-items:stretch !important}
 .kat-list{max-height:46vh;overflow-y:auto;margin:10px 0 8px;display:flex;flex-direction:column;gap:6px}
 .kat-row{display:flex;align-items:center;gap:6px}
 .kat-ico{width:52px;flex:0 0 52px;text-align:center;font-size:1rem;padding:7px 2px;border:1px solid var(--line,#d8cdbb);border-radius:8px;background:var(--card,#fff);color:var(--ink)}
@@ -669,10 +669,32 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .kat-note{font-size:.68rem;line-height:1.45;color:var(--dim);text-align:left;margin:0 0 12px}
 /* Emoji-Auswahl: ein Raster, das unter die bearbeitete Zeile wandert.
    44px Berührungshöhe — Klaus bedient das mit dem Finger am Tablet. */
-.kat-emoji-raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;
-  max-height:30vh;overflow-y:auto;padding:6px;margin:2px 0 4px;
-  background:rgba(0,0,0,.05);border-radius:10px}
+/* ⚠ ES LIEGT DARUEBER, ES SCHIEBT NICHTS. Der erste Versuch liess die
+   Liste beim Oeffnen schrumpfen (46vh → 22vh), damit der Dialog nicht ueber
+   den Schirm waechst. GEMESSEN: dabei wandert die angetippte Zeile unter
+   dem Finger weg, der danach folgende `click` landet auf einer ANDEREN
+   Zeile — vier Waechter fielen um. Das ist wortgleich derselbe Fehler wie
+   `scrollIntoView` am 2026-09-15, nur mit einer anderen Ursache fuer
+   dieselbe Bewegung. EIN AUSWAHL-FELD DARF DAS LAYOUT NICHT BEWEGEN. */
+.kat-emoji-raster{position:absolute;left:12px;right:12px;z-index:3;
+  padding:8px;background:var(--card,#fff);border:1px solid var(--line,#d8cdbb);
+  border-radius:12px;box-shadow:0 0 24px rgba(0,0,0,.20)}
 .kat-emoji-raster[hidden]{display:none}
+.kat-emoji-kopf{font-size:.72rem;color:var(--dim);padding:2px 4px 6px;text-align:left;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kat-emoji-zu{flex:0 0 auto;min-width:34px;min-height:34px;border:0;border-radius:8px;
+  background:transparent;color:var(--dim);font-size:1.2rem;line-height:1;cursor:pointer;padding:0}
+/* ⚠ NUR DAS GITTER SCROLLT, und es steht AUSSERHALB der Kategorie-Liste.
+   Lag es darin, drueckte der Flex-Container es platt (gemessen: 12 px statt
+   598 px Inhalt — `overflow-y:auto` setzt die Mindesthoehe eines Flex-Kindes
+   auf 0). Und es stuende unter der angetippten Zeile, also bei einer Zeile
+   weiter unten ausserhalb des Sichtfelds. Genau dagegen stand einmal
+   `scrollIntoView` — und das hat die Auswahl wieder zugemacht. */
+.kat-emoji-gitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;
+  max-height:26vh;overflow-y:auto}
+/* `emoji-auf` bewegt NICHTS mehr — es ist nur noch die Marke „offen", an
+   der sich ablesen laesst, ob aufgeraeumt wurde. */
+.kat-row-aktiv .kat-ico{border-color:var(--gold,#b8860b);box-shadow:0 0 0 2px rgba(184,134,11,.22)}
 .kat-emoji{min-width:40px;min-height:40px;border:0;border-radius:8px;background:transparent;
   font-size:1.25rem;line-height:1;cursor:pointer;padding:0}
 .kat-emoji:hover,.kat-emoji:focus{background:rgba(0,0,0,.10);outline:none}
@@ -7861,28 +7883,28 @@ function openFolderSheet(){document.getElementById('folderSheet').style.display=
    anzufassen; `check_i18n` prueft LANGS und bleibt unberuehrt. */
 const KAT_TXT={
   de:{t:'✎ Kategorien umbenennen',s:'Gib den Kategorien deine eigenen Namen und Symbole. Aus „Mocktails" wird deine „Salatbar".',
-      n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',
+      n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',fuer:'Symbol fuer',
       f:'mitgebracht',z:'↺ zuruecksetzen',ok:'Speichern',ab:'Abbrechen',g:'✅ Kategorien gespeichert'},
   en:{t:'✎ Rename categories',s:'Give the categories your own names and icons. “Mocktails” becomes your “Salad bar”.',
-      n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',
+      n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',fuer:'Icon for',
       f:'imported',z:'↺ reset',ok:'Save',ab:'Cancel',g:'✅ Categories saved'},
   ru:{t:'✎ Переименовать категории',s:'Дайте категориям свои названия и значки.',
-      n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',
+      n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',fuer:'Значок для',
       f:'импортировано',z:'↺ сбросить',ok:'Сохранить',ab:'Отмена',g:'✅ Сохранено'},
   zh:{t:'✎ 重命名分类',s:'为分类设置你自己的名称和图标。',
-      n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',
+      n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',fuer:'图标：',
       f:'导入',z:'↺ 重置',ok:'保存',ab:'取消',g:'✅ 已保存'},
   es:{t:'✎ Renombrar categorías',s:'Da a las categorías tus propios nombres e iconos.',
-      n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',
+      n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',fuer:'Icono para',
       f:'importado',z:'↺ restablecer',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'},
   fr:{t:'✎ Renommer les catégories',s:'Donnez aux catégories vos propres noms et icônes.',
-      n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',
+      n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',fuer:'Icône pour',
       f:'importé',z:'↺ réinitialiser',ok:'Enregistrer',ab:'Annuler',g:'✅ Enregistré'},
   it:{t:'✎ Rinomina categorie',s:'Dai alle categorie i tuoi nomi e le tue icone.',
-      n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',
+      n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',fuer:'Icona per',
       f:'importato',z:'↺ ripristina',ok:'Salva',ab:'Annulla',g:'✅ Salvato'},
   pt:{t:'✎ Renomear categorias',s:'Dê às categorias os seus próprios nomes e ícones.',
-      n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',
+      n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',fuer:'Ícone para',
       f:'importado',z:'↺ repor',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'}
 };
 /* ══ EMOJI-AUSWAHL (Klaus 2026-09-15) ════════════════════════════════════
@@ -7914,16 +7936,27 @@ const KAT_EMOJIS = [
 ];
 function katEmojiRaster(){
   return '<div class="kat-emoji-raster" id="katEmojiRaster" hidden>'
+    + '<div class="kat-emoji-kopf"><span id="katEmojiKopf"></span>'
+    + '<button type="button" class="kat-emoji-zu" onclick="katEmojiSchliessen()" aria-label="Zu">×</button></div>'
+    + '<div class="kat-emoji-gitter">'
     + KAT_EMOJIS.map(function(e){
         return '<button type="button" class="kat-emoji" onclick="katEmojiWaehlen(\''+e+'\')">'+e+'</button>';
       }).join('')
-    + '</div>';
+    + '</div></div>';
 }
 /* Das Raster steht EINMAL im Dialog und wandert unter die Zeile, an der
    gerade gearbeitet wird. Dreizehn eigene Raster waeren dreizehn Stellen,
    die auseinanderlaufen — und dreizehnmal dieselben hundert Knoepfe im DOM. */
 var _katZiel = null;
-/* ⚠ DIESE FUNKTION OEFFNET NUR — sie schaltet NICHT um. Als Umschalter
+/* ⚠ SIE HAENGT NUR NOCH AM KLICK, NICHT MEHR AM FOCUS. Am 2026-09-15
+   hingen beide daran, und die Funktion wurde deshalb vom Umschalter zum
+   reinen Oeffner (siehe unten). Seit das Raster als Ueberlagerung ueber der
+   Liste liegt, reicht das nicht mehr: `focus` feuert beim MAUSDRUCK, das
+   Raster erscheint also noch WAEHREND des Fingertipps unter dem Finger —
+   und das Loslassen landet auf einem Emoji-Knopf darin. Gemessen: der
+   erste Tipp suchte ein zufaelliges Symbol aus oder machte sofort wieder
+   zu. `click` feuert erst NACH dem Loslassen; danach ist der Tipp vorbei.
+   ⚠ DIESE FUNKTION OEFFNET NUR — sie schaltet NICHT um. Als Umschalter
    gebaut hat sie sich selbst wieder zugemacht: am Symbol-Feld haengen
    `onfocus` UND `onclick`, und ein Fingertipp loest beide aus. Das erste
    oeffnete, das zweite sah „schon offen" und schloss. Gemessen im Browser:
@@ -7934,22 +7967,49 @@ var _katZiel = null;
 function katEmojiOeffnen(feld){
   var raster=document.getElementById('katEmojiRaster');
   if(!raster||!feld)return;
+  var box=feld.closest('.kat-box');
   var zeile=feld.closest('.kat-row');
   _katZiel=feld;
-  if(zeile&&zeile.parentNode)zeile.parentNode.insertBefore(raster,zeile.nextSibling);
+  /* Das Raster WANDERT NICHT MEHR. Es steht fest unter der Liste, und die
+     bearbeitete Zeile wird stattdessen markiert und im Kopf benannt — sonst
+     waere nicht zu sehen, welches Symbol man gerade aendert. */
+  if(box){
+    var alt=box.querySelectorAll('.kat-row-aktiv');
+    for(var i=0;i<alt.length;i++)alt[i].classList.remove('kat-row-aktiv');
+    box.classList.add('emoji-auf');
+  }
+  if(zeile)zeile.classList.add('kat-row-aktiv');
+  var kopf=document.getElementById('katEmojiKopf');
+  if(kopf){
+    var X=(typeof KAT_TXT!=='undefined'&&(KAT_TXT[CL]||KAT_TXT.de))||{};
+    var nf=zeile?zeile.querySelector('.kat-name'):null;
+    var wie=nf?(nf.value||nf.placeholder||''):'';
+    kopf.textContent=wie?((X.fuer||'Symbol fuer')+' '+wie):(X.sym||'');
+  }
+  /* ⚠ ES DECKT GENAU DIE LISTE AB, nicht den ganzen Dialog. Laege es ueber
+     „Speichern"/„Abbrechen", waere jeder Tipp dort wirkungslos — ein toter
+     Knopf, den man sieht. Gemessen wird gegen die echte Lage der Liste,
+     statt einen Abstand zu raten. */
+  if(box){
+    var liste=box.querySelector('.kat-list');
+    if(liste){
+      var lb=liste.getBoundingClientRect(), bb=box.getBoundingClientRect();
+      raster.style.top=Math.max(0,lb.top-bb.top)+'px';
+      raster.style.bottom=Math.max(0,bb.bottom-lb.bottom)+'px';
+    }
+  }
   raster.hidden=false;
-  /* ⚠ HIER STAND `raster.scrollIntoView({block:'nearest'})`, UND ES HAT DIE
-     AUSWAHL SOFORT WIEDER ZUGEMACHT. Am Symbol-Feld haengen focus und click;
-     focus oeffnet, das Scrollen verschiebt die Liste unter dem Finger, und
-     der danach folgende click landet auf einem ANDEREN Element — worauf der
-     „Tipp daneben"-Riegel schliesst. Gemessen: drei Laeufe derselben Datei,
-     zweimal offen, einmal zu. Ein Flatterfehler, der am Tablet genauso
-     zuschnappt. Das Raster steht ohnehin direkt unter der angetippten
-     Zeile; wer tippt, sieht es. */
 }
 function katEmojiSchliessen(){
   var raster=document.getElementById('katEmojiRaster');
   if(raster)raster.hidden=true;
+  var ov=document.getElementById('katRenameOv');
+  if(ov){
+    var box=ov.querySelector('.kat-box');
+    if(box)box.classList.remove('emoji-auf');
+    var alt=ov.querySelectorAll('.kat-row-aktiv');
+    for(var i=0;i<alt.length;i++)alt[i].classList.remove('kat-row-aktiv');
+  }
   _katZiel=null;
 }
 function katEmojiWaehlen(e){
@@ -7973,7 +8033,7 @@ function openKatUmbenennen(){
        als Wert drin, koennte man einen eigenen Namen nicht mehr von der
        Vorgabe unterscheiden — und „zuruecksetzen" haette nichts zu tun. */
     return `<div class="kat-row" data-kid="${h(c.id)}">
-      <input class="kat-ico" value="${h(eigen.ico||'')}" placeholder="${h(c.ico||'📦')}" maxlength="4" aria-label="${h(X.sym)}" title="${h(X.sym)}" onclick="katEmojiOeffnen(this)" onfocus="katEmojiOeffnen(this)">
+      <input class="kat-ico" value="${h(eigen.ico||'')}" placeholder="${h(c.ico||'📦')}" maxlength="4" aria-label="${h(X.sym)}" title="${h(X.sym)}" onclick="katEmojiOeffnen(this)">
       <input class="kat-name" value="${h(eigen.name||'')}" placeholder="${h(c[CL]||c.de||c.id)}" aria-label="Name">
       <button class="kat-reset" onclick="katZuruecksetzen('${h(c.id)}')" ${hatEigen?'':'disabled'} title="${h(X.z)}">↺</button>
       ${c.fremd?`<span class="kat-fremd">${h(X.f)}</span>`:''}
@@ -7982,7 +8042,8 @@ function openKatUmbenennen(){
   ov.innerHTML=`<div class="share-box kat-box">
     <div class="share-box-title">${h(X.t)}</div>
     <div class="share-box-sub">${h(X.s)}</div>
-    <div class="kat-list">${zeilen}${katEmojiRaster()}</div>
+    <div class="kat-list">${zeilen}</div>
+    ${katEmojiRaster()}
     <div class="kat-note">${h(X.n)}</div>
     <button class="share-btn-p" onclick="katSpeichern()">${h(X.ok)}</button>
     <button class="share-btn-cl" onclick="document.getElementById('katRenameOv').remove()">${h(X.ab)}</button>
@@ -7992,6 +8053,14 @@ function openKatUmbenennen(){
      sie stehen, waehrend man in einem anderen Feld schreibt — und verdeckte
      genau die Zeile, an der man arbeitet. */
   ov.addEventListener('click',function(e){
+    /* ⚠ DAS GANZE RASTER IST AUSGENOMMEN, nicht nur das Gitter. Kurz stand
+       hier `.kat-emoji-gitter` — damit ein Tipp auf den Rand nicht in einer
+       toten Zone endet. GEMESSEN im Rezeptbuch: das Raster liegt UEBER der
+       angetippten Zeile, also landet der Tipp, der es GEOEFFNET hat, auf
+       seinem Rand — und dieser Riegel machte es sofort wieder zu. Eine tote
+       Zone gibt es nicht mehr, weil das Raster die Knoepfe nicht mehr
+       verdeckt (es deckt genau die Liste ab); zum Schliessen ohne Wahl gibt
+       es das × in der Kopfzeile. */
     if(e.target.closest('.kat-emoji-raster'))return;
     if(e.target.classList&&e.target.classList.contains('kat-ico'))return;
     katEmojiSchliessen();

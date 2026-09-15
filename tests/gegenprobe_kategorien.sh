@@ -14,6 +14,10 @@ KOPIE="$(mktemp -d)/buch"
 mkdir -p "$KOPIE"; cp -a "$QUELLE/." "$KOPIE/" 2>/dev/null
 rm -rf "$KOPIE/node_modules"; ln -s "$QUELLE/node_modules" "$KOPIE/node_modules"
 cd "$KOPIE" || exit 2
+# ⚠ Ablagen INNERHALB der Wegwerf-Kopie. Feste /tmp-Namen teilen sich
+#   zwei Laeufe nebeneinander — sie ueberschreiben einander die
+#   Quelldatei, und jeder Fall danach ist „rot aus falschem Grund".
+SICH="$KOPIE/../_sich.html"; ANKERFEHL="$KOPIE/../_ankerfehl"
 DATEI="$(ls QC_*.html | head -1)"
 echo "Kopie: $KOPIE · Quelldatei: $DATEI"
 
@@ -24,20 +28,20 @@ if lauf | grep -qE "^[0-9]+ grün · 0 ROT$"; then echo "Ausgangslage gruen"; el
   echo "ABBRUCH: schon ohne Eingriff rot."; lauf | tail -4; exit 2; fi
 
 fall(){
-  cp "$DATEI" /tmp/_sich_buch.html
-  python3 - "$3" <<'PY'
+  cp "$DATEI" "$SICH"
+  ANKERFEHL="$ANKERFEHL" python3 - "$3" <<'PY'
 import io,sys,glob
 p=glob.glob('QC_*.html')[0]
 s=io.open(p,encoding='utf-8').read()
 alt,neu=sys.argv[1].split('@@@')
 if s.count(alt)!=1:
-    io.open('/tmp/_ankerfehl_buch','w').write('1'); sys.exit(0)
+    io.open('"$ANKERFEHL"','w').write('1'); sys.exit(0)
 io.open(p,'w',encoding='utf-8').write(s.replace(alt,neu,1))
 PY
-  if [ -f /tmp/_ankerfehl_buch ]; then rm -f /tmp/_ankerfehl_buch
-    echo "  ⊘ ANKER NICHT GEFUNDEN — $1"; tot=$((tot+1)); cp /tmp/_sich_buch.html "$DATEI"; return; fi
+  if [ -f "$ANKERFEHL" ]; then rm -f "$ANKERFEHL"
+    echo "  ⊘ ANKER NICHT GEFUNDEN — $1"; tot=$((tot+1)); cp "$SICH" "$DATEI"; return; fi
   AUS="$(lauf)"
-  cp /tmp/_sich_buch.html "$DATEI"
+  cp "$SICH" "$DATEI"
   if echo "$AUS" | grep -qE "^[0-9]+ grün · 0 ROT$"; then
     echo "  ✗ NICHT GEFANGEN — $1"; durch=$((durch+1))
   elif echo "$AUS" | grep "✗ ROT" | grep -q "$2"; then
@@ -79,10 +83,28 @@ fall "die Herkunfts-Marke faellt weg" "gekennzeichnet" \
 "      \${c.fremd?\`<span class=\"kat-fremd\">\${h(X.f)}</span>\`:''}@@@      \${''}"
 
 fall "das Symbol-Feld oeffnet die Auswahl nicht" "Tipp aufs Symbol-Feld" \
-'onclick="katEmojiOeffnen(this)" onfocus="katEmojiOeffnen(this)"@@@onclick="void 0" onfocus="void 0"'
+'onclick="katEmojiOeffnen(this)"@@@onclick="void 0"'
 
-fall "das Raster wandert nicht unter die Zeile" "direkt unter" \
-"  if(zeile&&zeile.parentNode)zeile.parentNode.insertBefore(raster,zeile.nextSibling);@@@  if(false)zeile.parentNode.insertBefore(raster,zeile.nextSibling);"
+fall "das Raster wird wieder in die scrollende Liste gebaut" "AUSSERHALB der scrollenden Liste" \
+'<div class="kat-list">${zeilen}</div>@@@<div class="kat-list">${zeilen}${katEmojiRaster()}</div><div hidden>'
+
+fall "das Gitter wird wieder plattgedrueckt (kein eigener Scrollbereich)" "wirklich aufgeklappt" \
+'.kat-emoji-gitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;@@@.kat-emoji-gitter{display:none;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:2px;'
+
+fall "das Raster schiebt die Liste wieder (Layout bewegt sich beim Oeffnen)" "bewegt sich die angetippte Zeile NICHT" \
+'.kat-emoji-raster{position:absolute;left:12px;right:12px;z-index:3;@@@.kat-emoji-raster{position:static;z-index:3;'
+
+fall "das Raster deckt wieder die Knoepfe mit ab (toter Speichern-Knopf)" "verdeckt den Speichern-Knopf nicht" \
+"      raster.style.bottom=Math.max(0,bb.bottom-lb.bottom)+'px';@@@      raster.style.bottom='0px';raster.style.top='0px';"
+
+fall "die bearbeitete Zeile wird nicht mehr markiert" "bearbeitete Zeile ist markiert" \
+"  if(zeile)zeile.classList.add('kat-row-aktiv');@@@  if(false)zeile.classList.add('kat-row-aktiv');"
+
+fall "die Kopfzeile nennt die Zeile nicht mehr" "nennt sie beim Namen" \
+"    kopf.textContent=wie?((X.fuer||'Symbol fuer')+' '+wie):(X.sym||'');@@@    kopf.textContent='';"
+
+fall "die Marke bleibt nach dem Schliessen stehen" "gibt der Liste ihren Platz zurueck" \
+"    if(box)box.classList.remove('emoji-auf');@@@    if(false)box.classList.remove('emoji-auf');"
 
 fall "die Wahl schreibt nichts ins Feld" "schreibt es ins Feld" \
 "    _katZiel.value=e;@@@    _katZiel.value=_katZiel.value;"
@@ -99,9 +121,9 @@ fall "der Vorrat schrumpft auf eine Handvoll" "bietet eine Auswahl an" \
 
 fall "das Scrollen beim Oeffnen kommt zurueck" "verschiebt die Liste nicht" \
 "  raster.hidden=false;
-  /* ⚠ HIER STAND@@@  raster.hidden=false;
-  raster.scrollIntoView({block:'nearest'});
-  /* ⚠ HIER STAND"
+}@@@  raster.scrollIntoView({block:'nearest'});
+  raster.hidden=false;
+}"
 
 echo
 echo "$gefangen gefangen · $durch durchgerutscht · $falsch aus falschem Grund · $tot tote Anker"
