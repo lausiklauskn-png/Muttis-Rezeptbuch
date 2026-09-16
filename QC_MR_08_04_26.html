@@ -5779,6 +5779,27 @@ function pillDragOver(e,cat){
 function pillDragLeave(e){
   e.currentTarget.classList.remove('drag-over');
 }
+/* ⚠ ORDNER UND KATEGORIE SIND ZWEI SACHEN (Klaus 2026-09-16).
+   Bis hierher schrieb ein Ordner-Umzug `fld_<id>` in `r.cat` — der Ordner fraß
+   die Kategorie auf. Folgen, von Klaus an Mein Rezeptbuch einzeln gemeldet:
+   dasselbe Gericht stand unter Kategorie UND Ordner („das Sushi taucht zweimal
+   auf"), die Zeilen im Ordner trugen das Ordner-Symbol 📁 statt des
+   Kategorie-Symbols, und ein Wechsel des Kategorie-Symbols erreichte sie nicht
+   mehr — sie hatten gar keine Kategorie mehr.
+   GEMESSEN am 2026-09-16 (3 cat-Werte × 2 folder-Werte × 2 FD-Zustaende, echter
+   Browser): ein 📁 in einer Rezeptzeile tritt AUSSCHLIESSLICH dort auf, wo die
+   Kategorie eine Ordner-Kennung traegt.
+   Ein Umzug setzt jetzt NUR noch `r.folder`. Die Kategorie bleibt stehen.
+   ⚠ Eine Altbestands-Kennung `fld_…` in `r.cat` ist KEINE Kategorie, sondern der
+   Rest des alten Weges. Sie wird beim Umzug geleert — sonst behauptete das
+   Rezept, in einem ANDEREN Ordner zu liegen als dem, in den es gerade gezogen
+   wurde. Geraten wird dabei nichts: leer heißt „Ohne Kategorie", und welche es
+   sein soll, entscheidet der Nutzer. */
+function setzeOrdner(r,fid){
+  if(!r)return;
+  r.folder=String(fid);
+  if(typeof r.cat==='string'&&r.cat.indexOf('fld_')===0)r.cat='';
+}
 function pillDrop(e,cat){
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
@@ -5839,7 +5860,7 @@ function fldGrpDrop(e,gid){
   if(!r)return;
   // Kategorie setzen
   if(gid.startsWith('cat_')){r.cat=gid.slice(4);r.folder='';}
-  else if(gid.startsWith('cfd_')){const fid=gid.slice(4);r.cat='fld_'+fid;r.folder=String(fid);}
+  else if(gid.startsWith('cfd_')){setzeOrdner(r,gid.slice(4));}
   // Reihenfolge anpassen wenn auf eine Zeile gezogen
   const overRow=_dd.overRow,overPos=_dd.overPos;
   if(overRow&&overRow.dataset.rid){
@@ -7191,7 +7212,7 @@ function badge(){
   const rc=R.filter(r=>!r.blank).length,rb=document.getElementById('recBadge');
   if(rb){rb.style.display=rc?'block':'none';rb.textContent=rc;}
   const fc=[
-    ...catsAlle().filter(c=>R.some(r=>katVonRezept(r)===c.id&&r.name)),
+    ...catsAlle().filter(c=>R.some(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)),
     ...FD.filter(f=>R.some(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name))
   ].length,fb=document.getElementById('fldBadge');
   if(fb){fb.style.display=fc?'block':'none';fb.textContent=fc;}
@@ -8177,7 +8198,10 @@ function renderFolders(){
   const openGids=new Set([...tree.querySelectorAll('.fld-recs.open')].map(el=>el.closest('.fld-grp')?.dataset.gid).filter(Boolean));
   const groups=[
     ...catsAlle().map(c=>({id:'cat_'+c.id,name:katBeschriftung(c),ico:katSymbol(c),col:c.col,
-      recipes:R.filter(r=>katVonRezept(r)===c.id&&r.name)})),
+      /* ⚠ WER IN EINEM ORDNER LIEGT, STEHT NUR DORT. Seit Ordner und Kategorie
+         getrennt sind, hat ein Ordner-Rezept BEIDES — ohne diesen Riegel stuende
+         dasselbe Gericht im Baum zweimal, und das war genau Klaus' Befund. */
+      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)})),
     ...FD.map(f=>({id:'cfd_'+f.id,name:f.name,ico:f.ico,col:'#7a5840',
       recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))
   ];
@@ -8199,7 +8223,7 @@ function renderFolders(){
       <div class="fld-recs">
         ${g.recipes.length?g.recipes.map(r=>`
           <div class="fld-rrow" data-rid="${r.id}" draggable="true" ondragstart="fldRecDragStart(event,${r.id})" ondragend="fldRecDragEnd(event)" onclick="goToRecipe(${r.id})" title="Zum Rezept: ${h(r.name)}">
-            <div style="font-size:.92rem">${catIco(r.cat)}</div>
+            <div style="font-size:.92rem">${catIco(katVonRezept(r))}</div>
             <div class="fld-rname">${h(r.name)}</div>
             <span class="fld-drag-hdl" data-hdl="fld" data-rid="${r.id}" data-tip="${T('dragTip')}" onclick="event.stopPropagation()"><svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" style="display:block"><path d="M5.5 0L2 4h7z"/><rect x="1.5" y="5.5" width="8" height="1.3" rx=".65"/><rect x="1.5" y="7.2" width="8" height="1.3" rx=".65"/><path d="M5.5 14L2 10h7z"/></svg></span>
           </div>`).join(''):`<div style="padding:8px 11px;font-size:.74rem;color:var(--dim);font-style:italic">${T('noRecipes')}</div>`}
@@ -8221,9 +8245,16 @@ function deleteFolder(fid,name){
   if(!confirm('Ordner "'+name+'" löschen? Enthaltene Rezepte werden nicht gelöscht.'))return;
   FD=FD.filter(f=>String(f.id)!==String(fid));
   // Blank-Slots des Ordners entfernen
-  R=R.filter(r=>!(r.cat===('fld_'+String(fid))&&r.blank));
-  // Rezepte aus Ordner: cat zurück auf 'fleisch', folder leeren
-  R.forEach(r=>{if(r.cat===('fld_'+String(fid))||r.folder===String(fid)){r.cat='fleisch';r.folder='';}});
+  R=R.filter(r=>!((r.folder===String(fid)||r.cat===('fld_'+String(fid)))&&r.blank));
+  /* ⚠ EIN GELOESCHTER ORDNER IST KEINE KATEGORIE-ENTSCHEIDUNG. Bis 2026-09-16
+     setzte diese Zeile `r.cat='fleisch'` — ein geratenes Zuhause fuer jedes Rezept
+     des Ordners, auch fuer die, die laengst eine eigene Kategorie hatten.
+     Aufgeloest wird jetzt nur der Ordner; eine echte Kategorie bleibt stehen,
+     eine Altbestands-Kennung `fld_…` wird geleert und landet sichtbar unter
+     „Ohne Kategorie", statt still zu einer erfundenen zu werden. */
+  R.forEach(r=>{if(r.cat===('fld_'+String(fid))||r.folder===String(fid)){
+    if(r.cat===('fld_'+String(fid)))r.cat='';
+    r.folder='';}});
   sv();svFD();
   if(CAT==='fld_'+fid){CAT='all';}
   renderFolders();renderCatNav();render();
@@ -8260,7 +8291,9 @@ function ensureFolderBlanks(fid){
   const blanks=R.filter(r=>r.folder===fidStr&&r.blank).length;
   let bid=R.reduce((m,r)=>Math.max(m,r.id||0),1999)+1;
   for(let i=blanks;i<TARGET;i++){
-    R.push({id:bid++,name:'',cat:'fld_'+fidStr,shut:true,blank:true,img:'',folder:fidStr,
+    /* Der Ordner steht in `folder`, nicht in `cat` — eine leere Karte soll
+       keine Kategorie behaupten, die der Nutzer nie gewaehlt hat. */
+    R.push({id:bid++,name:'',cat:'',shut:true,blank:true,img:'',folder:fidStr,
       servings:4,imgCrop:{x:50,y:50,scale:1},
       flavors:[],ings:[],steps:[],rating:{stars:0,comment:'',imps:[]}});
   }
@@ -8271,9 +8304,14 @@ function toggleNewPanel(){document.getElementById('newPanel').classList.contains
 function createRecipe(){
   const name=document.getElementById('newName').value.trim();if(!name){toast('⚠️ '+T('lName'));return;}
   const folder=document.getElementById('newFolder')?.value||'';
-  const catId=folder?('fld_'+folder):(document.getElementById('newCat').value||'fleisch');
+  /* Der Anlegen-Dialog hat ZWEI Felder, und bis 2026-09-16 hat der Ordner das
+     Kategorie-Feld stillschweigend ueberstimmt: wer einen Ordner waehlte, bekam
+     ein Rezept OHNE Kategorie, ohne dass es irgendwo stand. Jetzt gilt beides. */
+  const catId=document.getElementById('newCat').value||'fleisch';
   const flavor=document.getElementById('newFlavor').value.trim();
-  const empty=R.find(r=>r.blank&&!r.name&&r.cat===catId);
+  const empty=folder
+    ?R.find(r=>r.blank&&!r.name&&(r.folder===String(folder)||r.cat===('fld_'+folder)))
+    :R.find(r=>r.blank&&!r.name&&!r.folder&&r.cat===catId);
   const nr={id:Date.now(),name,cat:catId,shut:false,img:'',folder,blank:false,servings:4,imgCrop:{x:50,y:50,scale:1},
     flavors:flavor?[flavor]:[],ings:[],steps:[],rating:{stars:0,comment:'',imps:[]}};
   if(empty)Object.assign(empty,nr);else R.unshift(nr);
@@ -8281,7 +8319,7 @@ function createRecipe(){
   document.getElementById('newName').value='';
   document.getElementById('newFlavor').value='';
   document.getElementById('newCat').value='';
-  CAT=catId;render();
+  CAT=folder?('fld_'+folder):catId;render();
   setTimeout(()=>{const tid=empty?empty.id:R[0].id;document.getElementById('c'+tid)?.scrollIntoView({behavior:'smooth',block:'start'});},80);
 }
 function pickImgForCard(rid){
@@ -9195,7 +9233,7 @@ function _tddEnd(){
           const targetRid=parseInt(over.dataset.rid);
           const grp=over.closest('.fld-grp');
           const gid=grp?.dataset.gid;
-          if(gid){if(gid.startsWith('cat_')){r.cat=gid.slice(4);r.folder='';}else if(gid.startsWith('cfd_')){const fid=gid.slice(4);r.cat='fld_'+fid;r.folder=String(fid);}}
+          if(gid){if(gid.startsWith('cat_')){r.cat=gid.slice(4);r.folder='';}else if(gid.startsWith('cfd_')){setzeOrdner(r,gid.slice(4));}}
           if(targetRid!==_tdd.rid){
             const fromIdx=R.findIndex(x=>x.id===_tdd.rid);
             if(fromIdx>=0){
@@ -9207,7 +9245,7 @@ function _tddEnd(){
         }else{
           // Auf eine Gruppe gezogen → nur Kategorie wechseln
           const gid=over.dataset.gid;
-          if(gid){if(gid.startsWith('cat_')){const catId=gid.slice(4);if(!(r.cat===catId&&!r.folder)){r.cat=catId;r.folder='';}}else if(gid.startsWith('cfd_')){const fid=gid.slice(4);if(r.cat!==('fld_'+fid)){r.cat='fld_'+fid;r.folder=String(fid);}}}
+          if(gid){if(gid.startsWith('cat_')){const catId=gid.slice(4);if(!(r.cat===catId&&!r.folder)){r.cat=catId;r.folder='';}}else if(gid.startsWith('cfd_')){const fid=gid.slice(4);if(r.folder!==String(fid))setzeOrdner(r,fid);}}
         }
         sv();render();renderFolders();
       }

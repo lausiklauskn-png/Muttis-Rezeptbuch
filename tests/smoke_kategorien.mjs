@@ -280,14 +280,31 @@ const paare = await seite.evaluate(()=>{
     if(!c)return;
     const id=gid.startsWith("cat_")?gid.slice(4):(gid.startsWith("cfd_")?"fld_"+gid.slice(4):null);
     if(!id)return;
-    out.push({id:id, ordner:parseInt(c.textContent,10)||0, leiste:leiste[id]||0});
+    /* Wie viele dieser Kategorie liegen in einem Ordner? Genau diese Zahl ist
+       der Unterschied zwischen den beiden Ansichten — und sie wird gemessen,
+       nicht geschaetzt. */
+    const imOrdner=gid.startsWith("cat_")
+      ? R.filter(r=>r.folder&&katVonRezept(r)===id&&r.name&&!r.blank).length : 0;
+    out.push({id:id, ordner:parseInt(c.textContent,10)||0, leiste:leiste[id]||0, imOrdner:imOrdner});
   });
   return out;
 });
-const uneins = paare.filter(p=>p.ordner!==p.leiste);
-ok("jede Gruppe zeigt in beiden Ansichten dieselbe Zahl",
+/* ⚠ TAFEL-EVOLUTIONS-KLAUSEL, AUSDRUECKLICH BENANNT. Hier stand bis zum
+   2026-09-16 die Zusicherung „jede Gruppe zeigt in BEIDEN Ansichten dieselbe
+   Zahl". Sie war richtig, solange ein Ordner die Kategorie auffrass: ein
+   Rezept hatte entweder das eine oder das andere.
+   Seit Ordner und Kategorie getrennt sind, hat ein Gericht BEIDES — und die
+   zwei Ansichten beantworten zwei verschiedene Fragen:
+     · die Kategorie-Leiste: „wie viele Rezepte haben diese Kategorie?"
+       (die in Ordnern zaehlen mit — sie haben sie ja)
+     · der Ordner-Baum: „was liegt hier?" (jedes Rezept steht GENAU EINMAL,
+       im Ordner ODER unter seiner Kategorie)
+   Ersetzt, nicht stillschweigend gelockert: gemessen wird weiter die
+   Uebereinstimmung, nur mit dem Unterschied ausgerechnet statt weggelassen. */
+const uneins = paare.filter(p=>p.ordner+p.imOrdner!==p.leiste);
+ok("Leiste = Baum + die, die in einem Ordner liegen",
    paare.length>0 && uneins.length===0);
-if(uneins.length)console.log("     uneins: "+uneins.map(p=>`${p.id} ${p.ordner}≠${p.leiste}`).join(", "));
+if(uneins.length)console.log("     uneins: "+uneins.map(p=>`${p.id} ${p.ordner}+${p.imOrdner}≠${p.leiste}`).join(", "));
 /* ⚠ UND DIE GEGENRICHTUNG: ohne eine fremde Kategorie MIT Inhalt misst der
    Waechter oben nichts — alle Zahlen waeren 0 und stimmten trivial ueberein. */
 ok("… und eine mitgebrachte Kategorie ist wirklich dabei",
@@ -309,6 +326,141 @@ ok("ein Rezept, das nur ueber r.cat im Ordner liegt, faellt nirgends heraus",
      R=sich; FD=sichF; renderCatNav(); renderFolders();
      return a===1 && b===1;
    }));
+
+console.log("\n── 14 · Ordner und Kategorie sind zwei Sachen ──");
+/* ⚠ Klaus 2026-09-16 an Mein Rezeptbuch, drei Befunde aus EINEM Bild: „das
+   Sushi taucht zweimal auf" · „wenn ich es aufklappe, hat das Sushi Ordner als
+   Emojis" · „wenn ich jetzt das Hauptemoji fuer die Kategorie aendere, aendern
+   sich die unteren Emojis fuer die einzelnen Gerichte nicht".
+   Alle drei hatten EINE Ursache: ein Ordner-Umzug schrieb `fld_<id>` in
+   `r.cat` und nahm dem Gericht damit seine Kategorie. Dieselbe Stelle stand
+   hier wortgleich. */
+const KAT_PROBE = "sushi";
+const trennung = await seite.evaluate((KAT)=>{
+  const sichR=JSON.parse(JSON.stringify(R)), sichF=JSON.parse(JSON.stringify(FD));
+  const sichE=JSON.parse(JSON.stringify(CATS_EIGEN));
+  const ev={preventDefault(){},stopPropagation(){}};
+  FD.push({id:"7701",name:"Probe-Ordner",ico:"📁"});
+  R.push({id:77010,name:"Wander-Rezept",cat:KAT,folder:"",blank:false});
+  R.push({id:77011,name:"Altbestand-Rezept",cat:"fld_9999",folder:"",blank:false});
+
+  // 1 · Umzug in den Ordner
+  _dd={type:"card",rid:77010,overRow:null,overPos:null};
+  fldGrpDrop(ev,"cfd_7701");
+  const a=R.find(r=>r.id===77010);
+  const katBleibt=(a.cat===KAT), ordnerGesetzt=(String(a.folder)==="7701");
+
+  // 2 · Die Zeile im Ordner traegt das Symbol ihrer KATEGORIE
+  renderFolders();
+  const zeile=()=>{
+    const g=document.querySelector('#fldTree .fld-grp[data-gid="cfd_7701"]');
+    const z=g&&[...g.querySelectorAll(".fld-rrow")].find(x=>x.dataset.rid==="77010");
+    return z?z.firstElementChild.textContent.trim():"";
+  };
+  /* ⚠ GEMESSEN WIRD DIE ZUSICHERUNG, NICHT DAS ZEICHEN. Ein fest genageltes
+     Emoji waere hier rot geworden, sobald ein frueherer Abschnitt der Probe
+     der Kategorie ein eigenes Symbol gibt — rot, ohne dass eine Zusicherung
+     gefallen waere. */
+  const symVorher=zeile();
+  const symKat=katSymbol(catsAlle().find(c=>c.id===KAT));
+  const symOrdner=FD.find(f=>String(f.id)==="7701").ico;
+
+  // 3 · Ein Wechsel des Kategorie-Symbols erreicht das Gericht im Ordner
+  const e2={}; e2[KAT]={ico:"🧪",name:""};
+  CATS_EIGEN=Object.assign({},CATS_EIGEN,e2);
+  renderFolders();
+  const symNachher=zeile();
+
+  // 4 · Kein Rezept steht im Baum zweimal
+  const rids=[...document.querySelectorAll("#fldTree .fld-rrow")].map(e=>e.dataset.rid);
+  const doppelt=rids.filter((v,i)=>rids.indexOf(v)!==i);
+
+  // 5 · Eine Altbestands-Kennung wird beim Umzug nicht mitgeschleppt
+  _dd={type:"card",rid:77011,overRow:null,overPos:null};
+  fldGrpDrop(ev,"cfd_7701");
+  const b=R.find(r=>r.id===77011);
+  const altGeleert=(b.cat===""&&String(b.folder)==="7701");
+
+  // 6 · Ein geloeschter Ordner erfindet keine Kategorie
+  const cf=window.confirm; window.confirm=()=>true;
+  deleteFolder("7701","Probe-Ordner");
+  window.confirm=cf;
+  const c1=R.find(r=>r.id===77010), c2=R.find(r=>r.id===77011);
+  const nachLoeschen={kat:c1.cat, ordner:String(c1.folder||""), altKat:c2.cat};
+
+  R=sichR; FD=sichF; CATS_EIGEN=sichE; renderCatNav(); renderFolders();
+  return {katBleibt,ordnerGesetzt,symVorher,symNachher,symKat,symOrdner,doppelt,altGeleert,nachLoeschen};
+}, KAT_PROBE);
+ok("ein Umzug in einen Ordner laesst die Kategorie stehen", trennung.katBleibt);
+/* ⚠ GEGENRICHTUNG: ohne diese Zeile waere „die Kategorie bleibt" auch dann
+   gruen, wenn der Umzug ueberhaupt nichts tut. */
+ok("… und setzt den Ordner wirklich", trennung.ordnerGesetzt);
+ok("das Gericht im Ordner traegt das Symbol seiner Kategorie, nicht das des Ordners",
+   trennung.symVorher===trennung.symKat && trennung.symVorher!==trennung.symOrdner);
+if(trennung.symVorher!==trennung.symKat)
+  console.log(`     Zeile ${trennung.symVorher} · Kategorie ${trennung.symKat} · Ordner ${trennung.symOrdner}`);
+ok("ein Wechsel des Kategorie-Symbols erreicht es (Klaus' dritter Befund)",
+   trennung.symNachher==="🧪" && trennung.symVorher!==trennung.symNachher);
+ok("kein Rezept steht im Ordner-Baum zweimal", trennung.doppelt.length===0);
+if(trennung.doppelt.length)console.log("     doppelt: "+trennung.doppelt.join(", "));
+ok("eine Altbestands-Kennung fld_ wird beim Umzug nicht mitgeschleppt",
+   trennung.altGeleert);
+/* ⚠ Bis 2026-09-16 setzte deleteFolder eine geratene Kategorie fuer JEDES
+   Rezept des Ordners, auch fuer die mit eigener. */
+ok("ein geloeschter Ordner erfindet keine Kategorie",
+   trennung.nachLoeschen.kat===KAT_PROBE && trennung.nachLoeschen.ordner==="" &&
+   trennung.nachLoeschen.altKat==="");
+/* ⚠ UND DAS ABZEICHEN AM REITER ZAEHLT DIESELBEN GRUPPEN. Es rechnet seine
+   Zahl selbst aus `R`, nicht aus dem gezeichneten Baum — zwei Stellen, eine
+   Wahrheit, und genau diese Sorte ist hier schon dreimal auseinandergelaufen. */
+ok("das Abzeichen zaehlt genau die Gruppen mit Inhalt",
+   await seite.evaluate((KAT)=>{
+     const sichR=JSON.parse(JSON.stringify(R)), sichF=JSON.parse(JSON.stringify(FD));
+     FD.push({id:"7704",name:"Probe-Ordner",ico:"📁"});
+     R.push({id:77040,name:"Im-Ordner",cat:KAT,folder:"7704",blank:false});
+     /* ⚠ ALLE dieser Kategorie in den Ordner. Bliebe auch nur eines draussen,
+        zaehlte das Abzeichen die Kategorie ohnehin mit, und der Waechter waere
+        blind — genau das hat die Gegenprobe in Mein Rezeptbuch gemeldet. */
+     R.forEach(r=>{if(r.name&&!r.blank&&katVonRezept(r)===KAT)r.folder="7704";});
+     renderFolders(); badge();
+     const voll=[...document.querySelectorAll("#fldTree .fld-grp .fld-cnt")]
+       .filter(e=>(parseInt(e.textContent,10)||0)>0).length;
+     const b=parseInt(document.getElementById("fldBadge").textContent,10)||0;
+     R=sichR; FD=sichF; renderCatNav(); renderFolders(); badge();
+     return voll>0 && b===voll;
+   }, KAT_PROBE));
+/* ⚠ EIN ORDNER, DEN ES NICHT MEHR GIBT, IST KEIN SYMBOL. `catIco('fld_9999')`
+   gibt ein nacktes 📁 zurueck — ein Ordner-Zeichen fuer einen Ordner, der nicht
+   existiert. Gedeutet steht dort das Zeichen von „Ohne Kategorie". */
+ok("ein Rezept mit toter Ordner-Kennung zeigt Ohne-Kategorie statt 📁",
+   await seite.evaluate(()=>{
+     const sichR=JSON.parse(JSON.stringify(R)), sichF=JSON.parse(JSON.stringify(FD));
+     FD.push({id:"7703",name:"Probe-Ordner",ico:"📁"});
+     R.push({id:77030,name:"Tote-Kennung",cat:"fld_9999",folder:"7703",blank:false});
+     renderFolders();
+     const g=document.querySelector('#fldTree .fld-grp[data-gid="cfd_7703"]');
+     const z=g&&[...g.querySelectorAll(".fld-rrow")].find(x=>x.dataset.rid==="77030");
+     const sym=z?z.firstElementChild.textContent.trim():"";
+     const soll=catIco(KAT_OHNE);
+     R=sichR; FD=sichF; renderCatNav(); renderFolders();
+     return sym===soll && sym!=="📁";
+   }));
+/* ⚠ Und die Anlage-Maske hat ZWEI Felder: der Ordner darf die Kategorie nicht
+   mehr ueberstimmen. */
+ok("ein im Ordner angelegtes Rezept bekommt trotzdem seine Kategorie",
+   await seite.evaluate((KAT)=>{
+     const sichR=JSON.parse(JSON.stringify(R)), sichF=JSON.parse(JSON.stringify(FD));
+     FD.push({id:"7702",name:"Probe-Ordner",ico:"📁"}); renderCatNav();
+     document.getElementById("newName").value="Frisch-im-Ordner";
+     document.getElementById("newCat").value=KAT;
+     document.getElementById("newFolder").value="7702";
+     document.getElementById("newFlavor").value="";
+     createRecipe();
+     const n=R.find(r=>r.name==="Frisch-im-Ordner");
+     const gut=!!n && n.cat===KAT && String(n.folder)==="7702";
+     R=sichR; FD=sichF; renderCatNav(); renderFolders();
+     return gut;
+   }, KAT_PROBE));
 
 await browser.close(); server.close();
 console.log(`\n${gruen} grün · ${rot} ROT`);
