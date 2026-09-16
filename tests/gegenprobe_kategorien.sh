@@ -24,18 +24,33 @@ echo "Kopie: $KOPIE · Quelldatei: $DATEI"
 gefangen=0; durch=0; falsch=0; tot=0
 lauf(){ python3 build.py >/dev/null 2>&1; node tests/smoke_kategorien.mjs 2>&1; }
 
+# ⚠ EIN TOTER ANKER FIEL BISHER ERST NACH EINEM VOLLEN LAUF AUF — also nach
+#   Minuten. `NUR_ANKER=1 bash tests/gegenprobe_kategorien.sh` prueft in
+#   Sekunden NUR, ob jeder Anker genau einmal trifft; es faehrt keine Probe.
+#   Uebertragen aus Mein Rezeptbuch, wo er am 2026-09-16 viermal zuschlug.
+if [ -n "${NUR_ANKER:-}" ]; then
+  lauf(){ echo "0 grün · 0 ROT"; }
+else
 if lauf | grep -qE "^[0-9]+ grün · 0 ROT$"; then echo "Ausgangslage gruen"; else
   echo "ABBRUCH: schon ohne Eingriff rot."; lauf | tail -4; exit 2; fi
+fi
 
 fall(){
   cp "$DATEI" "$SICH"
   ANKERFEHL="$ANKERFEHL" python3 - "$3" <<'PY'
-import io,sys,glob
+import io,os,sys,glob
 p=glob.glob('QC_*.html')[0]
 s=io.open(p,encoding='utf-8').read()
 alt,neu=sys.argv[1].split('@@@')
 if s.count(alt)!=1:
-    io.open('"$ANKERFEHL"','w').write('1'); sys.exit(0)
+    # ⚠ DER PFAD KOMMT AUS DER UMGEBUNG, nicht aus einer Zeichenkette im
+    #   ZITIERTEN Heredoc. Hier stand '"$ANKERFEHL"' — in einem <<'PY' wird
+    #   NICHTS ersetzt, also entstand eine Datei, die WOERTLICH so hiess, und
+    #   die Pruefung darauf traf nie zu. Folge: ein TOTER ANKER meldete sich
+    #   als „NICHT GEFANGEN" — also als blinder Waechter, und das verlangt das
+    #   Gegenteil („bau einen Waechter" statt „zieh den Fall nach").
+    #   Uebertragen aus Mein Rezeptbuch, wo es am 2026-09-16 gemessen wurde.
+    io.open(os.environ['ANKERFEHL'],'w').write('1'); sys.exit(0)
 io.open(p,'w',encoding='utf-8').write(s.replace(alt,neu,1))
 PY
   if [ -f "$ANKERFEHL" ]; then rm -f "$ANKERFEHL"
@@ -148,7 +163,7 @@ fall "die Getraenke-Symbole verschwinden wieder" "eigene Getraenke-Symbole" \
 
 # ── Die Ordner-Ansicht zaehlt wieder anders als die Leiste (Klaus 2026-09-16) ──
 fall "der Ordner-Baum fragt wieder das rohe Feld" "dieselbe Zahl" \
-"      recipes:R.filter(r=>katVonRezept(r)===c.id&&r.name)})),@@@      recipes:R.filter(r=>r.cat===c.id&&r.name)})),"
+"      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)})),@@@      recipes:R.filter(r=>!r.folder&&r.cat===c.id&&r.name)})),"
 
 fall "ein Ordner-Rezept ohne r.folder faellt im Baum wieder heraus" "faellt nirgends heraus" \
 "      recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))@@@      recipes:R.filter(r=>r.folder===String(f.id)&&r.name)}))"
