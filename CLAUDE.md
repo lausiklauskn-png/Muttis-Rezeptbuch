@@ -775,6 +775,94 @@ Reparatur zu ersetzen.
 ---
 
 
+---
+
+## 🧬 HERKUNFT AM REZEPT UND EINE KENNUNG, DIE UMBENENNEN ÜBERSTEHT (Klaus 2026-09-16)
+
+Nachgezogen aus **Mein Rezeptbuch** (dort gebaut und gemessen, PR #410/#411).
+Klaus: *„das Rezept Export, dass es die Spore trägt. Wenn ich es wieder einfüge,
+soll die Spur mit drin bleiben."*
+
+**Warum es in BEIDEN Büchern stehen muss:** Mein Rezeptbuch schreibt seit dem
+2026-09-16 `version: 10` mit Kennung und Herkunft. Ein Buch, das die Felder nur
+durchträgt, ohne sie zu **nutzen**, ist einseitig geschützt — dort entstehen die
+Dubletten weiter. *„Von dir zu Mutti und zurück" trägt erst, wenn beide es können.*
+
+### Zwei Dinge, die man trennen muss
+
+| | was es ist | wie viele |
+|---|---|---|
+| **die Spore** | *wer bin ich* — die Identität der App | **genau eine**, kommt nie aus einer Datei |
+| **die Herkunft** | *woher kommt dieses Rezept* | eine je Rezept, wird nur **angehängt** |
+
+`r.uid` ist die **Identität** des Rezepts, `r.id` bleibt die **lokale** Nummer.
+Zwei Dinge, zwei Felder. Dateien ohne `uid` (alles vor v10) gehen weiter den
+alten Namens-Weg.
+
+| | vorher | jetzt |
+|---|---|---|
+| umbenannt, alte Datei importiert | kam als **zweites** dazu | an `r.uid` erkannt — **kein Doppel** |
+| zwei verschiedene Rezepte, gleicher Name | das zweite verschwand **still** | beide landen |
+
+### Die Kette (Weg 3, Klaus' Wahl)
+
+`r.herkunft = [{k,d}]` — gedeckelt auf **5** (`HERK_MAX`), keine Wiederholung
+direkt hintereinander, **nur Kennung und Datum**. Wird gekürzt, steht
+`herkGekuerzt` dabei. Treffen zwei Ketten aufeinander, **gewinnt die längere**.
+
+⚠ **NIE EIN GERÄTENAME.** „Klaus-Handy" wäre ein Hinweis auf eine **Person** und
+wanderte mit jedem Rezept zu Fremden. Die Kennung tut das nicht.
+
+⚠ **`lokal-…` ist kein Beweis**, nur eine stabile Marke dieses Browsers — und
+sagt das im Namen.
+
+⚠ **Der Speicher-Schlüssel ist app-eigen:** Muttis `mrzknoten9`, Mein Rezeptbuch
+`mrzknoten9m`. Beide Bücher liegen auf derselben `github.io`-Adresse.
+
+### ⚠ ES GIBT ZWEI IMPORT-WEGE, und in Mein Rezeptbuch ist einer durchgerutscht
+
+| Weg | Funktion | nennt seine Liste |
+|---|---|---|
+| Datei | `importData(e)` | `imported` |
+| **Tresor** | `importJsonFromVault(input)` | **`recs`** |
+
+Dort suchte die Bestandsaufnahme nach der ersten Form — gemergt war eine **halbe
+Reparatur**. Aufgefallen ist es erst **hier**, weil in dieser Datei
+`existingNames` **zweimal** stand. *„0 Treffer" ist erst dann eine Aussage, wenn
+man belegt hat, dass man überall hineingesehen hat.*
+
+Das Zusammenführen steht deshalb an **einer** Stelle (`_zusammenfuehren`), beide
+Wege gehen hindurch, und ein Wächter besteht darauf, dass der Dubletten-Riegel
+**genau einmal** im Code steht.
+
+### ⚠ Und die Ordner kommen beim Hinzufügen jetzt MIT
+
+`onMerge` fasste `FD` **nicht** an — ein Rezept, das in der Datei in einem Ordner
+lag, zeigte danach auf einen Ordner, den es hier nicht gibt. **Klaus'
+„unsichtbarer Ordner", an seiner Quelle** statt an der Anzeige. Fehlende Ordner
+kommen mit; **vorhandene werden nicht überschrieben**.
+
+### Der Import sagt jetzt, was man nicht sehen wird
+
+> ℹ️ **2** ohne Kategorie — sie erscheinen unter „Ohne Kategorie"
+
+### ⚠ Eine benannte Abweichung zu Mein Rezeptbuch
+
+**Dieses Buch hat keinen `_showCatMapDialog`.** Der Zuordnungs-Dialog beim Import
+existiert hier nicht; der Umbau ist deshalb **nicht byte-gleich** übernommen,
+sondern an den vorhandenen Ablauf angepasst. Wer ihn weiterträgt, prüft die
+Anker, statt zu kopieren.
+
+### Geprüft
+
+```bash
+node tests/smoke_herkunft.mjs        # echter Browser, an der GEBAUTEN index.html
+bash tests/gegenprobe_herkunft.sh    # Wegwerf-Kopie, MIT Bau-Schritt
+```
+
+Zuletzt gemessen (2026-09-16): **37 grün · 0 ROT**. Gegenprobe und
+`smoke_kategorien`: siehe PR-Text — beide Rückgabewerte **direkt** gelesen.
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue
