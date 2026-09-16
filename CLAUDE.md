@@ -863,6 +863,79 @@ bash tests/gegenprobe_herkunft.sh    # Wegwerf-Kopie, MIT Bau-Schritt
 Zuletzt gemessen (2026-09-16): **37 grün · 0 ROT**. Gegenprobe und
 `smoke_kategorien`: siehe PR-Text — beide Rückgabewerte **direkt** gelesen.
 
+## 🌐 DER EINSTELLUNGS-BILDSCHIRM SPRACH STELLENWEISE NUR DEUTSCH (Klaus 2026-09-16)
+
+Klaus mit Bild aus der **englischen** Oberfläche (aufgenommen in Mein Mixarium):
+*„Mit dem Netzwerk verbinden in Einstellungen ist nicht übersetzt worden und
+genauso Mistral-Schlüssel … wahrscheinlich auch in den anderen."*
+
+**Nachgemessen, nicht angenommen — und dieses Buch stand ANDERS da.** Die
+Abschnitte **🌐 NETZWERK (SBKIM)** und **🧩 WERKZEUGE** gibt es hier gar nicht;
+von Klaus' Liste betraf nur **ein** Punkt diese App:
+
+| Beschriftungen ohne Sprach-Schlüssel | Mein Rezeptbuch | **Muttis Rezeptbuch** | Mein Mixarium |
+|---|---|---|---|
+| gemessen am 2026-09-16 | 13 | **5** | 14 |
+
+*Drei Apps dieselbe Zusicherung behaupten zu lassen wäre in einer davon eine
+Lüge* — deshalb steht hier die Zahl, die hier gemessen wurde.
+
+### Der Mechanismus — und wo er still durchfällt
+
+Übersetzt wird eine Beschriftung, wenn **beides** stimmt: sie trägt eine `id`,
+**und** diese id steht in der Namensliste des Setzers in `applyLang`. Fehlt
+eines von beidem, bleibt sie **still deutsch** — kein Fehler, keine rote Zeile.
+
+Nachgetragen sind **drei** Schlüssel in acht Sprachen: `sMistralLbl`,
+`sMistralSub` und `sOfflineCap` (das Wort „Offline-fähig" in der Versionszeile).
+
+⚠ **DIE VERSIONSNUMMER BLEIBT AN EINER STELLE:**
+`Version 9.5 · <span id="sOfflineCap">Offline-fähig</span>` — nur das **Wort**
+wird übersetzt. Die ganze Zeile in acht Sprachen zu führen hiesse, dieselbe
+Nummer achtmal zu pflegen.
+
+### ⚠ Der Fund, den erst die Messung im Browser gemacht hat
+
+`updateStatus` trug den Satz *„Updates werden automatisch im Hintergrund
+bereitgestellt."* fest im Markup — auf Englisch stand er dauerhaft auf Deutsch,
+weil er nur beim Update-Prüfen ersetzt wird. Die Quelltext-Inventur sah ihn
+**nicht** (er hat ja eine `id`).
+
+⚠ **BENANNTE GRENZE:** er steht jetzt in der Namensliste, also setzt ein
+Sprachwechsel die Zeile auf ihren Ruhesatz zurück. Der Update-Hinweis selbst
+hängt an `#updBanner` und bleibt davon unberührt.
+
+### ⚠ Der Wächter misst die WIRKUNG, nicht den Namen
+
+Der erste Anlauf fragte „trägt die Zeile eine id, die ein LANGS-Schlüssel ist?"
+— und meldete in Mein Rezeptbuch drei Zeilen als stumm, **die sehr wohl
+übersetzt werden**: sie hängen an einem Schlüssel mit anderem Namen
+(`sApiKeyLbl` ← `T('apiKeyLbl')`). Gemessen wird jetzt derselbe Bildschirm auf
+Deutsch **und** auf Englisch: jede Beschriftung, die dabei stehen bleibt,
+braucht einen Grund — Wörterbuch-Eintrag mit gleichem Text in beiden Sprachen,
+oder namentliche Ausnahme (Eigenname, ©-Zeile, E-Mail, Versionsnummer, Zähler).
+
+⚠ **`window.LANGS` gibt es nicht.** `const LANGS={…}` auf oberster Ebene hängt
+**nicht** am window-Objekt — wortgleich dieselbe Falle wie `window.R` in dieser
+Datei. Die Probe greift auf den globalen Lexikal-Bereich zu.
+
+### Geprüft
+
+```bash
+node tests/smoke_einstellungen_sprache.mjs        # echter Browser, DE → EN → DE
+bash tests/gegenprobe_einstellungen_sprache.sh    # Wegwerf-Kopie, MIT Bau-Schritt
+```
+
+Zuletzt gemessen (2026-09-16): **17 grün · 0 ROT** · Gegenprobe **7 gefangen ·
+0 durchgerutscht · 0 aus falschem Grund · 0 tote Anker** · `smoke_kategorien`
+unverändert **141 grün**, `smoke_herkunft` **37 grün**.
+
+⚠ **Und derselbe Ausgangslagen-Riegel wie in der Nachbar-Gegenprobe:**
+`grep -q "0 ROT"` liest „10 ROT" als Erfolg. In `gegenprobe_herkunft.sh` stand
+er noch so und ist mit nachgezogen.
+
+---
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue
