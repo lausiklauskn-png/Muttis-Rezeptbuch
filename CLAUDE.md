@@ -504,6 +504,153 @@ bash tests/gegenprobe_kategorien.sh    # Wegwerf-Kopie, MIT Bau-Schritt
 ⚠ **Die Gegenprobe baut zwischen Sabotage und Messung neu.** Ohne
 `python3 build.py` misst sie die alte `index.html`, und jeder Fall wäre „nicht
 gefangen".
+---
+
+## 🏷️ NACHGEZOGEN AUS MEIN REZEPTBUCH (2026-09-16)
+
+Klaus: *„jetzt Muttis Rezeptbuch und Mixarium nachziehen."* Was dort an einem
+Tag entstanden ist, steht seitdem auch hier. **Die Befunde sind dort gemacht
+worden** — hier stehen nur die Stellen, an denen sich diese App unterscheidet.
+
+### ⚠ EIN ORDNER, DEN ES NICHT GIBT, IST KEIN ORDNER
+
+Klaus am Tablet, über Mein Rezeptbuch: *„sie werden immer nur innerhalb eines
+Ordners verschoben … und dieser Ordner lässt sich nicht umbenennen, sondern
+bleibt ein **unsichtbarer Ordner**."* Zeigt `r.folder` auf eine Kennung, die in
+`FD` nicht steht, fällt das Rezept aus **jeder** Kategorie-Gruppe (die fragt
+`!r.folder`), und einen Ordner-Eintrag gibt es auch nicht.
+
+`ordnerVonRezept(r)` ist das Gegenstück zu `katVonRezept` am **anderen Feld**:
+es gibt den Ordner nur zurück, wenn es ihn wirklich gibt. Eingesetzt an den
+**drei** Stellen, die „liegt es in einem Ordner?" fragen — Ordner-Baum,
+`imOrdner`-Zahl und das Abzeichen in `badge()`.
+
+⚠ **UND DAS ABZEICHEN WAR DABEI BLIND.** Der vorhandene Wächter misst
+„Leiste = Baum" und fragt das Abzeichen bei einem **toten** Ordner gar nicht —
+der Gegenprobe-Fall rutschte durch. **Gefunden hat es die Gegenprobe, nicht
+das Nachdenken.** Gemessen wird jetzt genau die Lage, in der beide Fassungen
+auseinandergehen: eine Kategorie mit **einem** Rezept, und das liegt in einem
+Ordner, den es nicht gibt.
+
+### ⚠ `T(k)` FÄLLT NICHT ZURÜCK — UND HIER FEHLTE WIRKLICH EIN SCHLÜSSEL
+
+```js
+function T(k){ return (LANGS[CL]||LANGS.de)[k] || k; }
+```
+
+Bei einem fehlenden Schlüssel gibt `T(k)` den **Schlüssel** heraus, also immer
+etwas Wahres — ein `T('x')||'Rückfall'` dahinter kann **nie** greifen.
+
+**Der Schlüssel-Sammler hat beim ersten Lauf sofort einen Fund gemacht:
+`hAddLbl`.** Er steht in der leeren Ansicht (`empty-state`) und war in
+`LANGS` nie eingetragen; auf dem Schirm stand dort **„+ hAddLbl hinzufügen"**.
+In acht Sprachen nachgetragen. Gemessen: **169 benutzte Schlüssel, alle
+vorhanden.**
+
+⚠ **In Mein Mixarium hat derselbe Sammler nichts gefunden** (196 Schlüssel,
+alle da). *Drei Apps dieselbe Zusicherung behaupten zu lassen wäre in einer
+davon eine Lüge* — deshalb steht in jeder App die Zahl, die dort gemessen
+wurde.
+
+### Eine Kennung kommt genau einmal vor · Kennung sichtbar
+
+`catsAlle()` hängte `CATS` und `catsFremd()` aneinander, **ohne zu prüfen, ob
+eine Kennung schon dabei war**. Standen zwei Einträge mit derselben Kennung in
+der Liste, markierte ein Tipp folgerichtig **beide** — sie sind für die App
+dieselbe Kategorie. Der Riegel sitzt jetzt an der **Quelle**, nicht auf der
+Anzeige.
+
+Und der Umbenennen-Dialog zeigt neben jedem Namen die Kennung **mit ihrer
+Zeichenzahl** (`"sushi" ·5`) — ohne die Zahl sehen `"sushi"` und `"sushi "`
+gleich aus, und genau so entstehen zwei Zeilen, die keiner auseinanderhält.
+
+⚠ **UND DIE GEGENRICHTUNG DAZU WAR SELBST BLIND — eine Zahl statt einer
+Liste.** Der Wächter „ohne Duplikat geht keine Kategorie verloren" verglich
+`catsAlle().length` mit der Zahl der festen Kategorien. Das misst nichts: die
+Liste trägt außer den festen auch die mitgebrachten und „Ohne Kategorie", ist
+also groß genug, selbst wenn eine feste fehlt. Gemessen wird jetzt
+**namentlich**, welche feste Kennung verschwunden ist. *Eine Zahl in einer
+Prüfung ist kein Vertrag.*
+
+⚠ **Und die zugehörige Sabotage traf zuerst die VORBEDINGUNG.** Sie faltete
+alle Kategorien auf ihren ersten Buchstaben zusammen; die Probe starb damit
+schon im ersten Abschnitt an einem fremden Reiter, und der Fall meldete sich
+als „rot aus falschem Grund" — **rot war es beides Mal, nur trug die rote
+Zeile den falschen Namen.** Weggenommen wird jetzt genau **eine** feste
+Kategorie.
+
+⚠ **UND BASH LIEST EIN SKRIPT STÜCKWEISE — die Gegenprobe-Datei darf während
+ihres eigenen Laufs nicht angefasst werden.** Am 2026-09-16 habe ich einen
+Fall repariert, während der Lauf noch lief; er quittierte mit
+`line 192: n: command not found` und meldete danach Fälle als „rot aus
+falschem Grund", die tadellos waren. **Die Wegwerf-Kopie schützt den Baum,
+nicht das Skript:** `bash tests/gegenprobe_kategorien.sh` liest die Datei im
+**echten** Depot, auch wenn der Lauf danach in die Kopie wechselt. Derselbe
+Fehler wie „nicht am Arbeitsbaum arbeiten, während die Gegenprobe läuft", nur
+an der einen Datei, die man dafür für sicher hält. Der Lauf war als Messung
+wertlos und wurde verworfen statt gezählt.
+
+### Kategorien löschen, zusammenlegen, neu anlegen
+
+📂 **Ordner** → **✎ Kategorien umbenennen** → 🗑 an einer Zeile bzw.
+**＋ Neue Kategorie**. Löschen fragt **immer** nach dem Ziel; die Antworten
+sind **drei**, nicht zwei:
+
+| Wahl | was mit `r.cat` geschieht |
+|---|---|
+| eine andere Kategorie | trägt deren Kennung |
+| **ausdrücklich ohne** (`''`) | leer — landet sichtbar unter „Ohne Kategorie" |
+| **es war nichts zu verschieben** (`null`) | gar nichts, die Kategorie war leer |
+
+⚠ **Der Speicher-Schlüssel ist app-eigen**, wie `mrzcats9`: hier
+`mrzcatsneu9` / `mrzcatsaus9`, in Mein Rezeptbuch `…9m`. Beide Bücher liegen
+auf derselben `github.io`-Adresse.
+
+⚠ **Eine feste Kategorie verschwindet über `CATS_AUS`, und nur solange sie
+leer ist.** `katAnzahl(id)===0` wird bei jedem `catsAlle()` neu gerechnet:
+kommt wieder ein Rezept hinein, ist der Reiter von selbst zurück. Ein Riegel,
+der eine Kategorie mit Inhalt verschwinden ließe, wäre ein stiller
+Datenverlust.
+
+### 🏷️ Kategorie zuordnen aus der Rezeptzeile
+
+Das **🏷️** steht links neben dem Papierkorb. Die Auswahl trägt alle
+Kategorien (die aktuelle mit ✓), darunter abgesetzt **„ohne Kategorie"** als
+Weg zurück und **＋ Neue Kategorie**.
+
+**Gesetzt wird NUR `r.cat`.** Der Ordner bleibt stehen. Ein
+`fld_…`-Altbestand wird **ersetzt**, nicht danebengelegt.
+
+⚠ **DAS AUSWAHL-FENSTER MACHTE SICH IN MEIN REZEPTBUCH SELBST WIEDER ZU.**
+＋ Neue Kategorie tauscht den Inhalt des Fensters; danach sucht der „Tipp
+daneben"-Riegel den geklickten Knopf **darin** und findet ihn nicht mehr.
+Repariert wird die **Ursache**, nicht der eine Knopf:
+
+```js
+if(!document.contains(e.target))return;   // gerade ersetzt ≠ Tipp nach draußen
+```
+
+⚠ **UND EINE PROBE, DIE SYNCHRON KLICKT, IST DAFÜR BLIND.** Der Riegel hängt
+an einem `setTimeout(…,0)`; klickt eine Probe alles in **einem** Durchgang,
+läuft dazwischen kein Timer. **Ein Finger ist langsamer als ein Skript** — die
+Probe lässt zwischen den Griffen einen `await tick()` verstreichen.
+
+### Geprüft
+
+Zuletzt gemessen (2026-09-16, nach dem Nachziehen): **109 grün · 0 ROT**
+(169 Schlüssel geprüft). Gegenprobe: die Zahl steht im Übergabe-Absatz weiter
+unten, direkt gelesen und nicht hinter einer Pipe.
+
+```bash
+node tests/smoke_kategorien.mjs           # echter Browser, an der GEBAUTEN index.html
+NUR_ANKER=1 bash tests/gegenprobe_kategorien.sh   # tote Anker in Sekunden
+bash tests/gegenprobe_kategorien.sh       # Wegwerf-Kopie, MIT Bau-Schritt
+```
+
+✅ **`NUR_ANKER=1` ist beim Nachziehen dreimal eingesprungen** — Zeilen, die
+diese Arbeit selbst bewegt hat und auf die ältere Fälle zeigten. Ohne den Gang
+wären es drei „NICHT GEFANGEN" nach Minuten gewesen, und die weisen in die
+**entgegengesetzte** Richtung („bau einen Wächter" statt „zieh den Fall nach").
 
 ---
 

@@ -66,6 +66,9 @@ await seite.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil:"domcontentl
 await seite.waitForFunction(()=>typeof catsAlle==="function" && typeof R!=="undefined" && Array.isArray(R), null, {timeout:25000});
 await seite.waitForFunction(()=>document.querySelectorAll("#catNav .cpill").length>0, null, {timeout:25000});
 
+/* Eine FESTE Kategorie aus dem Code dieser App — an ihr wird der
+   CATS_AUS-Riegel gemessen. Eine mitgebrachte verschwindet ohnehin. */
+const FEST="fleisch";
 console.log("\n── 0 · Die Seite läuft ohne Fehler ──");
 ok("kein Seitenfehler beim Laden" + (seitenfehler.length?" — "+seitenfehler[0].slice(0,90):""), seitenfehler.length===0);
 
@@ -482,6 +485,460 @@ ok("ein im Ordner angelegtes Rezept bekommt trotzdem seine Kategorie",
      R=sichR; FD=sichF; renderCatNav(); renderFolders();
      return gut;
    }, KAT_PROBE));
+
+console.log("\n── 16 · Jeder benutzte Text-Schluessel steht wirklich in LANGS ──");
+/* ⚠ `T(k)` gibt bei einem FEHLENDEN Schluessel den Schluessel ZURUECK:
+     function T(k){return(LANGS[CL]||LANGS.de)[k]||k;}
+   Der Rueckgabewert ist damit immer truthy — ein `T('x')||'Rueckfall'`
+   dahinter kann NIE greifen, und auf dem Schirm steht der Schluesselname.
+   Genau das ist am 2026-09-16 in Mein Rezeptbuch passiert („+6 fldInOrdnern"),
+   und gefunden hat es Klaus im Bild, nicht eine Probe. Gemessen wird deshalb
+   die FAMILIE: jeder Schluessel, den der Code benutzt, muss in LANGS.de
+   stehen. */
+const fehlend = await seite.evaluate(()=>{
+  const quelle=document.documentElement.innerHTML;
+  const schluessel=new Set();
+  const re=/\bT\(\s*'([A-Za-z_][A-Za-z0-9_]*)'\s*\)/g;
+  let m; while((m=re.exec(quelle)))schluessel.add(m[1]);
+  const de=(typeof LANGS!=="undefined"&&LANGS.de)||{};
+  return {gesamt:schluessel.size, fehlt:[...schluessel].filter(k=>!(k in de))};
+});
+ok(`alle ${fehlend.gesamt} benutzten Schluessel sind in LANGS.de vorhanden`,
+   fehlend.gesamt>20 && fehlend.fehlt.length===0);
+if(fehlend.fehlt.length)console.log("     fehlt: "+fehlend.fehlt.join(", "));
+/* ⚠ GEGENRICHTUNG: ohne diese Zeile waere der Waechter oben auch dann gruen,
+   wenn der Sammler gar nichts findet. */
+ok("… und der Sammler findet ueberhaupt Schluessel", fehlend.gesamt>20);
+
+console.log("\n── 17 · Eine Kennung kommt genau einmal vor ──");
+/* ⚠ Klaus 2026-09-16 mit Bild: ZWEI Pillen „Sushi", und ein einziger Tipp
+   markierte BEIDE. Eine Pille traegt `on` genau dann, wenn `CAT===c.id` —
+   markiert ein Tipp zwei, tragen beide dieselbe Kennung. Es sind also nicht
+   zwei Kategorien, sondern EINE, die zweimal gezeichnet wird. */
+const doppelt = await seite.evaluate((FEST)=>{
+  const sichC=CATS.slice(), sichR=JSON.parse(JSON.stringify(R));
+  const vorlage=CATS.find(c=>c.id===FEST);
+  // dieselbe Kennung ein zweites Mal in die Liste — Klaus' Lage nachgestellt
+  CATS.push(Object.assign({},vorlage));
+  const wieOft=catsAlle().filter(c=>c.id===FEST).length;
+  CAT=FEST; renderCatNav();
+  const markiert=[...document.querySelectorAll('#catNav .cpill.on')]
+    .filter(e=>(e.getAttribute("onclick")||"").indexOf("setCAT('"+FEST+"')")>=0).length;
+  renderFolders();
+  const gruppen=document.querySelectorAll('#fldTree .fld-grp[data-gid="cat_'+FEST+'"]').length;
+  /* ⚠ GEGENRICHTUNG, UND SIE MUSS NAMENTLICH SEIN. Hier stand zuerst
+     `catsAlle().length >= CATS.length-1` — eine Zahl. Sie ist blind: die
+     Liste traegt ausser den festen auch die mitgebrachten und „Ohne
+     Kategorie", also bleibt sie gross genug, selbst wenn eine feste fehlt.
+     Gemessen wird deshalb NAMENTLICH, welche feste Kennung verschwunden
+     ist — eine Zahl in einer Pruefung ist kein Vertrag. */
+  CATS.length=0; sichC.forEach(c=>CATS.push(c));
+  const listeIds=catsAlle().map(c=>String(c.id));
+  const fehlt=CATS.filter(c=>c.id!=='all').map(c=>String(c.id))
+    .filter(id=>listeIds.indexOf(id)<0);
+  R=sichR; CAT='all'; renderCatNav(); renderFolders();
+  return {wieOft,markiert,gruppen,fehlt};
+}, FEST);
+ok("eine doppelte Kennung erscheint in catsAlle nur EINMAL", doppelt.wieOft===1);
+ok("… ein Tipp markiert genau eine Pille (Klaus' Befund)", doppelt.markiert===1);
+ok("… und der Ordner-Baum zeichnet die Gruppe nur einmal", doppelt.gruppen===1);
+/* ⚠ GEGENRICHTUNG: ein Riegel, der zu viel wegwirft, waere schlimmer als das
+   Duplikat — dann fehlten Kategorien. */
+ok("… und ohne Duplikat geht keine Kategorie verloren", doppelt.fehlt.length===0);
+if(doppelt.fehlt.length)console.log("     fehlt: "+doppelt.fehlt.join(", "));
+ok("die fest eingebaute Liste CATS traegt keine Kennung zweimal",
+   await seite.evaluate(()=>{
+     const ids=CATS.map(c=>c.id);
+     return new Set(ids).size===ids.length;
+   }));
+/* ⚠ UND DIE KENNUNG STEHT IM DIALOG, MIT ZEICHENZAHL. Zwei Kategorien
+   koennen denselben NAMEN tragen — die Kennung ist das, woran die Eintraege
+   haengen. Ein fuehrendes oder folgendes Leerzeichen sieht man nur so. */
+const kennung = await seite.evaluate(()=>{
+  const sichR=JSON.parse(JSON.stringify(R));
+  R.push({id:88010,name:"Mit-Leerzeichen",cat:"luecke ",folder:"",blank:false});
+  openKatUmbenennen();
+  const row=document.querySelector('#katRenameOv .kat-row[data-kid="luecke "]');
+  /* ⚠ EINE PROBE, DIE ABSTUERZT STATT ZU MELDEN, ZEIGT AUF DEN BOTEN. */
+  const k=row&&row.querySelector('.kat-kenn');
+  const txt=k?k.textContent.trim():"";
+  const ov=document.getElementById('katRenameOv'); if(ov)ov.remove();
+  R=sichR; renderCatNav(); renderFolders();
+  return txt;
+});
+ok("der Dialog zeigt die Kennung", /luecke/.test(kennung));
+ok("… in Anfuehrungszeichen, sodass ein Leerzeichen sichtbar wird",
+   kennung.indexOf('"luecke "')===0);
+ok("… und mit der Zeichenzahl daneben", /·7$/.test(kennung));
+if(!/·7$/.test(kennung))console.log(`     gelesen: „${kennung}"`);
+
+console.log("\n── 18 · Kategorien loeschen, zusammenlegen, neu anlegen ──");
+/* ⚠ Klaus 2026-09-16: „mache es bitte moeglich, die Kategorien einzeln zu
+   loeschen, auch ganze Kategorien zu loeschen und neu zu erstellen."
+   Das ZUSAMMENLEGEN ist derselbe Weg: die eine Kategorie wird in die andere
+   aufgeloest. */
+const aufl = await seite.evaluate(()=>{
+  const sichR=JSON.parse(JSON.stringify(R)), sichN=JSON.parse(JSON.stringify(CATS_NEU));
+  const sichA=CATS_AUS.slice(), sichE=JSON.parse(JSON.stringify(CATS_EIGEN));
+  R.push({id:91001,name:"Sushi-A-1",cat:"sushiA",folder:"",blank:false});
+  R.push({id:91002,name:"Sushi-A-2",cat:"sushiA",folder:"",blank:false});
+  R.push({id:91003,name:"Sushi-B-1",cat:"sushiB",folder:"",blank:false});
+
+  const vorher=katAnzahl("sushiB");
+  // zusammenlegen: B in A aufloesen
+  katWegNehmen("sushiB","sushiA");
+  const nachA=katAnzahl("sushiA"), nachB=katAnzahl("sushiB");
+  /* ⚠ EINE MITGEBRACHTE KENNUNG VERSCHWINDET VON SELBST, sobald kein Eintrag
+     mehr auf sie zeigt — `catsFremd()` sammelt sie ja aus `R`. Ein Waechter
+     daran waere BLIND fuer den Riegel, um den es geht (CATS_AUS). Gemessen
+     wird deshalb an einer FESTEN Kategorie — die steht im Code und geht nur
+     ueber das Ausblenden weg. */
+  const bWeg=!catsAlle().some(c=>String(c.id)==="sushiB");
+  const fest=String(CATS.find(c=>c.id!=="all").id);
+  R.push({id:91004,name:"Fest-1",cat:fest,folder:"",blank:false});
+  katWegNehmen(fest,"sushiA");
+  const festWeg=!catsAlle().some(c=>String(c.id)===fest);
+
+  // in „Ohne Kategorie" aufloesen ist eine WAHL, kein fehlender Wert
+  katWegNehmen("sushiA","");
+  const ohne=R.filter(r=>[91001,91002,91003].indexOf(r.id)>=0&&katVonRezept(r)===KAT_OHNE).length;
+
+  document.querySelectorAll('#katRenameOv,#katAuflOv').forEach(e=>e.remove());
+  R=sichR;CATS_NEU=sichN;CATS_AUS=sichA;CATS_EIGEN=sichE;
+  renderCatNav();renderFolders();
+  return {vorher,nachA,nachB,bWeg,festWeg,ohne};
+});
+ok("zwei Kategorien lassen sich zusammenlegen", aufl.vorher===1 && aufl.nachA===3);
+ok("… die aufgeloeste ist danach leer", aufl.nachB===0);
+ok("… und verschwindet aus der Liste", aufl.bWeg);
+ok("… auch eine FESTE Kategorie verschwindet (der Riegel greift wirklich)", aufl.festWeg);
+ok("„Ohne Kategorie“ ist eine Wahl, kein fehlender Wert", aufl.ohne===3);
+
+/* ⚠ EINE KATEGORIE MIT INHALT WIRD NICHT STILL AUSGEBLENDET. Das waere der
+   Schaden vom 2026-09-15 zurueck: Eintraege liegen in R, werden gespeichert
+   und mitexportiert — und tauchen nirgends auf. */
+ok("eine ausgeblendete Kategorie MIT Inhalt bleibt sichtbar",
+   await seite.evaluate(()=>{
+     const sichR=JSON.parse(JSON.stringify(R)), sichA=CATS_AUS.slice();
+     R.push({id:91010,name:"Noch-da",cat:"bleibt9",folder:"",blank:false});
+     CATS_AUS.push("bleibt9");
+     const sichtbar=catsAlle().some(c=>String(c.id)==="bleibt9");
+     // Gegenrichtung: ohne Inhalt verschwindet sie sehr wohl
+     R=R.filter(r=>r.id!==91010);
+     const wegOhneInhalt=!catsAlle().some(c=>String(c.id)==="bleibt9");
+     R=sichR;CATS_AUS=sichA;renderCatNav();renderFolders();
+     return sichtbar && wegOhneInhalt;
+   }));
+
+/* ⚠ EINE NEUE KATEGORIE IST EINE NEUE ZEILE, kein zweiter Dialog. */
+const neuK = await seite.evaluate(()=>{
+  const sichN=JSON.parse(JSON.stringify(CATS_NEU)), sichE=JSON.parse(JSON.stringify(CATS_EIGEN));
+  openKatUmbenennen();
+  const vorher=document.querySelectorAll('#katRenameOv .kat-row').length;
+  katNeuAnlegen();
+  const rows=[...document.querySelectorAll('#katRenameOv .kat-row')];
+  const nachher=rows.length;
+  /* ⚠ NICHT „die letzte Zeile" — `catsAlle()` haengt die mitgebrachten
+     Kategorien dahinter. Gesucht wird die Zeile mit der NEUEN Kennung. */
+  const neue=rows.find(r=>/^eig_/.test(r.dataset.kid||""));
+  const kid=neue?neue.dataset.kid:"";
+  const fokus=!!neue&&document.activeElement===neue.querySelector('.kat-name');
+  const istLetzte=rows.length>0&&rows[rows.length-1]===neue;
+  katSpeichern();
+  const bleibtOhneNamen=CATS_NEU.some(c=>c.id===kid);
+  CATS_NEU=sichN;CATS_EIGEN=sichE;svCatsNeu();svCatsEigen();
+  document.querySelectorAll('#katRenameOv,#katAuflOv').forEach(e=>e.remove());
+  renderCatNav();renderFolders();
+  return {vorher,nachher,kid,fokus,istLetzte,bleibtOhneNamen};
+});
+ok("„＋ Neue Kategorie“ legt eine Zeile an", neuK.nachher===neuK.vorher+1);
+ok("… mit eigener Kennung", /^eig_/.test(neuK.kid));
+/* ⚠ UND ER STEHT IN DER RICHTIGEN ZEILE. „die letzte" waere eine FREMDE
+   Kategorie — wer lostippt, benennt die falsche um. */
+ok("… und der Finger steht gleich im Namensfeld DER NEUEN", neuK.fokus===true);
+ok("… obwohl sie nicht die letzte Zeile ist", neuK.istLetzte===false);
+ok("… ohne Namen wird sie beim Speichern wieder entfernt", neuK.bleibtOhneNamen===false);
+
+/* ══ 19 · KATEGORIE ZUORDNEN AUS DER REZEPTZEILE (Klaus 2026-09-16) ══
+   „links neben dem Papierkorb da noch einen reinmachen, zu einer anderen
+   Kategorie zuordnen … dann geht eine Leiste auf und ich kann waehlen."
+   Dazu: „ich kann eine neue Kategorie anlegen, direkt aus dem Rezeptbuch."  */
+const kz = await seite.evaluate(async () => {
+  const sichR = JSON.stringify(R), sichN = JSON.stringify(CATS_NEU);
+  /* Ein Rezept, das in einem ORDNER liegt UND eine Kategorie hat — nur an dem
+     laesst sich messen, dass das Zuordnen den Ordner in Ruhe laesst. */
+  FD = [{ id:"o1", name:"Japanisch" }];
+  R = [
+    { id:91, name:"Zuordnen-Probe-1", cat:"fleisch", folder:"o1", shut:true, ings:[], steps:[] },
+    { id:92, name:"Alt-Ordnerkennung", cat:"fld_999", shut:true, ings:[], steps:[] },
+  ];
+  CAT = "all"; render(); renderCatNav();
+
+  const zeile = document.querySelector('.rcard-acts');
+  const knoepfe = [...zeile.querySelectorAll('button')];
+  const iZu = knoepfe.findIndex(b => b.classList.contains('kat-zu-btn'));
+  const iWeg = knoepfe.findIndex(b => b.classList.contains('del'));
+
+  /* ⚠ GEMESSEN WIRD DIE LAGE, NICHT DIE ANWESENHEIT. „der Knopf ist da" waere
+     auch dann gruen, wenn er am anderen Ende der Zeile stuende — und genau
+     seine Stelle hat Klaus bestellt.
+     ⚠ UND GEMESSEN WIRD, WAS MAN SIEHT, NICHT DIE REIHENFOLGE IM DOM. Die
+     erste Fassung verglich zwei Indizes. `.rcard-acts` ist aber ein Flex-
+     Container: ein `order:9` schoebe den Knopf ans Ende der Zeile, und der
+     Waechter waere gruen geblieben, waehrend Klaus ihn rechts vom Papierkorb
+     sieht. Dieselbe Familie wie „ein Waechter auf die Lage misst nicht die
+     Sichtbarkeit" (2026-09-15) — nur andersherum. */
+  const rZu  = iZu  >= 0 ? knoepfe[iZu].getBoundingClientRect()  : null;
+  const rWeg = iWeg >= 0 ? knoepfe[iWeg].getBoundingClientRect() : null;
+  const dazwischen = (rZu && rWeg) ? knoepfe.filter(b => {
+    const r = b.getBoundingClientRect();
+    return r.left > rZu.left && r.left < rWeg.left && Math.abs(r.top - rWeg.top) < 4;
+  }).length : -1;
+  const linksNebenWeg = !!rZu && !!rWeg
+    && rZu.left < rWeg.left && Math.abs(rZu.top - rWeg.top) < 4 && dazwischen === 0;
+
+  /* ⚠ GEMESSEN WIRD, WAS DER FINGER ERLEBT — nicht die ERSTE Karte. Die
+     bewegt sich nie: haengt die Auswahl in ihrer Knopfzeile, waechst sie nach
+     UNTEN, und ihr eigenes `top` bleibt stehen. Der erste Wächter war genau
+     dadurch blind, und die Gegenprobe hat es gesagt. Gemessen werden der
+     ANGETIPPTE KNOPF und die Karte DARUNTER. */
+  const knopfVor  = knoepfe[iZu].getBoundingClientRect().top;
+  const untenVor  = document.querySelectorAll('.rcard')[1].getBoundingClientRect().top;
+  knoepfe[iZu].click();
+  const pop = document.getElementById('katZuPop');
+  const knopfNach = knoepfe[iZu].getBoundingClientRect().top;
+  const untenNach = document.querySelectorAll('.rcard')[1].getBoundingClientRect().top;
+  const offen = !!pop;
+  /* ⚠ „die Karte bewegt sich nicht" allein war BLIND. Das Popup haengt an
+     `document.body` — es kann die Karte gar nicht schieben, egal welche
+     Position es traegt. Gefangen hat das die Gegenprobe: `position:relative`
+     aenderte nichts an der Karte, wohl aber daran, WO die Auswahl steht (ans
+     Ende der Seite statt an den Knopf). Gemessen wird deshalb beides. */
+  const popNahAmKnopf = pop ? (() => {
+    const rp = pop.getBoundingClientRect(), rb = knoepfe[iZu].getBoundingClientRect();
+    return Math.abs(rp.left - rb.left) < 260 && Math.abs(rp.top - rb.bottom) < 420;
+  })() : false;
+  const eintraege = pop ? [...pop.querySelectorAll('button')].length : 0;
+  const hatOhne = !!(pop && pop.querySelector('.kzp-ohne'));
+  const hatNeu  = !!(pop && pop.querySelector('.kzp-neu'));
+  const zeigtJetzt = !!(pop && pop.querySelector('.kzp-jetzt'));
+
+  /* zu „fleisch" umhaengen */
+  const ziel = [...pop.querySelectorAll('button')]
+    .find(b => (b.textContent||"").includes(katBeschriftung(catsAlle().find(c=>c.id==="fleisch"))));
+  ziel.click();
+  const r91 = R.find(r => r.id === 91);
+  const catNachher = r91.cat, ordnerNachher = r91.folder;
+  const popWeg = !document.getElementById('katZuPop');
+  /* ⚠ GEMESSEN WIRD DIE UEBEREINSTIMMUNG, NICHT EINE ZAHL. „die Leiste zeigt 2"
+     war beim ersten Lauf zu Recht rot — ich hatte falsch gezaehlt, und der
+     Waechter haette bei jedem Bestands-Wechsel wieder gelogen. Eine Zahl in
+     einer Pruefung ist kein Vertrag. */
+  /* ⚠ DIE PILLE TRAEGT KEIN `data-cid` — sie haengt an ihrem `setCAT('…')`.
+     Mein erster Selektor traf nichts und war ROT AUS DEM FALSCHEM GRUND: er
+     meldete -1, also „die Leiste zieht nicht nach", waehrend sie es tat.
+     Ein Waechter, der ins Leere greift, misst nicht, was er zu messen glaubt. */
+  const zielLeiste = (() => {
+    const p = [...document.querySelectorAll('#catNav .cpill')]
+      .find(e => (e.getAttribute('onclick')||"").includes("setCAT('fleisch')"));
+    if (!p) return -1;
+    const z = p.querySelector('span');           // die Zahl steht im letzten span
+    return z ? +String(z.textContent).trim() : -1;
+  })();
+  const zielEcht = R.filter(r => r.name && katVonRezept(r) === "fleisch").length;
+
+  /* der Weg ZURUECK */
+  document.querySelector('.rcard-acts .kat-zu-btn').click();
+  document.getElementById('katZuPop').querySelector('.kzp-ohne').click();
+  const catOhne = R.find(r => r.id === 91).cat;
+  const ordnerOhne = R.find(r => r.id === 91).folder;
+
+  /* ⚠ ALTBESTAND: ein `fld_…` in r.cat wird ERSETZT, nicht danebengelegt. */
+  R.find(r=>r.id===92).cat = "fld_999";
+  render();
+  const zeile92 = [...document.querySelectorAll('.rcard')]
+    .find(k => (k.textContent||"").includes("Alt-Ordnerkennung"));
+  zeile92.querySelector('.kat-zu-btn').click();
+  [...document.getElementById('katZuPop').querySelectorAll('button')]
+    .find(b => (b.textContent||"").includes(katBeschriftung(catsAlle().find(c=>c.id==="fleisch")))).click();
+  const cat92 = R.find(r=>r.id===92).cat;
+
+  /* ＋ Neue Kategorie — anlegen UND zuordnen in EINEM Griff */
+  /* ⚠ EIN TICK ZWISCHEN DEN KLICKS, SONST MISST DIE PROBE EINE ANDERE APP.
+     Der „Tipp daneben"-Riegel haengt an einem `setTimeout(…,0)`. Klickt die
+     Probe alles synchron in EINEM Durchgang, ist er nie registriert — und
+     genau der Riegel war der Fehler, den Klaus am Tablet sah. Ein Finger ist
+     langsamer als ein Skript. Gemessen am 2026-09-16: mit Tick rot, ohne
+     Tick gruen, bei unveraendertem Code. */
+  const tick = () => new Promise(r => setTimeout(r, 0));
+  const vorN = CATS_NEU.length;
+  document.querySelector('.rcard-acts .kat-zu-btn').click();
+  await tick();
+  document.getElementById('katZuPop').querySelector('.kzp-neu').click();
+  await tick();
+  /* ⚠ GEMESSEN WIRD, DASS ES OFFEN BLEIBT — nicht, dass es kurz aufging.
+     Genau daran ist Klaus' Tipp gescheitert: das Fenster tauschte den Inhalt,
+     und der „Tipp daneben"-Riegel schloss es im selben Atemzug wieder. Der
+     `await tick()` darueber ist der Teil, der das ueberhaupt sichtbar macht. */
+  const feldDa = !!document.getElementById('katZuNeuIn');
+  /* ohne Namen darf NICHTS entstehen */
+  katZuNeuAnlegen(91);
+  const leerLegtAn = CATS_NEU.length !== vorN;
+  const feldBleibt = !!document.getElementById('katZuNeuIn');
+  /* ⚠ EINE PROBE DARF AN EINER SABOTAGE NICHT STOLPERN. Ist der Riegel
+     ausgebaut, schliesst sich das Popup — und der naechste Zugriff aufs Feld
+     warf. Die Probe starb, und ZWEI Faelle, die sauber zugeschlagen hatten,
+     meldeten sich als „rot aus falschem Grund": die rote Zeile trug den
+     Absturz statt den Namen ihrer Zusicherung. Gemessen am 2026-09-16. */
+  if (!document.getElementById('katZuNeuIn')) {
+    document.querySelector('.rcard-acts .kat-zu-btn').click();
+    await tick();
+    document.getElementById('katZuPop').querySelector('.kzp-neu').click();
+    await tick();
+  }
+  const vorN2 = CATS_NEU.length;      // erst JETZT zaehlen, sonst misst der
+  /* ⚠ FEHLT DAS FELD, WIRD GEMELDET STATT GEWORFEN. Baut eine Sabotage den
+     „Tipp daneben"-Riegel kaputt, macht sich das Fenster selbst zu — und ein
+     Zugriff auf das Feld warf, die Probe starb, und der Fall meldete sich als
+     „rot aus falschem Grund". Jetzt fallen die Waechter EINZELN, jeder mit
+     seinem eigenen Namen in der roten Zeile. */
+  let nachN = vorN2, neuKid = "", zugeordnet = false,
+      nameStimmt = false, formatGleich = false;
+  const feld = document.getElementById('katZuNeuIn');
+  if (feld) {                         // Waechter darunter die Sabotage mit
+    feld.value = "Fisch-Rollen";
+    katZuNeuAnlegen(91);
+    nachN = CATS_NEU.length;
+    neuKid = CATS_NEU[CATS_NEU.length-1] ? CATS_NEU[CATS_NEU.length-1].id : "";
+    zugeordnet = R.find(r=>r.id===91).cat === neuKid;
+    nameStimmt = katBeschriftung(catsAlle().find(c=>String(c.id)===String(neuKid))) === "Fisch-Rollen";
+    /* dieselbe Quelle wie der Dialog → dasselbe Kennungs-Format */
+    formatGleich = /^eig_\d+$/.test(neuKid);
+  }
+
+  R = JSON.parse(sichR); CATS_NEU = JSON.parse(sichN); FD = []; svCatsNeu();
+  document.getElementById('katZuPop')?.remove();
+  render(); renderCatNav(); renderFolders();
+  return { linksNebenWeg, offen, popNahAmKnopf, eintraege, hatOhne, hatNeu, zeigtJetzt,
+           bewegt: Math.max(Math.abs(knopfNach-knopfVor), Math.abs(untenNach-untenVor)),
+           catNachher, ordnerNachher,
+           popWeg, zielLeiste, zielEcht, catOhne, ordnerOhne, cat92,
+           feldDa, leerLegtAn, feldBleibt, vorN2, nachN, zugeordnet, nameStimmt, formatGleich };
+});
+ok("der Zuordnen-Knopf steht LINKS neben dem Papierkorb", kz.linksNebenWeg===true);
+ok("ein Tipp oeffnet die Auswahl", kz.offen===true);
+ok("… und sie steht beim Knopf, nicht irgendwo auf der Seite", kz.popNahAmKnopf===true);
+ok("… und sie traegt mehrere Kategorien", kz.eintraege>3);
+ok("… die aktuelle ist darin markiert", kz.zeigtJetzt===true);
+ok("… „ohne Kategorie“ steht als Weg zurueck darin", kz.hatOhne===true);
+ok("… und „＋ Neue Kategorie“ ebenfalls", kz.hatNeu===true);
+/* ⚠ DIE AUSWAHL DARF DAS LAYOUT NICHT BEWEGEN. Waanderte die Karte unter dem
+   Finger weg, landete der Klick auf einer anderen — wortgleich derselbe
+   Fehler wie bei der Emoji-Auswahl am 2026-09-15, nur an einer anderen Tuer. */
+ok("… und bewegt die Karte nicht", kz.bewegt<1);
+ok("eine Wahl setzt die Kategorie", kz.catNachher==="fleisch");
+/* ⚠ DER KERN: der Ordner bleibt, wo er ist. Ein Griff, der beides aendert,
+   frisst das eine mit dem anderen auf — Klaus' Befund vom 2026-09-16. */
+ok("… und laesst den Ordner in Ruhe", kz.ordnerNachher==="o1");
+ok("… die Auswahl schliesst sich danach", kz.popWeg===true);
+ok("… und die Reiter-Leiste zieht von selbst nach", kz.zielLeiste===kz.zielEcht && kz.zielEcht>0);
+ok("„ohne Kategorie“ leert die Kategorie wirklich", kz.catOhne==="");
+ok("… auch dabei bleibt der Ordner stehen", kz.ordnerOhne==="o1");
+ok("ein `fld_…`-Altbestand wird ERSETZT, nicht danebengelegt", kz.cat92==="fleisch");
+ok("„＋ Neue Kategorie“ oeffnet ein Namensfeld", kz.feldDa===true);
+/* Ein Fenster, das auf einen Tipp hin zugeht und nichts getan hat, sieht aus
+   wie ein kaputter Knopf — deshalb bleibt das Feld bei leerer Eingabe stehen. */
+ok("… ohne Namen entsteht KEINE Kategorie", kz.leerLegtAn===false);
+ok("… und das Feld bleibt stehen statt still zuzugehen", kz.feldBleibt===true);
+ok("… mit Namen entsteht genau eine", kz.nachN===kz.vorN2+1);
+ok("… sie traegt den getippten Namen", kz.nameStimmt===true);
+ok("… der Eintrag ist im selben Griff zugeordnet", kz.zugeordnet===true);
+/* ⚠ EINE QUELLE, ZWEI WEGE: das Anlegen liegt in `katAnlegen`. Zwei Fassungen
+   ergaeben zwei Kennungs-Formate — und der „eine Kennung kommt genau einmal
+   vor"-Riegel haette zwei Sorten zu pruefen. */
+ok("… mit demselben Kennungs-Format wie aus dem Dialog", kz.formatGleich===true);
+
+/* ══ 20 · EIN ORDNER, DEN ES NICHT GIBT, IST KEIN ORDNER (Klaus 2026-09-16) ══
+   „sie werden immer nur innerhalb eines Ordners verschoben … als wenn sie in
+   einem eigenen Ordner waeren. Und dieser Ordner laesst sich nicht umbenennen,
+   sondern bleibt ein unsichtbarer Ordner."
+   Genau die Lage: r.folder zeigt auf eine Kennung, die in FD nicht steht. Das
+   Rezept faellt dann aus JEDER Kategorie-Gruppe (die fragt `!r.folder`) UND es
+   gibt keinen Ordner-Eintrag — es bleibt nur die Zahl „+N in Ordnern". Dieselbe
+   Luecke wie bei `r.cat='fld_…'` am Vortag, nur am anderen Feld. */
+console.log("\n── 20 · Ein Ordner, den es nicht gibt, ist kein Ordner ──");
+const geist = await seite.evaluate(async () => {
+  const sichR = JSON.stringify(R), sichFD = JSON.stringify(FD);
+  FD = [];                                   // es gibt KEINEN Ordner
+  R = [
+    { id:81, name:"Geister-Gericht", cat:"", folder:"tot999", shut:true, ings:[], steps:[] },
+    { id:82, name:"Sichtbar-Ohne",   cat:"", folder:"",       shut:true, ings:[], steps:[] },
+  ];
+  CAT = "all"; render(); renderCatNav(); renderFolders();
+
+  const gruppe = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .find(g => (g.dataset.gid||"") === "cat___ohne");
+  const imBaum = gruppe ? [...gruppe.querySelectorAll('.fld-rrow')]
+    .some(e => (e.textContent||"").includes("Geister-Gericht")) : false;
+  const zeile = gruppe ? (gruppe.querySelector('.fld-cnt')||{}).textContent || "" : "";
+  /* Gibt es ueberhaupt einen Ordner-Eintrag, in dem es stecken koennte? */
+  const ordnerDa = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .some(g => (g.dataset.gid||"").startsWith("cfd_"));
+
+  /* und nach dem Zuordnen muss es in SEINER Kategorie stehen — dafuer muss
+     auch der Ordner-Baum nachziehen, nicht nur die Liste. */
+  katZuSetzen(81, "fleisch");
+  const gZiel = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .find(g => (g.dataset.gid||"") === "cat_fleisch");
+  const imZiel = gZiel ? [...gZiel.querySelectorAll('.fld-rrow')]
+    .some(e => (e.textContent||"").includes("Geister-Gericht")) : false;
+
+  R = JSON.parse(sichR); FD = JSON.parse(sichFD);
+  render(); renderCatNav(); renderFolders();
+  return { imBaum, zeile, ordnerDa, imZiel };
+});
+/* ⚠ DIE ZUSICHERUNG IST SICHTBARKEIT, NICHT EINE ZAHL. „+1 in Ordnern" waere
+   auch dann da, wenn das Rezept nirgends steht — und genau so sah es aus. */
+ok("ein Rezept mit totem Ordner steht im Baum unter „Ohne Kategorie“", geist.imBaum===true);
+ok("… es gibt dafuer naemlich gar keinen Ordner-Eintrag", geist.ordnerDa===false);
+ok("… und es zaehlt nicht als „in Ordnern“", !/\+\s*1/.test(geist.zeile));
+ok("… nach dem Zuordnen steht es in SEINER Kategorie", geist.imZiel===true);
+/* ⚠ UND DAS WORT DANEBEN WIRD MITGEMESSEN, nicht nur die Zahl. `T(k)` gibt bei
+   einem fehlenden Schluessel den SCHLUESSEL heraus — „+6 fldInOrdnern" stand so
+   an Klaus' Schirm. Ein Waechter, der nur nach „+6" fragt, ist dafuer blind. */
+const ordZeile = await seite.evaluate(() => {
+  const sichR = JSON.stringify(R), sichFD = JSON.stringify(FD);
+  FD = [{ id:"o1", name:"Echter Ordner", ico:"📁" }];
+  R = [
+    { id:83, name:"Drin",    cat:"suppe", folder:"o1", shut:true, ings:[], steps:[] },
+    { id:84, name:"Draussen",cat:"suppe", folder:"",   shut:true, ings:[], steps:[] },
+  ];
+  renderFolders();
+  const g = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .find(x => (x.dataset.gid||"") === "cat_suppe");
+  const t = g ? (g.querySelector('.fld-cnt')||{}).textContent || "" : "";
+  R = JSON.parse(sichR); FD = JSON.parse(sichFD); renderFolders();
+  return t;
+});
+/* ⚠ UND DAS ABZEICHEN WAR DAFUER BLIND — gefunden hat es die Gegenprobe, nicht
+   das Nachdenken. Der Fall „das Abzeichen zaehlt Gruppen wieder aus dem rohen
+   Feld" rutschte durch: der vorhandene Waechter misst „Leiste = Baum" und
+   fragt das Abzeichen bei einem TOTEN Ordner gar nicht. Gemessen wird deshalb
+   genau die Lage, in der beide Fassungen auseinandergehen: die Kategorie hat
+   EIN Rezept, und das liegt in einem Ordner, den es nicht gibt. */
+const abzGeist = await seite.evaluate(() => {
+  const sichR = JSON.stringify(R), sichFD = JSON.stringify(FD);
+  FD = [];
+  R = [{ id:85, name:"Nur-Geist", cat:"suppe", folder:"tot999", shut:true, ings:[], steps:[] }];
+  badge();
+  const zahl = (document.getElementById('fldBadge')||{}).textContent || "";
+  R = JSON.parse(sichR); FD = JSON.parse(sichFD); badge();
+  return zahl;
+});
+ok("das Abzeichen zaehlt eine Kategorie mit totem Ordner MIT", abzGeist==="1");
+
+ok("die Ordner-Zeile nennt die Zahl …", /\+\s*1/.test(ordZeile));
+ok("… und ein WORT daneben, nicht den Schluesselnamen", /in Ordnern/.test(ordZeile) && !/fldInOrdnern/.test(ordZeile));
 
 await browser.close(); server.close();
 console.log(`\n${gruen} grün · ${rot} ROT`);

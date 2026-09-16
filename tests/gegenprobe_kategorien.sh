@@ -70,11 +70,7 @@ PY
 echo "── Gegenprobe Kategorien ──"
 
 fall "catsFremd findet nichts mehr" "sushi" \
-'  return out;
-}
-function catsAlle(){@@@  return [];
-}
-function catsAlle(){'
+'    if(!id||bekannt.has(id)||gesehen.has(id))continue;@@@    if(!id||bekannt.has(id)||gesehen.has(id)||true)continue;'
 
 fall "der eigene Name wird ignoriert" "Japanisch" \
 "function katBeschriftung(c){if(!c)return'';const e=CATS_EIGEN[c.id];if(e&&e.name)return e.name;@@@function katBeschriftung(c){if(!c)return'';const e=null;if(e&&e.name)return e.name;"
@@ -83,10 +79,18 @@ fall "das eigene Symbol wird ignoriert" "Symbol steht davor" \
 "function katSymbol(c){if(!c)return'📦';const e=CATS_EIGEN[c.id];if(e&&e.ico)return e.ico;@@@function katSymbol(c){if(!c)return'📦';const e=null;if(e&&e.ico)return e.ico;"
 
 fall "gespeichert wird nicht" "Neuladen" \
-"  CATS_EIGEN=neu;svCatsEigen();@@@  CATS_EIGEN=neu;"
+"  CATS_EIGEN=neu;svCatsEigen();
+  /* Eine frisch angelegte@@@  CATS_EIGEN=neu;
+  /* Eine frisch angelegte"
 
 fall "das Umbenennen aendert die KENNUNG mit" "Speicher-Weg bleibt r.cat" \
-"    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;}@@@    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;R.forEach(r=>{if(r.cat===id)r.cat=nm||id;});}"
+"    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;}
+  });
+  CATS_EIGEN=neu;svCatsEigen();
+  /* Eine frisch angelegte@@@    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;R.forEach(r=>{if(r.cat===id)r.cat=nm||id;});}
+  });
+  CATS_EIGEN=neu;svCatsEigen();
+  /* Eine frisch angelegte"
 
 fall "die Alle-Ansicht laeuft wieder nur ueber CATS" "Maki-Rolle" \
 "    for(const cat of catsAlle()){@@@    for(const cat of CATS.filter(c=>c.id!=='all')){"
@@ -163,10 +167,166 @@ fall "die Getraenke-Symbole verschwinden wieder" "eigene Getraenke-Symbole" \
 
 # ── Die Ordner-Ansicht zaehlt wieder anders als die Leiste (Klaus 2026-09-16) ──
 fall "der Ordner-Baum fragt wieder das rohe Feld" "Leiste = Baum" \
-"      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)})),@@@      recipes:R.filter(r=>!r.folder&&r.cat===c.id&&r.name)})),"
+"      recipes:R.filter(r=>!ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name),@@@      recipes:R.filter(r=>!ordnerVonRezept(r)&&r.cat===c.id&&r.name),"
 
 fall "ein Ordner-Rezept ohne r.folder faellt im Baum wieder heraus" "faellt nirgends heraus" \
 "      recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))@@@      recipes:R.filter(r=>r.folder===String(f.id)&&r.name)}))"
+
+# ── Eine Kennung kommt genau einmal vor (Klaus 2026-09-16, zwei Pillen) ──
+fall "catsAlle laesst Duplikate wieder durch" "nur EINMAL" \
+"    if(gesehen.has(id))return;
+    gesehen.add(id);out.push(c);@@@    gesehen.add(id);out.push(c);"
+
+# ⚠ EINE SABOTAGE DARF DIE VORBEDINGUNG NICHT TREFFEN. Hier stand zuerst
+# `String(c.de||c.id).slice(0,1)` — das faltet ALLE Kategorien auf ihren
+# ersten Buchstaben zusammen, und die Probe starb schon in Abschnitt 1 an
+# einem fremden Reiter. Rot war es beides Mal; nur trug die rote Zeile den
+# falschen Namen. Weggenommen wird jetzt genau EINE feste Kategorie.
+fall "der Riegel wirft eine feste Kategorie mit weg" "geht keine Kategorie verloren" \
+"function catsAlle(){
+  const out=[],gesehen=new Set();@@@function catsAlle(){
+  const out=[],gesehen=new Set([String(CATS[CATS.length-1].id)]);"
+
+fall "der Dialog verschweigt die Kennung wieder" "der Dialog zeigt die Kennung" \
+'        <div class="kat-kenn" title="${h(X.kenn||'"'"'Kennung'"'"')}">"${h(c.id)}" ·${String(c.id).length}</div>@@@'
+
+fall "die Anfuehrungszeichen um die Kennung fallen weg" "sodass ein Leerzeichen sichtbar wird" \
+'">"${h(c.id)}" ·${String(c.id).length}</div>@@@">${h(c.id)} ·${String(c.id).length}</div>'
+
+fall "die Zeichenzahl faellt weg" "mit der Zeichenzahl daneben" \
+'" ·${String(c.id).length}</div>@@@"</div>'
+
+# ── Loeschen, Zusammenlegen, Neu-Anlegen (Klaus 2026-09-16) ──
+fall "das Aufloesen haengt die Rezepte nicht um" "lassen sich zusammenlegen" \
+"  if(ziel!==null)R.forEach(r=>{if(katVonRezept(r)===sid)r.cat=ziel;});@@@"
+
+fall "„Ohne Kategorie\" wird wie ein fehlender Wert behandelt" "ist eine Wahl, kein fehlender Wert" \
+"  if(ziel!==null)R.forEach(r=>{if(katVonRezept(r)===sid)r.cat=ziel;});@@@  if(ziel)R.forEach(r=>{if(katVonRezept(r)===sid)r.cat=ziel;});"
+
+# ⚠ Der Suchtext nennt den Waechter, der WIRKLICH faellt: die mitgebrachte
+#   Kennung verschwindet ohnehin von selbst, der Riegel wirkt nur auf feste.
+fall "die aufgeloeste Kategorie bleibt in der Liste stehen" "der Riegel greift wirklich" \
+"  if(CATS_NEU.length===vorher&&CATS_AUS.indexOf(sid)<0)CATS_AUS.push(sid);@@@"
+
+fall "eine Kategorie MIT Inhalt wird still ausgeblendet" "MIT Inhalt bleibt sichtbar" \
+"  const aus=new Set((CATS_AUS||[]).filter(id=>katAnzahl(id)===0));@@@  const aus=new Set(CATS_AUS||[]);"
+
+fall "der Finger landet wieder in der letzten statt in der neuen Zeile" "im Namensfeld DER NEUEN" \
+"  const zeile=document.querySelector('#katRenameOv .kat-row[data-kid=\"'+kid+'\"]');@@@  const _r=document.querySelectorAll('#katRenameOv .kat-row');const zeile=_r[_r.length-1];"
+
+fall "eine namenlose neue Kategorie bleibt stehen" "wird sie beim Speichern wieder entfernt" \
+"  CATS_NEU=CATS_NEU.filter(c=>!!(CATS_EIGEN[c.id]&&CATS_EIGEN[c.id].name)||katAnzahl(c.id)>0);@@@"
+
+# ══ 19 · Kategorie zuordnen aus der Rezeptzeile (Klaus 2026-09-16) ══
+
+# Die Lage ist die Bestellung — der Knopf wandert HINTER den Papierkorb.
+# Die Lage ist die Bestellung. Sabotiert wird ueber `order` im Flex-Container —
+# das verschiebt genau das, was Klaus SIEHT, und laesst die Reihenfolge im
+# Dokument unberuehrt. Ein Waechter auf zwei Indizes waere hier blind geblieben.
+fall "der Knopf rutscht hinter den Papierkorb" "LINKS neben dem Papierkorb" \
+".ra:active{opacity:.65}@@@.ra:active{opacity:.65}
+.kat-zu-btn{order:9}"
+
+# ⚠ DER KERN: das Zuordnen frisst den Ordner mit auf — genau der Fehler vom
+#   2026-09-16, nur von der anderen Seite.
+fall "das Zuordnen nimmt den Ordner mit" "laesst den Ordner in Ruhe" \
+"  r.cat=String(kid||'');@@@  r.cat=String(kid||'');r.folder='';"
+
+# Ein `fld_…`-Altbestand bleibt stehen statt ersetzt zu werden.
+fall "ein fld_-Altbestand wird nicht mehr ersetzt" "ERSETZT, nicht danebengelegt" \
+"  r.cat=String(kid||'');@@@  if(String(r.cat||'').indexOf('fld_')!==0)r.cat=String(kid||'');"
+
+# „ohne Kategorie" ist der Weg zurueck — er wird zur Sackgasse.
+fall "der Weg zurueck fuehrt nicht mehr nach leer" "leert die Kategorie wirklich" \
+"katZuSetzen('+rid+',\\'\\')@@@katZuSetzen('+rid+',\\'fleisch\\')"
+
+# Eine namenlose Kategorie waere ein Reiter, den niemand wiederfindet.
+fall "eine namenlose Kategorie entsteht doch" "ohne Namen entsteht KEINE" \
+"  if(!name){if(f)f.focus();return;}@@@  if(!name){}"
+
+# Ein Fenster, das zugeht und nichts getan hat, sieht aus wie ein kaputter Knopf.
+fall "das leere Feld geht still zu" "Feld bleibt stehen" \
+"  if(!name){if(f)f.focus();return;}@@@  if(!name){document.getElementById('katZuPop')?.remove();return;}"
+
+# ⚠ ZWEI FASSUNGEN DES ANLEGENS — genau das, was katAnlegen verhindert.
+fall "das Anlegen bekommt ein zweites Format" "Kennungs-Format" \
+"  katZuSetzen(rid,katAnlegen(name));@@@  var kid2='neu_'+Date.now();CATS_NEU.push({id:kid2,ico:'🏷',de:name,col:'#7a5840',eigen:true});svCatsNeu();katZuSetzen(rid,kid2);"
+
+# Die Auswahl bewegt das Layout — dieselbe Falle wie die Emoji-Auswahl.
+# ⚠ ZWEI ZUSICHERUNGEN, ZWEI FAELLE. `position:relative` bewegt die Karte NICHT
+#   (das Popup haengt an document.body) — es verschiebt nur, WO die Auswahl
+#   steht. Der erste Anlauf zielte damit auf den falschen Waechter und rutschte
+#   durch. Wer die Karte wirklich bewegen will, haengt das Popup IN sie hinein.
+# ⚠ DAS FENSTER MACHT SICH SELBST WIEDER ZU. Ohne diesen Riegel haelt der
+#   „Tipp daneben"-Wachhund den Knopf, den ＋ Neue Kategorie gerade ersetzt hat,
+#   fuer einen Tipp nach DRAUSSEN — und schliesst. Genau das hat Klaus am
+#   Tablet gesehen. Die Probe war blind, weil sie synchron klickt; erst ein
+#   `tick()` zwischen den Klicks bildet einen Finger ab.
+fall "der Tipp-daneben-Riegel schliesst das eigene Fenster" "oeffnet ein Namensfeld" \
+"    if(!document.contains(e.target))return;@@@    if(false)return;"
+
+fall "die Auswahl steht nicht mehr beim Knopf" "steht beim Knopf" \
+".kat-zu-pop{position:fixed;@@@.kat-zu-pop{position:relative;"
+
+# ⚠ ZWEI RIEGEL, DIE EINANDER DECKEN, GEHOEREN IN EINE SABOTAGE. Die Karte kann
+#   sich nur bewegen, wenn die Auswahl IN ihr haengt UND im Fluss steht:
+#   `position:fixed` allein haelt sie schon draussen, `document.body` allein
+#   auch. Der erste Anlauf nahm nur das Anhaengen — und rutschte durch, obwohl
+#   nichts am Waechter falsch war. Dieselbe Lehre wie `umask`+`chmod` in
+#   Kimhubs Schluessel-Ablagefach.
+# ⚠ Und der Anker braucht seinen Nachbarn: `document.body.appendChild` steht
+#   auch im Bild-Popup, ein Anker, der zweimal trifft, ist keiner.
+fall "die Auswahl haengt im Fluss der Karte" "bewegt die Karte nicht" \
+"  pop.innerHTML=teile.join('');
+  document.body.appendChild(pop);@@@  pop.innerHTML=teile.join('');
+  btn.parentNode.appendChild(pop);pop.style.position='static';"
+
+# Ohne Markierung weiss niemand, wo das Rezept gerade steht.
+fall "die aktuelle Kategorie wird nicht mehr markiert" "aktuelle ist darin markiert" \
+"(id===jetzt?'kzp-jetzt':'')@@@(false?'kzp-jetzt':'')"
+
+# ══ 20 · Ein Ordner, den es nicht gibt, ist kein Ordner (Klaus 2026-09-16) ══
+
+# Der Helfer prueft FD nicht mehr — ein toter Ordner gilt wieder als Ordner.
+fall "ein toter Ordner gilt wieder als Ordner" "steht im Baum unter" \
+"  return da?f:'';@@@  return f;"
+
+# Die Kategorie-Gruppe liest wieder das ROHE Feld — die Lehre vom Vortag,
+# rueckgaengig gemacht.
+fall "die Kategorie-Gruppe liest r.folder wieder roh" "steht im Baum unter" \
+"      recipes:R.filter(r=>!ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name),@@@      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name),"
+
+# Die Zahl „+N in Ordnern" zaehlt wieder Geister mit.
+fall "die Ordner-Zahl zaehlt wieder Geister" "zaehlt nicht als" \
+"      imOrdner:R.filter(r=>ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name).length})),@@@      imOrdner:R.filter(r=>r.folder&&katVonRezept(r)===c.id&&r.name).length})),"
+
+# Das Abzeichen zaehlt die Gruppen wieder aus dem rohen Feld.
+fall "das Abzeichen zaehlt Gruppen wieder aus dem rohen Feld" "mit totem Ordner MIT" \
+"    ...catsAlle().filter(c=>R.some(r=>!ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name)),@@@    ...catsAlle().filter(c=>R.some(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)),"
+
+# Die Zahl daneben faellt ganz weg.
+fall "die Kategorie-Zeile verschweigt die in Ordnern wieder" "nennt die Zahl" \
+'${g.imOrdner?` · +${g.imOrdner} ${T('"'"'fldInOrdnern'"'"')}`:'"'"''"'"'}@@@'
+
+# ── Ein Text-Schluessel, den es nicht gibt (Klaus 2026-09-16: „+6 fldInOrdnern") ──
+fall "die Ordner-Zeile zeigt wieder den Schluesselnamen" "ein WORT daneben" \
+"fldInOrdnern:'in Ordnern',@@@fldInOrdnern:'fldInOrdnern',"
+
+# ── Der Schluessel-Sammler (Abschnitt 16) ──
+fall "ein benutzter Schluessel fehlt ganz in LANGS" "sind in LANGS.de vorhanden" \
+"fldInOrdnern:'in Ordnern',@@@"
+
+# ⚠ BENANNTE GRENZE — fuer „der Sammler findet ueberhaupt Schluessel" steht
+#   hier KEIN Fall. Um ihn leerlaufen zu lassen, muesste eine Sabotage ALLE
+#   `T('…')`-Aufrufe auf doppelte Anfuehrungszeichen umstellen; `fall` ersetzt
+#   aber nur die erste Fundstelle. Gedeckt ist die Zusicherung trotzdem: der
+#   Haupt-Waechter verlangt ausdruecklich `gesamt > 20` und faellt mit aus.
+#   Uebertragen aus Mein Rezeptbuch, wo das am 2026-09-16 gemessen wurde.
+
+# Nach dem Zuordnen bleibt der Ordner-Baum stehen — die Aenderung ist da,
+# man sieht sie nur nicht.
+fall "der Ordner-Baum zieht nach dem Zuordnen nicht nach" "steht es in SEINER Kategorie" \
+"  sv();render();renderCatNav();renderFolders();badge();@@@  sv();render();badge();"
 
 echo
 echo "$gefangen gefangen · $durch durchgerutscht · $falsch aus falschem Grund · $tot tote Anker"
