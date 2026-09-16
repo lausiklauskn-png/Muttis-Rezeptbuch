@@ -650,12 +650,33 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .kat-box{position:relative;max-width:420px;width:94%;display:block !important;flex-direction:column !important;text-align:left !important;align-items:stretch !important}
 .kat-list{max-height:46vh;overflow-y:auto;margin:10px 0 8px;display:flex;flex-direction:column;gap:6px}
 .kat-row{display:flex;align-items:center;gap:6px}
+.kat-feld{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.kat-feld .kat-name{width:100%}
+.kat-kenn{font-size:.55rem;color:var(--dim);font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:2px}
 .kat-ico{width:52px;flex:0 0 52px;text-align:center;font-size:1rem;padding:7px 2px;border:1px solid var(--line,#d8cdbb);border-radius:8px;background:var(--card,#fff);color:var(--ink)}
 .kat-name{flex:1 1 auto;min-width:0;font-size:.82rem;padding:7px 8px;border:1px solid var(--line,#d8cdbb);border-radius:8px;background:var(--card,#fff);color:var(--ink)}
 .kat-reset{flex:0 0 auto;min-width:34px;min-height:34px;border:0;border-radius:8px;background:transparent;color:var(--dim);font-size:.95rem;cursor:pointer}
 .kat-reset:disabled{opacity:.28;cursor:default}
+.kat-weg{flex:0 0 auto;min-width:34px;min-height:34px;border:0;border-radius:8px;background:transparent;color:var(--dim);font-size:.95rem;cursor:pointer}
+.kat-neu-btn{width:100%;min-height:40px;border:1px dashed var(--dim);border-radius:10px;background:transparent;color:var(--dim);font-size:.8rem;cursor:pointer;margin-bottom:8px}
+.kat-aufl{margin:8px 0}
+.kat-aufl select{width:100%;min-height:40px;margin-top:6px}
 .kat-fremd{flex:0 0 auto;font-size:.6rem;color:var(--dim);background:rgba(0,0,0,.06);padding:2px 6px;border-radius:6px}
 .kat-note{font-size:.68rem;line-height:1.45;color:var(--dim);text-align:left;margin:0 0 12px}
+/* Kategorie zuordnen — die Auswahl liegt FEST ueber der Seite (position:fixed,
+   an document.body). Sie darf das Layout nicht bewegen: wanderte die Zeile
+   unter dem Finger weg, landete der Klick auf einer anderen Karte — derselbe
+   Fehler wie bei der Emoji-Auswahl am 2026-09-15. */
+.kat-zu-pop{position:fixed;z-index:300;background:#fff;border:1px solid var(--sand2);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.2);display:flex;flex-direction:column;min-width:190px;max-width:76vw;max-height:52vh;overflow-y:auto;overscroll-behavior:contain;padding:4px 0}
+.kat-zu-pop .kzp-kopf{padding:7px 14px 5px;font-size:.6rem;font-weight:800;color:var(--dim);letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0;background:#fff}
+.kat-zu-pop button{padding:9px 14px;border:none;background:none;font-size:.76rem;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:9px;color:var(--ink);font-family:inherit;min-height:38px}
+.kat-zu-pop button:active{background:var(--sand)}
+.kat-zu-pop button.kzp-jetzt{background:var(--teals);color:var(--teal);font-weight:800}
+.kat-zu-pop .kzp-ohne{border-top:1px solid var(--sand2);margin-top:3px;padding-top:10px;color:var(--dim)}
+.kat-zu-pop .kzp-neu{border-top:1px solid var(--sand2);margin-top:3px;padding-top:10px;color:var(--teal);font-weight:800}
+.kat-zu-pop .kzp-neu-zeile{display:flex;gap:6px;align-items:center;padding:6px 10px 10px}
+.kat-zu-pop .kzp-neu-in{flex:1;min-width:0;height:34px;border:1.5px solid var(--sand2);border-radius:9px;padding:0 9px;font-size:.78rem;font-family:inherit;color:var(--ink);background:#fff}
+.kat-zu-pop .kzp-neu-ok{min-width:34px;height:34px;padding:0;border-radius:9px;background:var(--teals);color:var(--teal);border:1.5px solid var(--teal);font-weight:800;justify-content:center}
 /* Emoji-Auswahl: ein Raster, das unter die bearbeitete Zeile wandert.
    44px Berührungshöhe — Klaus bedient das mit dem Finger am Tablet. */
 /* ⚠ ES LIEGT DARUEBER, ES SCHIEBT NICHTS. Der erste Versuch liess die
@@ -2950,7 +2971,7 @@ const LANGS={
     menuTitle:'🍽️ Menüplaner',mActAdd:'Gang hinzufügen',mActView:'Menü & Einkaufsliste',
     mvTitle:'Mein Menü',mvTabTl:'📋 Ablauf',mvTabSh:'🛒 Einkaufen',mvTabCk:'🍳 Kochen',mvTabAl:'📋 Gesamt',
     mvPrint:'🖨️ Drucken / PDF',mvClose:'Schließen',
-    bnRec:'Rezepte',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
+    bnRec:'Rezepte',katZuTtl:'Kategorie zuordnen',katZuOhne:'ohne Kategorie',katZuOk:'verschoben nach',fldInOrdnern:'in Ordnern',bnFld:'Ordner',bnMen:'Menü',bnSet:'Einst.',bnBv:'Tresor',
     impTitle:'📥 Importieren',impTabImg:'🖼️ Bilder',impTabWeb:'🌐 Web',impTabScan:'📄 KI-Scan',impTabTxt:'📝 Text',impTabJson:'📥 Rezept laden',
     impTabImgGen:"🎨 KI-Bild",imggenInfoTitle:"🎨 KI-Bilder für deine Rezepte",imggenInfoCol1Hdr:"Was erzeugt wird",imggenInfoCol1Items:"<li>Appetitliches Rezeptfoto</li><li>Passend zum Gericht</li><li>KI-generiert mit DALL·E 3</li><li>Sofort im Rezept gespeichert</li>",imggenInfoCol2Hdr:"Was du brauchst",imggenInfoCol2Items:"<li>OpenAI API-Schlüssel</li><li>Ca. 0,04 € pro Bild</li><li>Abrechnung direkt bei OpenAI</li><li>Bilder exportierbar als JSON</li>",sImgGenLbl:"DALL-E Bildschlüssel",sImgGenSub:"OpenAI-Key für KI-Bilder",igBildErzeugen:"KI-Bild erzeugen",igNeuesBild:"Neues KI-Bild erstellen",
     imgDropLbl:'Bilder auswählen oder hierher ziehen',
@@ -3021,7 +3042,7 @@ const LANGS={
     pwaText:'Als App installieren — offline nutzen',pwaBtn:'Installieren',updText:'🔄 Update verfügbar! Neue Version bereit.',updBtn:'Jetzt laden',sUpdLbl:'Auf Updates prüfen',sUpdSub:'Aktuelle Version: ',sUpdCheck:'⏳ Prüfe …',sUpdOk:'✅ Bereits aktuell',sUpdAvail:'Update verfügbar!',sUpdInfo:'Deine Rezepte bleiben erhalten.\nDie neue App-Datei wird heruntergeladen.',sUpdDl:'⬇️ Jetzt aktualisieren',sUpdLater:'Später',sUpdDone:'✅ Download gestartet — alte Datei durch neue ersetzen',sDonateTitle:'Projekt unterstützen',sDonateSub:'Freiwillig · PayPal',sImprintLbl:'Impressum & Datenschutz',sImprintSub:'Rechtliche Hinweise',sImprintFooter:'Impressum & Datenschutz',sDonateText:'Diese App ist ein privates, nicht kommerzielles Projekt und wird in der Freizeit entwickelt.\n\nWenn dir die App gefällt, kannst du das Projekt freiwillig unterstützen.',sDonateBtn:'☕ Unterstützen',sDonateNote:'Die Unterstützung erfolgt ohne Gegenleistung und begründet keinen Anspruch auf Funktionen, Updates oder Support.\nVielen Dank für deine Unterstützung.',
     resetShop:'Zurücksetzen',recPickerTitle:'Rezept wählen',noFolder:'— keiner —',
     thDefault:'Landhaus',thSpring:'Frühling',thNight:'Nacht',thModern:'Modern',thColor:'Bunt',thNeon:'Neon',thPastel:'Pastell',
-    noRecipes:'Noch keine Rezepte',emptyStateDesc:'Füge dein erstes Rezept hinzu — per Foto, Weblink oder manuell.',emptyStateAdd:'hinzufügen',clearConfirm:'ALLE Daten wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
+    noRecipes:'Noch keine Rezepte',emptyStateDesc:'Füge dein erstes Rezept hinzu — per Foto, Weblink oder manuell.',emptyStateAdd:'hinzufügen',hAddLbl:'Rezept',clearConfirm:'ALLE Daten wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
     hlpTitle:'ℹ️ Hilfe · Teilen · Reparatur',hlpShare:'Hilfe & Notfall-Link',hlpShareSub:'Einladungslink – auch wenn die App kaputt ist · Reparieren · Teilen',hlpExport:'Rezepte sichern (Backup)',hlpExportSub:'JSON-Datei exportieren und sicher speichern',hlpImport:'Backup wiederherstellen',hlpImportSub:'JSON-Backup laden und Rezepte zurückholen',hlpCache:'Cache leeren – Anleitung',hlpCacheSub:'Wenn die App nicht richtig lädt',hlpReset:'App zurücksetzen',hlpResetSub:'Alle Daten löschen – erst Backup erstellen!',hlpCacheTitle:'🧹 Cache leeren – so geht\'s',hlpCacheOk:'Verstanden ✓',hlpShareBtn:'🆘 Notfall-Link öffnen',hlpExportBtn:'📤 Backup erstellen',hlpImportBtn:'📥 Backup laden',hlpCacheBtn:'🧹 Anleitung anzeigen',hlpResetBtn:'⚠️ Zurücksetzen',hlpPwa:'Wie funktioniert die App offline?',hlpPwaSub:'Die App speichert sich beim ersten Öffnen automatisch auf deinem Gerät – danach läuft sie vollständig ohne Internet. Wenn du Browserdaten löschst, wird dieser Speicher ebenfalls gelöscht. Danach einfach einmal online gehen – die App lädt sich neu.',hlpResetMsg:'⚠️ Alle Rezepte und Einstellungen werden gelöscht.\n\nHast du ein Backup erstellt?\n\nFortsetzen und alle Daten löschen?',
     mvNone:'Noch keine Rezepte im Menü.',cookHint:'Schritt antippen = erledigt ✓',
     cropTitle:'Bildausschnitt anpassen',cropBtn:'Ausschnitt',cpCenter:'⬛ Mitte',cpTop:'⬆ Oben',cpBottom:'⬇ Unten',cpLeft:'◀ Links',cpRight:'▶ Rechts',cropSave:'✓ Speichern',cropCancel:'Abbrechen',cropReset:'↺ Zurücksetzen',cropHint:'✂️ Ausschnitt anpassen',
@@ -3080,7 +3101,7 @@ const LANGS={
     menuTitle:'🍽️ Menu Planner',mActAdd:'Add course',mActView:'View menu',
     mvTitle:'My Menu',mvTabTl:'📋 Overview',mvTabSh:'🛒 Shopping',mvTabCk:'🍳 Cooking',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Print / PDF',mvClose:'Close',
-    bnRec:'Recipes',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
+    bnRec:'Recipes',katZuTtl:'Assign category',katZuOhne:'no category',katZuOk:'moved to',fldInOrdnern:'in folders',bnFld:'Folders',bnMen:'Planner',bnSet:'Settings',bnBv:'Vault',
     impTitle:'📥 Import',impTabImg:'🖼️ Images',impTabWeb:'🌐 Web',impTabScan:'📄 AI Scan',impTabTxt:'📝 Text',impTabJson:'📥 Load recipes',
     impTabImgGen:"🎨 AI Image",imggenInfoTitle:"🎨 AI Images for Your Recipes",imggenInfoCol1Hdr:"What gets created",imggenInfoCol1Items:"<li>Appetising recipe photo</li><li>Matching the dish</li><li>AI-generated with DALL·E 3</li><li>Saved directly to the recipe</li>",imggenInfoCol2Hdr:"What you need",imggenInfoCol2Items:"<li>OpenAI API key</li><li>Approx. €0.04 per image</li><li>Billed directly by OpenAI</li><li>Images exportable as JSON</li>",sImgGenLbl:"DALL-E Image Key",sImgGenSub:"OpenAI key for AI images",igBildErzeugen:"Create an AI image",igNeuesBild:"Create a new AI image",
     imgDropLbl:'Select images or drag here',
@@ -3151,7 +3172,7 @@ const LANGS={
     pwaText:'Install as app — use offline',pwaBtn:'Install',updText:'🔄 Update available! New version ready.',updBtn:'Reload now',sUpdLbl:'Check for updates',sUpdSub:'Current version: ',sUpdCheck:'⏳ Checking…',sUpdOk:'✅ Already up to date',sUpdAvail:'Update available!',sUpdInfo:'Your recipes are safe.\nThe new app file will be downloaded.',sUpdDl:'⬇️ Update now',sUpdLater:'Later',sUpdDone:'✅ Download started — replace the old file with the new one',sDonateTitle:'Support the project',sDonateSub:'Voluntary · PayPal',sImprintLbl:'Imprint & Privacy Policy',sImprintSub:'Legal information',sImprintFooter:'Imprint & Privacy',sDonateText:'This app is a private, non-commercial project developed in spare time.\n\nIf you enjoy the app, you can voluntarily support the project.',sDonateBtn:'☕ Support',sDonateNote:'Support is given voluntarily and does not entitle you to features, updates or technical support.\nThank you for your support.',
     resetShop:'Reset',recPickerTitle:'Choose recipe',noFolder:'— none —',
     thDefault:'Country',thSpring:'Spring',thNight:'Night',thModern:'Modern',thColor:'Colorful',thNeon:'Neon',thPastel:'Pastel',
-    noRecipes:'No recipes yet',emptyStateDesc:'Add your first recipe — by photo, web link, or manually.',emptyStateAdd:'add',clearConfirm:'Really delete ALL data? This cannot be undone.',
+    noRecipes:'No recipes yet',emptyStateDesc:'Add your first recipe — by photo, web link, or manually.',emptyStateAdd:'add',hAddLbl:'Recipe',clearConfirm:'Really delete ALL data? This cannot be undone.',
     hlpTitle:'ℹ️ Help · Share · Repair',hlpShare:'Help & Emergency Link',hlpShareSub:'Invite link – works even if the app is broken · Repair · Share',hlpExport:'Back up recipes',hlpExportSub:'Export JSON file and keep it safe',hlpImport:'Restore backup',hlpImportSub:'Load JSON backup file and recover recipes',hlpCache:'Clear cache – instructions',hlpCacheSub:'If the app does not load correctly',hlpReset:'Reset app',hlpResetSub:'Delete all data – create backup first!',hlpCacheTitle:'🧹 How to clear the cache',hlpCacheOk:'Got it ✓',hlpShareBtn:'🆘 Open emergency link',hlpExportBtn:'📤 Create backup',hlpImportBtn:'📥 Load backup',hlpCacheBtn:'🧹 Show instructions',hlpResetBtn:'⚠️ Reset',hlpPwa:'How does the app work offline?',hlpPwaSub:'The app saves itself to your device automatically on first use. After that it runs fully without internet. If you clear browser data, this storage is also deleted – just go online once and it works again.',hlpResetMsg:'⚠️ All recipes and settings will be deleted.\n\nDid you create a backup?\n\nContinue and delete all data?',
     mvNone:'No recipes in menu yet.',cookHint:'Tap a step to mark done ✓',
     cropTitle:'Adjust image crop',cropBtn:'Crop',cpCenter:'⬛ Centre',cpTop:'⬆ Top',cpBottom:'⬇ Bottom',cpLeft:'◀ Left',cpRight:'▶ Right',cropSave:'✓ Save',cropCancel:'Cancel',cropReset:'↺ Reset',cropHint:'✂️ Adjust crop',
@@ -3210,7 +3231,7 @@ const LANGS={
     menuTitle:'🍽️ Планировщик',mActAdd:'Добавить блюдо',mActView:'Просмотр меню',
     mvTitle:'Моё меню',mvTabTl:'📋 Обзор',mvTabSh:'🛒 Покупки',mvTabCk:'🍳 Готовка',mvTabAl:'📋 Итого',
     mvPrint:'🖨️ Печать / PDF',mvClose:'Закрыть',
-    bnRec:'Рецепты',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
+    bnRec:'Рецепты',katZuTtl:'Назначить категорию',katZuOhne:'без категории',katZuOk:'перемещено в',fldInOrdnern:'в папках',bnFld:'Папки',bnMen:'Планир.',bnSet:'Настр.',bnBv:'Архив',
     impTitle:'📥 Импорт',impTabImg:'🖼️ Фото',impTabWeb:'🌐 Интернет',impTabScan:'📄 ИИ-скан',impTabTxt:'📝 Текст',impTabJson:'📥 Загрузить',
     impTabImgGen:"🎨 ИИ-Фото",imggenInfoTitle:"🎨 ИИ-фото для ваших рецептов",imggenInfoCol1Hdr:"Что создаётся",imggenInfoCol1Items:"<li>Аппетитное фото рецепта</li><li>Соответствует блюду</li><li>Генерируется с DALL·E 3</li><li>Сохраняется прямо в рецепте</li>",imggenInfoCol2Hdr:"Что нужно",imggenInfoCol2Items:"<li>API-ключ OpenAI</li><li>Ок. 0,04 € за изображение</li><li>Оплата напрямую через OpenAI</li><li>Экспорт изображений в JSON</li>",sImgGenLbl:"DALL-E ключ",sImgGenSub:"OpenAI-ключ для изображений",igBildErzeugen:"Создать ИИ-фото",igNeuesBild:"Создать новое ИИ-фото",
     imgDropLbl:'Выбрать фото или перетащить',
@@ -3281,7 +3302,7 @@ const LANGS={
     pwaText:'Установить как приложение — офлайн',pwaBtn:'Установить',updText:'🔄 Обновление доступно!',updBtn:'Обновить',sUpdLbl:'Проверить обновления',sUpdSub:'Текущая версия: ',sUpdCheck:'⏳ Проверяю …',sUpdOk:'✅ Уже актуально',sUpdAvail:'Доступно обновление!',sUpdInfo:'Ваши рецепты сохранятся.\nНовый файл приложения будет загружен.',sUpdDl:'⬇️ Обновить сейчас',sUpdLater:'Позже',sUpdDone:'✅ Загрузка начата — замените старый файл новым',sDonateTitle:'Поддержать проект',sDonateSub:'Добровольно · PayPal',sImprintLbl:'Выходные данные & Конфиденциальность',sImprintSub:'Правовые сведения',sImprintFooter:'Выходные данные & Конфиденц.',sDonateText:'Это приложение — частный некоммерческий проект, разрабатываемый в свободное время.\n\nЕсли вам нравится приложение, вы можете добровольно поддержать проект.',sDonateBtn:'☕ Поддержать',sDonateNote:'Поддержка осуществляется безвозмездно и не даёт права на функции, обновления или техническую поддержку.\nСпасибо за вашу поддержку.',
     resetShop:'Сбросить',recPickerTitle:'Выбрать рецепт',noFolder:'— нет —',
     thDefault:'Деревенский',thSpring:'Весна',thNight:'Ночь',thModern:'Модерн',thColor:'Яркий',thNeon:'Неон',thPastel:'Пастель',
-    noRecipes:'Рецептов пока нет',emptyStateDesc:'Добавьте первый рецепт — по фото, ссылке или вручную.',emptyStateAdd:'добавить',clearConfirm:'Действительно удалить ВСЕ данные?',
+    noRecipes:'Рецептов пока нет',emptyStateDesc:'Добавьте первый рецепт — по фото, ссылке или вручную.',emptyStateAdd:'добавить',hAddLbl:'Рецепт',clearConfirm:'Действительно удалить ВСЕ данные?',
     hlpTitle:'ℹ️ Помощь · Поделиться · Ремонт',hlpShare:'Помощь и аварийная ссылка',hlpShareSub:'Ссылка работает даже если приложение сломано · Ремонт · Поделиться',hlpExport:'Сохранить рецепты (резервная копия)',hlpExportSub:'Экспортировать JSON-файл и сохранить',hlpImport:'Восстановить резервную копию',hlpImportSub:'Загрузить JSON-файл и вернуть рецепты',hlpCache:'Очистить кеш – инструкция',hlpCacheSub:'Если приложение не загружается',hlpReset:'Сбросить приложение',hlpResetSub:'Удалить все данные – сначала создайте копию!',hlpCacheTitle:'🧹 Как очистить кеш',hlpCacheOk:'Понятно ✓',hlpShareBtn:'🆘 Открыть аварийную ссылку',hlpExportBtn:'📤 Создать резервную копию',hlpImportBtn:'📥 Загрузить резервную копию',hlpCacheBtn:'🧹 Показать инструкцию',hlpResetBtn:'⚠️ Сбросить',hlpPwa:'Как работает приложение без интернета?',hlpPwaSub:'При первом открытии приложение автоматически сохраняется на устройство. После этого оно работает полностью без интернета. При очистке данных браузера хранилище удаляется — выйдите в интернет один раз, и всё заработает снова.',hlpResetMsg:'⚠️ Все рецепты и настройки будут удалены.\n\nВы создали резервную копию?\n\nПродолжить и удалить все данные?',
     mvNone:'В меню пока нет рецептов.',cookHint:'Нажмите на шаг чтобы отметить ✓',
     cropTitle:'Настроить кадрирование',cropBtn:'Кадр',cpCenter:'⬛ Центр',cpTop:'⬆ Вверх',cpBottom:'⬇ Вниз',cpLeft:'◀ Влево',cpRight:'▶ Вправо',cropSave:'✓ Сохранить',cropCancel:'Отмена',cropReset:'↺ Сброс',cropHint:'✂️ Изменить кадр',
@@ -3340,7 +3361,7 @@ const LANGS={
     menuTitle:'🍽️ 菜单计划',mActAdd:'添加菜品',mActView:'查看菜单',
     mvTitle:'我的菜单',mvTabTl:'📋 概览',mvTabSh:'🛒 购物',mvTabCk:'🍳 烹饪',mvTabAl:'📋 汇总',
     mvPrint:'🖨️ 打印 / PDF',mvClose:'关闭',
-    bnRec:'食谱',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
+    bnRec:'食谱',katZuTtl:'分配类别',katZuOhne:'无类别',katZuOk:'已移至',fldInOrdnern:'在文件夹中',bnFld:'文件夹',bnMen:'菜单计划',bnSet:'设置',bnBv:'备份',
     impTitle:'📥 导入',impTabImg:'🖼️ 图片',impTabWeb:'🌐 网络',impTabScan:'📄 AI扫描',impTabTxt:'📝 文本',impTabJson:'📥 加载食谱',
     impTabImgGen:"🎨 AI图片",imggenInfoTitle:"🎨 为您的食谱生成AI图片",imggenInfoCol1Hdr:"生成内容",imggenInfoCol1Items:"<li>精美的食谱照片</li><li>与菜肴相匹配</li><li>DALL·E 3 AI生成</li><li>直接保存到食谱中</li>",imggenInfoCol2Hdr:"所需条件",imggenInfoCol2Items:"<li>OpenAI API密钥</li><li>每张图片约0.04€</li><li>直接通过OpenAI计费</li><li>图片可导出为JSON</li>",sImgGenLbl:"DALL-E 图片密钥",sImgGenSub:"用于AI图片的OpenAI密钥",igBildErzeugen:"生成 AI 图片",igNeuesBild:"生成新的 AI 图片",
     imgDropLbl:'选择或拖拽图片至此',
@@ -3411,7 +3432,7 @@ const LANGS={
     pwaText:'安装为应用 — 离线使用',pwaBtn:'安装',updText:'🔄 有新版本可用！',updBtn:'立即更新',sUpdLbl:'检查更新',sUpdSub:'当前版本：',sUpdCheck:'⏳ 检查中…',sUpdOk:'✅ 已是最新版本',sUpdAvail:'有新版本！',sUpdInfo:'您的食谱将保留。\n新版应用文件即将下载。',sUpdDl:'⬇️ 立即更新',sUpdLater:'稍后',sUpdDone:'✅ 下载已开始 — 用新文件替换旧文件',sDonateTitle:'支持该项目',sDonateSub:'自愿 · PayPal',sImprintLbl:'法律声明 & 隐私政策',sImprintSub:'法律信息',sImprintFooter:'法律声明 & 隐私',sDonateText:'本应用是一个私人非商业项目，由开发者在业余时间开发。\n\n如果您喜欢这款应用，可以自愿支持该项目。',sDonateBtn:'☕ 支持',sDonateNote:'支持完全出于自愿，不构成对功能、更新或技术支持的任何要求。\n感谢您的支持。',
     resetShop:'重置',recPickerTitle:'选择食谱',noFolder:'— 无 —',
     thDefault:'乡村',thSpring:'春天',thNight:'夜晚',thModern:'现代',thColor:'多彩',thNeon:'霓虹',thPastel:'粉彩',
-    noRecipes:'暂无食谱',emptyStateDesc:'添加您的第一个食谱 — 通过照片、网址或手动输入。',emptyStateAdd:'添加',clearConfirm:'真的要删除所有数据吗？',
+    noRecipes:'暂无食谱',emptyStateDesc:'添加您的第一个食谱 — 通过照片、网址或手动输入。',emptyStateAdd:'添加',hAddLbl:'食谱',clearConfirm:'真的要删除所有数据吗？',
     hlpTitle:'ℹ️ 帮助 · 分享 · 修复',hlpShare:'帮助 & 紧急链接',hlpShareSub:'即使应用崩溃也能使用 · 修复 · 分享',hlpExport:'备份食谱',hlpExportSub:'导出 JSON 文件并妥善保存',hlpImport:'恢复备份',hlpImportSub:'加载 JSON 备份文件以恢复食谱',hlpCache:'清除缓存 – 操作指南',hlpCacheSub:'当应用无法正常加载时',hlpReset:'重置应用',hlpResetSub:'删除所有数据 – 请先创建备份！',hlpCacheTitle:'🧹 如何清除缓存',hlpCacheOk:'明白了 ✓',hlpShareBtn:'🆘 打开紧急链接',hlpExportBtn:'📤 创建备份',hlpImportBtn:'📥 加载备份',hlpCacheBtn:'🧹 显示说明',hlpResetBtn:'⚠️ 重置',hlpPwa:'应用如何离线工作？',hlpPwaSub:'首次使用时，应用会自动保存到您的设备。之后完全无需网络即可运行。如果清除浏览器数据，存储也会被删除——上网一次即可恢复正常。',hlpResetMsg:'⚠️ 所有食谱和设置将被删除。\n\n您已创建备份吗？\n\n继续并删除所有数据？',
     mvNone:'菜单中暂无食谱。',cookHint:'点击步骤标记完成 ✓',
     cropTitle:'调整图片裁剪',cropBtn:'裁剪',cpCenter:'⬛ 居中',cpTop:'⬆ 上方',cpBottom:'⬇ 下方',cpLeft:'◀ 左侧',cpRight:'▶ 右侧',cropSave:'✓ 保存',cropCancel:'取消',cropReset:'↺ 重置',cropHint:'✂️ 调整裁剪',
@@ -3470,7 +3491,7 @@ const LANGS={
     menuTitle:'🍽️ Planificador',mActAdd:'Añadir plato',mActView:'Ver menú',
     mvTitle:'Mi menú',mvTabTl:'📋 Orden',mvTabSh:'🛒 Comprar',mvTabCk:'🍳 Cocinar',mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimir / PDF',mvClose:'Cerrar',
-    bnRec:'Recetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
+    bnRec:'Recetas',katZuTtl:'Asignar categoría',katZuOhne:'sin categoría',katZuOk:'movido a',fldInOrdnern:'en carpetas',bnFld:'Carpetas',bnMen:'Planif.',bnSet:'Ajustes',bnBv:'Bóveda',
     impTitle:'📥 Importar',impTabImg:'🖼️ Imágenes',impTabWeb:'🌐 Web',impTabScan:'📄 Scan IA',impTabTxt:'📝 Texto',impTabJson:'📥 Cargar recetas',
     impTabImgGen:"🎨 IA Imagen",imggenInfoTitle:"🎨 Imágenes IA para tus recetas",imggenInfoCol1Hdr:"Qué se crea",imggenInfoCol1Items:"<li>Foto apetitosa de la receta</li><li>Acorde al plato</li><li>Generada con DALL·E 3</li><li>Guardada directamente en la receta</li>",imggenInfoCol2Hdr:"Lo que necesitas",imggenInfoCol2Items:"<li>Clave API de OpenAI</li><li>Aprox. 0,04 € por imagen</li><li>Facturado por OpenAI</li><li>Imágenes exportables en JSON</li>",sImgGenLbl:"Clave DALL-E",sImgGenSub:"Clave OpenAI para imágenes IA",igBildErzeugen:"Crear imagen IA",igNeuesBild:"Crear una nueva imagen IA",
     imgDropLbl:'Seleccionar imágenes o arrastrar aquí',
@@ -3541,7 +3562,7 @@ const LANGS={
     pwaText:'Instalar como app — usar sin conexión',pwaBtn:'Instalar',updText:'🔄 ¡Actualización disponible!',updBtn:'Actualizar',sUpdLbl:'Buscar actualizaciones',sUpdSub:'Versión actual: ',sUpdCheck:'⏳ Comprobando…',sUpdOk:'✅ Ya está actualizado',sUpdAvail:'¡Actualización disponible!',sUpdInfo:'Tus recetas se conservarán.\nSe descargará el nuevo archivo de la app.',sUpdDl:'⬇️ Actualizar ahora',sUpdLater:'Más tarde',sUpdDone:'✅ Descarga iniciada — reemplaza el archivo antiguo por el nuevo',sDonateTitle:'Apoyar el proyecto',sDonateSub:'Voluntariamente · PayPal',sImprintLbl:'Aviso legal & Privacidad',sImprintSub:'Información legal',sImprintFooter:'Aviso legal & Privacidad',sDonateText:'Esta app es un proyecto privado y no comercial, desarrollado en tiempo libre.\n\nSi te gusta la app, puedes apoyar el proyecto voluntariamente.',sDonateBtn:'☕ Apoyar',sDonateNote:'El apoyo se realiza sin contraprestación y no genera derecho a funciones, actualizaciones ni soporte.\nMuchas gracias por tu apoyo.',
     resetShop:'Restablecer',recPickerTitle:'Elegir receta',noFolder:'— ninguna —',
     thDefault:'Rural',thSpring:'Primavera',thNight:'Noche',thModern:'Moderno',thColor:'Colorido',thNeon:'Neón',thPastel:'Pastel',
-    noRecipes:'Aún no hay recetas',emptyStateDesc:'Añade tu primera receta — por foto, enlace web o manualmente.',emptyStateAdd:'añadir',clearConfirm:'¿Borrar TODOS los datos? Esto no se puede deshacer.',
+    noRecipes:'Aún no hay recetas',emptyStateDesc:'Añade tu primera receta — por foto, enlace web o manualmente.',emptyStateAdd:'añadir',hAddLbl:'Receta',clearConfirm:'¿Borrar TODOS los datos? Esto no se puede deshacer.',
     hlpTitle:'ℹ️ Ayuda · Compartir · Reparar',hlpShare:'Ayuda & Enlace de emergencia',hlpShareSub:'Funciona aunque la app esté rota · Reparar · Compartir',hlpExport:'Guardar recetas (copia de seguridad)',hlpExportSub:'Exportar archivo JSON y guardarlo',hlpImport:'Restaurar copia de seguridad',hlpImportSub:'Cargar archivo JSON y recuperar recetas',hlpCache:'Borrar caché – instrucciones',hlpCacheSub:'Si la app no carga correctamente',hlpReset:'Restablecer app',hlpResetSub:'¡Borrar todos los datos – crea copia antes!',hlpCacheTitle:'🧹 Cómo borrar la caché',hlpCacheOk:'Entendido ✓',hlpShareBtn:'🆘 Abrir enlace de emergencia',hlpExportBtn:'📤 Crear copia de seguridad',hlpImportBtn:'📥 Cargar copia de seguridad',hlpCacheBtn:'🧹 Mostrar instrucciones',hlpResetBtn:'⚠️ Restablecer',hlpPwa:'¿Cómo funciona la app sin internet?',hlpPwaSub:'Al abrirse por primera vez, la app se guarda automáticamente en tu dispositivo. Después funciona sin internet. Si borras los datos del navegador, este almacenamiento se elimina – conéctate una vez y vuelve a funcionar.',hlpResetMsg:'⚠️ Se eliminarán todas las recetas y ajustes.\n\n¿Has creado una copia de seguridad?\n\n¿Continuar y borrar todos los datos?',
     mvNone:'Aún no hay recetas en el menú.',cookHint:'Tocar paso = hecho ✓',
     cropTitle:'Ajustar recorte',cropBtn:'Recorte',cpCenter:'⬛ Centro',cpTop:'⬆ Arriba',cpBottom:'⬇ Abajo',cpLeft:'◀ Izquierda',cpRight:'▶ Derecha',cropSave:'✓ Guardar',cropCancel:'Cancelar',cropReset:'↺ Restablecer',cropHint:'✂️ Ajustar recorte',
@@ -3617,7 +3638,7 @@ const LANGS={
     mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimer',
     mvClose:'Fermer',
-    bnRec:'Recettes',
+    bnRec:'Recettes',katZuTtl:'Attribuer une catégorie',katZuOhne:'sans catégorie',katZuOk:'déplacé vers',fldInOrdnern:'dans des dossiers',
     bnFld:'Dossiers',
     bnMen:'Planif.',
     bnSet:'Réglages',
@@ -3756,7 +3777,7 @@ const LANGS={
     thModern:'Moderne',
     thColor:'Coloré',
     thNeon:'Néon',thPastel:'Pastel',
-    noRecipes:'Aucune recette',emptyStateDesc:'Ajoutez votre première recette — par photo, lien web ou manuellement.',emptyStateAdd:'ajouter',
+    noRecipes:'Aucune recette',emptyStateDesc:'Ajoutez votre première recette — par photo, lien web ou manuellement.',emptyStateAdd:'ajouter',hAddLbl:'Recette',
     clearConfirm:'Supprimer TOUTES données?',
     hlpTitle:'ℹ️ Aide · Partager · Réparer',hlpShare:'Aide & Lien d\'urgence',hlpShareSub:'Fonctionne même si l\'app est cassée · Réparer · Partager',hlpExport:'Sauvegarder les recettes',hlpExportSub:'Exporter le fichier JSON et le conserver',hlpImport:'Restaurer la sauvegarde',hlpImportSub:'Charger le fichier JSON et récupérer les recettes',hlpCache:'Vider le cache – instructions',hlpCacheSub:'Si l\'app ne se charge pas correctement',hlpReset:'Réinitialiser l\'app',hlpResetSub:'Supprimer tout – sauvegardez d\'abord !',hlpCacheTitle:'🧹 Comment vider le cache',hlpCacheOk:'Compris ✓',hlpShareBtn:'🆘 Ouvrir le lien d\'urgence',hlpExportBtn:'📤 Créer la sauvegarde',hlpImportBtn:'📥 Charger la sauvegarde',hlpCacheBtn:'🧹 Afficher les instructions',hlpResetBtn:'⚠️ Réinitialiser',hlpPwa:'Comment l\'app fonctionne-t-elle hors ligne ?',hlpPwaSub:'À la première ouverture, l\'app se sauvegarde automatiquement sur ton appareil. Ensuite elle fonctionne sans internet. Si tu effaces les données du navigateur, ce stockage est supprimé – reconnecte-toi une fois et tout fonctionne.',hlpResetMsg:'⚠️ Toutes les recettes et paramètres seront supprimés.\n\nAvez-vous créé une sauvegarde ?\n\nContinuer et tout supprimer ?',
     mvNone:'Aucune recette dans menu.',
@@ -3856,7 +3877,7 @@ const LANGS={
     mvTabAl:'📋 Totale',
     mvPrint:'🖨️ Stampa',
     mvClose:'Chiudi',
-    bnRec:'Ricette',
+    bnRec:'Ricette',katZuTtl:'Assegna categoria',katZuOhne:'senza categoria',katZuOk:'spostato in',fldInOrdnern:'in cartelle',
     bnFld:'Cartelle',
     bnMen:'Pianif.',
     bnSet:'Impostazioni',
@@ -3995,7 +4016,7 @@ const LANGS={
     thModern:'Moderno',
     thColor:'Colorato',
     thNeon:'Neon',thPastel:'Pastello',
-    noRecipes:'Nessuna ricetta',emptyStateDesc:'Aggiungi la tua prima ricetta — tramite foto, link web o manualmente.',emptyStateAdd:'aggiungere',
+    noRecipes:'Nessuna ricetta',emptyStateDesc:'Aggiungi la tua prima ricetta — tramite foto, link web o manualmente.',emptyStateAdd:'aggiungere',hAddLbl:'Ricetta',
     clearConfirm:'Eliminare TUTTI i dati?',
     hlpTitle:'ℹ️ Aiuto · Condividi · Ripara',hlpShare:'Aiuto & Link di emergenza',hlpShareSub:'Funziona anche se l\'app è rotta · Ripara · Condividi',hlpExport:'Salva ricette (backup)',hlpExportSub:'Esporta file JSON e conservalo',hlpImport:'Ripristina backup',hlpImportSub:'Carica file JSON e recupera le ricette',hlpCache:'Svuota cache – istruzioni',hlpCacheSub:'Se l\'app non si carica correttamente',hlpReset:'Ripristina app',hlpResetSub:'Elimina tutto – crea prima un backup!',hlpCacheTitle:'🧹 Come svuotare la cache',hlpCacheOk:'Capito ✓',hlpShareBtn:'🆘 Apri link di emergenza',hlpExportBtn:'📤 Crea backup',hlpImportBtn:'📥 Carica backup',hlpCacheBtn:'🧹 Mostra istruzioni',hlpResetBtn:'⚠️ Ripristina',hlpPwa:'Come funziona l\'app offline?',hlpPwaSub:'Al primo utilizzo, l\'app si salva automaticamente sul dispositivo. Poi funziona senza internet. Se cancelli i dati del browser, questa memoria viene eliminata – connettiti una volta e torna a funzionare.',hlpResetMsg:'⚠️ Tutte le ricette e impostazioni verranno eliminate.\n\nHai creato un backup?\n\nContinuare ed eliminare tutto?',
     mvNone:'Nessuna ricetta nel menu.',
@@ -4095,7 +4116,7 @@ const LANGS={
     mvTabAl:'📋 Total',
     mvPrint:'🖨️ Imprimir',
     mvClose:'Fechar',
-    bnRec:'Receitas',
+    bnRec:'Receitas',katZuTtl:'Atribuir categoria',katZuOhne:'sem categoria',katZuOk:'movido para',fldInOrdnern:'em pastas',
     bnFld:'Pastas',
     bnMen:'Planeja.',
     bnSet:'Definições',
@@ -4234,7 +4255,7 @@ const LANGS={
     thModern:'Moderno',
     thColor:'Colorido',
     thNeon:'Néon',thPastel:'Pastel',
-    noRecipes:'Sem receitas',emptyStateDesc:'Adicione a sua primeira receita — por foto, link da web ou manualmente.',emptyStateAdd:'adicionar',
+    noRecipes:'Sem receitas',emptyStateDesc:'Adicione a sua primeira receita — por foto, link da web ou manualmente.',emptyStateAdd:'adicionar',hAddLbl:'Receita',
     clearConfirm:'Apagar TODOS dados?',
     hlpTitle:'ℹ️ Ajuda · Partilhar · Reparar',hlpShare:'Ajuda & Link de emergência',hlpShareSub:'Funciona mesmo que a app esteja com problemas · Reparar · Partilhar',hlpExport:'Guardar receitas (backup)',hlpExportSub:'Exportar ficheiro JSON e guardar',hlpImport:'Restaurar backup',hlpImportSub:'Carregar ficheiro JSON e recuperar receitas',hlpCache:'Limpar cache – instruções',hlpCacheSub:'Se a app não carregar corretamente',hlpReset:'Repor app',hlpResetSub:'Apagar tudo – crie backup primeiro!',hlpCacheTitle:'🧹 Como limpar o cache',hlpCacheOk:'Entendido ✓',hlpShareBtn:'🆘 Abrir link de emergência',hlpExportBtn:'📤 Criar backup',hlpImportBtn:'📥 Carregar backup',hlpCacheBtn:'🧹 Mostrar instruções',hlpResetBtn:'⚠️ Repor',hlpPwa:'Como funciona a app sem internet?',hlpPwaSub:'Na primeira abertura, a app guarda-se automaticamente no dispositivo. Depois funciona sem internet. Se limpar os dados do browser, este armazenamento é eliminado – ligue-se uma vez e volta a funcionar.',hlpResetMsg:'⚠️ Todas as receitas e definições serão eliminadas.\n\nCriou um backup?\n\nContinuar e apagar tudo?',
     mvNone:'Sem receitas no menu.',
@@ -4395,6 +4416,36 @@ let CATS_EIGEN={};
 function ladeCatsEigen(){try{const r=JSON.parse(localStorage.getItem(CATS_KEY)||'{}');CATS_EIGEN=(r&&typeof r==='object')?r:{};}catch(e){CATS_EIGEN={};}}
 function svCatsEigen(){try{localStorage.setItem(CATS_KEY,JSON.stringify(CATS_EIGEN));}catch(e){}}
 ladeCatsEigen();
+/* ══ KATEGORIEN LOESCHEN, ZUSAMMENLEGEN, NEU ANLEGEN (Klaus 2026-09-16) ══
+   Klaus: „mache es bitte moeglich, die Kategorien einzeln zu loeschen, auch
+   ganze Kategorien zu loeschen und neu zu erstellen."
+
+   ⚠ DIE SCHLUESSEL SIND APP-EIGEN, wie `CATS_KEY` — die Geschwister-Apps
+   teilen sich den localStorage derselben github.io-Adresse.
+
+   ⚠ UND AUSBLENDEN WIRKT NUR AUF LEERE KATEGORIEN. Eine Kategorie mit Inhalt
+   verschwinden zu lassen hiesse, ihre Rezepte heimatlos zu machen — genau der
+   Schaden vom 2026-09-15, als Eintraege in `R` lagen, gespeichert und
+   mitexportiert wurden und trotzdem nirgends auftauchten. Wer eine Kategorie
+   mit Inhalt loswerden will, sagt vorher, wohin er soll; geraten wird
+   nichts. */
+const CATS_NEU_KEY='mrzcatsneu9', CATS_AUS_KEY='mrzcatsaus9';
+let CATS_NEU=[], CATS_AUS=[];
+function ladeCatsNeu(){
+  try{const r=JSON.parse(localStorage.getItem(CATS_NEU_KEY)||'[]');CATS_NEU=Array.isArray(r)?r.filter(c=>c&&c.id):[];}catch(e){CATS_NEU=[];}
+  try{const a=JSON.parse(localStorage.getItem(CATS_AUS_KEY)||'[]');CATS_AUS=Array.isArray(a)?a.map(String):[];}catch(e){CATS_AUS=[];}
+}
+function svCatsNeu(){
+  try{localStorage.setItem(CATS_NEU_KEY,JSON.stringify(CATS_NEU));}catch(e){}
+  try{localStorage.setItem(CATS_AUS_KEY,JSON.stringify(CATS_AUS));}catch(e){}
+}
+ladeCatsNeu();
+/* Wie viele SICHTBARE Eintraege haengen an dieser Kennung? Blanks und
+   namenlose zaehlen nicht — sie sind kein Inhalt. */
+function katAnzahl(id){
+  if(typeof R==='undefined'||!Array.isArray(R))return 0;
+  return R.filter(r=>r&&!r.blank&&r.name&&String(r.name).trim()&&katVonRezept(r)===id).length;
+}
 /* EINE Stelle fuer den angezeigten Namen. Zwei Stellen liefen auseinander,
    und dann stuende im Reiter etwas anderes als in der Auswahlliste.
    ⚠ Die Namen sind mit Bedacht anders als `catName`/`catIco`: die gibt es
@@ -4425,6 +4476,21 @@ function katSymbol(c){if(!c)return'📦';const e=CATS_EIGEN[c.id];if(e&&e.ico)re
    Sie werden jetzt als EIGENE Kategorie gefuehrt, nicht repariert: welche
    Kategorie sie bekommen sollen, entscheidet Klaus, nicht die App. */
 const KAT_OHNE='__ohne';
+/* ⚠ EIN ORDNER, DEN ES NICHT GIBT, IST KEIN ORDNER (Klaus 2026-09-16).
+   Dieselbe Zusicherung wie `katVonRezept` fuer die Kategorie, nur am anderen
+   Feld. Zeigt `r.folder` auf eine Kennung, die in FD nicht steht, dann fiel
+   das Rezept aus JEDER Kategorie-Gruppe (die fragt `!r.folder`) UND es gab
+   keinen Ordner-Eintrag, in dem es stehen koennte: es blieb nur die Zahl
+   „+N in Ordnern" — ein Ordner, den man nicht oeffnen, nicht umbenennen und
+   nicht aufloesen kann. Klaus nannte ihn „ein unsichtbarer Ordner".
+   Ein rohes Feld zu lesen, wo eine Deutung gemeint ist, macht aus einer
+   Kennung zwei verschiedene — die Lehre vom Vortag, am zweiten Feld. */
+function ordnerVonRezept(r){
+  var f=(r&&r.folder!=null)?String(r.folder):'';
+  if(!f)return '';
+  var da=(typeof FD!=='undefined'&&Array.isArray(FD))&&FD.some(function(x){return String(x.id)===f;});
+  return da?f:'';
+}
 function katVonRezept(r){
   var id=(r&&typeof r.cat==='string')?r.cat.trim():'';
   if(!id)return KAT_OHNE;
@@ -4505,7 +4571,27 @@ function catsFremd(){
   }
   return out;
 }
-function catsAlle(){return CATS.filter(c=>c.id!=='all').concat(catsFremd());}
+/* ⚠ EINE KENNUNG KOMMT GENAU EINMAL HERAUS (Klaus 2026-09-16, mit Bild:
+   „oben sind zwei Kategorien Sushi selektiert … obwohl ich nur eine
+   angeklickt habe"). Eine Pille traegt `on` genau dann, wenn `CAT===c.id` —
+   standen zwei Eintraege mit derselben Kennung in der Liste, markierte ein
+   Tipp folgerichtig BEIDE. Es sind nicht zwei Kategorien, sondern EINE, die
+   zweimal gezeichnet wird. Der Riegel sitzt deshalb an der QUELLE, nicht auf
+   der Anzeige: jede Zaehl- und Zeichen-Stelle liest dieselbe Liste. */
+function catsAlle(){
+  const out=[],gesehen=new Set();
+  /* ⚠ AUSGEBLENDET WIRD NUR, WAS LEER IST. Sonst waeren die Eintraege darin
+     nirgends mehr zu sehen — und genau dafuer gibt es „Ohne Kategorie". */
+  const aus=new Set((CATS_AUS||[]).filter(id=>katAnzahl(id)===0));
+  CATS.filter(c=>c.id!=='all').concat(CATS_NEU||[]).concat(catsFremd()).forEach(c=>{
+    if(c&&aus.has(String(c.id)))return;
+    if(!c||c.id===undefined||c.id===null)return;
+    const id=String(c.id);
+    if(gesehen.has(id))return;
+    gesehen.add(id);out.push(c);
+  });
+  return out;
+}
 
 function catName(id){if(typeof id==='string'&&id.indexOf('fld_')===0){const f=FD.find(f=>String(f.id)===id.slice(4));return f?f.name:id;}const c=catsAlle().find(x=>x.id===id);if(!c)return id;return katBeschriftung(c);}
 function catCol(id){if(typeof id==='string'&&id.indexOf('fld_')===0){return'#7a5840';}return catsAlle().find(x=>x.id===id)?.col||'#7a5840';}
@@ -6740,7 +6826,16 @@ function exportData(){
   toast('✅ JSON');
 }
 function _normalizeRecs(recs){
-  recs.forEach(r=>{if(!r.img)r.img='';if(r.folder===undefined)r.folder='';if(!r.rating)r.rating={stars:0,comment:'',imps:[]};if(!r.ings)r.ings=[];if(!r.steps)r.steps=[];if(!r.flavors)r.flavors=[];if(!r.servings)r.servings=4;if(!r.imgCrop)r.imgCrop={x:50,y:50,scale:1};});
+  recs.forEach(r=>{if(!r.img)r.img='';if(r.folder===undefined)r.folder='';if(!r.rating)r.rating={stars:0,comment:'',imps:[]};if(!r.ings)r.ings=[];if(!r.steps)r.steps=[];if(!r.flavors)r.flavors=[];if(!r.servings)r.servings=4;if(!r.imgCrop)r.imgCrop={x:50,y:50,scale:1};
+    /* ⚠ LEER HEISST „OHNE KATEGORIE" UND WIRD NICHT GERATEN. Seit Ordner und
+       Kategorie getrennt sind, ist eine leere Kennung ein GUELTIGER Zustand —
+       sie bekommt ueber `catsFremd()`/KAT_OHNE ihren eigenen Reiter. In Mein
+       Rezeptbuch stand hier bis zum 2026-09-16 ein Remap auf 'fleisch', der
+       genau diese Auskunft jedes Mal weggeworfen hat. Hier gab es ihn nie;
+       was fehlte, war die Zusicherung, dass `r.cat` wirklich eine
+       Zeichenkette ist — `katVonRezept` deutet sonst `undefined`. */
+    if(r.cat===undefined||r.cat===null)r.cat='';
+    if(typeof r.cat!=='string')r.cat='';});
 }
 function _showImportChoiceDialog(recCount, onReplace, onMerge){
   const ov=document.createElement('div');
@@ -7212,7 +7307,7 @@ function badge(){
   const rc=R.filter(r=>!r.blank).length,rb=document.getElementById('recBadge');
   if(rb){rb.style.display=rc?'block':'none';rb.textContent=rc;}
   const fc=[
-    ...catsAlle().filter(c=>R.some(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)),
+    ...catsAlle().filter(c=>R.some(r=>!ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name)),
     ...FD.filter(f=>R.some(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name))
   ].length,fb=document.getElementById('fldBadge');
   if(fb){fb.style.display=fc?'block':'none';fb.textContent=fc;}
@@ -7974,28 +8069,28 @@ function openFolderSheet(){document.getElementById('folderSheet').style.display=
 const KAT_TXT={
   de:{t:'✎ Kategorien umbenennen',s:'Gib den Kategorien deine eigenen Namen und Symbole. Aus „Mocktails" wird deine „Salatbar".',
       n:'⚠ Der Name gilt in allen Sprachen — du hast ihn selbst geschrieben. Die Kennung bleibt unveraendert, deine Rezepte behalten ihr Zuhause.',sym:'Symbol antippen und aussuchen',fuer:'Symbol fuer',ohne:'Ohne Kategorie',
-      f:'mitgebracht',z:'↺ zuruecksetzen',ok:'Speichern',ab:'Abbrechen',g:'✅ Kategorien gespeichert'},
+      f:'mitgebracht',kenn:'Kennung — daran haengen deine Rezepte',weg:'Kategorie aufloesen',neu:'Neue Kategorie',neuName:'Neue Kategorie',auflT:'Kategorie aufloesen',auflS:'{0} Rezepte liegen in „{1}". Wohin sollen sie? Geraten wird nichts.',auflOk:'Aufloesen',auflG:'Kategorie aufgeloest',z:'↺ zuruecksetzen',ok:'Speichern',ab:'Abbrechen',g:'✅ Kategorien gespeichert'},
   en:{t:'✎ Rename categories',s:'Give the categories your own names and icons. “Mocktails” becomes your “Salad bar”.',
       n:'⚠ The name applies in every language — you wrote it yourself. The internal id stays, so your recipes keep their home.',sym:'Tap the icon to pick one',fuer:'Icon for',ohne:'No category',
-      f:'imported',z:'↺ reset',ok:'Save',ab:'Cancel',g:'✅ Categories saved'},
+      f:'imported',kenn:'Internal id — your recipes hang on this',weg:'Dissolve category',neu:'New category',neuName:'New category',auflT:'Dissolve category',auflS:'{0} recipes are in “{1}”. Where should they go? Nothing is guessed.',auflOk:'Dissolve',auflG:'Category dissolved',z:'↺ reset',ok:'Save',ab:'Cancel',g:'✅ Categories saved'},
   ru:{t:'✎ Переименовать категории',s:'Дайте категориям свои названия и значки.',
       n:'⚠ Название действует на всех языках. Идентификатор не меняется — рецепты остаются на месте.',sym:'Нажмите на значок и выберите',fuer:'Значок для',ohne:'Без категории',
-      f:'импортировано',z:'↺ сбросить',ok:'Сохранить',ab:'Отмена',g:'✅ Сохранено'},
+      f:'импортировано',kenn:'Идентификатор — к нему привязаны рецепты',weg:'Распустить категорию',neu:'Новая категория',neuName:'Новая категория',auflT:'Распустить категорию',auflS:'{0} рецептов в «{1}». Куда их перенести? Ничего не угадывается.',auflOk:'Распустить',auflG:'Категория распущена',z:'↺ сбросить',ok:'Сохранить',ab:'Отмена',g:'✅ Сохранено'},
   zh:{t:'✎ 重命名分类',s:'为分类设置你自己的名称和图标。',
       n:'⚠ 该名称适用于所有语言。内部标识不变，菜谱不会丢失。',sym:'点按图标即可选择',fuer:'图标：',ohne:'未分类',
-      f:'导入',z:'↺ 重置',ok:'保存',ab:'取消',g:'✅ 已保存'},
+      f:'导入',kenn:'内部标识 — 你的食谱挂在它上面',weg:'解散类别',neu:'新建类别',neuName:'新建类别',auflT:'解散类别',auflS:'「{1}」中有 {0} 个食谱。它们该去哪里？不作猜测。',auflOk:'解散',auflG:'类别已解散',z:'↺ 重置',ok:'保存',ab:'取消',g:'✅ 已保存'},
   es:{t:'✎ Renombrar categorías',s:'Da a las categorías tus propios nombres e iconos.',
       n:'⚠ El nombre vale en todos los idiomas. El identificador no cambia: tus recetas conservan su sitio.',sym:'Toca el icono para elegir',fuer:'Icono para',ohne:'Sin categoría',
-      f:'importado',z:'↺ restablecer',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'},
+      f:'importado',kenn:'Identificador — tus recetas dependen de él',weg:'Disolver categoría',neu:'Nueva categoría',neuName:'Nueva categoría',auflT:'Disolver categoría',auflS:'{0} recetas están en «{1}». ¿Adónde deben ir? No se adivina nada.',auflOk:'Disolver',auflG:'Categoría disuelta',z:'↺ restablecer',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'},
   fr:{t:'✎ Renommer les catégories',s:'Donnez aux catégories vos propres noms et icônes.',
       n:'⚠ Le nom vaut dans toutes les langues. L’identifiant ne change pas : vos recettes gardent leur place.',sym:'Touchez l’icône pour choisir',fuer:'Icône pour',ohne:'Sans catégorie',
-      f:'importé',z:'↺ réinitialiser',ok:'Enregistrer',ab:'Annuler',g:'✅ Enregistré'},
+      f:'importé',kenn:'Identifiant — vos recettes y sont rattachées',weg:'Dissoudre la catégorie',neu:'Nouvelle catégorie',neuName:'Nouvelle catégorie',auflT:'Dissoudre la catégorie',auflS:'{0} recettes sont dans « {1} ». Où doivent-elles aller ? Rien n’est deviné.',auflOk:'Dissoudre',auflG:'Catégorie dissoute',z:'↺ réinitialiser',ok:'Enregistrer',ab:'Annuler',g:'✅ Enregistré'},
   it:{t:'✎ Rinomina categorie',s:'Dai alle categorie i tuoi nomi e le tue icone.',
       n:'⚠ Il nome vale in tutte le lingue. L’identificativo resta: le ricette mantengono il loro posto.',sym:'Tocca l’icona per sceglierne una',fuer:'Icona per',ohne:'Senza categoria',
-      f:'importato',z:'↺ ripristina',ok:'Salva',ab:'Annulla',g:'✅ Salvato'},
+      f:'importato',kenn:'Identificatore — le tue ricette vi sono legate',weg:'Sciogli la categoria',neu:'Nuova categoria',neuName:'Nuova categoria',auflT:'Sciogli la categoria',auflS:'{0} ricette sono in «{1}». Dove devono andare? Non si indovina nulla.',auflOk:'Sciogli',auflG:'Categoria sciolta',z:'↺ ripristina',ok:'Salva',ab:'Annulla',g:'✅ Salvato'},
   pt:{t:'✎ Renomear categorias',s:'Dê às categorias os seus próprios nomes e ícones.',
       n:'⚠ O nome vale em todos os idiomas. O identificador permanece: as receitas mantêm o seu lugar.',sym:'Toque no ícone para escolher',fuer:'Ícone para',ohne:'Sem categoria',
-      f:'importado',z:'↺ repor',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'}
+      f:'importado',kenn:'Identificador — as tuas receitas dependem dele',weg:'Dissolver categoria',neu:'Nova categoria',neuName:'Nova categoria',auflT:'Dissolver categoria',auflS:'{0} receitas estão em «{1}». Para onde devem ir? Nada é adivinhado.',auflOk:'Dissolver',auflG:'Categoria dissolvida',z:'↺ repor',ok:'Guardar',ab:'Cancelar',g:'✅ Guardado'}
 };
 /* ══ EMOJI-AUSWAHL (Klaus 2026-09-15) ════════════════════════════════════
    „Einmal anklicken, Emojis aussuchen." Ein Symbol von Hand zu tippen setzt
@@ -8127,8 +8222,18 @@ function openKatUmbenennen(){
        Vorgabe unterscheiden — und „zuruecksetzen" haette nichts zu tun. */
     return `<div class="kat-row" data-kid="${h(c.id)}">
       <input class="kat-ico" value="${h(eigen.ico||'')}" placeholder="${h(c.ico||'📦')}" maxlength="4" aria-label="${h(X.sym)}" title="${h(X.sym)}" onclick="katEmojiOeffnen(this)">
-      <input class="kat-name" value="${h(eigen.name||'')}" placeholder="${h(c[CL]||c.de||c.id)}" aria-label="Name">
+      <div class="kat-feld">
+        <input class="kat-name" value="${h(eigen.name||'')}" placeholder="${h(c[CL]||c.de||c.id)}" aria-label="Name">
+        <!-- ⚠ DIE KENNUNG STEHT DA, MIT ZEICHENZAHL. Zwei Kategorien koennen
+             denselben NAMEN tragen (der Nutzer vergibt ihn selbst) — die
+             Kennung ist das, woran die Eintraege haengen. Ohne sie sind zwei
+             Zeilen „Sushi" nicht auseinanderzuhalten. Die Anfuehrungszeichen
+             zeigen ein fuehrendes oder folgendes Leerzeichen, die Zahl
+             bestaetigt es. -->
+        <div class="kat-kenn" title="${h(X.kenn||'Kennung')}">"${h(c.id)}" ·${String(c.id).length}</div>
+      </div>
       <button class="kat-reset" onclick="katZuruecksetzen('${h(c.id)}')" ${hatEigen?'':'disabled'} title="${h(X.z)}">↺</button>
+      <button class="kat-weg" onclick="katAufloesen('${h(String(c.id).replace(/'/g,"\\'"))}')" title="${h(X.weg)}" aria-label="${h(X.weg)}">🗑</button>
       ${c.fremd?`<span class="kat-fremd">${h(X.f)}</span>`:''}
     </div>`;
   }).join('');
@@ -8136,6 +8241,7 @@ function openKatUmbenennen(){
     <div class="share-box-title">${h(X.t)}</div>
     <div class="share-box-sub">${h(X.s)}</div>
     <div class="kat-list">${zeilen}</div>
+    <button class="kat-neu-btn" onclick="katNeuAnlegen()">＋ ${h(X.neu)}</button>
     ${katEmojiRaster()}
     <div class="kat-note">${h(X.n)}</div>
     <button class="share-btn-p" onclick="katSpeichern()">${h(X.ok)}</button>
@@ -8161,6 +8267,190 @@ function openKatUmbenennen(){
   ov.addEventListener('keydown',function(e){ if(e.key==='Escape')katEmojiSchliessen(); });
   document.body.appendChild(ov);
 }
+/* Was gerade in den Feldern steht, wird uebernommen, BEVOR der Dialog neu
+   gebaut wird. Sonst waere jede Eingabe weg, sobald jemand eine Kategorie
+   anlegt oder aufloest — und das saehe aus wie ein Datenverlust. */
+function katEingabenUebernehmen(){
+  const ov=document.getElementById('katRenameOv');if(!ov)return;
+  const neu={};
+  ov.querySelectorAll('.kat-row').forEach(row=>{
+    const id=row.dataset.kid;
+    const nm=(row.querySelector('.kat-name').value||'').trim();
+    const ic=(row.querySelector('.kat-ico').value||'').trim();
+    if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;}
+  });
+  CATS_EIGEN=neu;svCatsEigen();
+}
+/* Eine neue Kategorie ist eine neue ZEILE, kein zweiter Dialog. Der Nutzer
+   tippt den Namen dort, wo er alle anderen auch tippt. */
+/* ⚠ EINE QUELLE FUER ZWEI WEGE. Eine Kategorie entsteht an ZWEI Stellen:
+   im Umbenennen-Dialog und in der Zuordnen-Auswahl an einer Zeile (Klaus
+   2026-09-16). Zwei Fassungen des Anlegens liefen auseinander — dann traegt
+   die eine Kennung ein anderes Format als die andere, und der „eine Kennung
+   kommt genau einmal vor"-Riegel haette zwei Sorten zu pruefen. */
+function katAnlegen(name){
+  const X=KAT_TXT[CL]||KAT_TXT.de;
+  const kid='eig_'+Date.now();
+  CATS_NEU.push({id:kid,ico:'🏷',de:(name&&String(name).trim())||X.neuName||'Neue Kategorie',col:'#7a5840',eigen:true});
+  svCatsNeu();
+  return kid;
+}
+function katNeuAnlegen(){
+  katEingabenUebernehmen();
+  const kid=katAnlegen('');
+  const ov=document.getElementById('katRenameOv');if(ov)ov.remove();
+  openKatUmbenennen();
+  /* ⚠ DIE NEUE ZEILE WIRD AN IHRER KENNUNG GESUCHT, nicht als „die letzte".
+     `catsAlle()` haengt die mitgebrachten Kategorien und „Ohne Kategorie"
+     HINTER die eigenen — die letzte Zeile ist also eine fremde. Gemessen in
+     Mein Rezeptbuch am 2026-09-16: der Finger stand danach im Namensfeld einer
+     FREMDEN Kategorie, und wer lostippt, benennt die falsche um. */
+  const zeile=document.querySelector('#katRenameOv .kat-row[data-kid="'+kid+'"]');
+  if(zeile){const f=zeile.querySelector('.kat-name');if(f){f.focus();zeile.scrollIntoView({block:'nearest'});}}
+}
+/* ⚠ EINE KATEGORIE MIT INHALT WIRD NICHT STILL WEGGENOMMEN. Wohin ihre
+   Eintraege sollen, entscheidet der Nutzer — die App raet nichts. Genau das
+   ist auch das „Zusammenlegen": zwei Kategorien mit demselben Namen werden
+   eine, indem die eine in die andere aufgeloest wird. */
+function katAufloesen(id){
+  katEingabenUebernehmen();
+  const X=KAT_TXT[CL]||KAT_TXT.de;
+  const n=katAnzahl(id);
+  if(n===0){katWegNehmen(id,null);return;}
+  const ziele=catsAlle().filter(c=>String(c.id)!==String(id)&&c.id!==KAT_OHNE)
+    .map(c=>`<option value="${h(c.id)}">${katSymbol(c)} ${h(katBeschriftung(c))}</option>`).join('');
+  const ov=document.createElement('div');
+  ov.id='katAuflOv';ov.className='share-ov';
+  const c=catsAlle().find(x=>String(x.id)===String(id));
+  ov.innerHTML=`<div class="share-box kat-box">
+    <div class="share-box-title">🗑 ${h(X.auflT)}</div>
+    <div class="share-box-sub">${h((X.auflS||'').replace('{0}',String(n)).replace('{1}',c?katBeschriftung(c):String(id)))}</div>
+    <div class="kat-aufl">
+      <select id="katAuflZiel"><option value="__ohne__">❓ ${h(X.ohne)}</option>${ziele}</select>
+    </div>
+    <button class="share-btn-p" onclick="katAuflBestaetigen('${h(String(id).replace(/'/g,"\\'"))}')">${h(X.auflOk)}</button>
+    <button class="share-btn-cl" onclick="document.getElementById('katAuflOv').remove()">${h(X.ab)}</button>
+  </div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+}
+function katAuflBestaetigen(id){
+  const sel=document.getElementById('katAuflZiel');
+  const ziel=sel?sel.value:'__ohne__';
+  const ov=document.getElementById('katAuflOv');if(ov)ov.remove();
+  katWegNehmen(id,ziel==='__ohne__'?'':ziel);
+}
+/* `ziel === null` heisst „die Kategorie war leer, es gab nichts umzuhaengen".
+   `ziel === ''` heisst ausdruecklich „Ohne Kategorie" — das ist eine Wahl,
+   kein fehlender Wert. Die beiden auseinanderzuhalten ist der ganze Punkt:
+   wer beides als „leer" liest, meldet ein Umhaengen, das nie stattfand. */
+function katWegNehmen(id,ziel){
+  const sid=String(id);
+  if(ziel!==null)R.forEach(r=>{if(katVonRezept(r)===sid)r.cat=ziel;});
+  const vorher=CATS_NEU.length;
+  CATS_NEU=CATS_NEU.filter(c=>String(c.id)!==sid);
+  /* Eine selbst angelegte Kategorie ist wirklich weg. Eine fest eingebaute
+     laesst sich nicht loeschen — sie steht im Code —, also wird sie
+     ausgeblendet; und das gilt nur, solange sie leer ist (siehe catsAlle). */
+  if(CATS_NEU.length===vorher&&CATS_AUS.indexOf(sid)<0)CATS_AUS.push(sid);
+  delete CATS_EIGEN[sid];
+  svCatsNeu();svCatsEigen();sv();
+  if(CAT===sid)CAT='all';
+  const ov=document.getElementById('katRenameOv');if(ov)ov.remove();
+  renderCatNav();render();if(typeof renderFolders==='function')renderFolders();badge();
+  openKatUmbenennen();
+  toast('🗑 '+((KAT_TXT[CL]||KAT_TXT.de).auflG||'aufgeloest'));
+}
+/* ═══ KATEGORIE ZUORDNEN (Klaus 2026-09-16) ═══════════════════════
+   Setzt NUR r.cat. Der Ordner (r.folder) bleibt, wo er ist — das ist die
+   Trennung vom 2026-09-16: ein Ordner sagt "wo liegt es", eine Kategorie
+   sagt "was ist es". Wer beides an einen Griff haengt, frisst das eine
+   mit dem anderen auf.
+   Die Anzeige zieht von selbst nach: Reiter-Leiste, Ordner-Baum und das
+   Zeilen-Symbol lesen alle katVonRezept(r), also dieselbe Quelle. */
+function katZuPop(rid,btn){
+  var alt=document.getElementById('katZuPop');
+  if(alt){alt.remove();if(+alt.dataset.rid===rid)return;}
+  var r=R.find(function(x){return x.id===rid;});if(!r)return;
+  var jetzt=katVonRezept(r);
+  var liste=(catsAlle()||[]).filter(function(c){return c&&String(c.id)!==KAT_OHNE;});
+  var pop=document.createElement('div');
+  pop.id='katZuPop';pop.className='kat-zu-pop';pop.dataset.rid=rid;
+  var teile=['<div class="kzp-kopf">'+h(T('katZuTtl'))+'</div>'];
+  liste.forEach(function(c){
+    var id=String(c.id);
+    teile.push('<button class="'+(id===jetzt?'kzp-jetzt':'')+'" onclick="katZuSetzen('+rid+',\''+h(id.replace(/'/g,"\\'"))+'\')">'
+      +'<span>'+h(katSymbol(c)||'')+'</span><span>'+h(katBeschriftung(c)||id)+'</span>'
+      +(id===jetzt?'<span style="margin-left:auto">✓</span>':'')+'</button>');
+  });
+  /* "ohne Kategorie" ist der Weg ZURUECK, kein Thema — deshalb unten und
+     abgesetzt. Ohne ihn gaebe es keine Umkehr fuer einen Fehlgriff. */
+  teile.push('<button class="kzp-ohne'+(jetzt===KAT_OHNE?' kzp-jetzt':'')+'" onclick="katZuSetzen('+rid+',\'\')">'
+    +'<span>📂</span><span>'+h(T('katZuOhne'))+'</span>'
+    +(jetzt===KAT_OHNE?'<span style="margin-left:auto">✓</span>':'')+'</button>');
+  /* ＋ NEUE KATEGORIE, direkt aus der Zeile heraus (Klaus 2026-09-16):
+     „ich kann eine neue Kategorie anlegen, direkt aus dem Rezeptbuch. Und es
+     wandelt dahin." Sie legt an UND ordnet zu — ein Griff, nicht zwei. */
+  var X=KAT_TXT[CL]||KAT_TXT.de;
+  teile.push('<button class="kzp-neu" onclick="katZuNeuFeld('+rid+')">＋ '+h(X.neu||'Neue Kategorie')+'</button>');
+  pop.innerHTML=teile.join('');
+  document.body.appendChild(pop);
+  /* Gemessen gegen die echte Lage des Knopfes, nicht gegen einen geratenen
+     Abstand — und geklemmt, damit nichts ueber den Rand haengt. */
+  var rc=btn.getBoundingClientRect(),ph=pop.offsetHeight,pw=pop.offsetWidth;
+  var oben=(rc.bottom+6+ph>window.innerHeight)&&(rc.top-6-ph>0);
+  pop.style.top=(oben?Math.max(6,rc.top-6-ph):Math.min(rc.bottom+6,window.innerHeight-ph-6))+'px';
+  pop.style.left=Math.max(6,Math.min(rc.left,window.innerWidth-pw-6))+'px';
+  setTimeout(function(){document.addEventListener('click',function schliess(e){
+    /* ⚠ EIN ZIEL, DAS NICHT MEHR IM DOKUMENT HAENGT, IST KEIN TIPP NACH DRAUSSEN.
+       „＋ Neue Kategorie" tauscht den Inhalt dieses Fensters aus. Danach feuert
+       dieser Riegel, findet den geklickten Knopf nicht mehr DARIN — und hielt
+       das fuer einen Tipp daneben: das Fenster machte sich selbst wieder zu,
+       und es sah aus, als taete der Knopf nichts. Klaus hat es am Tablet
+       gesehen; die Probe war blind, weil sie synchron klickt und dieser
+       `setTimeout` dort nie zum Zug kam.
+       Geprueft wird die URSACHE, nicht der eine Knopf — jeder kuenftige, der
+       den Inhalt ersetzt, ist damit mitgedeckt. Wortgleich dieselbe Falle wie
+       bei der Emoji-Auswahl am 2026-09-15, nur mit anderem Ausloeser. */
+    if(!document.contains(e.target))return;
+    if(!pop.contains(e.target)){pop.remove();document.removeEventListener('click',schliess);}
+  });},0);
+}
+/* Das Feld ersetzt die Liste IM Popup — kein zweites Fenster, kein Sprung aus
+   dem Fluss. Das Popup haengt an document.body und ist `position:fixed`; die
+   Karte darunter bewegt sich dabei nicht. */
+function katZuNeuFeld(rid){
+  var pop=document.getElementById('katZuPop');if(!pop)return;
+  var X=KAT_TXT[CL]||KAT_TXT.de;
+  pop.innerHTML='<div class="kzp-kopf">＋ '+h(X.neu||'Neue Kategorie')+'</div>'
+    +'<div class="kzp-neu-zeile"><input id="katZuNeuIn" class="kzp-neu-in" type="text" placeholder="'+h(X.neuName||'Neue Kategorie')+'" '
+    +'onkeydown="if(event.key===\'Enter\'){event.preventDefault();katZuNeuAnlegen('+rid+');}else if(event.key===\'Escape\'){document.getElementById(\'katZuPop\')?.remove();}">'
+    +'<button class="kzp-neu-ok" onclick="katZuNeuAnlegen('+rid+')" aria-label="'+h(X.neu||'Neue Kategorie')+'">✓</button></div>';
+  var f=document.getElementById('katZuNeuIn');if(f)f.focus();
+}
+function katZuNeuAnlegen(rid){
+  var f=document.getElementById('katZuNeuIn');
+  var name=f?String(f.value||'').trim():'';
+  /* Ohne Namen wird nichts angelegt — eine namenlose Kategorie waere ein
+     Reiter, den niemand wiederfindet. Das Feld bleibt stehen statt still
+     zuzugehen: ein Fenster, das auf einen Tipp hin verschwindet und nichts
+     getan hat, sieht aus wie ein kaputter Knopf. */
+  if(!name){if(f)f.focus();return;}
+  katZuSetzen(rid,katAnlegen(name));
+}
+function katZuSetzen(rid,kid){
+  var pop=document.getElementById('katZuPop');if(pop)pop.remove();
+  var r=R.find(function(x){return x.id===rid;});if(!r)return;
+  r.cat=String(kid||'');
+  /* ⚠ ALLE DREI ANSICHTEN ZIEHEN NACH, nicht nur die Liste. Der Ordner-Baum
+     liest dieselbe Quelle (`katVonRezept`), zeichnete sich aber nicht neu —
+     wer von dort kam, sah seine Aenderung nicht. Ein Waechter hat es
+     gefunden, nicht das Nachdenken. */
+  sv();render();renderCatNav();renderFolders();badge();
+  var c=(catsAlle()||[]).filter(function(x){return x&&String(x.id)===String(kid);})[0];
+  var name=c?(katBeschriftung(c)||String(kid)):T('katZuOhne');
+  toast('🏷️ '+(rName(r)||r.name||'')+' — '+T('katZuOk')+' '+name);
+}
 function katZuruecksetzen(id){
   const row=document.querySelector('#katRenameOv .kat-row[data-kid="'+id+'"]');
   if(!row)return;
@@ -8181,6 +8471,11 @@ function katSpeichern(){
     if(nm||ic){neu[id]={};if(nm)neu[id].name=nm;if(ic)neu[id].ico=ic;}
   });
   CATS_EIGEN=neu;svCatsEigen();
+  /* Eine frisch angelegte Kategorie ohne Namen ist keine — sie wuerde als
+     „Neue Kategorie" stehenbleiben, obwohl der Nutzer abgebrochen hat. */
+  const vorNeu=CATS_NEU.length;
+  CATS_NEU=CATS_NEU.filter(c=>!!(CATS_EIGEN[c.id]&&CATS_EIGEN[c.id].name)||katAnzahl(c.id)>0);
+  if(CATS_NEU.length!==vorNeu)svCatsNeu();
   ov.remove();
   renderCatNav();render();if(typeof renderFolders==='function')renderFolders();
   toast((KAT_TXT[CL]||KAT_TXT.de).g);
@@ -8201,7 +8496,13 @@ function renderFolders(){
       /* ⚠ WER IN EINEM ORDNER LIEGT, STEHT NUR DORT. Seit Ordner und Kategorie
          getrennt sind, hat ein Ordner-Rezept BEIDES — ohne diesen Riegel stuende
          dasselbe Gericht im Baum zweimal, und das war genau Klaus' Befund. */
-      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)})),
+      recipes:R.filter(r=>!ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name),
+      /* ⚠ DIE ZAHL SAGT, WAS FEHLT (Klaus 2026-09-16: „oben 7, im Ordner 1").
+         Beide Zahlen waren richtig gerechnet — die Leiste zaehlt ALLE Rezepte
+         einer Kategorie, dieser Baum nur die, die in keinem Ordner liegen.
+         Der Unterschied stand nirgends und sah deshalb aus wie ein Fehler.
+         Er wird jetzt danebengeschrieben, statt die Doppelung zurueckzuholen. */
+      imOrdner:R.filter(r=>ordnerVonRezept(r)&&katVonRezept(r)===c.id&&r.name).length})),
     ...FD.map(f=>({id:'cfd_'+f.id,name:f.name,ico:f.ico,col:'#7a5840',
       recipes:R.filter(r=>(r.folder===String(f.id)||r.cat==='fld_'+f.id)&&r.name)}))
   ];
@@ -8215,7 +8516,7 @@ function renderFolders(){
         <div class="fld-ico-c" style="background:${g.col}22">${g.ico}</div>
         <div class="fld-info" onclick="event.stopPropagation();${navTarget}" style="cursor:pointer;flex:1">
           <div class="fld-name">${h(g.name)}</div>
-          <div class="fld-cnt">${g.recipes.length} ${T('bnRec')}</div>
+          <div class="fld-cnt">${g.recipes.length} ${T('bnRec')}${g.imOrdner?` · +${g.imOrdner} ${T('fldInOrdnern')}`:''}</div>
         </div>
         ${isFolder?`<button onclick="event.stopPropagation();deleteFolder('${fid}','${h(g.name)}')" style="background:transparent;border:none;color:var(--dim);font-size:1rem;cursor:pointer;padding:4px 6px;border-radius:6px" title="Ordner löschen">🗑</button>`:''}
         <div class="fld-chev" title="Aufklappen / Zuklappen">▼ aufklappen</div>
@@ -8627,6 +8928,7 @@ function rndCard(r){
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();spellCheckCard(${r.id})" title="${T('ttlSpell')}" style="background:var(--golds);border-color:var(--gold);color:var(--gold)">✨</button>`:''}
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();shareRecipeQR(${r.id})" title="${T('shareTtl')}" style="background:var(--teals);border-color:var(--teal);color:var(--teal)">📤</button>`:''}
           ${r.name?`<button class="ra ren" onclick="event.stopPropagation();showNutrition(${r.id})" title="${T('nutrTtl')}" style="background:var(--grns);border-color:var(--grn);color:var(--grn)">🥗</button>`:''}
+          ${r.name?`<button class="ra ren kat-zu-btn" onclick="event.stopPropagation();katZuPop(${r.id},this)" title="${T('katZuTtl')}" aria-label="${T('katZuTtl')}" style="background:var(--sand);border-color:var(--sand2);color:var(--br2)">🏷️</button>`:''}
           <button class="ra del" onclick="delRecipe(${r.id})" title="${T('ttlDelRec')}">🗑</button>
           ${(_undoStack[r.id]||[]).length>0?`<button class="ra" onclick="event.stopPropagation();undoRec(${r.id})" title="${T('undoTtl')}" style="background:var(--sand);border:1.5px solid var(--sand2);color:var(--br2)">↩ ${(_undoStack[r.id]||[]).length}</button>`:''}
         </div>`:''}
