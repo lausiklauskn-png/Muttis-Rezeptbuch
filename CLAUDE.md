@@ -663,6 +663,118 @@ nach").
 
 ---
 
+## 🔀 GANZE KATEGORIEN VERSCHIEBEN — Leiste und Ordner-Baum (Klaus 2026-09-16)
+
+Klaus mit Bild: *„Die Kategorien müssen sich per Drag and Drop verschieben
+lassen, sowohl in Rezepte als auch in den Ordnern. Also sind sie zugeklappt,
+müssen sich ganze Kategorien verschieben lassen."* Der Grund stand daneben:
+*„dass Sushi plötzlich zwischen den Getränken aufgetaucht ist. Also zwischen
+den Cocktails und den Mocktails."*
+
+**Der Weg:** eine Pille in der Reiter-Leiste oder der Anfasser links in der
+Gruppen-Kopfzeile des Ordner-Baums — **Maus ziehen, Finger lang drücken und
+ziehen**. Ein Strich zeigt, wohin es fällt; links/oben heißt davor,
+rechts/unten dahinter. Die Folge steht in `mrzcatord9` und überlebt das Neuladen.
+
+⚠ **Der Speicher-Schlüssel ist app-eigen** — Mein Rezeptbuch (`mrzcatord9m`) bleibt leer. Alle drei
+Apps liegen auf derselben `github.io`-Adresse; eine Probe besteht darauf.
+
+⚠ **Ein Ordner geht diesen Weg NICHT.** Ordner stehen in `FD` und haben ihre
+eigene Reihenfolge; beide in eine Liste zu schreiben hieße, zwei Ordnungen
+übereinanderzulegen. „Alle" ebenso wenig — das ist eine **Ansicht**, kein Thema.
+
+⚠ **Die Liste wird vollständig neu geschrieben, nicht ergänzt.** Eine Teil-Liste
+hätte Lücken: alle Nicht-Genannten sprängen ans Ende, und ein Zug hätte die
+ganze Ordnung umgeworfen. Eine Kategorie, die (noch) nicht darin steht, behält
+ihren Platz — gemessen, nicht behauptet.
+
+### ⚠ Vier echte Fehler, und KEINEN hat das Nachdenken gefunden
+
+| Was | Wie es sich zeigte |
+|---|---|
+| **`renderCatNav` verliert die Finger-Griffe** | `el.innerHTML` wirft die Pillen weg, samt ihrer `touchstart`-Anmeldung. `renderCatNav()` wird an einem Dutzend Stellen **allein** gerufen — auch von `katUmsortieren` selbst: **nach dem ersten Verschieben mit dem Finger ließ sich nichts mehr verschieben.** Der Maus-Weg blieb dabei grün, weil `draggable` im Markup steht |
+| **`.fld-grp-hd` gibt es nicht** — die Kopfzeile heißt `.fld-hdr` | der Rückfall `\|\|el` machte das Schattenbild zum **22 px breiten Anfasser**: man zog, ohne zu sehen WAS. Mein eigener Kommentar daneben hatte genau davor gewarnt |
+| **`katZiehEnde()` löscht `_katWohin`, bevor es gelesen wird** | in `pillDrop` **und** `fldGrpDrop`. „nach" fiel damit immer auf „vor" zurück — **die Richtung gab es gar nicht** |
+| **eine überflüssige Zeile, die wie ein Riegel aussah** | `katZiehMarkenWeg()` in `_tddEnd`: `_tddMove` räumt die Marken bei jeder Bewegung schon weg, und ein Treffer zeichnet ohnehin neu. *Ein Riegel, den keine Probe von seinem Fehlen unterscheiden kann, ist eine Behauptung* — er ist raus |
+
+### ⚠ Und FÜNF eigene Wächter waren dabei blind — alle von der Gegenprobe entlarvt
+
+Das ist der Befund dieses Durchgangs: **der Code stand nach wenigen Anläufen;
+fünfmal falsch war die Messung.** Gefunden hat sie kein Nachdenken, sondern der
+volle Lauf und das Nachstellen von Hand.
+
+| Wächter | warum er nichts maß |
+|---|---|
+| „ein ORDNER bekommt keinen Anfasser" | **es gab gar keinen Ordner.** `.some(…)` über eine leere Liste ist immer falsch. Jetzt wird der Ordner gestellt — und dass es ihn gibt, eigens gemessen |
+| „die Leiste verliert beim Neuzeichnen ihre Griffe" | vor der Messung lief `showSc`, und das meldet über `render()` die Griffe wieder an. Zuletzt wird jetzt `renderCatNav()` **allein** gerufen — genau so, wie `katUmsortieren` es tut |
+| „ein Strich zeigt im Baum, wohin es fällt" | `.fld-grp` trägt **schon** einen Schatten; „nicht `none`" ist dort immer wahr. Gemessen wird jetzt der **Unterschied** zur ungezogenen Gruppe |
+| „kein Strich bleibt stehen" | bei einem Treffer zeichnet `katUmsortieren` ohnehin neu. Gemessen wird jetzt das **Weiterziehen**, wo nur das Aufräumen in `_tddMove` greift |
+| „„Alle" ist nicht ziehbar" | hing an **einer Zahl** („genau eine Pille ohne Kennung"). Sobald ein Ordner dazukam, war sie zwei — rot, ohne dass eine Zusicherung gefallen wäre. *Eine Zahl in einer Prüfung ist kein Vertrag* |
+
+⚠ **Zwei der Gegenprobe-FÄLLE waren selbst falsch**, und beide sind bekannte
+Sorten: einer wies `out` neu zu — **`out` ist `const`**, also meldete er einen
+Absturz statt der Zusicherung; einer suchte „fa**e**llt", während die rote Zeile
+„fällt" trägt. *Eine Sabotage muss treffen, was der Wächter misst — und die rote
+Zeile muss den Namen der Zusicherung tragen.*
+
+### ⚠ Und der Finger-Wächter griff zuerst neben den Schirm
+
+Beim ersten Lauf stand die Leiste bei **`top −541`** (ein früherer Abschnitt
+hatte die Seite heruntergescrollt) und die letzte Pille bei **`left 1464`** von
+1280 — `elementFromPoint` gab dort `null` zurück, und der Wächter meldete „kein
+Strich", als wäre der Code kaputt. Die Ausgangslage wird jetzt **gesetzt statt
+vorgefunden**, die Griffe kommen aus den wirklich sichtbaren Pillen, und ein
+**Selbst-Riegel** daneben besteht darauf: liegen sie nicht auf dem Schirm, hat
+der ganze Abschnitt nichts gemessen. *Ein Fall, der nichts messen kann, sähe
+sonst wie eine bestandene Prüfung aus.*
+
+⚠ **BENANNTE GRENZE:** für „ein kurzer Tipp zieht NICHT" steht **kein**
+Gegenprobe-Fall. Der Riegel ist die Uhr selbst — ohne abgelaufenen Langdruck
+gibt es kein Schattenbild, und keine Sabotage an einer einzelnen Zeile kann
+eines im selben Tick erzeugen.
+
+## 🪣 DER SAMMEL-EIMER TRÄGT SEINEN EIGENEN NAMEN — auch beim Zuordnen (Klaus 2026-09-16)
+
+Klaus: *„und bei Kategorie zuordnen aus den Rezepten erscheint die Kategorie
+Sushi nicht."*
+
+**Sie erschien sehr wohl — nur unter zwei verschiedenen Namen.** Die Zeile im
+Zuordnen-Fenster nahm den fest verdrahteten Text `T('katZuOhne')` („ohne
+Kategorie"), während Leiste und Ordner-Baum `katBeschriftung(c)` lesen. Klaus
+hatte den Sammel-Eimer `__ohne` auf **„Sushi"** umbenannt — seine eigene
+Aufnahme des Umbenennen-Dialogs zeigt „Sushi" mit der Kennung `"__ohne"`.
+
+*Dieselbe Sorte wie „zwei Stellen zählten dieselbe Sache verschieden", nur am
+**Namen** statt an der Zahl.*
+
+⚠ **UND DER ZUSTAND BLEIBT DANEBEN STEHEN.** `__ohne` ist ein **Zustand**, kein
+Thema: wer ihn umbenennt, gibt **jedem** künftigen Rezept ohne Kategorie diesen
+Namen. Das steht jetzt als kleiner Hinweis (`.kzp-ohne-hin`) neben dem eigenen
+Namen — und **nur dann**, sonst wäre es Zierde statt Auskunft. Beide Richtungen
+sind bewacht.
+
+### Geprüft
+
+```bash
+node tests/smoke_kategorien.mjs           # echter Browser
+NUR_ANKER=1 bash tests/gegenprobe_kategorien.sh   # tote Anker in Sekunden
+bash tests/gegenprobe_kategorien.sh       # Wegwerf-Kopie (`python3 build.py`)
+```
+
+Zuletzt gemessen (2026-09-16, nach dem Umsortieren): **141 grün · 0 ROT** ·
+Gegenprobe **80 gefangen · 0 durchgerutscht · 0 aus falschem Grund · 0 tote
+Anker**. Beide Rückgabewerte **direkt** gelesen, nicht hinter einer Pipe; die
+Prüfsummen des Baums waren vor und nach dem Lauf gleich.
+
+⚠ **Die Zahl davor bleibt daneben stehen, weil sie die Funde gemacht hat:**
+derselbe Durchgang meldete zuerst **73 gefangen · 4 durchgerutscht · 3 aus
+falschem Grund**. Daraus kamen die fünf blinden Wächter und die zwei falschen
+Fälle oben. Nur die letzte Zahl zu nennen hieße, die Befunde durch ihre
+Reparatur zu ersetzen.
+
+---
+
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue

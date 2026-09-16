@@ -940,6 +940,428 @@ ok("das Abzeichen zaehlt eine Kategorie mit totem Ordner MIT", abzGeist==="1");
 ok("die Ordner-Zeile nennt die Zahl …", /\+\s*1/.test(ordZeile));
 ok("… und ein WORT daneben, nicht den Schluesselnamen", /in Ordnern/.test(ordZeile) && !/fldInOrdnern/.test(ordZeile));
 
+
+/* ══ 21 · GANZE KATEGORIEN UMSORTIEREN (Klaus 2026-09-16) ══
+   „Die Kategorien muessen sich per Drag and Drop verschieben lassen, sowohl in
+   Rezepte als auch in den Ordnern. Also sind sie zugeklappt, muessen sich ganze
+   Kategorien verschieben lassen." Der Grund war sein Befund, „dass Sushi
+   ploetzlich zwischen den Getraenken aufgetaucht ist, zwischen den Cocktails
+   und den Mocktails". */
+console.log("\n── 21 · Ganze Kategorien umsortieren ──");
+
+const zieh = await seite.evaluate(() => {
+  const sichOrd = CATS_ORD.slice(), sichFD = JSON.stringify(FD);
+  /* ⚠ OHNE EINEN ORDNER MISST „ein ORDNER dagegen nicht" NICHTS. Beim ersten
+     Lauf war `FD` leer; `.some(…)` ueber eine leere Liste ist immer falsch, und
+     die Sabotage „auch ein ORDNER bekommt den Anfasser" rutschte durch. Der
+     Ordner wird deshalb gestellt, und dass es ihn gibt, wird eigens gemessen. */
+  FD = [{ id:"sortordner", name:"Sortier-Ordner", ico:"📁" }];
+  CAT = "all"; render(); renderCatNav(); renderFolders();
+
+  /* Was man SIEHT, nicht was im Feld steht: die Pillen in ihrer Reihenfolge
+     auf dem Schirm. Eine Probe auf `catsAlle()` allein waere gruen, auch wenn
+     die Leiste eine andere Folge zeichnet. */
+  const leiste = () => [...document.querySelectorAll('#catNav .cpill[data-kid]')]
+    .map(e => e.dataset.kid);
+  const baum = () => [...document.querySelectorAll('#fldTree .fld-grp')]
+    .map(g => g.dataset.gid || '').filter(g => g.startsWith('cat_')).map(g => g.slice(4));
+
+  const vorher = leiste();
+  const griffe = [...document.querySelectorAll('#catNav .cpill[data-kid][draggable="true"]')].length;
+  const alleMitKennung = vorher.length;
+  /* „Alle" ist kein Thema, sondern eine Ansicht — es traegt mit Absicht KEINE
+     Kennung und laesst sich nicht verschieben. Dasselbe gilt fuer die
+     ORDNER-Pillen: Ordner haben ihre eigene Reihenfolge.
+     ⚠ Hier stand zuerst „genau eine Pille ohne Kennung". Das war eine ZAHL und
+     kein Vertrag — sobald ein Ordner dazukam, war sie zwei, und der Waechter
+     wurde rot, ohne dass eine Zusicherung gefallen waere. */
+  const alleCpills = [...document.querySelectorAll('#catNav .cpill')];
+  const allePille = alleCpills.find(e => /setCAT\('all'\)/.test(e.getAttribute('onclick')||''));
+  const alleZiehbar = !!allePille && allePille.getAttribute('draggable') === 'true';
+  const ordnerPillenZiehbar = alleCpills
+    .filter(e => /setCAT\('fld_/.test(e.getAttribute('onclick')||''))
+    .some(e => e.getAttribute('draggable') === 'true');
+  const alleOhneKennung = alleCpills.filter(e => !e.dataset.kid).length;
+
+  /* Der Anfasser im Ordner-Baum: an Kategorie-Gruppen ja, an ORDNERN nein —
+     ein Ordner hat seine eigene Reihenfolge und geht diesen Weg nicht. */
+  const hdlKat = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .filter(g => (g.dataset.gid||'').startsWith('cat_'))
+    .every(g => !!g.querySelector('.fld-grp-hdl[data-kid]'));
+  const ordnerGruppen = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .filter(g => (g.dataset.gid||'').startsWith('cfd_'));
+  const hdlOrdner = ordnerGruppen.some(g => !!g.querySelector('.fld-grp-hdl[data-kid]'));
+
+  /* Das Letzte VOR das Erste ziehen */
+  const letzte = vorher[vorher.length-1], erste = vorher[0];
+  katUmsortieren(letzte, erste, 'vor');
+  const nachVor = leiste();
+  const baumVor = baum();
+
+  /* … und wieder ans Ende, diesmal mit „nach" */
+  katUmsortieren(letzte, nachVor[nachVor.length-1], 'nach');
+  const nachNach = leiste();
+
+  /* Eine Kategorie, die in der gespeicherten Folge NICHT steht, darf nicht
+     verschwinden — sonst waere jede neu angelegte weg. */
+  const fremdRein = katAnlegen('Ganz-Neu-Sortier');
+  renderCatNav();
+  const neueDa = leiste().includes(fremdRein);
+  CATS_NEU = CATS_NEU.filter(c => c.id !== fremdRein); svCatsNeu();
+
+  const ergebnis = {
+    griffe, alleMitKennung, alleOhneKennung, hdlKat, hdlOrdner,
+    vorher, nachVor, nachNach, baumVor, neueDa, alleDa: !!allePille,
+    alleZiehbar, ordnerPillenZiehbar,
+    ordGespeichert: (localStorage.getItem('mrzcatord9')||''),
+    ordAndereApp: (localStorage.getItem('mrzcatord9m')||''),
+    ordnerDa: ordnerGruppen.length,
+  };
+  CATS_ORD = sichOrd; svCatsOrd(); FD = JSON.parse(sichFD); renderCatNav(); renderFolders();
+  return ergebnis;
+});
+
+ok("jede Kategorie-Pille traegt eine Kennung und ist ziehbar",
+   zieh.griffe > 3 && zieh.griffe === zieh.alleMitKennung);
+ok("… „Alle“ nicht — es ist eine Ansicht, kein Thema",
+   zieh.alleDa === true && zieh.alleZiehbar === false && zieh.alleOhneKennung >= 1);
+ok("… und eine ORDNER-Pille auch nicht — Ordner haben ihre eigene Reihenfolge",
+   zieh.ordnerPillenZiehbar === false);
+ok("jede Kategorie-Gruppe im Ordner-Baum hat einen Anfasser", zieh.hdlKat === true);
+/* Der Selbst-Riegel: ohne einen Ordner im Baum misst die Zeile darunter nichts. */
+ok("… und es gibt überhaupt einen Ordner zum Vergleichen", zieh.ordnerDa >= 1);
+ok("… ein ORDNER dagegen nicht", zieh.hdlOrdner === false);
+
+/* ⚠ GEMESSEN WIRD DIE BEWEGUNG, NICHT EINE GENAGELTE FOLGE. „Sushi steht an
+   Stelle 2" waere blind, sobald eine Kategorie dazukommt — und eine Zahl in
+   einer Pruefung ist kein Vertrag. */
+const letzteVor = zieh.vorher[zieh.vorher.length-1];
+ok("„vor“ setzt die gezogene Kategorie wirklich an den Anfang",
+   zieh.nachVor[0] === letzteVor && zieh.nachVor.length === zieh.vorher.length);
+ok("… und keine geht dabei verloren",
+   [...zieh.vorher].sort().join("|") === [...zieh.nachVor].sort().join("|"));
+ok("„nach“ setzt sie wieder ans Ende",
+   zieh.nachNach[zieh.nachNach.length-1] === letzteVor);
+
+/* ⚠ DIE ZWEI ANSICHTEN MUESSEN DIESELBE FOLGE ZEIGEN. Klaus' ganzer Befund war
+   eine Kategorie an der falschen Stelle — stuende sie im Baum anders als in der
+   Leiste, haette er das Problem zweimal. */
+ok("der Ordner-Baum zeigt dieselbe Folge wie die Leiste",
+   zieh.baumVor.join("|") === zieh.nachVor.filter(k => zieh.baumVor.includes(k)).join("|")
+   && zieh.baumVor.length > 1);
+
+ok("die Folge wird gespeichert", zieh.ordGespeichert.includes(letzteVor));
+/* ⚠ GETEILTE ADRESSE: beide Rezeptbuecher liegen auf derselben github.io. */
+ok("… unter dem eigenen Schluessel, der des anderen Buches bleibt leer",
+   zieh.ordAndereApp === "");
+ok("eine Kategorie ohne Eintrag in der Folge geht nicht verloren", zieh.neueDa === true);
+
+/* Und sie ueberlebt ein Neuladen — sonst waere das Sortieren eine Geste. */
+const nachLaden = await seite.evaluate(async () => {
+  const sichOrd = CATS_ORD.slice();
+  const ids = catsAlle().map(c => String(c.id));
+  katUmsortieren(ids[ids.length-1], ids[0], 'vor');
+  const gewollt = catsAlle().map(c => String(c.id));
+  const roh = localStorage.getItem('mrzcatord9');
+  /* laden wie beim Start: den Speicher noch einmal lesen */
+  CATS_ORD = []; ladeCatsOrd();
+  const nachher = catsAlle().map(c => String(c.id));
+  CATS_ORD = sichOrd; svCatsOrd();
+  return { gewollt, nachher, roh: !!roh };
+});
+ok("die Folge ueberlebt ein Neuladen",
+   nachLaden.roh && nachLaden.gewollt.join("|") === nachLaden.nachher.join("|"));
+
+/* ⚠ UND DER MAUS-WEG WIRD GANZ GEFAHREN, nicht nur `katUmsortieren` gerufen.
+   Genau dazwischen lag ein Fehler: `pillDrop` und `fldGrpDrop` riefen erst
+   `katZiehEnde()` — das `_katWohin` auf null setzt — und lasen es DANACH.
+   „nach" fiel damit immer auf „vor" zurueck, und ein Waechter, der nur die
+   Funktion ruft, sieht davon nichts. */
+const maus = await seite.evaluate(async () => {
+  const sichOrd = CATS_ORD.slice();
+  const warte = ms => new Promise(r => setTimeout(r, ms));
+  showSc('recipes'); render();
+  await warte(30); window.scrollTo(0,0); await warte(30);
+  const leiste = () => [...document.querySelectorAll('#catNav .cpill[data-kid]')].map(e => e.dataset.kid);
+  const pillen = [...document.querySelectorAll('#catNav .cpill[data-kid]')];
+  if (pillen.length < 3) { return { zuWenig: pillen.length }; }
+  const von = pillen[0], ziel = pillen[pillen.length-1];
+  const rZ = ziel.getBoundingClientRect();
+  const vorher = leiste(), vonId = von.dataset.kid, zielId = ziel.dataset.kid;
+  const zieh = (art, el, x, y) => el.dispatchEvent(new DragEvent(art,
+    { bubbles:true, cancelable:true, clientX:x, clientY:y }));
+  /* RECHTE Haelfte des Ziels = „nach" — genau die Richtung, die verloren ging. */
+  zieh('dragstart', von, 0, 0);
+  await warte(0);
+  zieh('dragover', ziel, rZ.left+rZ.width*0.8, rZ.top+rZ.height/2);
+  zieh('drop',     ziel, rZ.left+rZ.width*0.8, rZ.top+rZ.height/2);
+  const nachher = leiste();
+  const ergebnis = { zuWenig:0, vorher, nachher, vonId, zielId };
+  CATS_ORD = sichOrd; svCatsOrd(); renderCatNav(); renderFolders();
+  return ergebnis;
+});
+
+ok("der Maus-Weg hat überhaupt genug Pillen zum Messen", maus.zuWenig === 0);
+/* ⚠ GEMESSEN WIRD „NACH", NICHT NUR „ES HAT SICH ETWAS BEWEGT". Mit dem
+   Fehler landete die Kategorie VOR dem Ziel — und das sah aus wie ein Treffer. */
+ok("auf der rechten Hälfte fallen gelassen landet sie HINTER dem Ziel",
+   Array.isArray(maus.nachher)
+   && maus.nachher.indexOf(maus.vonId) === maus.nachher.indexOf(maus.zielId) + 1
+   && maus.nachher.length === maus.vorher.length);
+
+/* ⚠ UND DER FINGER GEHT EINEN ANDEREN WEG ALS DIE MAUS. `draggable="true"` ist
+   eine Maus-Sache; am Tablet loest es nichts aus. Ein Waechter, der nur das
+   Attribut misst, waere gruen, waehrend Klaus nichts verschieben kann — und
+   Klaus arbeitet am Tablet. Gemessen wird deshalb der GRIFF: Langdruck,
+   ziehen, loslassen, und danach die Folge auf dem Schirm. */
+const finger = await seite.evaluate(async () => {
+  const sichOrd = CATS_ORD.slice();
+  CAT = "all"; render(); renderCatNav();
+  const warte = ms => new Promise(r => setTimeout(r, ms));
+  const leiste = () => [...document.querySelectorAll('#catNav .cpill[data-kid]')]
+    .map(e => e.dataset.kid);
+
+  /* ⚠ EIN GRIFF NEBEN DEN SCHIRM MISST NICHTS. Beim ersten Lauf stand die
+     Leiste bei `top −541` (die Seite war von einem frueheren Abschnitt
+     heruntergescrollt) und die letzte Pille bei `left 1464` von 1280 — 
+     `elementFromPoint` gab dort `null` zurueck, und der Waechter meldete
+     „kein Strich", als waere der Code kaputt. Die Seite wird deshalb
+     zurueckgesetzt, die Griffe werden aus den WIRKLICH sichtbaren Pillen
+     gewaehlt, und die Lage wird unten eigens geprueft: ein Fall, der nichts
+     messen kann, saehe sonst wie eine bestandene Pruefung aus.
+     Dieselbe Falle wie in der Mycel-Karte, nur an einer anderen Tuer. */
+  /* ⚠ DIE AUSGANGSLAGE WIRD GESETZT, NICHT VORGEFUNDEN. Beim zweiten Lauf
+     stand die Probe auf einem anderen Bildschirm, die Leiste war gar nicht
+     gezeichnet — und derselbe Code war einmal gruen und einmal rot. Eine
+     Pruefung, deren Ausgangslage von dem abhaengt, was ein frueherer
+     Abschnitt hinterlassen hat, misst irgendwann etwas anderes als das, was
+     sie zu messen glaubt. */
+  showSc('recipes');
+  await warte(30);
+  /* ⚠ UND ZULETZT WIRD `renderCatNav` ALLEIN GERUFEN — genau so, wie
+     `katUmsortieren` es tut. Vorher lief davor noch `showSc`, das ueber
+     `render()` die Griffe wieder anmeldet; die Sabotage „die Leiste verliert
+     beim Neuzeichnen ihre Finger-Griffe" rutschte deshalb durch. */
+  renderCatNav();
+  window.scrollTo(0,0);
+  const nav = document.getElementById('catNav');
+  if(nav)nav.scrollLeft = 0;
+  await warte(30);
+  const sichtbar = e => { const r = e.getBoundingClientRect();
+    return r.width>0 && r.left>=0 && r.right<=innerWidth && r.top>=0 && r.bottom<=innerHeight; };
+  const pillen = [...document.querySelectorAll('#catNav .cpill[data-kid]')].filter(sichtbar);
+  if(pillen.length < 2) return { zuWenig: pillen.length };
+  const von = pillen[pillen.length-1], nach = pillen[0];
+  const rV = von.getBoundingClientRect(), rN = nach.getBoundingClientRect();
+  /* ⚠ VOR dem Griff abgelesen. Danach hat `renderCatNav` die Pillen ersetzt —
+     die alten Knoten haengen nicht mehr im Dokument und sind 0 px breit, der
+     Selbst-Riegel meldete deshalb „nicht auf dem Schirm", obwohl er es war. */
+  const aufDemSchirm = sichtbar(von) && sichtbar(nach);
+  const vorher = leiste();
+
+  const tippe = (art, ziel, x, y) => {
+    const t = new Touch({ identifier:1, target:ziel, clientX:x, clientY:y });
+    ziel.dispatchEvent(new TouchEvent(art, {
+      bubbles:true, cancelable:true, touches: art==='touchend'?[]:[t],
+      targetTouches: art==='touchend'?[]:[t], changedTouches:[t],
+    }));
+  };
+  const mitteV = [rV.left+rV.width/2, rV.top+rV.height/2];
+  /* LINKE Haelfte des Ziels = „vor" — genau die Achse, die die Leiste braucht. */
+  const linksN = [rN.left+rN.width*0.2, rN.top+rN.height/2];
+
+  tippe('touchstart', von, mitteV[0], mitteV[1]);
+  /* Ein kurzer Tipp darf NICHT ziehen — er wechselt die Kategorie. */
+  const zuFrueh = (()=>{ tippe('touchmove', document, mitteV[0]+30, mitteV[1]); 
+                         return !!document.getElementById('tdd-ghost'); })();
+  tippe('touchend', document, mitteV[0]+30, mitteV[1]);
+
+  /* … und jetzt derselbe Griff mit Langdruck. */
+  tippe('touchstart', von, mitteV[0], mitteV[1]);
+  await warte(360);
+  tippe('touchmove', document, mitteV[0], mitteV[1]+4);   // loest das Ziehen aus
+  const schattenDa = !!document.getElementById('tdd-ghost');
+  tippe('touchmove', document, linksN[0], linksN[1]);     // ueber das Ziel
+  /* ⚠ GEMESSEN WIRD DER STRICH, NICHT DIE KLASSE. „Es traegt `kat-vor`" waere
+     auch dann gruen, wenn die CSS-Regel fehlt und man nichts sieht — dieselbe
+     Sorte wie „ein Waechter auf die Lage misst nicht die Sichtbarkeit"
+     (2026-09-15). */
+  const markeEl = document.querySelector('#catNav .cpill.kat-vor');
+  const markeDa = !!markeEl && getComputedStyle(markeEl).boxShadow !== 'none';
+  tippe('touchend', document, linksN[0], linksN[1]);
+  await warte(0);
+  const nachher = leiste();
+  const schattenWeg = !document.getElementById('tdd-ghost');
+
+  /* ⚠ UND JETZT DERSELBE GRIFF INS LEERE. Faellt die Kategorie auf ein Ziel,
+     zeichnet `katUmsortieren` die Leiste ohnehin neu — der Strich waere auch
+     ohne jedes Aufraeumen weg, und der Waechter war blind (die Gegenprobe hat
+     es gemeldet). Gemessen wird deshalb der Abwurf auf NICHTS: dort raeumt nur
+     `katZiehMarkenWeg()` auf, und nichts zeichnet neu. */
+  const pillen2 = [...document.querySelectorAll('#catNav .cpill[data-kid]')].filter(sichtbar);
+  let markeWeg = null;
+  if(pillen2.length >= 2){
+    const v2 = pillen2[pillen2.length-1], z2 = pillen2[0];
+    const r2 = z2.getBoundingClientRect(), rv2 = v2.getBoundingClientRect();
+    tippe('touchstart', v2, rv2.left+rv2.width/2, rv2.top+rv2.height/2);
+    await warte(360);
+    tippe('touchmove', document, rv2.left+rv2.width/2, rv2.top+rv2.height/2+4);
+    tippe('touchmove', document, r2.left+r2.width*0.2, r2.top+r2.height/2);
+    const markeVorher = !!document.querySelector('.cpill.kat-vor,.cpill.kat-nach');
+    /* … und dann weit weg, wo kein Ziel liegt */
+    tippe('touchmove', document, 2, innerHeight-2);
+    tippe('touchend', document, 2, innerHeight-2);
+    await warte(0);
+    markeWeg = markeVorher && !document.querySelector('.kat-vor,.kat-nach');
+  }
+
+  const ergebnis = { vorher, nachher, zuFrueh, schattenDa, markeDa, schattenWeg, markeWeg,
+                     vonId: von.dataset.kid, zuWenig: 0,
+                     aufDemSchirm, griffe: pillen.length };
+  CATS_ORD = sichOrd; svCatsOrd(); renderCatNav(); renderFolders();
+  return ergebnis;
+});
+
+/* Der Selbst-Riegel ZUERST: liegt gar nichts auf dem Schirm, hat der Rest
+   dieses Abschnitts nichts gemessen — und das gehoert gesagt, nicht verschwiegen. */
+/* ⚠ UND DER ANFASSER IM ORDNER-BAUM IST EIN ZWEITER GRIFF, kein Abklatsch des
+   ersten. Klaus hat ihn ausdruecklich bestellt: „sowohl in Rezepte als auch in
+   den Ordnern. Also sind sie zugeklappt, muessen sich ganze Kategorien
+   verschieben lassen." Ein Waechter nur auf die Leiste haette den halben
+   Auftrag gemessen. */
+const fingerBaum = await seite.evaluate(async () => {
+  const sichOrd = CATS_ORD.slice();
+  const warte = ms => new Promise(r => setTimeout(r, ms));
+  showSc('folders'); renderFolders();
+  await warte(30);
+  window.scrollTo(0,0);
+  await warte(30);
+  const sichtbar = e => { const r = e.getBoundingClientRect();
+    return r.width>0 && r.left>=0 && r.right<=innerWidth && r.top>=0 && r.bottom<=innerHeight; };
+  const folge = () => [...document.querySelectorAll('#fldTree .fld-grp')]
+    .map(g => g.dataset.gid||'').filter(g => g.startsWith('cat_')).map(g => g.slice(4));
+  const gruppen = [...document.querySelectorAll('#fldTree .fld-grp')]
+    .filter(g => (g.dataset.gid||'').startsWith('cat_') && sichtbar(g));
+  if (gruppen.length < 2) { CATS_ORD = sichOrd; svCatsOrd(); return { zuWenig: gruppen.length }; }
+  const vonG = gruppen[0], nachG = gruppen[1];
+  const hdl = vonG.querySelector('.fld-grp-hdl[data-kid]');
+  if (!hdl) { CATS_ORD = sichOrd; svCatsOrd(); return { keinAnfasser: true }; }
+  const rH = hdl.getBoundingClientRect(), rN = nachG.getBoundingClientRect();
+  const rKopf = vonG.querySelector('.fld-hdr').getBoundingClientRect();
+  const vorher = folge(), vonId = hdl.dataset.kid;
+  const schattenOhne = getComputedStyle(nachG).boxShadow;
+
+  const tippe = (art, ziel, x, y) => {
+    const t = new Touch({ identifier:1, target:ziel, clientX:x, clientY:y });
+    ziel.dispatchEvent(new TouchEvent(art, { bubbles:true, cancelable:true,
+      touches: art==='touchend'?[]:[t], targetTouches: art==='touchend'?[]:[t], changedTouches:[t] }));
+  };
+  tippe('touchstart', hdl, rH.left+rH.width/2, rH.top+rH.height/2);
+  await warte(360);
+  tippe('touchmove', document, rH.left+rH.width/2, rH.top+rH.height/2+4);
+  const g = document.getElementById('tdd-ghost');
+  /* ⚠ GEMESSEN WIRD, WAS MAN SIEHT. Der erste Bau griff mit einem toten
+     Selektor nach der Kopfzeile und hob deshalb den 22 px breiten ANFASSER an:
+     man zog, ohne zu sehen was. „Ein Schattenbild ist da" waere dafuer blind. */
+  const schattenBreite = g ? Math.round(g.getBoundingClientRect().width) : 0;
+  /* UNTERE Haelfte des Ziels = „nach" — im Baum liegen die Gruppen
+     untereinander, die Achse ist eine andere als in der Leiste. */
+  const untenN = [rN.left+rN.width/2, rN.top+rN.height*0.8];
+  tippe('touchmove', document, untenN[0], untenN[1]);
+  /* ⚠ `.fld-grp` TRAEGT SCHON EINEN SCHATTEN. „nicht none" ist deshalb immer
+     wahr, und die Sabotage an der Marken-Regel rutschte durch. Gemessen wird
+     der UNTERSCHIED zur ungezogenen Gruppe. */
+  const markeEl = document.querySelector('#fldTree .fld-grp.kat-nach');
+  const markeDa = !!markeEl && getComputedStyle(markeEl).boxShadow !== schattenOhne;
+  tippe('touchend', document, untenN[0], untenN[1]);
+  await warte(0);
+  const nachher = folge();
+  const ergebnis = { zuWenig:0, keinAnfasser:false, vorher, nachher, vonId,
+                     schattenBreite, kopfBreite: Math.round(rKopf.width), markeDa };
+  CATS_ORD = sichOrd; svCatsOrd(); renderCatNav(); renderFolders();
+  showSc('recipes');
+  return ergebnis;
+});
+
+ok("auch im Ordner-Baum hebt ein Langdruck die Kategorie an",
+   fingerBaum.zuWenig === 0 && fingerBaum.keinAnfasser === false && fingerBaum.schattenBreite > 0);
+ok("… und das Schattenbild zeigt die ganze Zeile, nicht nur den Anfasser",
+   fingerBaum.schattenBreite > 0 && fingerBaum.kopfBreite > 0
+   && fingerBaum.schattenBreite >= fingerBaum.kopfBreite * 0.9);
+ok("… ein Strich zeigt auch dort, wohin es fällt", fingerBaum.markeDa === true);
+ok("… und das Loslassen sortiert den Baum wirklich um",
+   Array.isArray(fingerBaum.nachher) && fingerBaum.nachher[1] === fingerBaum.vonId
+   && fingerBaum.nachher.length === fingerBaum.vorher.length);
+
+ok("beide Griffe liegen wirklich auf dem Schirm — sonst misst der Rest nichts",
+   finger.zuWenig === 0 && finger.aufDemSchirm === true && finger.griffe >= 2);
+ok("ein kurzer Tipp zieht NICHT — er wechselt die Kategorie", finger.zuFrueh === false);
+ok("ein Langdruck hebt die Pille an (Schattenbild)", finger.schattenDa === true);
+ok("… über dem Ziel zeigt ein Strich, wohin es fällt", finger.markeDa === true);
+ok("… und das Loslassen sortiert wirklich um",
+   finger.nachher[0] === finger.vonId && finger.nachher.length === finger.vorher.length);
+ok("… danach ist das Schattenbild weg", finger.schattenWeg === true);
+ok("… und kein Strich bleibt stehen", finger.markeWeg === true);
+
+/* ══ 22 · DER SAMMEL-EIMER TRAEGT SEINEN EIGENEN NAMEN (Klaus 2026-09-16) ══
+   „und bei Kategorie zuordnen aus den Rezepten erscheint die Kategorie Sushi
+   nicht." Sie erschien sehr wohl — nur unter dem fest verdrahteten Text
+   „ohne Kategorie", waehrend Leiste und Ordner-Baum den Namen zeigten, den er
+   selbst vergeben hatte. */
+console.log("\n── 22 · Der Sammel-Eimer trägt seinen eigenen Namen ──");
+
+const eimer = await seite.evaluate(async () => {
+  const tick = () => new Promise(r => setTimeout(r, 0));
+  const sichR = JSON.stringify(R), sichE = JSON.parse(JSON.stringify(CATS_EIGEN));
+  R = [{ id:77, name:"Eimer-Probe", cat:"", shut:true, ings:[], steps:[] }];
+  CAT = "all"; render(); renderCatNav();
+
+  /* ZUERST ohne eigenen Namen — die Gegenrichtung. Ohne sie waere der Waechter
+     auch dann gruen, wenn der Hinweis IMMER dastuende. */
+  CATS_EIGEN = {}; svCatsEigen();
+  document.querySelector('.rcard-acts .kat-zu-btn').click();
+  await tick();
+  const zOhne = document.querySelector('#katZuPop .kzp-ohne');
+  const textOhne = zOhne ? zOhne.textContent.trim() : null;
+  const hinweisOhne = !!(zOhne && zOhne.querySelector('.kzp-ohne-hin'));
+  document.getElementById('katZuPop')?.remove();
+
+  /* … und jetzt mit Klaus' Umbenennung. */
+  CATS_EIGEN = { [KAT_OHNE]: { name:"Sushi", ico:"🍣" } }; svCatsEigen();
+  render(); renderCatNav();
+  document.querySelector('.rcard-acts .kat-zu-btn').click();
+  await tick();
+  const zMit = document.querySelector('#katZuPop .kzp-ohne');
+  const textMit = zMit ? zMit.textContent.trim() : null;
+  const hinEl = zMit ? zMit.querySelector('.kzp-ohne-hin') : null;
+  const hinweisText = hinEl ? hinEl.textContent.trim() : null;
+  const hinweisSichtbar = !!(hinEl && hinEl.getClientRects().length > 0);
+  /* Der Name in der LEISTE — beide muessen denselben zeigen. */
+  const pilleOhne = [...document.querySelectorAll('#catNav .cpill[data-kid]')]
+    .find(e => e.dataset.kid === KAT_OHNE);
+  const textLeiste = pilleOhne ? pilleOhne.textContent.trim() : null;
+  document.getElementById('katZuPop')?.remove();
+
+  R = JSON.parse(sichR); CATS_EIGEN = sichE; svCatsEigen(); render(); renderCatNav();
+  return { textOhne, hinweisOhne, textMit, hinweisText, hinweisSichtbar, textLeiste };
+});
+
+ok("die Zeile beim Zuordnen zeigt den eigenen Namen des Sammel-Eimers",
+   !!eimer.textMit && /Sushi/.test(eimer.textMit));
+/* ⚠ EINE KENNUNG IST KEIN NAME, UND ZWEI STELLEN DUERFEN IHN NICHT VERSCHIEDEN
+   NENNEN — genau das war Klaus' Befund. Gemessen wird die UEBEREINSTIMMUNG. */
+ok("… denselben, den die Leiste zeigt",
+   !!eimer.textLeiste && /Sushi/.test(eimer.textLeiste));
+/* ⚠ UND DER ZUSTAND BLEIBT DANEBEN STEHEN. `__ohne` ist ein Zustand, kein
+   Thema: wer ihn umbenennt, gibt JEDEM kuenftigen Rezept ohne Kategorie diesen
+   Namen. Das gehoert sichtbar. */
+ok("… und der Zustand steht als Hinweis daneben",
+   eimer.hinweisSichtbar && /ohne Kategorie/i.test(eimer.hinweisText||""));
+/* Die Gegenrichtung: ohne eigenen Namen gibt es nichts danebenzuschreiben. */
+ok("ohne eigenen Namen steht kein Hinweis daneben", eimer.hinweisOhne === false);
+ok("… und die Zeile heisst dann schlicht „ohne Kategorie“",
+   /ohne Kategorie/i.test(eimer.textOhne||""));
+
 await browser.close(); server.close();
 console.log(`\n${gruen} grün · ${rot} ROT`);
 process.exitCode = rot ? 1 : 0;   // kein process.exit(): es verwirft den stdout-Puffer
