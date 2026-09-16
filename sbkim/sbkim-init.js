@@ -85,8 +85,33 @@
       });
     });
 
+    /* ── Die eigene Wortkarte dieser App (Umzug 2026-09-16) ──────────────
+     * SIE STAND BIS HEUTE IN DER MODUL-KOPIE `sbkim/15_membran.js` — also in
+     * einer byte-1:1-Datei, die "kopieren, nicht klonen" gar nicht zu ändern
+     * erlaubt. Das war echte, nützliche Funktion an der falschen Stelle: das
+     * nächste Nachziehen des Kanons hätte sie LAUTLOS geloescht.
+     *
+     * Seit dem 2026-08-14 traegt der Kanon die Mechanik selbst
+     * (`queryInclusion`, aus BookLedgerPro hochgezogen) — mit der
+     * ausdruecklichen Auflage: die MECHANIK gehoert in den Kanon, die
+     * FACHWORTE bleiben bei der App, die sie kennt. Genau das ist hier
+     * geschehen; der Inhalt der Karte ist Zeichen fuer Zeichen derselbe.
+     *
+     * Vorgabe im Kanon ist `null` = aus. Wer sie hier nicht uebergibt,
+     * bekommt den reinen Cosinus-Pfad wie vor dem 2026-07-02. */
+    const MR_QUERY_SYNONYMS = {
+    "torte": ["kuchen"], "kuchen": ["torte", "gebäck"], "gebäck": ["kuchen"],
+    "plätzchen": ["keks"], "keks": ["plätzchen", "plaetzchen"],
+    "vorspeise": ["appetizer"], "hauptgericht": ["hauptspeise"],
+    "beilage": ["side"], "nachtisch": ["dessert"], "dessert": ["nachtisch", "nachspeise"],
+    "suppe": ["eintopf"], "eintopf": ["suppe"],
+    "vegetarisch": ["fleischlos"], "fleischlos": ["vegetarisch"],
+    "getränk": ["drink"], "drink": ["getränk", "getraenk"],
+    };
+
     await SbkimMembrane.init({
       allowedOrigins: ["https://lausiklauskn-png.github.io"],
+      queryInclusion: { synonyms: MR_QUERY_SYNONYMS },
     });
     SbkimSiegel.init({
       badgeSelector: "#sbkim-siegel-badge",
