@@ -20,7 +20,7 @@ P=tests/smoke_herkunft.mjs
 gefangen=0; durch=0; falsch=0; tot=0
 
 python3 build.py >/dev/null 2>&1
-if ! node "$P" 2>&1 | grep -q "0 ROT"; then
+if ! node "$P" 2>&1 | grep -qE "^[0-9]+ grün · 0 ROT$"; then
   echo "✗ ABBRUCH: die Probe ist schon OHNE Eingriff rot — kein Fall würde etwas messen."; exit 2
 fi
 echo "Ausgangslage grün."; echo
