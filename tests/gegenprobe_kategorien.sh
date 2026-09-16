@@ -328,6 +328,100 @@ fall "ein benutzter Schluessel fehlt ganz in LANGS" "sind in LANGS.de vorhanden"
 fall "der Ordner-Baum zieht nach dem Zuordnen nicht nach" "steht es in SEINER Kategorie" \
 "  sv();render();renderCatNav();renderFolders();badge();@@@  sv();render();badge();"
 
+# ── 21 · Ganze Kategorien umsortieren ──
+fall "die gespeicherte Folge wird gar nicht angewandt" "setzt die gezogene Kategorie wirklich an den Anfang" \
+"  if(CATS_ORD&&CATS_ORD.length){@@@  if(false){"
+
+fall "die Folge wird nicht gespeichert" "ueberlebt ein Neuladen" \
+"  CATS_ORD=ids;svCatsOrd();@@@  CATS_ORD=ids;"
+
+# ⚠ NICHT `out=…` — `out` ist `const`, und eine Sabotage, die das Programm
+#   unlauffaehig macht, meldet einen Absturz statt der Zusicherung.
+fall "eine Kategorie ohne Eintrag in der Folge faellt heraus" "geht nicht verloren" \
+"  out.sort((a,b)=>{@@@  for(let z=out.length-1;z>=0;z--)if(pos[String(out[z].id)]===undefined)out.splice(z,1);
+  out.sort((a,b)=>{"
+
+fall "der Speicher-Schluessel ist der des ANDEREN Buches" "des anderen Buches bleibt leer" \
+"CATS_ORD_KEY='mrzcatord9'@@@CATS_ORD_KEY='mrzcatord9m'"
+
+fall "die Pillen sind nicht mehr ziehbar" "traegt eine Kennung und ist ziehbar" \
+'draggable="true" data-kid="${c.id}"@@@data-kid="${c.id}"'
+
+fall "auch ein ORDNER bekommt den Kategorie-Anfasser" "ein ORDNER dagegen nicht" \
+"        \${isFolder?'':\`<span class=\"fld-grp-hdl\"@@@        \${false?'':\`<span class=\"fld-grp-hdl\""
+
+# ── Der Finger geht einen anderen Weg als die Maus ──
+fall "die Griffe bekommen gar keinen Finger-Weg" "hebt die Pille an" \
+"'.fld-grp-hdl[data-kid],.cpill[data-kid]'@@@'.fld-grp-hdl[data-kid-aus],.cpill[data-kid-aus]'"
+
+# ⚠ GENAU DER FEHLER, DEN DER FINGER-WAECHTER GEFUNDEN HAT: `renderCatNav`
+#   ersetzt die Pillen und damit ihre touchstart-Anmeldung. Der Maus-Weg blieb
+#   dabei gruen, weil `draggable` im Markup steht.
+fall "die Leiste verliert beim Neuzeichnen ihre Finger-Griffe" "hebt die Pille an" \
+"  if(typeof setupTouchDrag==='function')setupTouchDrag();@@@"
+
+fall "ueber dem Ziel erscheint kein Strich" "zeigt ein Strich, wohin" \
+"      zpill.classList.add('kat-'+wohin);@@@"
+
+fall "der Strich ist da, aber unsichtbar" "zeigt ein Strich, wohin" \
+".cpill.kat-vor{box-shadow:inset 3px 0 0@@@.cpill.kat-vor{box-shadow:none;x-inset:inset 3px 0 0"
+
+fall "das Loslassen sortiert nicht um" "sortiert wirklich um" \
+"      if(zid)katUmsortieren(vonId,zid,wohin);@@@      if(zid){}"
+
+# ⚠ GEMESSEN WIRD DIE STELLE, DIE DIE ZUSICHERUNG WIRKLICH TRAEGT.
+#   Der erste Anlauf sabotierte ein `katZiehMarkenWeg()` in `_tddEnd` — und
+#   rutschte durch, weil `_tddMove` die Marken ohnehin bei jeder Bewegung
+#   wegraeumt. Die Zeile war redundant und ist raus.
+fall "beim Weiterziehen bleibt der alte Strich stehen" "kein Strich bleibt stehen" \
+"  if(_tdd.type==='kat'){
+    katZiehMarkenWeg();@@@  if(_tdd.type==='kat'){"
+
+# ⚠ GENAU DER FEHLER, DEN DER MAUS-WAECHTER GEFUNDEN HAT: `katZiehEnde()`
+#   setzt `_katWohin` auf null, und der Aufruf danach las den Rueckfall.
+#   „nach" gab es damit gar nicht — von Hand nachgestellt, genau eine rote Zeile.
+fall "der Maus-Weg liest die Richtung erst nach dem Aufraeumen" "landet sie HINTER dem Ziel" \
+"    const von=_katZieh,wohin=_katWohin||'vor';katZiehEnde();
+    katUmsortieren(von,cat,wohin);@@@    const von=_katZieh;katZiehEnde();
+    katUmsortieren(von,cat,_katWohin||'vor');"
+
+# ⚠ GENAU DER TOTE SELEKTOR, DEN DER BAUM-WAECHTER GEFUNDEN HAT: `.fld-grp-hd`
+#   gibt es nicht, die Kopfzeile heisst `.fld-hdr`. Der Rueckfall `||el` machte
+#   das Schattenbild zum 22 px breiten Anfasser.
+fall "das Schattenbild zeigt nur den Anfasser" "zeigt die ganze Zeile, nicht nur den Anfasser" \
+"querySelector('.fld-hdr')||el@@@querySelector('.fld-grp-hd')||el"
+
+fall "im Ordner-Baum erscheint kein Strich" "Strich zeigt auch dort" \
+"        zgrp.classList.add('kat-'+wohin);@@@"
+
+fall "der Strich im Baum ist da, aber unsichtbar" "Strich zeigt auch dort" \
+".fld-grp.kat-nach{box-shadow:inset 0 -3px 0@@@.fld-grp.kat-nach{box-shadow:none;x-inset:inset 0 -3px 0"
+
+fall "der Ordner-Baum ordnet anders als die Leiste" "dieselbe Folge wie die Leiste" \
+"    ...catsAlle().map(c=>({id:'cat_'+c.id,@@@    ...catsAlle().slice().reverse().map(c=>({id:'cat_'+c.id,"
+
+# ⚠ BENANNTE GRENZE — fuer „ein kurzer Tipp zieht NICHT" steht hier KEIN Fall.
+#   Der Riegel ist die Uhr selbst: ohne abgelaufenen Langdruck gibt es kein
+#   Schattenbild, und keine Sabotage an einer einzelnen Zeile kann ein
+#   Schattenbild im selben Tick erzeugen. Ein Fall, der nichts messen kann,
+#   saehe wie Deckung aus. Gedeckt ist die Zusicherung durch den Selbst-Riegel
+#   daneben: liegen die Griffe nicht auf dem Schirm, faellt der Abschnitt aus.
+
+# ── 22 · Der Sammel-Eimer traegt seinen eigenen Namen ──
+fall "die Zuordnen-Zeile nimmt wieder den fest verdrahteten Text" "zeigt den eigenen Namen des Sammel-Eimers" \
+"  var eimerName=katBeschriftung(eimer)@@@  var eimerName=T('katZuOhne')"
+
+fall "der Zustand steht nicht mehr daneben" "Zustand steht als Hinweis daneben" \
+"    +(eigenerName?'<span class=\"kzp-ohne-hin\">'@@@    +(false?'<span class=\"kzp-ohne-hin\">'"
+
+fall "der Hinweis ist da, aber unsichtbar" "Zustand steht als Hinweis daneben" \
+".kat-zu-pop .kzp-ohne-hin{margin-left:6px@@@.kat-zu-pop .kzp-ohne-hin{display:none;margin-left:6px"
+
+# Die Gegenrichtung: der Hinweis darf nicht IMMER dastehen, sonst waere er
+# keine Auskunft ueber den eigenen Namen, sondern Zierde.
+fall "der Hinweis steht auch ohne eigenen Namen da" "ohne eigenen Namen steht kein Hinweis" \
+"  var eigenerName=eimerName!==T('katZuOhne');@@@  var eigenerName=true;"
+
 echo
 echo "$gefangen gefangen · $durch durchgerutscht · $falsch aus falschem Grund · $tot tote Anker"
 cd /; rm -rf "$(dirname "$KOPIE")"
