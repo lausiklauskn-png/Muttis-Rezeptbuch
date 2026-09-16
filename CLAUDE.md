@@ -638,8 +638,13 @@ Probe lässt zwischen den Griffen einen `await tick()` verstreichen.
 ### Geprüft
 
 Zuletzt gemessen (2026-09-16, nach dem Nachziehen): **109 grün · 0 ROT**
-(169 Schlüssel geprüft). Gegenprobe: die Zahl steht im Übergabe-Absatz weiter
-unten, direkt gelesen und nicht hinter einer Pipe.
+(169 Schlüssel geprüft) · Gegenprobe **59 gefangen · 0 durchgerutscht · 0 aus
+falschem Grund · 0 tote Anker**. Beide Rückgabewerte **direkt** gelesen, nicht
+hinter einer Pipe; der Baum war vor und nach dem Lauf sauber.
+
+⚠ **Die Zahl davor bleibt daneben stehen, weil sie den Fund gemacht hat:**
+derselbe Durchgang meldete zuerst **58 gefangen · 1 aus falschem Grund** —
+das war der blinde Dedup-Wächter oben.
 
 ```bash
 node tests/smoke_kategorien.mjs           # echter Browser, an der GEBAUTEN index.html
@@ -647,10 +652,14 @@ NUR_ANKER=1 bash tests/gegenprobe_kategorien.sh   # tote Anker in Sekunden
 bash tests/gegenprobe_kategorien.sh       # Wegwerf-Kopie, MIT Bau-Schritt
 ```
 
-✅ **`NUR_ANKER=1` ist beim Nachziehen dreimal eingesprungen** — Zeilen, die
-diese Arbeit selbst bewegt hat und auf die ältere Fälle zeigten. Ohne den Gang
-wären es drei „NICHT GEFANGEN" nach Minuten gewesen, und die weisen in die
-**entgegengesetzte** Richtung („bau einen Wächter" statt „zieh den Fall nach").
+✅ **`NUR_ANKER=1` hat beim Nachziehen VIER tote Anker gemeldet**, in zwei
+Läufen von je wenigen Sekunden: drei nach dem Löschen/Zusammenlegen (die
+Zeilen von `catsFremd`, `katSpeichern` und dem Umbenennen hatten sich bewegt)
+und einen danach — `const out=[],gesehen=new Set();` steht **zweimal**, auch
+in `catsFremd`, und ein Anker, der zweimal trifft, ist keiner. Ohne den Gang
+wären es vier „NICHT GEFANGEN" nach Minuten gewesen, und die weisen in die
+**entgegengesetzte** Richtung („bau einen Wächter" statt „zieh den Fall
+nach").
 
 ---
 
