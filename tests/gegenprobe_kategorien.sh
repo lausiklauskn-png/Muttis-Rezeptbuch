@@ -162,7 +162,7 @@ fall "die Getraenke-Symbole verschwinden wieder" "eigene Getraenke-Symbole" \
 '"🍶","🍼","🚰","⚗️","🫧","🍋‍🟩",@@@'
 
 # ── Die Ordner-Ansicht zaehlt wieder anders als die Leiste (Klaus 2026-09-16) ──
-fall "der Ordner-Baum fragt wieder das rohe Feld" "dieselbe Zahl" \
+fall "der Ordner-Baum fragt wieder das rohe Feld" "Leiste = Baum" \
 "      recipes:R.filter(r=>!r.folder&&katVonRezept(r)===c.id&&r.name)})),@@@      recipes:R.filter(r=>!r.folder&&r.cat===c.id&&r.name)})),"
 
 fall "ein Ordner-Rezept ohne r.folder faellt im Baum wieder heraus" "faellt nirgends heraus" \
