@@ -936,6 +936,158 @@ er noch so und ist mit nachgezogen.
 
 ---
 
+
+---
+
+## 📷 EIN KAMERAFOTO WURDE NICHT HERUNTERGERECHNET, SONDERN ABGEWIESEN (Klaus 2026-09-18)
+
+Klaus: *„Das Problem zur Zeit, es ist glaube ich schon behoben innerhalb des
+Codes, und zwar, dass das Kamerabild automatisch beim Fotografieren
+heruntergerechnet wird … gerade eben habe ich getestet, und die Kamera hat
+höhere Auflösung gefahren."*
+
+**Der Befund stimmt, und „schon behoben" war er nicht.** Gemessen im Code auf
+`origin/main`, nicht vermutet:
+
+```js
+if(file.size>5*1024*1024){toast('⚠️ Bild zu groß (max. 5 MB). Bitte ein kleineres Foto wählen.');return;}
+const fr=new FileReader();
+fr.onload=async ev=>{ … resizeImage(orig,1200,0.90) … };
+```
+
+⚠ **DER RIEGEL STAND VOR DEM WERKZEUG, DAS IHN UNNÖTIG MACHT.** `resizeImage`
+lief erst **nach** der Prüfung — bei einem Foto über 5 MB kam es also **nie
+dran**. Verkleinert wurde nur, was ohnehin klein genug war. Über die ganze
+Git-Historie zurückverfolgt: die Zeile steht seit der ersten Fassung dieser
+Datei, **kein Commit hat sie je durch ein Verkleinern ersetzt.**
+
+⚠ **UND „BITTE EIN KLEINERES FOTO WÄHLEN" IST AM TABLET EIN TOTER RAT.** Die
+Auflösung entscheidet die **Kamera-App**; ein `<input type="file"
+capture="environment">` kann sie nicht vorgeben — `capture` sagt nur, *welche
+Quelle sich öffnet*, nicht *wie groß das Ergebnis wird*. Es gibt keinen Weg,
+das Foto klein aufzunehmen. *Wer eine Grenze nennt, die der Nutzer nicht
+einhalten KANN, hat einen toten Knopf mit Beschriftung gebaut.*
+
+### ⚠ Und die 5 MB waren nie die Grenze dieser Schnittstelle
+
+Gemessen an der Doku (`platform.claude.com/docs/en/build-with-claude/vision`,
+geprüft 2026-09-18), nicht aus dem Gedächtnis:
+
+| | |
+|---|---|
+| Claude-API, je Bild | **10 MB base64** — und ein zu großes Bild rechnet die API **selbst** herunter |
+| 5 MB | gilt auf **Amazon Bedrock und Google Cloud** — Wege, die diese App nicht geht |
+| Größte Kanten | 8000×8000 px |
+
+⚠ **UND GEPRÜFT WURDE DIE FALSCHE ZAHL.** Der Riegel las `file.size`, die
+Schnittstelle sieht den **base64-String** — und der ist um ein Drittel größer.
+Eine 4-MB-Datei ergibt 5,3 MB Nutzlast. *Zwei Zahlen, die niemand
+auseinanderhielt.*
+
+### Was jetzt gilt
+
+| | vorher | nachher |
+|---|---|---|
+| Foto über 5 MB | **abgewiesen**, Toast | **heruntergerechnet und verarbeitet** |
+| gemessen wird | `file.size` der Eingabe | der **base64-String der Ausgabe** |
+| Deckel | 5 MB (Eingabe) | **4 MB base64** (Ausgabe), mit Nachrechnung |
+| Speicher-Riegel | — | **40 MB** Rohdatei, mit der Zahl in der Meldung |
+| Weg hinein | `FileReader` → 33-MB-Text → verkleinern | **`createImageBitmap(datei)`** → verkleinern |
+
+**Alles geht durch eine Tür:** `bildFuersNetz()` bzw. `scanBildAufbereiten()`.
+Der Deckel gilt für das **Ergebnis**, also wird nachgerechnet statt gehofft —
+passt die erste Stufe nicht, geht es über `BILD_NETZ_STUFEN` nach unten
+(kleinere Kante **und** härtere Kompression), fail-soft bis zur kleinsten.
+
+⚠ **DER DECKEL IST EIN ARGUMENT, NICHT NUR EINE KONSTANTE.** Bei 1200 px wiegt
+die Nutzlast ein Zehntel des Deckels — die Nachrechnung springt im Normalfall
+**nie** an, und keine Probe könnte sie von ihrem Fehlen unterscheiden. Mit
+einem übergebenen Deckel lässt sie sich einzeln fragen und einzeln
+gegenprüfen. *Eine Rechnung, die man nicht einzeln fragen kann, kann man auch
+nicht einzeln gegenprüfen.*
+
+### ⚠ Ein zweiter Fund nebenbei: `resizeImage` deckelte nur die BREITE
+
+`Math.min(1,maxW/img.width)` — ein Hochformat-Kamerafoto mit 3000×4000 wurde zu
+**1200×1600**: die lange Kante stand bei **1600**, nicht bei 1200. Bei
+1000×5000 griff die Rechnung **gar nicht**. Der Nachbar `_compressImgStage1`
+hat immer schon `Math.max` genommen — *zwei Funktionen nebeneinander, zwei
+Regeln für dieselbe Sache.* Gedeckelt wird jetzt die lange Kante; kleiner wird
+ein Bild dadurch nie falsch, nur wirklich so klein wie angegeben.
+**Tafel-Evolutions-Klausel: benannt, nicht stillschweigend getauscht.**
+
+### ⚠ Und ein dritter: der Stapel-Weg schickte das ORIGINAL an Mistral
+
+Der **Einzel**-Weg (`triggerScan`) gab die verkleinerte Fassung an die OCR, der
+**Stapel**-Weg (`runBatchScan`) das unveränderte `origData`. *Zwei Wege, ein
+Dienst, zwei Nutzlasten* — und nirgends stand, warum. Angeglichen an den
+Einzel-Weg, dessen Größe sich im Betrieb bewährt hat; ein PDF bleibt
+unberührt, dort gibt es keine Kante zu deckeln. Der Wächter **zählt** seitdem
+beide Aufruf-Stellen: ein bloßes „enthält `bildFuersNetz`" wäre noch grün,
+wenn einer der zwei Anbieter wieder am Verkleinern vorbeigeht.
+
+### ⚠ Vier eigene Fehler, alle in der MESSUNG — keiner im Code
+
+Das ist der Befund dieses Durchgangs, und er gehört so aufgeschrieben: **der
+Code stand nach dem ersten Bau; viermal falsch war die Probe.**
+
+| Was | warum es nichts (oder das Falsche) maß |
+|---|---|
+| „kein Aufruf geht nach draußen" | **verbot das Richtige.** Die App liest bei Sitzungsstart den SBKIM-Briefkasten (`Sage-Protokol/…/SIGNAL.json`) — das ist ihre Aufgabe, kein Befund. Gemessen wird jetzt, dass **kein Bild** an eine KI geht |
+| `window.scanData` | **gibt es nicht.** `scanData` ist ein top-level `let` und hängt **nicht** am window-Objekt; die Probe setzte und las eine ANDERE Variable und meldete „verarbeitet ein Foto über 5 MB nicht", während der Code tadellos war. Wortgleich dieselbe Falle wie `window.R` und `window.LANGS` |
+| ein Deckel von **60 000 Bytes**, fest hingeschrieben | das gestellte Foto ist reines **Rauschen** — der schlimmste Fall für JPEG — und kommt selbst auf der kleinsten Stufe nicht darunter. Die Probe war ROT, obwohl die Nachrechnung lief. *Eine Zahl in einer Prüfung ist kein Vertrag*; der Deckel wird jetzt aus der Messung **abgeleitet** |
+| `new Image().src=''` | **feuert kein `onload`.** Der Gegenprobe-Fall „das Rezeptbild fällt weg" ließ die Probe **hängen**, statt sie rot zu machen: sie starb an „promise was garbage collected", und die rote Zeile trug den Namen des Absturzes statt den der Zusicherung. Jetzt mit `onerror` **und** Frist |
+
+⚠ **UND EINE ZUSICHERUNG WAR BEI NULL TRIVIAL WAHR:** „das Rezeptbild ist
+kleiner als die Netz-Fassung" stimmt auch dann, wenn es **gar nicht da** ist.
+Ein fehlendes Bild wäre die beste Note gewesen. Verlangt wird jetzt beides.
+
+### ⚠ Das Rauschen im gestellten Foto ist Pflicht
+
+Eine einfarbige Fläche komprimiert auf wenige KB — die Probe hätte den Fall
+„über 5 MB" **nie erreicht** und wäre still grün geblieben, ohne etwas gemessen
+zu haben. Zwei **Selbst-Riegel** bestehen deshalb darauf, dass das gestellte
+Foto wirklich über 5 MB groß und wirklich Hochformat ist. *Ein Fall, der nichts
+messen kann, sähe sonst wie eine bestandene Prüfung aus.*
+
+### Benannte Grenzen
+
+- **Der Sicht-Test bleibt bei Klaus.** Gemessen ist, dass die Nutzlast klein
+  ist und der Weg durchläuft — **nicht**, wie die Erkennung sich an seinem
+  Tablet anfühlt.
+- **Ein zu großes Bild für die Leinwand des Browsers ist nicht gemessen.**
+  Manche Geräte (iOS deckelt bei ~16,7 Megapixeln) geben eine überdimensionierte
+  Leinwand **leer** zurück statt mit einem Fehler. Dagegen steht der Weg über
+  `createImageBitmap` (die Ziel-Leinwand bleibt klein) — ein Wächter auf den
+  leeren Fall steht **nicht** da, weil ein weißes Rezeptblatt von einer leeren
+  Leinwand nicht sicher zu unterscheiden ist und ein geratener Schwellwert
+  schlimmer wäre als keiner.
+- **Für den Anthropic-Aufruf im Stapel steht kein eigener Gegenprobe-Fall** —
+  sein Anker lautet je App anders, und ein Fall, der je App anders lautet, ist
+  eine zweite Fassung. Gedeckt ist er durch die **Zählung** der zwei
+  Aufruf-Stellen.
+
+### ⚠ Diese App hat den KI-Buch-Weg NICHT
+
+Mein Rezeptbuch hat neben dem KI-Scan einen zweiten Bild-Weg (`kbk*`,
+„Bilder hinzufügen", 15 MB), und **der** rechnet seit jeher herunter — daher
+Klaus' Erinnerung, es sei „schon behoben". Hier gibt es ihn nicht (gemessen:
+null Treffer für `kbkResize`), also gab es nur den kaputten Weg.
+
+⚠ **Und das Rezeptbild wird hier mit 800 px / JPEG 75 % abgelegt**, nicht mit
+1024 px / 82 % wie in Mein Rezeptbuch (dort über `_compressImgStage1`). Der
+Wert ist **unverändert übernommen**, nur aus einem Dekodier-Durchgang statt aus
+einem zweiten. *Drei Apps dieselbe Zahl behaupten zu lassen wäre in einer davon
+eine Lüge.*
+
+### Geprüft
+
+```bash
+node tests/smoke_kamera_bild.mjs                     # echter Browser, echtes Foto
+NUR_ANKER=1 bash tests/gegenprobe_kamera_bild.sh     # tote Anker in Sekunden
+bash tests/gegenprobe_kamera_bild.sh                 # Wegwerf-Kopie
+```
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue

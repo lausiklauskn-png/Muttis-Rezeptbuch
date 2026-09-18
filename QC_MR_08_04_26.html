@@ -4848,11 +4848,19 @@ async function _initPersistentStorage(){
 }
 
 // ── Bild-Komprimierung via Canvas ────────────────────────
-function resizeImage(dataUrl,maxW,quality){
+// ⚠ GEDECKELT WIRD DIE LANGE KANTE, NICHT DIE BREITE (geändert 2026-09-18).
+// `maxW/img.width` ließ jedes Hochformat zu groß durch: ein Kamerafoto mit
+// 3000×4000 wurde zu 1200×1600 — die lange Kante stand bei 1600, nicht bei
+// 1200. Bei 1000×5000 griff die Rechnung gar nicht. Der Nachbar
+// `_compressImgStage1` hat immer schon `Math.max` genommen: zwei Funktionen
+// nebeneinander, zwei Regeln für dieselbe Sache.
+// Ein Bild wird dadurch nie falsch klein — nur wirklich so klein wie
+// angegeben. Tafel-Evolutions-Klausel: benannt, nicht stillschweigend getauscht.
+function resizeImage(dataUrl,maxKante,quality){
   return new Promise(resolve=>{
     const img=new Image();
     img.onload=()=>{
-      const scale=Math.min(1,maxW/img.width);
+      const scale=Math.min(1,maxKante/Math.max(img.width,img.height));
       const w=Math.round(img.width*scale),h=Math.round(img.height*scale);
       const c=document.createElement('canvas');
       c.width=w;c.height=h;
@@ -4862,6 +4870,123 @@ function resizeImage(dataUrl,maxW,quality){
     img.onerror=()=>resolve(dataUrl);
     img.src=dataUrl;
   });
+}
+
+// ── Ein Bild fürs Netz kleinrechnen — gemessen an dem, was HINAUSGEHT ────────
+// Befund (Klaus 2026-09-18): ein Kamerafoto wurde NICHT heruntergerechnet.
+// `loadScanFile` wies jede Datei über 5 MB ab, BEVOR `resizeImage` lief — der
+// Riegel stand VOR dem Werkzeug, das ihn unnötig macht, und hat damit genau
+// die Fotos abgewiesen, die nach dem Verkleinern tadellos gepasst hätten.
+//
+// ⚠ UND „BITTE EIN KLEINERES FOTO WÄHLEN" IST AM TABLET EIN TOTER RAT. Die
+// Auflösung entscheidet die Kamera-App; ein `<input type=file capture>` kann
+// sie nicht vorgeben — es gibt keinen Weg, das Foto klein aufzunehmen. Wer
+// eine Grenze nennt, die der Nutzer nicht einhalten KANN, hat einen toten
+// Knopf mit Beschriftung gebaut.
+//
+// ⚠ GEMESSEN WIRD DER BASE64-STRING, NICHT DIE DATEI. Base64 wächst um ein
+// Drittel: eine 4-MB-Datei ergibt 5,3 MB Nutzlast. Wer `file.size` prüft,
+// prüft eine ANDERE Zahl als die, die die Schnittstelle sieht.
+//
+// ⚠ UND DIE 5 MB WAREN NIE DIE GRENZE DIESER SCHNITTSTELLE. Gemessen an der
+// Doku (platform.claude.com/docs/en/build-with-claude/vision, geprüft
+// 2026-09-18): die Claude-API nimmt 10 MB base64 je Bild und rechnet ein zu
+// großes Bild selbst herunter; die 5 MB gelten auf Amazon Bedrock und Google
+// Cloud — Wege, die diese App nicht geht. Der Deckel unten liegt mit Absicht
+// deutlich darunter: eine Nutzlast, die knapp unter der Grenze liegt, fällt
+// beim nächsten geänderten Detail darüber.
+const BILD_NETZ_B64_MAX = 4*1024*1024;
+// Die Kanten-Stufen sind die Rückfalllinie, nicht der Normalfall: 1200 px bei
+// JPEG 90 % wiegen ~200–400 KB, also ein Zehntel des Deckels. Gebraucht werden
+// sie nur, wenn ein Bild sich der Kompression widersetzt.
+const BILD_NETZ_STUFEN = [1200,900,700,500,380];
+// ⚠ Ab hier ist nicht die Schnittstelle das Problem, sondern der
+// Arbeitsspeicher des Geräts. Kein Kamerafoto kommt in diese Gegend.
+const BILD_ROH_MAX = 40*1024*1024;
+
+function _b64Bytes(dataUrl){
+  const s=String(dataUrl||''), i=s.indexOf(',');
+  return i<0?s.length:(s.length-i-1);
+}
+
+// ⚠ Nimmt die DATEI, nicht ihre data-URL: `readAsDataURL` legt von einem
+// 25-MB-Foto erst einen 33-MB-Text im Speicher an, den niemand braucht.
+// `createImageBitmap` dekodiert direkt aus der Datei. Fehlt es, bleibt der
+// alte Weg — fail-soft, nie ein toter Pfad.
+function _bildUeberImage(quelle){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error('Bild nicht lesbar'));
+    if(typeof Blob!=='undefined'&&quelle instanceof Blob){
+      const fr=new FileReader();
+      fr.onload=e=>{img.src=e.target.result;};
+      fr.onerror=()=>reject(new Error('Datei nicht lesbar'));
+      fr.readAsDataURL(quelle);
+    }else{ img.src=quelle; }
+  });
+}
+function _bildDekodieren(quelle){
+  if(typeof Blob!=='undefined'&&quelle instanceof Blob&&typeof createImageBitmap==='function')
+    return createImageBitmap(quelle).catch(()=>_bildUeberImage(quelle));
+  return _bildUeberImage(quelle);
+}
+
+// ⚠ SYNCHRON, weil das Bild schon dekodiert ist — nur so lässt sich die
+// Nutzlast nachrechnen, ohne für jede Stufe neu zu dekodieren.
+function _aufKante(bild,kante,quali){
+  const bw=bild.width||bild.naturalWidth, bh=bild.height||bild.naturalHeight;
+  const scale=Math.min(1,kante/Math.max(bw,bh));
+  const w=Math.max(1,Math.round(bw*scale)), h=Math.max(1,Math.round(bh*scale));
+  const c=document.createElement('canvas');
+  c.width=w;c.height=h;
+  c.getContext('2d').drawImage(bild,0,0,w,h);
+  return c.toDataURL('image/jpeg',quali);
+}
+
+// ⚠ DER DECKEL GILT FÜR DAS ERGEBNIS, also wird nachgerechnet statt gehofft.
+// Eine Stufe tiefer heißt kleinere Kante UND härtere Kompression — beides
+// zusammen, weil die Kante allein bei einem rauschigen Foto zu wenig bringt.
+// ⚠ DER DECKEL IST EIN ARGUMENT, nicht nur eine Konstante. Bei 1200 px wiegt
+// die Nutzlast ein Zehntel des Deckels — die Nachrechnung springt im
+// Normalfall also NIE an, und eine Probe könnte nicht von ihrem Fehlen
+// unterscheiden. Mit einem übergebenen Deckel lässt sie sich einzeln fragen
+// und einzeln gegenprüfen.
+function _bildAufDeckel(bild,kante,quali,deckel){
+  const max=(typeof deckel==='number'&&deckel>0)?deckel:BILD_NETZ_B64_MAX;
+  let aus=_aufKante(bild,kante,quali);
+  if(_b64Bytes(aus)<=max) return aus;
+  for(const k of BILD_NETZ_STUFEN){
+    if(k>=kante) continue;
+    aus=_aufKante(bild,k,Math.min(quali,0.82));
+    if(_b64Bytes(aus)<=max) break;
+  }
+  return aus;   // fail-soft: das kleinste Ergebnis, nie ein Abbruch
+}
+
+// Der eine Weg, auf dem ein Bild an eine KI geht. Nimmt eine Datei ODER eine
+// data-URL, damit beide Scan-Wege (einzeln und Stapel) dieselbe Tür nehmen.
+async function bildFuersNetz(quelle,kante,quali){
+  kante=kante||1200; quali=quali||0.90;
+  let bild;
+  try{ bild=await _bildDekodieren(quelle); }
+  catch(e){ return typeof quelle==='string'?quelle:''; }
+  const aus=_bildAufDeckel(bild,kante,quali);
+  if(bild&&bild.close) bild.close();
+  return aus;
+}
+
+// Ein Kamerafoto: EIN Dekodier-Durchgang, zwei Ergebnisse — was an die KI geht
+// und was als Rezeptbild liegen bleibt. Zweimal zu dekodieren kostet bei einem
+// 50-Megapixel-Foto den doppelten Speicher.
+async function scanBildAufbereiten(datei){
+  let bild;
+  try{ bild=await _bildDekodieren(datei); }
+  catch(e){ return null; }
+  const netz=_bildAufDeckel(bild,1200,0.90);
+  const store=_aufKante(bild,800,0.75);
+  if(bild&&bild.close) bild.close();
+  return {netz:netz,store:store};
 }
 
 // ── Undo-System (Rezept-Editor, max. 10 Schritte) ────────
@@ -6505,7 +6630,7 @@ function initScanPane(){
 }
 
 // ── SCAN: FILE HANDLING ───────────────────────────────
-function loadScanFile(file){
+async function loadScanFile(file){
   if(!file)return;
   const isPdf=file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf');
   if(isPdf){
@@ -6531,28 +6656,33 @@ function loadScanFile(file){
     fr.readAsDataURL(file);
     return;
   }
-  if(file.size>5*1024*1024){toast('⚠️ Bild zu groß (max. 5 MB). Bitte ein kleineres Foto wählen.');return;}
-  const fr=new FileReader();
-  fr.onload=async ev=>{
-    const orig=ev.target.result;
-    // 1200px für KI-Erkennung, 800px/0.75 für Rezeptbild-Speicher
-    [scanData,scanDataStore]=await Promise.all([
-      resizeImage(orig,1200,0.90),
-      resizeImage(orig,800,0.75)
-    ]);
-    const prev=document.getElementById('scanPrev');
-    const ph=document.getElementById('scanPhotoContent');
-    const pdfPrev=document.getElementById('scanPdfPrev');
-    if(prev){prev.src=scanDataStore;prev.style.display='block';}
-    if(ph)ph.style.display='none';
-    if(pdfPrev)pdfPrev.style.display='none';
-    document.getElementById('scanActions').style.display='block';
-    document.getElementById('scanResultWrap').innerHTML='';
-    const st=document.getElementById('scanStatus');
-    if(st)st.style.display='none';
-    if(getSavedKey()){triggerScan();}
-  };
-  fr.readAsDataURL(file);
+  // ⚠ KEIN 5-MB-RIEGEL MEHR — siehe `bildFuersNetz()` weiter oben: er stand
+  // VOR dem Verkleinern und hat genau die Kamerafotos abgewiesen, die danach
+  // gepasst hätten. Was bleibt, ist ein Speicher-Riegel weit oben, und er
+  // nennt die Zahl statt eines Rates, den niemand befolgen kann.
+  if(file.size>BILD_ROH_MAX){
+    toast('⚠️ Diese Datei ist '+Math.round(file.size/1048576)+' MB groß — mehr, als der Browser auf einmal verarbeiten kann. Ein Foto aus der Kamera ist immer klein genug.');
+    return;
+  }
+  // ⚠ DIE DATEI GEHT HINEIN, NICHT IHRE DATA-URL. Vorher las ein
+  // `FileReader` erst die ganze Datei in einen Text (ein Drittel größer als
+  // das Foto) und rechnete DANACH klein — der Speicher-Gipfel lag also genau
+  // dort, wo er nicht sein muss.
+  const bilder=await scanBildAufbereiten(file);
+  if(!bilder){toast('⚠️ Dieses Bild konnte nicht gelesen werden.');return;}
+  scanData=bilder.netz;
+  scanDataStore=bilder.store;
+  const prev=document.getElementById('scanPrev');
+  const ph=document.getElementById('scanPhotoContent');
+  const pdfPrev=document.getElementById('scanPdfPrev');
+  if(prev){prev.src=scanDataStore;prev.style.display='block';}
+  if(ph)ph.style.display='none';
+  if(pdfPrev)pdfPrev.style.display='none';
+  document.getElementById('scanActions').style.display='block';
+  document.getElementById('scanResultWrap').innerHTML='';
+  const st=document.getElementById('scanStatus');
+  if(st)st.style.display='none';
+  if(getSavedKey()){triggerScan();}
 }
 
 function handleScanFile(e){
@@ -6602,7 +6732,12 @@ async function runBatchScan(files){
           mime=origData.split(';')[0].split(':')[1]||'image/jpeg';
           storeData=imgStore;
         }
-        const r=await window.SbkimOcr.recognize(origData,{provider:'mistral',apiKey:mkey,mimeType:mime});
+        // ⚠ DERSELBE WEG WIE EINZELN. Bis 2026-09-18 ging hier das ORIGINAL
+        // hinaus, während `triggerScan` die verkleinerte Fassung schickte:
+        // zwei Wege, ein Dienst, zwei Nutzlasten. Ein PDF bleibt unberührt —
+        // dort gibt es keine Kante zu deckeln.
+        const ocrData=fileIsPdf?origData:await bildFuersNetz(files[i],1200,0.90);
+        const r=await window.SbkimOcr.recognize(ocrData,{provider:'mistral',apiKey:mkey,mimeType:mime});
         if(!r||!r.available)throw new Error((r&&r.reason)||'Mistral OCR fehlgeschlagen');
         contentBlock={type:'text',text:r.text};
         prompt=_SCAN_PROMPT_INTRO_TXT+'\n'+_SCAN_PROMPT_SCHEMA;
@@ -6613,7 +6748,7 @@ async function runBatchScan(files){
           storeData='';
           contentBlock={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};
         }else{
-          const[apiData,imgStore]=await Promise.all([resizeImage(origData,1200,0.90),resizeImage(origData,800,0.75)]);
+          const[apiData,imgStore]=await Promise.all([bildFuersNetz(files[i],1200,0.90),resizeImage(origData,800,0.75)]);
           b64=apiData.split(',')[1];
           mime=apiData.split(';')[0].split(':')[1]||'image/jpeg';
           storeData=imgStore;
