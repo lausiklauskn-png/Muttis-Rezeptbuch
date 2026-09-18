@@ -1052,9 +1052,18 @@ messen kann, sähe sonst wie eine bestandene Prüfung aus.*
 
 ### Benannte Grenzen
 
-- **Der Sicht-Test bleibt bei Klaus.** Gemessen ist, dass die Nutzlast klein
-  ist und der Weg durchläuft — **nicht**, wie die Erkennung sich an seinem
-  Tablet anfühlt.
+- ✅ **Der Sicht-Test IST gefahren — Klaus am 2026-09-18: „Hat
+  funktioniert."** Hier stand: *„Der Sicht-Test bleibt bei Klaus. Gemessen
+  ist, dass die Nutzlast klein ist und der Weg durchläuft — nicht, wie die
+  Erkennung sich an seinem Tablet anfühlt."* Der Satz war richtig, **solange
+  ihn niemand gefahren hatte**; das Kamerafoto geht jetzt an seinem Gerät
+  durch, mit seiner Kamera.
+  ⚠ **Was sein Wort NICHT belegt, bleibt daneben stehen:** wie **gut** die
+  Erkennung ausfällt · ob ein Querformat-Foto anders läuft als ein Hochformat ·
+  und der **Stapel**-Weg (`runBatchScan`), der an diesem Tag mit angeglichen
+  wurde. Er hat gemeldet, was er gemeldet hat — *eine Bestätigung auf mehr
+  auszudehnen, als sie trägt, ist dieselbe Sorte Fehler wie eine geratene
+  Zahl.*
 - **Ein zu großes Bild für die Leinwand des Browsers ist nicht gemessen.**
   Manche Geräte (iOS deckelt bei ~16,7 Megapixeln) geben eine überdimensionierte
   Leinwand **leer** zurück statt mit einem Fehler. Dagegen steht der Weg über
