@@ -41,10 +41,10 @@ const LANGS = {
   de: {
     title: 'Impressum & Datenschutzerklärung',
     imp_h: 'Impressum',
-    imp: `<p><strong>Angaben gemäß § 5 TMG</strong></p>
+    imp: `<p><strong>Angaben gemäß § 5 DDG</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Deutschland</p>
 <p>E-Mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br>Klaus Nitzsche (Adresse wie oben)</p>`,
+<p>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:<br>Klaus Nitzsche (Adresse wie oben)</p>`,
     disc_h: 'Haftungsausschluss',
     disc: `
 <h3>1. Haftung für Inhalte</h3>
@@ -59,10 +59,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-Mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Bereitstellung der App (Hosting)</h3>
 <p>Diese Anwendung wird über GitHub Pages bereitgestellt. Beim Aufruf der App werden technische Daten (z. B. IP-Adresse, Browserinformationen) an GitHub übertragen, um die Inhalte der App auszuliefern.</p>
+<p>Einzelne Funktionen laden beim Gebrauch Inhalte von fremden Servern: api.qrserver.com (QR). Dabei werden technische Daten wie die IP-Adresse an diese Dienste übertragen; es gelten deren Datenschutzbestimmungen.</p>
 <h3>3. Lokale Datenverarbeitung</h3>
 <p>Alle vom Nutzer eingegebenen Inhalte (z. B. Rezepte) werden ausschließlich lokal im Browser gespeichert (z. B. LocalStorage oder IndexedDB). Es erfolgt keine Speicherung dieser Daten auf Servern des Betreibers.</p>
 <h3>4. Nutzung von KI-Diensten</h3>
 <p>Für die Funktion „KI-Scan" werden Inhalte (z. B. Bilder oder Texte) an externe KI-Dienste übermittelt, insbesondere an Anthropic (Claude).</p>
+<p>Welcher Anbieter genutzt wird, legt der Nutzer in den Einstellungen fest: Anthropic (Claude, USA), Mistral AI (EU, Frankreich) oder OpenAI (USA). Eine Übermittlung erfolgt nur, wenn der Nutzer eine KI-Funktion auslöst; bei Anbietern in den USA werden Daten in ein Drittland übertragen.</p>
 <p>Dabei gilt:</p>
 <ul><li>Die Übertragung erfolgt verschlüsselt</li><li>Die Daten werden ausschließlich zur Verarbeitung der Anfrage genutzt</li><li>Es erfolgt keine Speicherung durch den Betreiber</li></ul>
 <p>Hinweis: Die Verarbeitung erfolgt durch externe Anbieter. Es kann nicht ausgeschlossen werden, dass Daten im Rahmen der technischen Bereitstellung kurzfristig verarbeitet oder gespeichert werden.</p>
@@ -76,6 +78,7 @@ const LANGS = {
 <p>Da keine zentrale Datenspeicherung erfolgt, bestimmt der Nutzer selbst die Speicherdauer seiner Daten auf seinem Gerät.</p>
 <h3>9. Rechte der Nutzer</h3>
 <p>Nutzer haben im Rahmen der gesetzlichen Bestimmungen das Recht auf Auskunft, Berichtigung und Löschung ihrer Daten.</p>
+<p>Zudem besteht das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, z. B. beim Hamburgischen Beauftragten für Datenschutz und Informationsfreiheit.</p>
 <h3>10. Einwilligung</h3>
 <p>Mit der Nutzung der App erklärt sich der Nutzer mit dieser Datenschutzerklärung einverstanden.</p>
 <h3>11. Änderungen</h3>
@@ -85,10 +88,10 @@ const LANGS = {
   en: {
     title: 'Imprint & Privacy Policy',
     imp_h: 'Legal Notice',
-    imp: `<p><strong>Information pursuant to § 5 TMG (German Telemedia Act)</strong></p>
+    imp: `<p><strong>Information pursuant to § 5 DDG (German Digital Services Act)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Germany</p>
 <p>E-Mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Responsible for content pursuant to § 55 para. 2 RStV:<br>Klaus Nitzsche (address as above)</p>`,
+<p>Responsible for content pursuant to § 18 para. 2 MStV:<br>Klaus Nitzsche (address as above)</p>`,
     disc_h: 'Disclaimer',
     disc: `
 <h3>1. Liability for Content</h3>
@@ -103,10 +106,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-Mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Provision of the App (Hosting)</h3>
 <p>This application is hosted via GitHub Pages. When accessing the app, technical data (e.g. IP address, browser information) is transmitted to GitHub in order to deliver the app content.</p>
+<p>Some functions load content from third-party servers when used: api.qrserver.com (QR). Technical data such as the IP address is transmitted to these services; their privacy policies apply.</p>
 <h3>3. Local Data Processing</h3>
 <p>All content entered by the user (e.g. recipes) is stored exclusively locally in the browser (e.g. LocalStorage or IndexedDB). No such data is stored on servers operated by the developer.</p>
 <h3>4. Use of AI Services</h3>
 <p>The "AI Scan" feature transmits content (e.g. images or text) to external AI services, in particular to Anthropic (Claude).</p>
+<p>The user selects the provider in the settings: Anthropic (Claude, USA), Mistral AI (EU, France) or OpenAI (USA). Data is only transmitted when the user triggers an AI function; with US providers, data is transferred to a third country.</p>
 <p>The following applies:</p>
 <ul><li>Transmission is encrypted</li><li>Data is used solely to process the request</li><li>No storage by the developer takes place</li></ul>
 <p>Note: Processing is carried out by external providers. It cannot be ruled out that data may be temporarily processed or stored as part of the technical delivery.</p>
@@ -120,6 +125,7 @@ const LANGS = {
 <p>Since no central data storage takes place, users determine the storage duration of their data on their own device.</p>
 <h3>9. User Rights</h3>
 <p>Users have the right to access, correct and delete their data in accordance with applicable law.</p>
+<p>Users also have the right to lodge a complaint with a data protection supervisory authority, e.g. the Hamburg Commissioner for Data Protection and Freedom of Information.</p>
 <h3>10. Consent</h3>
 <p>By using the app, the user agrees to this privacy policy.</p>
 <h3>11. Changes</h3>
@@ -129,10 +135,10 @@ const LANGS = {
   ru: {
     title: 'Выходные данные & Политика конфиденциальности',
     imp_h: 'Выходные данные',
-    imp: `<p><strong>Сведения согласно § 5 TMG (Закон о телемедиа Германии)</strong></p>
+    imp: `<p><strong>Сведения согласно § 5 DDG (Закон Германии о цифровых услугах)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Германия</p>
 <p>Эл. почта: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Ответственный за содержание согласно § 55 Abs. 2 RStV:<br>Klaus Nitzsche (адрес как выше)</p>`,
+<p>Ответственный за содержание согласно § 18 Abs. 2 MStV:<br>Klaus Nitzsche (адрес как выше)</p>`,
     disc_h: 'Отказ от ответственности',
     disc: `
 <h3>1. Ответственность за содержание</h3>
@@ -147,10 +153,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Эл. почта: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Предоставление приложения (хостинг)</h3>
 <p>Данное приложение размещено на GitHub Pages. При открытии приложения технические данные (например, IP-адрес, информация о браузере) передаются на серверы GitHub для доставки содержимого приложения.</p>
+<p>Некоторые функции при использовании загружают содержимое со сторонних серверов: api.qrserver.com (QR). При этом этим сервисам передаются технические данные, например IP-адрес; действуют их правила конфиденциальности.</p>
 <h3>3. Локальная обработка данных</h3>
 <p>Весь контент, введённый пользователем (например, рецепты), хранится исключительно локально в браузере (например, в LocalStorage или IndexedDB). Эти данные не сохраняются на серверах разработчика.</p>
 <h3>4. Использование сервисов ИИ</h3>
 <p>Функция «Сканирование через ИИ» передаёт контент (например, изображения или тексты) внешним сервисам ИИ, в частности Anthropic (Claude).</p>
+<p>Поставщика пользователь выбирает в настройках: Anthropic (Claude, США), Mistral AI (ЕС, Франция) или OpenAI (США). Данные передаются только тогда, когда пользователь запускает функцию ИИ; у поставщиков из США данные передаются в третью страну.</p>
 <p>При этом:</p>
 <ul><li>Передача данных зашифрована</li><li>Данные используются исключительно для обработки запроса</li><li>Разработчик не хранит эти данные</li></ul>
 <p>Примечание: Обработка осуществляется внешними поставщиками. Не исключено, что данные могут кратковременно обрабатываться или храниться в рамках технической доставки.</p>
@@ -164,6 +172,7 @@ const LANGS = {
 <p>Поскольку централизованное хранение данных не осуществляется, пользователь самостоятельно определяет срок хранения своих данных на своём устройстве.</p>
 <h3>9. Права пользователей</h3>
 <p>Пользователи имеют право на доступ, исправление и удаление своих данных в соответствии с действующим законодательством.</p>
+<p>Кроме того, пользователи вправе подать жалобу в надзорный орган по защите данных, например уполномоченному по защите данных Гамбурга.</p>
 <h3>10. Согласие</h3>
 <p>Используя приложение, пользователь соглашается с настоящей политикой конфиденциальности.</p>
 <h3>11. Изменения</h3>
@@ -173,10 +182,10 @@ const LANGS = {
   zh: {
     title: '法律声明 & 隐私政策',
     imp_h: '法律声明',
-    imp: `<p><strong>根据德国《电信媒体法》第 5 条（§ 5 TMG）的信息披露</strong></p>
+    imp: `<p><strong>根据德国《数字服务法》第 5 条（§ 5 DDG）的信息披露</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>德国</p>
 <p>电子邮件：<a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>根据 § 55 第 2 款 RStV 对内容负责：<br>Klaus Nitzsche（地址同上）</p>`,
+<p>根据 § 18 第 2 款 MStV 对内容负责：<br>Klaus Nitzsche（地址同上）</p>`,
     disc_h: '免责声明',
     disc: `
 <h3>1. 内容责任</h3>
@@ -191,10 +200,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>电子邮件：<a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. 应用托管</h3>
 <p>本应用通过 GitHub Pages 托管。访问应用时，技术数据（如 IP 地址、浏览器信息）将传输至 GitHub 服务器以提供应用内容。</p>
+<p>部分功能在使用时会从第三方服务器加载内容：api.qrserver.com (QR)。此时 IP 地址等技术数据会传输给这些服务，并适用其隐私政策。</p>
 <h3>3. 本地数据处理</h3>
 <p>用户输入的所有内容（如食谱）仅在浏览器本地存储（如 LocalStorage 或 IndexedDB）。开发者服务器上不存储任何此类数据。</p>
 <h3>4. 使用 AI 服务</h3>
 <p>「AI 扫描」功能会将内容（如图片或文本）传输至外部 AI 服务，特别是 Anthropic（Claude）。</p>
+<p>使用哪家服务商由用户在设置中决定：Anthropic（Claude，美国）、Mistral AI（欧盟，法国）或 OpenAI（美国）。只有在用户触发 AI 功能时才会传输数据；使用美国服务商时，数据会被传输到第三国。</p>
 <p>相关说明：</p>
 <ul><li>传输经过加密</li><li>数据仅用于处理请求</li><li>开发者不存储这些数据</li></ul>
 <p>注意：处理由外部服务提供商执行。不排除数据在技术传输过程中被短暂处理或存储的可能性。</p>
@@ -208,6 +219,7 @@ const LANGS = {
 <p>由于不进行集中数据存储，用户自行决定其数据在设备上的存储期限。</p>
 <h3>9. 用户权利</h3>
 <p>用户依法享有查阅、更正和删除其数据的权利。</p>
+<p>此外，用户有权向数据保护监管机构投诉，例如汉堡数据保护与信息自由专员。</p>
 <h3>10. 同意</h3>
 <p>使用本应用即表示用户同意本隐私政策。</p>
 <h3>11. 变更</h3>
@@ -217,10 +229,10 @@ const LANGS = {
   es: {
     title: 'Aviso Legal & Política de Privacidad',
     imp_h: 'Aviso Legal',
-    imp: `<p><strong>Información conforme al § 5 TMG (Ley alemana de Medios Telemáticos)</strong></p>
+    imp: `<p><strong>Información conforme al § 5 DDG (Ley alemana de Servicios Digitales)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Alemania</p>
 <p>Correo electrónico: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Responsable del contenido conforme al § 55 párr. 2 RStV:<br>Klaus Nitzsche (dirección como arriba)</p>`,
+<p>Responsable del contenido conforme al § 18 párr. 2 MStV:<br>Klaus Nitzsche (dirección como arriba)</p>`,
     disc_h: 'Aviso de Responsabilidad',
     disc: `
 <h3>1. Responsabilidad por los contenidos</h3>
@@ -235,10 +247,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Correo: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Provisión de la app (alojamiento)</h3>
 <p>Esta aplicación está alojada en GitHub Pages. Al acceder a la app, se transmiten datos técnicos (p. ej. dirección IP, información del navegador) a GitHub para entregar el contenido de la app.</p>
+<p>Algunas funciones cargan contenidos de servidores de terceros al usarse: api.qrserver.com (QR). Se transmiten datos técnicos como la dirección IP a estos servicios; se aplican sus políticas de privacidad.</p>
 <h3>3. Procesamiento local de datos</h3>
 <p>Todo el contenido introducido por el usuario (p. ej. recetas) se almacena exclusivamente de forma local en el navegador (p. ej. LocalStorage o IndexedDB). El desarrollador no almacena estos datos en ningún servidor.</p>
 <h3>4. Uso de servicios de IA</h3>
 <p>La función «Escaneo con IA» transmite contenido (p. ej. imágenes o textos) a servicios de IA externos, en particular a Anthropic (Claude).</p>
+<p>El usuario elige el proveedor en los ajustes: Anthropic (Claude, EE. UU.), Mistral AI (UE, Francia) u OpenAI (EE. UU.). Los datos solo se transmiten cuando el usuario activa una función de IA; con proveedores de EE. UU., los datos se transfieren a un tercer país.</p>
 <p>Al respecto:</p>
 <ul><li>La transmisión está cifrada</li><li>Los datos se usan únicamente para procesar la solicitud</li><li>El desarrollador no almacena estos datos</li></ul>
 <p>Nota: El procesamiento lo realizan proveedores externos. No puede descartarse que los datos sean procesados o almacenados brevemente en el marco de la entrega técnica.</p>
@@ -252,6 +266,7 @@ const LANGS = {
 <p>Dado que no existe almacenamiento central de datos, el usuario determina por sí mismo la duración del almacenamiento de sus datos en su dispositivo.</p>
 <h3>9. Derechos del usuario</h3>
 <p>Los usuarios tienen derecho de acceso, rectificación y supresión de sus datos conforme a la legislación aplicable.</p>
+<p>Además, existe el derecho a presentar una reclamación ante una autoridad de control de protección de datos, p. ej. el Comisionado de Hamburgo para la Protección de Datos y la Libertad de Información.</p>
 <h3>10. Consentimiento</h3>
 <p>Al usar la app, el usuario acepta esta política de privacidad.</p>
 <h3>11. Cambios</h3>
@@ -261,10 +276,10 @@ const LANGS = {
   fr: {
     title: 'Mentions légales & Politique de confidentialité',
     imp_h: 'Mentions légales',
-    imp: `<p><strong>Informations conformément au § 5 TMG (loi allemande sur les médias télémédia)</strong></p>
+    imp: `<p><strong>Informations conformément au § 5 DDG (loi allemande sur les services numériques)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Allemagne</p>
 <p>Courriel : <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Responsable du contenu conformément au § 55 al. 2 RStV :<br>Klaus Nitzsche (adresse comme ci-dessus)</p>`,
+<p>Responsable du contenu conformément au § 18 al. 2 MStV :<br>Klaus Nitzsche (adresse comme ci-dessus)</p>`,
     disc_h: 'Clause de non-responsabilité',
     disc: `
 <h3>1. Responsabilité pour les contenus</h3>
@@ -279,10 +294,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Courriel : <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Mise à disposition de l'application (hébergement)</h3>
 <p>Cette application est hébergée via GitHub Pages. Lors de l'accès à l'application, des données techniques (p. ex. adresse IP, informations sur le navigateur) sont transmises à GitHub pour livrer le contenu de l'application.</p>
+<p>Certaines fonctions chargent, lors de leur utilisation, des contenus depuis des serveurs tiers : api.qrserver.com (QR). Des données techniques comme l'adresse IP sont alors transmises à ces services ; leurs politiques de confidentialité s'appliquent.</p>
 <h3>3. Traitement local des données</h3>
 <p>Tout le contenu saisi par l'utilisateur (p. ex. des recettes) est stocké exclusivement en local dans le navigateur (p. ex. LocalStorage ou IndexedDB). Ces données ne sont pas stockées sur des serveurs du développeur.</p>
 <h3>4. Utilisation de services d'IA</h3>
 <p>La fonctionnalité « Scan IA » transmet des contenus (p. ex. images ou textes) à des services d'IA externes, notamment à Anthropic (Claude).</p>
+<p>L'utilisateur choisit le fournisseur dans les paramètres : Anthropic (Claude, États-Unis), Mistral AI (UE, France) ou OpenAI (États-Unis). Les données ne sont transmises que lorsque l'utilisateur déclenche une fonction d'IA ; avec des fournisseurs américains, les données sont transférées vers un pays tiers.</p>
 <p>À ce propos :</p>
 <ul><li>La transmission est chiffrée</li><li>Les données sont utilisées uniquement pour traiter la demande</li><li>Aucun stockage n'est effectué par le développeur</li></ul>
 <p>Remarque : le traitement est effectué par des prestataires externes. Il ne peut être exclu que des données soient brièvement traitées ou stockées dans le cadre de la fourniture technique.</p>
@@ -296,6 +313,7 @@ const LANGS = {
 <p>Comme il n'y a pas de stockage centralisé des données, l'utilisateur détermine lui-même la durée de conservation de ses données sur son appareil.</p>
 <h3>9. Droits des utilisateurs</h3>
 <p>Les utilisateurs ont le droit d'accéder à leurs données, de les corriger et de les supprimer conformément aux dispositions légales en vigueur.</p>
+<p>Il existe en outre un droit de réclamation auprès d'une autorité de contrôle de la protection des données, p. ex. le commissaire de Hambourg à la protection des données et à la liberté d'information.</p>
 <h3>10. Consentement</h3>
 <p>En utilisant l'application, l'utilisateur accepte la présente politique de confidentialité.</p>
 <h3>11. Modifications</h3>
@@ -305,10 +323,10 @@ const LANGS = {
   it: {
     title: 'Note Legali & Informativa sulla Privacy',
     imp_h: 'Note Legali',
-    imp: `<p><strong>Informazioni ai sensi del § 5 TMG (Legge tedesca sui media telematici)</strong></p>
+    imp: `<p><strong>Informazioni ai sensi del § 5 DDG (Legge tedesca sui servizi digitali)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Germania</p>
 <p>E-mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Responsabile dei contenuti ai sensi del § 55 comma 2 RStV:<br>Klaus Nitzsche (indirizzo come sopra)</p>`,
+<p>Responsabile dei contenuti ai sensi del § 18 comma 2 MStV:<br>Klaus Nitzsche (indirizzo come sopra)</p>`,
     disc_h: 'Limitazione di responsabilità',
     disc: `
 <h3>1. Responsabilità per i contenuti</h3>
@@ -323,10 +341,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Fornitura dell'app (hosting)</h3>
 <p>Questa applicazione è ospitata tramite GitHub Pages. Quando si accede all'app, dati tecnici (ad es. indirizzo IP, informazioni sul browser) vengono trasmessi a GitHub per fornire i contenuti dell'app.</p>
+<p>Alcune funzioni, quando utilizzate, caricano contenuti da server di terzi: api.qrserver.com (QR). Dati tecnici come l'indirizzo IP vengono trasmessi a tali servizi; si applicano le rispettive informative sulla privacy.</p>
 <h3>3. Elaborazione locale dei dati</h3>
 <p>Tutti i contenuti inseriti dall'utente (ad es. ricette) vengono archiviati esclusivamente in locale nel browser (ad es. LocalStorage o IndexedDB). Questi dati non vengono archiviati sui server dello sviluppatore.</p>
 <h3>4. Utilizzo di servizi di IA</h3>
 <p>La funzionalità «Scansione IA» trasmette contenuti (ad es. immagini o testi) a servizi di IA esterni, in particolare ad Anthropic (Claude).</p>
+<p>L'utente sceglie il fornitore nelle impostazioni: Anthropic (Claude, USA), Mistral AI (UE, Francia) o OpenAI (USA). I dati vengono trasmessi solo quando l'utente avvia una funzione di IA; con fornitori statunitensi i dati vengono trasferiti in un paese terzo.</p>
 <p>In proposito:</p>
 <ul><li>La trasmissione è cifrata</li><li>I dati vengono utilizzati esclusivamente per elaborare la richiesta</li><li>Nessuna archiviazione da parte dello sviluppatore</li></ul>
 <p>Nota: l'elaborazione è effettuata da fornitori esterni. Non si può escludere che i dati vengano brevemente elaborati o archiviati nell'ambito della fornitura tecnica.</p>
@@ -340,6 +360,7 @@ const LANGS = {
 <p>Non essendoci una conservazione centralizzata dei dati, l'utente determina autonomamente la durata della conservazione dei propri dati sul proprio dispositivo.</p>
 <h3>9. Diritti degli utenti</h3>
 <p>Gli utenti hanno il diritto di accedere, correggere e cancellare i propri dati in conformità alle disposizioni di legge applicabili.</p>
+<p>Sussiste inoltre il diritto di proporre reclamo a un'autorità di controllo per la protezione dei dati, ad es. il Garante di Amburgo per la protezione dei dati e la libertà d'informazione.</p>
 <h3>10. Consenso</h3>
 <p>Utilizzando l'app, l'utente accetta la presente informativa sulla privacy.</p>
 <h3>11. Modifiche</h3>
@@ -349,10 +370,10 @@ const LANGS = {
   pt: {
     title: 'Aviso Legal & Política de Privacidade',
     imp_h: 'Aviso Legal',
-    imp: `<p><strong>Informações nos termos do § 5 TMG (Lei alemã dos Meios Telemáticos)</strong></p>
+    imp: `<p><strong>Informações nos termos do § 5 DDG (Lei alemã dos Serviços Digitais)</strong></p>
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>Alemanha</p>
 <p>E-mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
-<p>Responsável pelo conteúdo nos termos do § 55 n.º 2 RStV:<br>Klaus Nitzsche (morada como acima)</p>`,
+<p>Responsável pelo conteúdo nos termos do § 18 n.º 2 MStV:<br>Klaus Nitzsche (morada como acima)</p>`,
     disc_h: 'Aviso de Responsabilidade',
     disc: `
 <h3>1. Responsabilidade pelo conteúdo</h3>
@@ -367,10 +388,12 @@ const LANGS = {
 <p>Klaus Nitzsche<br>Märchenweg 14<br>21077 Hamburg<br>E-mail: <a href="mailto:info@family-projekt.de">info@family-projekt.de</a></p>
 <h3>2. Disponibilização da app (alojamento)</h3>
 <p>Esta aplicação é alojada através do GitHub Pages. Ao aceder à app, são transmitidos dados técnicos (p. ex. endereço IP, informações do navegador) para o GitHub para disponibilizar o conteúdo da app.</p>
+<p>Algumas funções carregam, ao serem usadas, conteúdos de servidores de terceiros: api.qrserver.com (QR). São transmitidos dados técnicos como o endereço IP a esses serviços; aplicam-se as respetivas políticas de privacidade.</p>
 <h3>3. Processamento local de dados</h3>
 <p>Todo o conteúdo introduzido pelo utilizador (p. ex. receitas) é armazenado exclusivamente de forma local no navegador (p. ex. LocalStorage ou IndexedDB). Estes dados não são armazenados em servidores do programador.</p>
 <h3>4. Utilização de serviços de IA</h3>
 <p>A funcionalidade «Digitalização IA» transmite conteúdo (p. ex. imagens ou textos) a serviços de IA externos, nomeadamente à Anthropic (Claude).</p>
+<p>O utilizador escolhe o fornecedor nas definições: Anthropic (Claude, EUA), Mistral AI (UE, França) ou OpenAI (EUA). Os dados só são transmitidos quando o utilizador aciona uma função de IA; com fornecedores dos EUA, os dados são transferidos para um país terceiro.</p>
 <p>A este respeito:</p>
 <ul><li>A transmissão é cifrada</li><li>Os dados são utilizados exclusivamente para processar o pedido</li><li>O programador não armazena estes dados</li></ul>
 <p>Nota: o processamento é efetuado por fornecedores externos. Não se pode excluir que os dados sejam brevemente processados ou armazenados no âmbito da disponibilização técnica.</p>
@@ -384,6 +407,7 @@ const LANGS = {
 <p>Uma vez que não existe armazenamento central de dados, o utilizador determina por si próprio a duração do armazenamento dos seus dados no seu dispositivo.</p>
 <h3>9. Direitos dos utilizadores</h3>
 <p>Os utilizadores têm o direito de aceder, corrigir e eliminar os seus dados nos termos das disposições legais aplicáveis.</p>
+<p>Existe ainda o direito de apresentar reclamação a uma autoridade de controlo da proteção de dados, p. ex. o Comissário de Hamburgo para a Proteção de Dados e a Liberdade de Informação.</p>
 <h3>10. Consentimento</h3>
 <p>Ao utilizar a app, o utilizador aceita a presente política de privacidade.</p>
 <h3>11. Alterações</h3>
