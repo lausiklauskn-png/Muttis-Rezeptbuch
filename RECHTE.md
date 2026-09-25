@@ -15,7 +15,7 @@ ausdrücklich an den Nutzer ab. Getragen wird der Schutz von der menschlichen
 Prägung: Entwurf, Auswahl und Anordnung, Nachbearbeitung, Dokumentation und die
 Git-Historie mit Datum.
 
-**Fremde Bestandteile** behalten ihre eigenen Lizenzen (noble-secp256k1, three.js,
+**Fremde Bestandteile** behalten ihre eigenen Lizenzen (Liste: [`THIRD_PARTY.md`](THIRD_PARTY.md); noble-secp256k1, three.js,
 GSAP und andere — erkennbar am Lizenz-Kopf der Datei). Die **SBKIM-Module** aus
 dem Sage-Protokol stehen unter der MIT-Lizenz und dürfen frei weiterverwendet
 werden; diese Lizenz beschränkt nur die App selbst.
