@@ -13070,7 +13070,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var box=document.getElementById('ob-hlp-url');
     if(box)box.textContent=url;
     var qr=document.getElementById('ob-hlp-qr');
-    if(qr)qr.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(url);
+    if(qr){
+      // QR lokal erzeugen (offline, kein externer Dienst) – nutzt gebündelten qrcode-generator
+      try{
+        var _q=qrcode(0,'M');
+        _q.addData(url);
+        _q.make();
+        qr.src=_q.createDataURL(4,8);
+      }catch(e){qr.removeAttribute('src');qr.alt='⚠️ QR-Fehler';}
+    }
     document.getElementById('ob-helper-bg').style.display='flex';
   };
   window.obCloseHelper=function(){
