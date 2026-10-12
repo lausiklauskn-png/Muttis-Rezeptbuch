@@ -11368,22 +11368,34 @@ function renderTxtResult(rec) {
 // ═══════════════════════════════════════════════════════
 // WEB RECIPE IMPORT – Rezept aus dem Internet laden
 // ═══════════════════════════════════════════════════════
-const _WEB_PROXY='https://api.allorigins.win/get?url=';
-const _WEB_PROXY2='https://corsproxy.io/?url=';
+// ⚠ Fremde Abruf-Dienste ändern ihre Bedingungen ohne Ankündigung (2026-10:
+// corsproxy.io antwortete 401, weil es fremde Webseiten nur noch mit Schlüssel
+// bedient). Deshalb eine KETTE: fällt einer aus, kommt der nächste dran — und
+// die Meldung nennt am Ende jeden Dienst mit seinem Grund, statt nur den letzten.
+const _WEB_DIENSTE=[
+  {n:'allorigins',  u:x=>'https://api.allorigins.win/get?url='+encodeURIComponent(x), json:true},
+  {n:'allorigins-raw',u:x=>'https://api.allorigins.win/raw?url='+encodeURIComponent(x)},
+  {n:'codetabs',    u:x=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(x)},
+  {n:'jina',        u:x=>'https://r.jina.ai/'+x, h:{'X-Return-Format':'html'}},
+  {n:'corsproxy',   u:x=>'https://corsproxy.io/?url='+encodeURIComponent(x)}
+];
 let _webRec=null;
 
 async function _webFetch(url){
-  // Primärer Proxy (gibt JSON zurück mit .contents)
-  try{
-    const r=await fetch(_WEB_PROXY+encodeURIComponent(url),{signal:AbortSignal.timeout(14000)});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();
-    if(d.contents)return d.contents;
-  }catch(e){}
-  // Fallback-Proxy (gibt HTML direkt zurück)
-  const r2=await fetch(_WEB_PROXY2+encodeURIComponent(url),{signal:AbortSignal.timeout(14000)});
-  if(!r2.ok)throw new Error('Seite nicht erreichbar (HTTP '+r2.status+')');
-  return await r2.text();
+  const gruende=[];
+  for(const d of _WEB_DIENSTE){
+    try{
+      const r=await fetch(d.u(url),{headers:d.h||{},signal:AbortSignal.timeout(14000)});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const html=d.json?((await r.json()).contents||''):await r.text();
+      // Eine leere Antwort oder eine Fehlerseite des Dienstes ist kein Rezept.
+      if(html.length<500)throw new Error('leere Antwort');
+      return html;
+    }catch(e){
+      gruende.push(d.n+': '+(e.name==='TimeoutError'?'keine Antwort':e.message));
+    }
+  }
+  throw new Error('Seite nicht erreichbar — alle Abruf-Dienste gescheitert<br><small>'+gruende.map(h).join(' · ')+'</small>');
 }
 
 function _parseJsonLdRecipe(html){
