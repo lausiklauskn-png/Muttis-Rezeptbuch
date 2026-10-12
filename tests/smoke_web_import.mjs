@@ -99,13 +99,17 @@ async function lauf(lage) {
       return route.continue();
     // ── das Rezeptbild: direkt oder über einen Dienst ──
     if (decodeURIComponent(u).includes('img.chefkoch-cdn.de')) {
-      const weg = u.startsWith('https://img.chefkoch-cdn.de') ? 'direkt'
+      const weg = u.startsWith('https://img.chefkoch-cdn.de') ? 'direkt' : /wsrv\.nl/.test(u) ? 'wsrv'
         : /allorigins\.win\/raw/.test(u) ? 'allorigins-raw' : /codetabs/.test(u) ? 'codetabs' : /corsproxy/.test(u) ? 'corsproxy' : 'anders';
       angefragt.push('bild:' + weg);
       const b = lage.bild || {};
       // ⚠ Ein von Playwright GESTELLTER Körper umgeht die CORS-Prüfung — ein
       // fehlender CORS-Kopf sperrt hier also nichts (beim ersten Lauf gemessen).
       // Für fetch ist ein Abbruch dasselbe wie eine CORS-Sperre: ein TypeError.
+      // Ein <img> (resourceType image) ist etwas anderes als ein fetch: viele
+      // Bild-Server liefern das eine und sperren das andere.
+      if (weg === 'direkt' && route.request().resourceType() === 'image')
+        return b.imgTag ? route.fulfill({ status: 200, body: PNG, headers: { 'content-type': 'image/png' } }) : route.abort();
       if (weg === 'direkt' && !b.direkt) return route.abort();
       if (weg === 'direkt' || b.dienst === weg)
         return route.fulfill({ status: 200, body: PNG, headers: { 'content-type': 'image/png', 'access-control-allow-origin': '*' } });
@@ -130,7 +134,10 @@ async function lauf(lage) {
   const st = await seite.evaluate(() => ({ status: document.getElementById('webStatus').innerHTML,
     ergebnis: document.getElementById('webResult').innerText,
     vorschau: !!document.querySelector('#webResult img.web-prev-img'),
-    bild: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.img : null }));
+    bild: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.img : null,
+    portionen: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.servings : null,
+    ergibt: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.yieldText : null,
+    keinBild: !!document.querySelector('#webResult .web-kein-bild') }));
   if (lage.annehmen) st.gespeichert = await seite.evaluate(() => { acceptWebImport();
     // nicht R[0]: eine leere Vorlage derselben Kategorie wird BEFÜLLT, nicht vorangestellt
     return (R.find(r => r.name === 'Zwetschgendatschi mit Butterstreuseln') || {}).img; });
@@ -182,12 +189,32 @@ try {
   // Direkt gesperrt (kein CORS) → über einen Dienst
   const g = await lauf({ codetabs: { status: 200, body: mitBild(BILD_URL) }, bild: { direkt: false, dienst: 'codetabs' } });
   ok('sperrt der Bild-Server direktes Laden, holt es ein Dienst', istDaten(g.bild), g.angefragt.join(','));
-  // Alles gesperrt → die Adresse bleibt, statt gar nichts
-  const k = await lauf({ codetabs: { status: 200, body: mitBild(BILD_URL) }, bild: { direkt: false } });
-  ok('geht gar nichts, bleibt wenigstens die Bild-Adresse stehen', k.bild === BILD_URL, String(k.bild).slice(0,40) + ' · ' + k.angefragt.join(','));
+  // Der Bild-Dienst wsrv.nl liefert — er steht vorn
+  const w = await lauf({ codetabs: { status: 200, body: mitBild(BILD_URL) }, bild: { direkt: false, dienst: 'wsrv' } });
+  ok('der Bild-Dienst (wsrv) holt das Bild als erster', istDaten(w.bild) && w.angefragt.indexOf('bild:wsrv') === w.angefragt.findIndex(a => a.startsWith('bild:')), w.angefragt.join(','));
+  // Download gesperrt, aber als <img> lädt es → die Adresse bleibt
+  const k = await lauf({ codetabs: { status: 200, body: mitBild(BILD_URL) }, bild: { direkt: false, imgTag: true } });
+  ok('lädt es nur als <img>, bleibt die Bild-Adresse stehen', k.bild === BILD_URL, String(k.bild).slice(0,40) + ' · ' + k.angefragt.join(','));
+  // Klaus' Lage: GAR NICHTS lädt → kein kaputter Rahmen, sondern ein Hinweis
+  const n = await lauf({ codetabs: { status: 200, body: mitBild(BILD_URL) }, bild: { direkt: false } });
+  ok('lädt gar nichts, wird KEINE tote Adresse gespeichert (kein leerer Rahmen)', n.bild === '', String(n.bild).slice(0,40));
+  ok('… und das Ergebnis sagt, dass kein Bild kam', n.keinBild);
   // Und ein Rezept ohne jedes Bild erfindet keins
   const l = await lauf({ codetabs: { status: 200, body: mitBild(undefined) } });
   ok('eine Seite ohne Bild bekommt kein erfundenes', l.bild === '' && !l.vorschau, JSON.stringify(l.bild));
+
+  // ── ERGIEBIGKEIT (Klaus 2026-10-12: „ein Blechkuchen sind ungefähr 20 Portionen") ──
+  const mitErtrag = y => `<!doctype html><html><head><script type="application/ld+json">${JSON.stringify({
+    '@context':'https://schema.org','@type':'Recipe',name:'Blechkuchen', recipeYield: y,
+    recipeIngredient:['1 kg Zwetschgen'], recipeInstructions:[{'@type':'HowToStep',text:'Backen.'}]
+  })}</script></head><body>${'Füllung '.repeat(100)}</body></html>`;
+  const y1 = await lauf({ codetabs: { status: 200, body: mitErtrag(['1', '1 Blech']) } });
+  ok('„1 Blech" wird zu 20 Portionen', y1.portionen === 20, String(y1.portionen));
+  ok('… und der Text dazu bleibt erhalten', /1 Blech/.test(y1.ergibt || '') && /20 Stück/.test(y1.ergibt || ''), String(y1.ergibt));
+  const y2 = await lauf({ codetabs: { status: 200, body: mitErtrag('20 Stücke') } });
+  ok('„20 Stücke" bleibt 20', y2.portionen === 20 && y2.ergibt === '20 Stücke', JSON.stringify([y2.portionen, y2.ergibt]));
+  const y3 = await lauf({ codetabs: { status: 200, body: mitErtrag('4') } });
+  ok('eine nackte Zahl bleibt, wie sie ist', y3.portionen === 4 && !y3.ergibt, JSON.stringify([y3.portionen, y3.ergibt]));
 } catch (e) {
   rot.push('ABSTURZ: ' + String(e).slice(0, 300));
   console.log('  ✗ ROT: ABSTURZ — ' + String(e).slice(0, 300));
