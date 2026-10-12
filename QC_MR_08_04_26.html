@@ -326,6 +326,7 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .crop-ov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.92);display:flex;flex-direction:column;padding-top:var(--st)}
 .crop-hdr{padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .crop-hdr-title{color:#fff;font-family:Georgia,serif;font-size:.96rem;flex:1}
+.crop-hdr-save{background:var(--rust);border:none;color:#fff;border-radius:16px;padding:7px 14px;font-weight:700;font-size:.8rem;cursor:pointer;flex-shrink:0}
 .crop-close{background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .crop-close:active{background:rgba(255,255,255,.25)}
 .crop-stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;touch-action:none}
@@ -2946,6 +2947,7 @@ Vielen Dank für deine Unterstützung.</div>
   <div class="crop-hdr">
     <button class="crop-close" onclick="closeCrop()" title="Schließen">✕</button>
     <div class="crop-hdr-title" id="cropTitle">Bildausschnitt anpassen</div>
+    <button class="crop-hdr-save" onclick="saveCrop()" id="cropHdrSaveBtn">✓ Speichern</button>
   </div>
   <div class="crop-stage">
     <div class="crop-frame" id="cropFrame">
@@ -10202,18 +10204,44 @@ function openCrop(rid){
 
   document.getElementById('cropOv').style.display='flex';
   document.body.style.overflow='hidden';
+  cropAnSichtAn();
 
   // Bind events (remove any stale first)
   bindCropEvents();
 }
 
 function applyLangToCrop(){
-  const ids=['cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight','cropSaveBtn','cropCancelBtn','cropResetBtn'];
-  const keys=['cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight','cropSave','cropCancel','cropReset'];
+  const ids=['cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight','cropSaveBtn','cropCancelBtn','cropResetBtn','cropHdrSaveBtn'];
+  const keys=['cropTitle','cpCenter','cpTop','cpBottom','cpLeft','cpRight','cropSave','cropCancel','cropReset','cropSave'];
   ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=T(keys[i]);});
 }
 
+// ── Der Dialog folgt dem SICHTBAREN Ausschnitt, nicht dem Seitenrahmen ──
+// Klaus 2026-10-12, Bild vom Tablet: Schieberegler liefen rechts aus dem
+// Schirm, „Speichern" stand gar nicht da — „und es wird der erste Stand
+// gespeichert". Die Seite war hineingezoomt (Bildmitte bei x≈1135 von 2000);
+// `position:fixed; inset:0` hängt dann am Seitenrahmen, der größer ist als
+// das, was man sieht, und der Knopf liegt unten rechts außerhalb.
+// Zoomen bleibt erlaubt (Lesbarkeit) — der Dialog misst stattdessen nach.
+function cropAnSicht(){
+  const ov=document.getElementById('cropOv'),vv=window.visualViewport;
+  if(!ov||!vv||ov.style.display==='none')return;
+  ov.style.inset='auto';
+  ov.style.left=vv.offsetLeft+'px';ov.style.top=vv.offsetTop+'px';
+  ov.style.width=vv.width+'px';ov.style.height=vv.height+'px';
+}
+function cropAnSichtAn(){
+  cropAnSicht();
+  if(window.visualViewport){visualViewport.addEventListener('resize',cropAnSicht);visualViewport.addEventListener('scroll',cropAnSicht);}
+}
+function cropAnSichtAus(){
+  if(window.visualViewport){visualViewport.removeEventListener('resize',cropAnSicht);visualViewport.removeEventListener('scroll',cropAnSicht);}
+  const ov=document.getElementById('cropOv');
+  if(ov)['inset','left','top','width','height'].forEach(k=>ov.style[k]='');
+}
+
 function closeCrop(){
+  cropAnSichtAus();
   document.getElementById('cropOv').style.display='none';
   document.body.style.overflow='';
   unbindCropEvents();
@@ -10227,6 +10255,7 @@ function saveCrop(){
     sv();render();
   }
   // Close overlay first, then open next in queue (if any)
+  cropAnSichtAus();
   document.getElementById('cropOv').style.display='none';
   document.body.style.overflow='';
   unbindCropEvents();
