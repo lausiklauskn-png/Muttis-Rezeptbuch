@@ -137,8 +137,18 @@ async function lauf(lage) {
     bild: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.img : null,
     portionen: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.servings : null,
     ergibt: (typeof _webRec !== 'undefined' && _webRec) ? _webRec.yieldText : null,
-    keinBild: !!document.querySelector('#webResult .web-kein-bild') }));
-  if (lage.annehmen) st.gespeichert = await seite.evaluate(() => { acceptWebImport();
+    keinBild: !!document.querySelector('#webResult .web-kein-bild'),
+    katWahl: document.getElementById('webKatSel')?.value ?? null,
+    katOffen: !!document.querySelector('#webResult .web-kat.offen') }));
+  if (lage.katAnnehmen) st.katGespeichert = await seite.evaluate(() => {
+    const vorher = R.length; acceptWebImport(); const blockiert = R.length === vorher;
+    const s = document.getElementById('webKatSel'); if (s) { s.value = 'kuchen'; }
+    acceptWebImport();
+    return { blockiert, cat: (R.find(r => r.name === 'Omas Sonntagsfreude') || {}).cat };
+  });
+  // „Zwetschgendatschi" ist ein Kuchen, den die Regeln nicht kennen — ohne Wahl
+  // trägt die App seit 2026-10-12 nichts ein. Die Probe wählt also, wie ein Mensch.
+  if (lage.annehmen) st.gespeichert = await seite.evaluate(() => { const s = document.getElementById('webKatSel'); if (s && !s.value) s.value = 'kuchen'; acceptWebImport();
     // nicht R[0]: eine leere Vorlage derselben Kategorie wird BEFÜLLT, nicht vorangestellt
     return (R.find(r => r.name === 'Zwetschgendatschi mit Butterstreuseln') || {}).img; });
   await seite.close();
@@ -215,6 +225,23 @@ try {
   ok('„20 Stücke" bleibt 20', y2.portionen === 20 && y2.ergibt === '20 Stücke', JSON.stringify([y2.portionen, y2.ergibt]));
   const y3 = await lauf({ codetabs: { status: 200, body: mitErtrag('4') } });
   ok('eine nackte Zahl bleibt, wie sie ist', y3.portionen === 4 && !y3.ergibt, JSON.stringify([y3.portionen, y3.ergibt]));
+
+  // ── KATEGORIE (Klaus 2026-10-12: „Pflaumenkuchen bei Fleisch einsortiert") ──
+  const mitKat = (name, extra = {}) => `<!doctype html><html><head><script type="application/ld+json">${JSON.stringify({
+    '@context':'https://schema.org','@type':'Recipe',name, ...extra,
+    recipeIngredient:['1 kg Zwetschgen'], recipeInstructions:[{'@type':'HowToStep',text:'Backen.'}]
+  })}</script></head><body>${'Füllung '.repeat(100)}</body></html>`;
+  const k1 = await lauf({ codetabs: { status: 200, body: mitKat('Pflaumenkuchen vom Blech') } });
+  ok('„Pflaumenkuchen" wird als Kuchen erkannt, nicht als Fleisch', k1.katWahl === 'kuchen' && !k1.katOffen, String(k1.katWahl));
+  const k2 = await lauf({ codetabs: { status: 200, body: mitKat('Omas Bestes', { recipeCategory: 'Suppe' }) } });
+  ok('recipeCategory der Seite geht vor („Suppe")', k2.katWahl === 'suppe', String(k2.katWahl));
+  const k3 = await lauf({ codetabs: { status: 200, body: mitKat('Pflaumenkuchen vom Blech'.replace('kuchen vom Blech', 'traum')) }, katAnnehmen: false });
+  ok('nicht eindeutig: KEINE Vorauswahl, die Wahl ist rot markiert', k3.katWahl === '' && k3.katOffen, JSON.stringify([k3.katWahl, k3.katOffen]));
+  // ⚠ Der Fall braucht ein Rezept, das WIRKLICH nicht erkannt wird — sonst misst er nichts.
+  const k4 = await lauf({ codetabs: { status: 200, body: mitKat('Omas Sonntagsfreude') }, katAnnehmen: true });
+  ok('(Vorbedingung: dieses Rezept wird nicht erkannt)', k4.katWahl === '', String(k4.katWahl));
+  ok('… und ohne Wahl wird NICHTS eingetragen', k4.katGespeichert.blockiert, JSON.stringify(k4.katGespeichert));
+  ok('mit Wahl landet das Rezept in der gewählten Kategorie', k4.katGespeichert.cat === 'kuchen', JSON.stringify(k4.katGespeichert));
 } catch (e) {
   rot.push('ABSTURZ: ' + String(e).slice(0, 300));
   console.log('  ✗ ROT: ABSTURZ — ' + String(e).slice(0, 300));

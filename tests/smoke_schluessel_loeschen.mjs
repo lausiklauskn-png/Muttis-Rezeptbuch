@@ -157,13 +157,49 @@ try {
        await seite.evaluate(() => [...document.querySelectorAll('[data-key-alt]')].every(e => e.style.display === 'none')));
     await seite.close();
   }
+  // ── 5b · Eine WEBADRESSE ist kein Schlüssel (Klaus 2026-10-12: gespeichert war „https:/…html") ──
+  {
+    const ctx = await browser.newContext();
+    await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: `http://127.0.0.1:${PORT}` });
+    const seite = await ctx.newPage();
+    const openai = [];
+    await seite.route('**/*', r => { const u = r.request().url(); if (/openai\.com/.test(u)) openai.push(u);
+      return u.startsWith(`http://127.0.0.1:${PORT}/`) ? r.continue() : r.abort(); });
+    await seite.goto(`http://127.0.0.1:${PORT}/index.html`, { waitUntil: 'domcontentloaded' });
+    await seite.waitForFunction(() => typeof pasteImgGenKey === 'function' && typeof _openAiKeyOk === 'function', null, { timeout: 20000 });
+    const url = 'https://www.chefkoch.de/rezepte/1476331252838756/Zwetschgendatschi-mit-Butterstreuseln.html';
+    const m = await seite.evaluate(async u => {
+      localStorage.clear(); openImport(); switchFovTab('importOv', 'imggen', document.getElementById('impTabImgGen'));
+      await navigator.clipboard.writeText(u);
+      await pasteImgGenKey();
+      const imFeld = document.getElementById('imggenKeyIn').value;
+      document.getElementById('imggenKeyIn').value = u; await saveAndActivateImgGen();
+      const gespeichert = localStorage.getItem('openaiImgKey9');
+      return { imFeld, gespeichert };
+    }, url);
+    ok('„📋 Einfügen" übernimmt eine Webadresse NICHT als Schlüssel', m.imFeld === '', m.imFeld);
+    ok('… und Speichern lehnt sie ab', m.gespeichert === null, String(m.gespeichert));
+    const alt = await seite.evaluate(async u => {
+      localStorage.setItem('openaiImgKey9', u);
+      initImgGenPane();
+      const warnung = document.getElementById('imggenReadySub').textContent;
+      const r = { id: 987201, name: 'Probe', cat: 'kuchen', img: '', ings: [], steps: [], rating: { stars: 0, comment: '', imps: [] } }; R.unshift(r);
+      openImgGenForRecipe(r.id); await startImgGenSingle();
+      await new Promise(z => setTimeout(z, 300));
+      return { warnung, fehler: document.getElementById('igFehlerBox')?.textContent || '', soll: T('oaiKeyGespeichertFalsch') };
+    }, url);
+    ok('ein schon gespeicherter Nicht-Schlüssel wird als solcher angezeigt', alt.warnung === alt.soll, alt.warnung);
+    ok('… „Jetzt generieren" sagt es, statt still zu scheitern', alt.fehler === alt.soll, alt.fehler);
+    ok('… und es geht KEINE Anfrage an OpenAI', openai.length === 0, openai.join(','));
+    await ctx.close();
+  }
   // ── 6 · in allen 8 Sprachen ──
   const fehlt = await (async () => { const s = await browser.newPage();
     await s.route('**/*', r => r.request().url().startsWith(`http://127.0.0.1:${PORT}/`) ? r.continue() : r.abort());
     await s.goto(`http://127.0.0.1:${PORT}/index.html`, { waitUntil: 'domcontentloaded' });
     await s.waitForFunction(() => typeof LANGS !== 'undefined', null, { timeout: 20000 });
     const f = await s.evaluate(() => ['de','en','ru','zh','es','fr','it','pt'].flatMap(l =>
-      ['keyDel','keyDelAsk','keyDelDone','keyAlt'].filter(k => !LANGS[l] || !LANGS[l][k]).map(k => l + '.' + k)));
+      ['keyDel','keyDelAsk','keyDelDone','keyAlt','oaiKeyFalsch','oaiKeyNichtInAblage','oaiKeyGespeichertFalsch'].filter(k => !LANGS[l] || !LANGS[l][k]).map(k => l + '.' + k)));
     await s.close(); return f; })();
   ok('die vier neuen Texte stehen in allen 8 Sprachen', fehlt.length === 0, fehlt.join(','));
 } catch (e) {

@@ -940,6 +940,9 @@ body.nav-collapsed{padding-bottom:calc(16px + var(--sb))}
 .scan-ready-sub{font-size:.63rem;color:var(--dim);margin-top:2px}
 .scan-key-change{background:none;border:1.5px solid var(--sand2);border-radius:7px;padding:5px 10px;font-size:.67rem;color:var(--dim);cursor:pointer;flex-shrink:0}
 .scan-key-change:active{background:var(--sand2)}
+.web-kat{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.74rem;font-weight:700;color:var(--dim);margin:6px 0 8px;padding:7px 9px;border-radius:9px;background:var(--sand);border:1.5px solid var(--sand2)}
+.web-kat select{flex:1;min-width:160px;font-size:.8rem;padding:5px 6px;border-radius:7px;border:1.5px solid var(--sand2);font-family:inherit}
+.web-kat.offen{border-color:#c0392b;color:#c0392b;background:rgba(192,57,43,.06)}
 .web-kein-bild{font-size:.72rem;color:var(--dim);background:var(--sand);border:1px dashed var(--sand2);border-radius:9px;padding:8px 10px;margin:4px 0 8px;text-align:left}
 .web-prev-img{display:block;width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:0 0 10px}
 .key-alt{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.7rem;color:var(--dim);background:var(--sand);border:1px solid var(--sand2);border-radius:8px;padding:6px 9px;margin:0 0 8px}
@@ -3115,7 +3118,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Fragen und Hilfe zum API-Key'
     ,sManualHead:'📚 HANDBUCH'
     ,sManualLbl:'Bedienungsanleitung'
-    ,sReloadHead:'🔄 APP',sReloadLbl:'Aktualisieren & neu laden',sReloadSub:'Cache leeren, neueste Version holen',keyDel:'🗑 Löschen',keyDelAsk:'Gespeicherten Schlüssel löschen? Danach kannst du einen neuen einfügen.',keyDelDone:'🗑 Schlüssel gelöscht — jetzt kannst du einen neuen einfügen',keyAlt:'Gespeichert',webBildLaedt:'🖼️ Rezeptbild wird übernommen…',webKeinBild:'Die Seite liefert kein Bild, das sich laden lässt.',webKiBildAuto:'danach ein Bild per KI erzeugen (OpenAI, ca. 0,04 €)',webKiBildOhneKey:'Mit einem OpenAI-Schlüssel (🎨 KI-Bild) kann das Rezeptbuch eines erzeugen — Claude selbst erzeugt keine Bilder.',sMistralLbl:'Mistral-Schlüssel (EU)',sMistralSub:'Für Texterkennung im KI-Scan',sOfflineCap:'Offline-fähig',updateStatus:'Updates werden automatisch im Hintergrund bereitgestellt.'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Aktualisieren & neu laden',sReloadSub:'Cache leeren, neueste Version holen',keyDel:'🗑 Löschen',keyDelAsk:'Gespeicherten Schlüssel löschen? Danach kannst du einen neuen einfügen.',keyDelDone:'🗑 Schlüssel gelöscht — jetzt kannst du einen neuen einfügen',keyAlt:'Gespeichert',webBildLaedt:'🖼️ Rezeptbild wird übernommen…',webKeinBild:'Die Seite liefert kein Bild, das sich laden lässt.',webKiBildAuto:'danach ein Bild per KI erzeugen (OpenAI, ca. 0,04 €)',webKiBildOhneKey:'Mit einem OpenAI-Schlüssel (🎨 KI-Bild) kann das Rezeptbuch eines erzeugen — Claude selbst erzeugt keine Bilder.',oaiKeyFalsch:'⚠️ Das ist kein OpenAI-Schlüssel — er beginnt mit „sk-“',oaiKeyNichtInAblage:'📋 In der Zwischenablage liegt kein OpenAI-Schlüssel (beginnt mit „sk-“)',oaiKeyGespeichertFalsch:'⚠️ Der gespeicherte Schlüssel ist kein OpenAI-Schlüssel — bitte mit 🗑 löschen und neu einfügen',webKatErkannt:'Kategorie:',webKatWaehlen:'⚠️ Kategorie nicht eindeutig — bitte wählen:',webKatBitte:'Bitte eine Kategorie wählen',sMistralLbl:'Mistral-Schlüssel (EU)',sMistralSub:'Für Texterkennung im KI-Scan',sOfflineCap:'Offline-fähig',updateStatus:'Updates werden automatisch im Hintergrund bereitgestellt.'
     ,sManualSub:'Alle Funktionen erklärt · PDF-Download'
     ,manOvTitle:'📚 Handbuch'
     ,manPdfLbl:'PDF'
@@ -3245,7 +3248,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Questions & help about the API Key'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'User Guide'
-    ,sReloadHead:'🔄 APP',sReloadLbl:'Refresh & reload',sReloadSub:'Clear cache, get the latest version',keyDel:'🗑 Delete',keyDelAsk:'Delete the saved key? You can then paste a new one.',keyDelDone:'🗑 Key deleted — you can now paste a new one',keyAlt:'Saved',webBildLaedt:'🖼️ Fetching the recipe photo…',webKeinBild:'The page provides no image that can be loaded.',webKiBildAuto:'then create an image with AI (OpenAI, approx. €0.04)',webKiBildOhneKey:'With an OpenAI key (🎨 AI image) the recipe book can create one — Claude itself does not create images.',sMistralLbl:'Mistral key (EU)',sMistralSub:'For text recognition in the AI scan',sOfflineCap:'Works offline',updateStatus:'Updates are provided automatically in the background.'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Refresh & reload',sReloadSub:'Clear cache, get the latest version',keyDel:'🗑 Delete',keyDelAsk:'Delete the saved key? You can then paste a new one.',keyDelDone:'🗑 Key deleted — you can now paste a new one',keyAlt:'Saved',webBildLaedt:'🖼️ Fetching the recipe photo…',webKeinBild:'The page provides no image that can be loaded.',webKiBildAuto:'then create an image with AI (OpenAI, approx. €0.04)',webKiBildOhneKey:'With an OpenAI key (🎨 AI image) the recipe book can create one — Claude itself does not create images.',oaiKeyFalsch:'⚠️ That is not an OpenAI key — it starts with “sk-”',oaiKeyNichtInAblage:'📋 The clipboard holds no OpenAI key (starts with “sk-”)',oaiKeyGespeichertFalsch:'⚠️ The saved key is not an OpenAI key — please delete it with 🗑 and paste a new one',webKatErkannt:'Category:',webKatWaehlen:'⚠️ Category unclear — please choose:',webKatBitte:'Please choose a category',sMistralLbl:'Mistral key (EU)',sMistralSub:'For text recognition in the AI scan',sOfflineCap:'Works offline',updateStatus:'Updates are provided automatically in the background.'
     ,sManualSub:'All features explained · PDF download'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -3375,7 +3378,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Вопросы и помощь по API-ключу'
     ,sManualHead:'📚 РУКОВОДСТВО'
     ,sManualLbl:'Руководство пользователя'
-    ,sReloadHead:'🔄 ПРИЛОЖЕНИЕ',sReloadLbl:'Обновить и перезагрузить',sReloadSub:'Очистить кэш, загрузить новую версию',keyDel:'🗑 Удалить',keyDelAsk:'Удалить сохранённый ключ? Затем можно вставить новый.',keyDelDone:'🗑 Ключ удалён — теперь можно вставить новый',keyAlt:'Сохранён',webBildLaedt:'🖼️ Загружается фото рецепта…',webKeinBild:'Страница не даёт изображения, которое можно загрузить.',webKiBildAuto:'затем создать изображение с ИИ (OpenAI, ок. 0,04 €)',webKiBildOhneKey:'С ключом OpenAI (🎨 ИИ-изображение) книга рецептов может его создать — Claude сам изображения не создаёт.',sMistralLbl:'Ключ Mistral (ЕС)',sMistralSub:'Для распознавания текста в ИИ-сканере',sOfflineCap:'Работает офлайн',updateStatus:'Обновления предоставляются автоматически в фоновом режиме.'
+    ,sReloadHead:'🔄 ПРИЛОЖЕНИЕ',sReloadLbl:'Обновить и перезагрузить',sReloadSub:'Очистить кэш, загрузить новую версию',keyDel:'🗑 Удалить',keyDelAsk:'Удалить сохранённый ключ? Затем можно вставить новый.',keyDelDone:'🗑 Ключ удалён — теперь можно вставить новый',keyAlt:'Сохранён',webBildLaedt:'🖼️ Загружается фото рецепта…',webKeinBild:'Страница не даёт изображения, которое можно загрузить.',webKiBildAuto:'затем создать изображение с ИИ (OpenAI, ок. 0,04 €)',webKiBildOhneKey:'С ключом OpenAI (🎨 ИИ-изображение) книга рецептов может его создать — Claude сам изображения не создаёт.',oaiKeyFalsch:'⚠️ Это не ключ OpenAI — он начинается с «sk-»',oaiKeyNichtInAblage:'📋 В буфере обмена нет ключа OpenAI (начинается с «sk-»)',oaiKeyGespeichertFalsch:'⚠️ Сохранённый ключ — не ключ OpenAI. Удали его 🗑 и вставь новый',webKatErkannt:'Категория:',webKatWaehlen:'⚠️ Категория неясна — выбери:',webKatBitte:'Выбери категорию',sMistralLbl:'Ключ Mistral (ЕС)',sMistralSub:'Для распознавания текста в ИИ-сканере',sOfflineCap:'Работает офлайн',updateStatus:'Обновления предоставляются автоматически в фоновом режиме.'
     ,sManualSub:'Все функции объяснены · Скачать PDF'
     ,manOvTitle:'📚 Руководство'
     ,manPdfLbl:'PDF'
@@ -3505,7 +3508,7 @@ const LANGS={
     ,apiKeyHelpTtl:'关于API密钥的问题与帮助'
     ,sManualHead:'📚 手册'
     ,sManualLbl:'用户手册'
-    ,sReloadHead:'🔄 应用',sReloadLbl:'刷新并重新加载',sReloadSub:'清除缓存，获取最新版本',keyDel:'🗑 删除',keyDelAsk:'删除已保存的密钥？之后可以粘贴新的密钥。',keyDelDone:'🗑 密钥已删除 — 现在可以粘贴新的密钥',keyAlt:'已保存',webBildLaedt:'🖼️ 正在获取菜谱图片…',webKeinBild:'该页面没有可加载的图片。',webKiBildAuto:'随后用 AI 生成图片（OpenAI，约 0.04 €）',webKiBildOhneKey:'有了 OpenAI 密钥（🎨 AI 图片），菜谱书可以生成图片——Claude 本身不生成图片。',sMistralLbl:'Mistral 密钥（欧盟）',sMistralSub:'用于 AI 扫描中的文字识别',sOfflineCap:'可离线使用',updateStatus:'更新会在后台自动提供。'
+    ,sReloadHead:'🔄 应用',sReloadLbl:'刷新并重新加载',sReloadSub:'清除缓存，获取最新版本',keyDel:'🗑 删除',keyDelAsk:'删除已保存的密钥？之后可以粘贴新的密钥。',keyDelDone:'🗑 密钥已删除 — 现在可以粘贴新的密钥',keyAlt:'已保存',webBildLaedt:'🖼️ 正在获取菜谱图片…',webKeinBild:'该页面没有可加载的图片。',webKiBildAuto:'随后用 AI 生成图片（OpenAI，约 0.04 €）',webKiBildOhneKey:'有了 OpenAI 密钥（🎨 AI 图片），菜谱书可以生成图片——Claude 本身不生成图片。',oaiKeyFalsch:'⚠️ 这不是 OpenAI 密钥——它以“sk-”开头',oaiKeyNichtInAblage:'📋 剪贴板中没有 OpenAI 密钥（以“sk-”开头）',oaiKeyGespeichertFalsch:'⚠️ 保存的不是 OpenAI 密钥——请用 🗑 删除后重新粘贴',webKatErkannt:'分类：',webKatWaehlen:'⚠️ 分类不明确——请选择：',webKatBitte:'请选择一个分类',sMistralLbl:'Mistral 密钥（欧盟）',sMistralSub:'用于 AI 扫描中的文字识别',sOfflineCap:'可离线使用',updateStatus:'更新会在后台自动提供。'
     ,sManualSub:'所有功能说明 · PDF下载'
     ,manOvTitle:'📚 手册'
     ,manPdfLbl:'PDF'
@@ -3633,7 +3636,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Preguntas y ayuda sobre el API Key'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'Manual de usuario'
-    ,sReloadHead:'🔄 APP',sReloadLbl:'Actualizar y recargar',sReloadSub:'Vaciar caché, obtener la última versión',keyDel:'🗑 Eliminar',keyDelAsk:'¿Eliminar la clave guardada? Después puedes pegar una nueva.',keyDelDone:'🗑 Clave eliminada — ya puedes pegar una nueva',keyAlt:'Guardada',webBildLaedt:'🖼️ Obteniendo la foto de la receta…',webKeinBild:'La página no ofrece ninguna imagen que se pueda cargar.',webKiBildAuto:'después crear una imagen con IA (OpenAI, aprox. 0,04 €)',webKiBildOhneKey:'Con una clave de OpenAI (🎨 Imagen IA) el recetario puede crear una; Claude no crea imágenes.',sMistralLbl:'Clave Mistral (UE)',sMistralSub:'Para el reconocimiento de texto en el escaneo con IA',sOfflineCap:'Funciona sin conexión',updateStatus:'Las actualizaciones se proporcionan automáticamente en segundo plano.'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Actualizar y recargar',sReloadSub:'Vaciar caché, obtener la última versión',keyDel:'🗑 Eliminar',keyDelAsk:'¿Eliminar la clave guardada? Después puedes pegar una nueva.',keyDelDone:'🗑 Clave eliminada — ya puedes pegar una nueva',keyAlt:'Guardada',webBildLaedt:'🖼️ Obteniendo la foto de la receta…',webKeinBild:'La página no ofrece ninguna imagen que se pueda cargar.',webKiBildAuto:'después crear una imagen con IA (OpenAI, aprox. 0,04 €)',webKiBildOhneKey:'Con una clave de OpenAI (🎨 Imagen IA) el recetario puede crear una; Claude no crea imágenes.',oaiKeyFalsch:'⚠️ Eso no es una clave de OpenAI: empieza por «sk-»',oaiKeyNichtInAblage:'📋 El portapapeles no contiene una clave de OpenAI (empieza por «sk-»)',oaiKeyGespeichertFalsch:'⚠️ La clave guardada no es de OpenAI: bórrala con 🗑 y pega una nueva',webKatErkannt:'Categoría:',webKatWaehlen:'⚠️ Categoría no clara: elige una:',webKatBitte:'Elige una categoría',sMistralLbl:'Clave Mistral (UE)',sMistralSub:'Para el reconocimiento de texto en el escaneo con IA',sOfflineCap:'Funciona sin conexión',updateStatus:'Las actualizaciones se proporcionan automáticamente en segundo plano.'
     ,sManualSub:'Todas las funciones explicadas · Descargar PDF'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -3872,7 +3875,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Questions et aide sur la clé API'
     ,sManualHead:'📚 MANUEL'
     ,sManualLbl:'Guide d\'utilisation'
-    ,sReloadHead:'🔄 APPLI',sReloadLbl:'Actualiser et recharger',sReloadSub:'Vider le cache, obtenir la dernière version',keyDel:'🗑 Supprimer',keyDelAsk:'Supprimer la clé enregistrée ? Tu pourras ensuite en coller une nouvelle.',keyDelDone:'🗑 Clé supprimée — tu peux maintenant en coller une nouvelle',keyAlt:'Enregistrée',webBildLaedt:'🖼️ Récupération de la photo de la recette…',webKeinBild:'La page ne fournit aucune image téléchargeable.',webKiBildAuto:'puis créer une image par IA (OpenAI, env. 0,04 €)',webKiBildOhneKey:'Avec une clé OpenAI (🎨 Image IA), le livre peut en créer une — Claude ne crée pas d\'images.',sMistralLbl:'Clé Mistral (UE)',sMistralSub:'Pour la reconnaissance de texte dans le scan IA',sOfflineCap:'Fonctionne hors ligne',updateStatus:'Les mises à jour sont fournies automatiquement en arrière-plan.'
+    ,sReloadHead:'🔄 APPLI',sReloadLbl:'Actualiser et recharger',sReloadSub:'Vider le cache, obtenir la dernière version',keyDel:'🗑 Supprimer',keyDelAsk:'Supprimer la clé enregistrée ? Tu pourras ensuite en coller une nouvelle.',keyDelDone:'🗑 Clé supprimée — tu peux maintenant en coller une nouvelle',keyAlt:'Enregistrée',webBildLaedt:'🖼️ Récupération de la photo de la recette…',webKeinBild:'La page ne fournit aucune image téléchargeable.',webKiBildAuto:'puis créer une image par IA (OpenAI, env. 0,04 €)',webKiBildOhneKey:'Avec une clé OpenAI (🎨 Image IA), le livre peut en créer une — Claude ne crée pas d\'images.',oaiKeyFalsch:'⚠️ Ce n\'est pas une clé OpenAI — elle commence par « sk- »',oaiKeyNichtInAblage:'📋 Le presse-papiers ne contient pas de clé OpenAI (commence par « sk- »)',oaiKeyGespeichertFalsch:'⚠️ La clé enregistrée n\'est pas une clé OpenAI — supprime-la avec 🗑 et colles-en une nouvelle',webKatErkannt:'Catégorie :',webKatWaehlen:'⚠️ Catégorie incertaine — choisis :',webKatBitte:'Choisis une catégorie',sMistralLbl:'Clé Mistral (UE)',sMistralSub:'Pour la reconnaissance de texte dans le scan IA',sOfflineCap:'Fonctionne hors ligne',updateStatus:'Les mises à jour sont fournies automatiquement en arrière-plan.'
     ,sManualSub:'Toutes les fonctions expliquées · Télécharger PDF'
     ,manOvTitle:'📚 Manuel'
     ,manPdfLbl:'PDF'
@@ -4111,7 +4114,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Domande e aiuto sulla chiave API'
     ,sManualHead:'📚 MANUALE'
     ,sManualLbl:'Manuale utente'
-    ,sReloadHead:'🔄 APP',sReloadLbl:'Aggiorna e ricarica',sReloadSub:'Svuota la cache, scarica l\'ultima versione',keyDel:'🗑 Elimina',keyDelAsk:'Eliminare la chiave salvata? Poi potrai incollarne una nuova.',keyDelDone:'🗑 Chiave eliminata — ora puoi incollarne una nuova',keyAlt:'Salvata',webBildLaedt:'🖼️ Recupero della foto della ricetta…',webKeinBild:'La pagina non fornisce un\'immagine caricabile.',webKiBildAuto:'poi creare un\'immagine con l\'IA (OpenAI, ca. 0,04 €)',webKiBildOhneKey:'Con una chiave OpenAI (🎨 Immagine IA) il ricettario può crearne una; Claude non crea immagini.',sMistralLbl:'Chiave Mistral (UE)',sMistralSub:'Per il riconoscimento del testo nella scansione IA',sOfflineCap:'Funziona offline',updateStatus:'Gli aggiornamenti vengono forniti automaticamente in background.'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Aggiorna e ricarica',sReloadSub:'Svuota la cache, scarica l\'ultima versione',keyDel:'🗑 Elimina',keyDelAsk:'Eliminare la chiave salvata? Poi potrai incollarne una nuova.',keyDelDone:'🗑 Chiave eliminata — ora puoi incollarne una nuova',keyAlt:'Salvata',webBildLaedt:'🖼️ Recupero della foto della ricetta…',webKeinBild:'La pagina non fornisce un\'immagine caricabile.',webKiBildAuto:'poi creare un\'immagine con l\'IA (OpenAI, ca. 0,04 €)',webKiBildOhneKey:'Con una chiave OpenAI (🎨 Immagine IA) il ricettario può crearne una; Claude non crea immagini.',oaiKeyFalsch:'⚠️ Questa non è una chiave OpenAI: inizia con «sk-»',oaiKeyNichtInAblage:'📋 Negli appunti non c\'è una chiave OpenAI (inizia con «sk-»)',oaiKeyGespeichertFalsch:'⚠️ La chiave salvata non è di OpenAI: eliminala con 🗑 e incollane una nuova',webKatErkannt:'Categoria:',webKatWaehlen:'⚠️ Categoria non chiara: scegline una:',webKatBitte:'Scegli una categoria',sMistralLbl:'Chiave Mistral (UE)',sMistralSub:'Per il riconoscimento del testo nella scansione IA',sOfflineCap:'Funziona offline',updateStatus:'Gli aggiornamenti vengono forniti automaticamente in background.'
     ,sManualSub:'Tutte le funzioni spiegate · Scarica PDF'
     ,manOvTitle:'📚 Manuale'
     ,manPdfLbl:'PDF'
@@ -4345,7 +4348,7 @@ const LANGS={
     ,apiKeyHelpTtl:'Perguntas e ajuda sobre a chave API'
     ,sManualHead:'📚 MANUAL'
     ,sManualLbl:'Manual do utilizador'
-    ,sReloadHead:'🔄 APP',sReloadLbl:'Atualizar e recarregar',sReloadSub:'Limpar cache, obter a versão mais recente',keyDel:'🗑 Apagar',keyDelAsk:'Apagar a chave guardada? Depois podes colar uma nova.',keyDelDone:'🗑 Chave apagada — agora podes colar uma nova',keyAlt:'Guardada',webBildLaedt:'🖼️ A obter a foto da receita…',webKeinBild:'A página não fornece nenhuma imagem que se possa carregar.',webKiBildAuto:'depois criar uma imagem com IA (OpenAI, aprox. 0,04 €)',webKiBildOhneKey:'Com uma chave OpenAI (🎨 Imagem IA) o livro pode criar uma — o Claude não cria imagens.',sMistralLbl:'Chave Mistral (UE)',sMistralSub:'Para o reconhecimento de texto na digitalização com IA',sOfflineCap:'Funciona offline',updateStatus:'As atualizações são fornecidas automaticamente em segundo plano.'
+    ,sReloadHead:'🔄 APP',sReloadLbl:'Atualizar e recarregar',sReloadSub:'Limpar cache, obter a versão mais recente',keyDel:'🗑 Apagar',keyDelAsk:'Apagar a chave guardada? Depois podes colar uma nova.',keyDelDone:'🗑 Chave apagada — agora podes colar uma nova',keyAlt:'Guardada',webBildLaedt:'🖼️ A obter a foto da receita…',webKeinBild:'A página não fornece nenhuma imagem que se possa carregar.',webKiBildAuto:'depois criar uma imagem com IA (OpenAI, aprox. 0,04 €)',webKiBildOhneKey:'Com uma chave OpenAI (🎨 Imagem IA) o livro pode criar uma — o Claude não cria imagens.',oaiKeyFalsch:'⚠️ Isto não é uma chave OpenAI — começa por «sk-»',oaiKeyNichtInAblage:'📋 A área de transferência não tem uma chave OpenAI (começa por «sk-»)',oaiKeyGespeichertFalsch:'⚠️ A chave guardada não é da OpenAI — apaga-a com 🗑 e cola uma nova',webKatErkannt:'Categoria:',webKatWaehlen:'⚠️ Categoria pouco clara — escolhe:',webKatBitte:'Escolhe uma categoria',sMistralLbl:'Chave Mistral (UE)',sMistralSub:'Para o reconhecimento de texto na digitalização com IA',sOfflineCap:'Funciona offline',updateStatus:'As atualizações são fornecidas automaticamente em segundo plano.'
     ,sManualSub:'Todas as funções explicadas · Baixar PDF'
     ,manOvTitle:'📚 Manual'
     ,manPdfLbl:'PDF'
@@ -5832,6 +5835,7 @@ function igrAllRecipes(checked){
 
 function stopImgGen(){_imgGenAborted=true;}
 async function startImgGen(){
+  if(!_openAiKeyOk(getOpenAiImgKey())){toast(T('oaiKeyGespeichertFalsch'));return;}
   _imgGenAborted=false;
   var replaceChecked=!!(document.getElementById('imggenReplaceAll')&&document.getElementById('imggenReplaceAll').checked);
   var panelVisible=replaceChecked&&document.getElementById('imggenReplacePanel')&&document.getElementById('imggenReplacePanel').style.display!=='none';
@@ -5899,7 +5903,7 @@ function openImgGenForRecipe(rid){
   const gb=document.getElementById('igGenBtn');
   if(sw)sw.style.display='block';
   if(title&&r)title.textContent='📸 Neues KI-Bild für: '+r.name;
-  if(preview&&r&&r.img){preview.src=r.img;preview.style.display='block';}
+  if(preview&&r&&r.img){preview.onerror=()=>{preview.style.display='none';};preview.src=r.img;preview.style.display='block';}
   else if(preview)preview.style.display='none';
   const dlBtn=document.getElementById('imggenSingleDlBtn');
   if(dlBtn)dlBtn.style.display=(r&&r.img)?'block':'none';
@@ -5908,6 +5912,7 @@ function openImgGenForRecipe(rid){
 }
 async function startImgGenSingle(){
   const rid=_imgGenSingleRid;if(!rid)return;
+  if(!_openAiKeyOk(getOpenAiImgKey())){const fb=document.getElementById('igFehlerBox');if(fb){fb.textContent=T('oaiKeyGespeichertFalsch');fb.style.display='block';}toast(T('oaiKeyGespeichertFalsch'));return;}
   const r=R.find(r=>r.id===rid);if(!r)return;
   const sw=document.getElementById('imggenSingleWrap');if(sw)sw.style.display='none';
   const stopBtn=document.getElementById('igStopBtn');
@@ -6005,8 +6010,9 @@ async function pasteImgGenKey(){
   try{
     const txt=await navigator.clipboard.readText();
     const inp=document.getElementById('imggenKeyIn');
+    if(!_openAiKeyOk(txt)){toast(T('oaiKeyNichtInAblage'));if(inp)inp.focus();return;}
     if(inp){inp.value=txt.trim();onImgGenKeyInput(txt.trim());inp.focus();}
-    if(txt.trim().startsWith('sk-'))toast('✅ Zugangscode eingefügt!');
+    toast('✅ Zugangscode eingefügt!');
   }catch(e){
     const inp=document.getElementById('imggenKeyIn');
     if(inp){inp.focus();inp.select();}
@@ -6014,9 +6020,15 @@ async function pasteImgGenKey(){
   }
 }
 
+// Klaus 2026-10-12: als „Schlüssel" war eine Webadresse gespeichert
+// („https:/…html") — „📋 Einfügen" nahm, was in der Zwischenablage lag, und
+// Speichern prüfte nichts. OpenAI lehnt so etwas ab; es kostet nichts, es
+// erzeugt nur nie ein Bild. Ein OpenAI-Schlüssel beginnt mit „sk-".
+function _openAiKeyOk(k){return /^sk-[A-Za-z0-9_\-]{20,}$/.test(String(k||'').trim());}
 async function saveAndActivateImgGen(){
   const v=document.getElementById('imggenKeyIn')?.value?.trim()||'';
   if(!v)return;
+  if(!_openAiKeyOk(v)){toast(T('oaiKeyFalsch'));const i=document.getElementById('imggenKeyIn');if(i){i.style.borderColor='#c0392b';i.focus();}return;}
   saveOpenAiImgKey(v);
   toast('✅ OpenAI-Schlüssel gespeichert!');
   switchToImgGenMain();
@@ -6027,7 +6039,10 @@ function switchToImgGenMain(){
   document.getElementById('imggenMain').style.display='block';
   const key=getOpenAiImgKey();
   const sub=document.getElementById('imggenReadySub');
-  if(sub&&key)sub.textContent=key.slice(0,7)+'…'+key.slice(-4);
+  if(sub&&key){
+    if(_openAiKeyOk(key)){sub.textContent=key.slice(0,7)+'…'+key.slice(-4);sub.style.color='';}
+    else{sub.textContent=T('oaiKeyGespeichertFalsch');sub.style.color='#c0392b';}
+  }
   updateImgGenInfo();
   keyAltZeilen();
 }
@@ -11595,7 +11610,12 @@ function _bildAusSeite(html,basis){
 // Diensten, die fremdes Einbetten sperren. Erst direkt, dann über dieselbe
 // Dienst-Kette wie die Seite (nur die, die Rohdaten liefern). Gelingt nichts,
 // bleibt die Adresse stehen — ein verlinktes Bild ist besser als keins.
-async function _bildHolen(u){
+async function _webBildHolen(u){
+  // ⚠ HIESS ZUERST `_bildHolen` — den Namen trug schon die OpenAI-Bestellung
+  // (`_bildHolen(prompt,size)`). Funktions-Deklarationen werden hochgezogen,
+  // die spätere gewinnt: jedes KI-Bild ging von #425 an als „Adresse" an
+  // diesen Downloader und kam leer zurück (Klaus 2026-10-12). Dieselbe Falle
+  // wie `catIco` in Mixarium. Ein Wächter zählt seitdem doppelte Namen.
   // Klaus 2026-10-12, Chefkoch: ein Rahmen mit dem Alternativtext, kein Bild —
   // und es „hat länger gerechnet". Der Download war an JEDEM Weg gescheitert
   // (5 Wege × 12 s), dann blieb eine Adresse stehen, die auch direkt nicht lud.
@@ -11652,6 +11672,30 @@ function _ergiebigkeit(y){
   }
   return {srv:srv||4,yieldText:text};
 }
+// ── Kategorie raten — und fragen, wenn es nicht eindeutig ist ─────────────
+// Klaus 2026-10-12: „Pflaumenkuchen bei Fleisch einsortiert". Der Web-Import
+// setzte JEDES Rezept ohne KI-Antwort auf 'fleisch'. Jetzt wird aus
+// recipeCategory, Name und Stichworten geraten (in dieser Reihenfolge, der
+// erste Treffer gewinnt) — und gibt es keinen, fragt die Vorschau nach.
+const _KAT_REGELN=[
+  ['kuchen',/kuchen|torte|gebäck|blech|muffin|cake|tarte|strudel|plätzchen|keks|backwerk/],
+  ['dessert',/dessert|nachtisch|nachspeise|pudding|mousse|tiramisu|parfait/],
+  ['suppe',/suppe|eintopf|brühe|soup/],
+  ['fisch',/fisch|lachs|thunfisch|garnele|scampi|meeresfrücht|forelle|seafood|\bfish/],
+  ['ckt',/cocktail/],['smooth',/smoothie|shake/],['limo',/limonade/],['bowle',/bowle/],
+  ['vorsp',/vorspeise|salat|starter|appetizer/],
+  ['vegi',/vegetarisch|vegan|vegetarian/],
+  ['fleisch',/fleisch|rind|schwein|hähnchen|huhn|geflügel|gulasch|braten|lamm|hackfleisch|schnitzel|meat|chicken|beef|pork/]
+];
+function _katRaten(s){
+  const da=new Set(catsAlle().map(c=>c.id));
+  const felder=[s.recipeCategory,s.name,s.keywords].map(x=>(Array.isArray(x)?x.join(' '):String(x||'')).toLowerCase());
+  for(const f of felder){
+    if(!f)continue;
+    for(const [id,re] of _KAT_REGELN)if(da.has(id)&&re.test(f))return id;
+  }
+  return '';
+}
 function _schemaToRec(s){
   const ings=(s.recipeIngredient||[]).map((x,i)=>{const p=_parseIngStr(x);return{id:i+1,...p,ck:false,note:''};});
   const steps=_parseInstr(s.recipeInstructions).map((t,i)=>({id:i+1,txt:t,note:''}));
@@ -11667,7 +11711,7 @@ function _schemaToRec(s){
   const rawDiets=s.suitableForDiet||[];
   const diets=Array.isArray(rawDiets)?rawDiets:[rawDiets];
   const allergens=diets.map(d=>d.toString().replace(/^https?:\/\/schema\.org\//,'').replace(/Diet$/,'')).filter(Boolean);
-  return{name:s.name||'Importiertes Rezept',servings:srv,yieldText,ings,steps,img:img||'',nutrition,allergens:allergens.length?allergens:[]};
+  return{name:s.name||'Importiertes Rezept',category:_katRaten(s),servings:srv,yieldText,ings,steps,img:img||'',nutrition,allergens:allergens.length?allergens:[]};
 }
 
 function _htmlToText(html){
@@ -11700,7 +11744,7 @@ async function _webBildAnhaengen(rec,html,url){
   if(!rec.img)rec.img=_bildAusSeite(html,url);
   if(!rec.img)return;
   _webSetSt('⏳ '+h(T('webBildLaedt')),'loading');
-  rec.img=await _bildHolen(rec.img);
+  rec.img=await _webBildHolen(rec.img);
 }
 
 function _webSetSt(msg,cls){
@@ -11711,8 +11755,9 @@ function _webSetSt(msg,cls){
   el.style.display=msg?'block':'none';
 }
 
+function _webKatGueltig(id){return !!id&&catsAlle().some(c=>c.id===id&&c.id!=='all');}
 function _webRenderResult(rec,url,method){
-  const catId=CATS.find(c=>c.id===rec.category)?rec.category:'fleisch';
+  const catId=_webKatGueltig(rec.category)?rec.category:'';
   const cc=catCol(catId);
   const ings=rec.ings||[];
   const ingPrev=ings.slice(0,5).map(i=>`<div class="scan-prev-ing"><span style="font-weight:700;color:${cc};min-width:52px;display:inline-block">${h(i.amt||'')} ${h(i.unit||'')}</span>${h(i.name||'')}</div>`).join('');
@@ -11723,11 +11768,15 @@ function _webRenderResult(rec,url,method){
       ${rec.img?`<img class="web-prev-img" src="${h(rec.img)}" alt="" onerror="this.remove()">`:`<div class="scan-result-icon">${method==='ai'?'🤖':'🌐'}</div>`}
       <h3 class="scan-result-name">${h(rec.name||'Importiertes Rezept')}</h3>
       <div class="scan-result-meta">
-        <span class="scan-meta-pill">${catIco(catId)} ${catName(catId)}</span>
         <span class="scan-meta-pill">👥 ${rec.servings||4}</span>
         <span class="scan-meta-pill">🥕 ${ings.length} Zutaten</span>
         <span class="scan-meta-pill">📝 ${(rec.steps||[]).length} Schritte</span>
       </div>
+      <label class="web-kat${catId?'':' offen'}">${h(T(catId?'webKatErkannt':'webKatWaehlen'))}
+        <select id="webKatSel" onchange="this.parentNode.classList.toggle('offen',!this.value)">
+          ${catId?'':`<option value="" selected>— ${h(T('webKatBitte'))} —</option>`}
+          ${catsAlle().filter(c=>c.id!=='all').map(c=>`<option value="${h(c.id)}"${c.id===catId?' selected':''}>${katSymbol(c)} ${h(katBeschriftung(c))}</option>`).join('')}
+        </select></label>
       ${rec.flavor?`<div class="scan-result-flavor">✨ ${h(rec.flavor)}</div>`:''}
       ${rec.img?'':`<div class="web-kein-bild">🖼️ ${h(T('webKeinBild'))}${(typeof getOpenAiImgKey==='function'&&getOpenAiImgKey())?`<label style="display:flex;gap:6px;align-items:center;margin-top:5px;cursor:pointer"><input type="checkbox" id="webKiBild" checked> ${h(T('webKiBildAuto'))}</label>`:`<div style="margin-top:4px">${h(T('webKiBildOhneKey'))}</div>`}</div>`}
       <div class="scan-result-preview">${ingPrev}${more}</div>
@@ -11781,7 +11830,9 @@ async function fetchWebRecipe(){
 
 function acceptWebImport(){
   const rec=_webRec;if(!rec)return;
-  const catId=CATS.find(c=>c.id===rec.category)?rec.category:'fleisch';
+  const sel=document.getElementById('webKatSel');
+  const catId=sel?sel.value:(_webKatGueltig(rec.category)?rec.category:'');
+  if(!catId){toast(T('webKatBitte'));if(sel){sel.parentNode.classList.add('offen');sel.focus();}return;}
   const nr={
     id:Date.now(),name:rec.name||'Web-Rezept',cat:catId,
     shut:false,img:rec.img||'',folder:'',blank:false,servings:parseInt(rec.servings)||4,
