@@ -112,6 +112,35 @@ try {
     ok(`[${lage}] der Dialog schließt und räumt seine Maße wieder auf`, zu);
     await seite.close();
   }
+  // ── DIE FORM DES RAHMENS = DIE FORM DER KARTE (Klaus 2026-10-12) ──
+  // Gemessen wird das Seitenverhältnis des Rahmens im Dialog gegen das der
+  // fertigen Karte NACH dem Speichern — nicht gegen eine Zahl.
+  for (const [b, hh, cat, hoehe, name] of [[1000, 625, 'kuchen', 0, 'Kuchen'], [400, 800, 'kuchen', 0, 'Handy'],
+                                           [833, 470, 'kuchen', 0, 'Klaus\' Tablet quer'], [833, 470, 'drk', 0, 'Getränk (3:4), Tablet quer']]) {
+    const seite = await browser.newPage({ viewport: { width: b, height: hh } });
+    await seite.route('**/*', r => r.request().url().startsWith(`http://127.0.0.1:${PORT}/`) ? r.continue() : r.abort());
+    await seite.goto(`http://127.0.0.1:${PORT}/index.html`, { waitUntil: 'domcontentloaded' });
+    await seite.waitForFunction(() => typeof openCrop === 'function' && typeof R !== 'undefined', null, { timeout: 20000 });
+    const m = await seite.evaluate(async ([bild, cat, hoehe]) => {
+      const r = { id: 987001, name: 'Formprobe', cat, img: bild, imgCrop: { x: 50, y: 50, scale: 1, h: 1 }, ings: [], steps: [], rating: { stars: 0, comment: '', imps: [] } };
+      R.unshift(r); CAT = 'all'; showSc('recipes'); render();
+      await new Promise(z => setTimeout(z, 100));
+      openCrop(r.id);
+      // ⚠ Benannte Abweichung: Muttis hat keinen Höhen-Regler — die Karte ist 160 px bzw. 3:4.
+      await new Promise(z => setTimeout(z, 100));
+      const f = document.getElementById('cropFrame').getBoundingClientRect();
+      const vv = visualViewport;
+      const drin = f.width > 0 && f.right <= vv.offsetLeft + vv.width + 1 && f.bottom <= vv.offsetTop + vv.height + 1;
+      saveCrop();
+      await new Promise(z => setTimeout(z, 150));
+      const k = document.querySelector('#c' + r.id + ' .rcard-img-wrap').getBoundingClientRect();
+      return { rahmen: f.width / f.height, karte: k.width / k.height, fw: f.width, kw: k.width, drin };
+    }, [BILD, cat, hoehe]);
+    const abw = Math.abs(m.rahmen - m.karte) / m.karte;
+    ok(`[${name}] der Rahmen hat die Form der Karte (${m.rahmen.toFixed(2)} gegen ${m.karte.toFixed(2)})`, abw < 0.03, JSON.stringify(m));
+    ok(`[${name}] … und passt in den Dialog`, m.drin, JSON.stringify(m));
+    await seite.close();
+  }
 } catch (e) {
   rot.push('ABSTURZ: ' + String(e).slice(0, 300));
   console.log('  ✗ ROT: ABSTURZ — ' + String(e).slice(0, 300));

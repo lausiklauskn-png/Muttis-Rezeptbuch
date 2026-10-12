@@ -9251,10 +9251,7 @@ function render(){
   const cw=c.offsetWidth;
   if(cw>=50){
     const h=Math.round(cw*4/3);
-    const drkCats=new Set(['drk']);
-    if(typeof FD!=='undefined'&&FD){
-      FD.forEach(f=>{if(/getr|drink|bever|bevande|boisson|bebida|напит/i.test(f.name))drkCats.add('fld_'+f.id);});
-    }
+    const drkCats=_getraenkKats();
     document.querySelectorAll('.rcard').forEach(card=>{
       if(!drkCats.has(card.dataset.cat))return;
       const wrap=card.querySelector('.rcard-img-wrap');
@@ -10236,15 +10233,52 @@ function applyLangToCrop(){
 // `position:fixed; inset:0` hängt dann am Seitenrahmen, der größer ist als
 // das, was man sieht, und der Knopf liegt unten rechts außerhalb.
 // Zoomen bleibt erlaubt (Lesbarkeit) — der Dialog misst stattdessen nach.
+// ── Der Rahmen hat die FORM DER KARTE, nicht eine eigene ─────────────────
+// Übertragen aus Mein Rezeptbuch (#426). Klaus 2026-10-12: „die Größe der
+// Ausschnitte stimmt nicht überein mit dem Endergebnis". Der Rahmen war fest
+// 496 × höchstens 208 px und seine Höhe hing an der Höhe des Dialogs; die
+// Karte ist so breit wie die Liste und 160 px hoch (Getränke 3:4 nach der
+// Listenbreite). object-fit:cover und der Zoom hängen allein am
+// Seitenverhältnis — gleiche Form, gleiches Bild.
+// ⚠ Benannte Abweichung: hier gibt es KEINEN Höhen-Regler (CE.h).
+function _getraenkKats(){
+  const s=new Set(['drk']);
+  if(typeof FD!=='undefined'&&FD)FD.forEach(f=>{if(/getr|drink|bever|bevande|boisson|bebida|напит/i.test(f.name))s.add('fld_'+f.id);});
+  return s;
+}
+function cropKartenMass(){
+  const r=R.find(x=>x.id===CE.rid);
+  const c=document.getElementById('rcont');
+  const cw=(c&&c.offsetWidth>=50)?c.offsetWidth:0;
+  let w=0;
+  const wrap=document.querySelector('#c'+CE.rid+' .rcard-img-wrap');
+  if(wrap&&wrap.offsetWidth>=50)w=wrap.offsetWidth;
+  if(!w)w=cw||496;   // Liste gerade nicht sichtbar: Breite der App-Spalte
+  const drk=r&&_getraenkKats().has(r.cat);
+  return {w,h:drk?Math.round((cw||w)*4/3):160};
+}
+function applyCropFrameHeight(){
+  const cf=document.getElementById('cropFrame');
+  if(!cf)return;
+  const st=cf.parentElement;
+  const aw=(st?.clientWidth||0)-24,ah=(st?.clientHeight||0)-24;
+  if(aw<50||ah<50)return;
+  const k=cropKartenMass();
+  const f=Math.min(1,aw/k.w,ah/k.h);
+  cf.style.maxWidth='none';cf.style.maxHeight='none';
+  cf.style.width=Math.round(k.w*f)+'px';cf.style.height=Math.round(k.h*f)+'px';
+}
 function cropAnSicht(){
   const ov=document.getElementById('cropOv'),vv=window.visualViewport;
   if(!ov||!vv||ov.style.display==='none')return;
   ov.style.inset='auto';
   ov.style.left=vv.offsetLeft+'px';ov.style.top=vv.offsetTop+'px';
   ov.style.width=vv.width+'px';ov.style.height=vv.height+'px';
+  applyCropFrameHeight();
 }
 function cropAnSichtAn(){
   cropAnSicht();
+  applyCropFrameHeight();
   if(window.visualViewport){visualViewport.addEventListener('resize',cropAnSicht);visualViewport.addEventListener('scroll',cropAnSicht);}
 }
 function cropAnSichtAus(){
