@@ -13844,6 +13844,7 @@ function helpAction(type){
      Eigener dbSuffix "muttisrezeptbuch" (getrennte Schublade -> eigene Identitaet;
      NIE derselbe wie Mein-Rezeptbuch "rezeptbuch"). -->
 <script>window.SBKIM_DB_SUFFIX="muttisrezeptbuch";</script>
+<script>/* Sprachmodell vom eigenen Server (Klaus 2026-10-13, Weg A: die App setzt die Adresse, Modul 03 bleibt neutral). Antwortet er nicht, nimmt Modul 03 Hugging Face. */window.SBKIM_MODEL_ROOT=window.SBKIM_MODEL_ROOT||"https://family-projekt.de/models/";</script>
 <script src="sbkim/01_storage.js"></script>
 <script src="sbkim/20_schluessel_safe.js"></script>
 <script src="sbkim/02_spore.js"></script>
