@@ -2501,6 +2501,7 @@ Vielen Dank für deine Unterstützung.</div>
             ✨ <span id="scanBtnLbl">Rezept automatisch erkennen</span>
           </button>
           <button class="scan-reset-btn" onclick="resetScan()" id="scanResetLbl" title="Anderes Bild wählen">↺ anderes Bild wählen</button>
+          <button class="scan-reset-btn" id="scanPruefBtn" onclick="scanDateiPruefen()" title="Datei auf versteckte Anweisungen an eine KI prüfen — auf dem Gerät, ohne Netz" data-pruef-knopf>🛡 Datei prüfen</button>
         </div>
 
       </div>
@@ -4988,7 +4989,10 @@ async function bildFuersNetz(quelle,kante,quali){
   kante=kante||1200; quali=quali||0.90;
   let bild;
   try{ bild=await _bildDekodieren(quelle); }
-  catch(e){ return typeof quelle==='string'?quelle:''; }
+  // ⚠ NIE DAS ORIGINAL (Klaus 2026-10-14, Reinigung vor der KI). Hier stand `return quelle` für eine
+  // data-URL: ließ sich ein Foto nicht dekodieren, ging es UNGEREINIGT hinaus — samt EXIF und Ort.
+  // Jetzt kommt '' zurück, und jeder Aufrufer bricht ab und sagt es (KT('fotoKaputt')).
+  catch(e){ return ''; }
   const aus=_bildAufDeckel(bild,kante,quali);
   if(bild&&bild.close) bild.close();
   return aus;
@@ -5005,6 +5009,163 @@ async function scanBildAufbereiten(datei){
   const store=_aufKante(bild,800,0.75);
   if(bild&&bild.close) bild.close();
   return {netz:netz,store:store};
+}
+
+// ── 🧽 REINIGUNG VOR DER KI · 🛡 PRÜFUNG AUF KNOPFDRUCK (Klaus 2026-10-14) ──
+// Vorbild ist Workflow PDF #112/#113. Klaus' Wort für die Rezeptbücher:
+// „Seiten als Bild" · „Prüfen auf Knopfdruck" · „Bildauftrag einmal anhalten".
+//
+// ⚠ EIN PDF GEHT NIE MEHR ROH AN EINE KI. Bis hierher ging die Originaldatei als
+// `document` an Claude und als Ganzes an Mistral OCR — samt Text, den man auf der
+// Seite nicht sieht (weiß auf weiß, unsichtbar gesetzt, winzig, blass). Jetzt
+// werden die Seiten mit pdf.js GEZEICHNET, versteckter Text wird in der Kopie
+// zugedeckt, und es gehen BILDER hinaus. Was herausgenommen wurde, steht einmal
+// im Halt („Ohne ihn senden" / „Abbrechen") und danach am Rezept (kiEntfernt).
+// Die Rechnung steht in assets/reinigung.js (byte-1:1 aus Workflow PDF), der
+// Prüfkern in assets/pruefer-*.js und assets/eingang.js (ebenso byte-1:1).
+const KIR_TXT={
+  de:{haltT:'Versteckten Text gefunden',haltP:'In „{n}" steht Text, den man auf der Seite nicht sieht. Eine KI würde ihn trotzdem lesen.',
+      haltS:'Gesendet wird die sichere Fassung: ohne diesen Text. Was entfernt wurde, wird am Rezept vermerkt. Die Datei selbst bleibt unverändert.',
+      ja:'Ohne ihn senden',nein:'Abbrechen',mehr:'… und weitere Stellen.',seite:'Seite',
+      winzig:'winzige Schrift',aussen:'außerhalb der Seite',unsichtbar:'auf der Seite nicht zu sehen (gleiche Farbe wie der Grund oder unsichtbar gesetzt)',meta:'Bild-Metadaten',
+      abgebr:'Senden abgebrochen — nichts ging an die KI.',fotoKaputt:'Dieses Foto ließ sich nicht lesen — es wurde nichts gesendet.',
+      seitenMax:'Nur die ersten {m} von {g} Seiten gehen an die KI.',pdfKaputt:'Das PDF ließ sich nicht zeichnen — es wurde nichts gesendet: ',
+      vermT:'🧽 Vor dem Senden an eine KI entfernt',vermP:'Dieser Text stand in der Datei, war auf der Seite aber nicht zu sehen. Er ging nicht mit.',
+      pruefBtn:'🛡 Datei prüfen',pruefT:'Prüfung der Datei',pruefLaeuft:'Wird geprüft … (auf dem Gerät, ohne Netz)',
+      warn:'⚠️ Auffällig',sauber:'✓ Nichts Auffälliges gefunden',ungeprueft:'◌ Nicht vollständig geprüft — „ungeprüft" heißt nicht „sauber".',
+      keinVirus:'Gesucht wird nach versteckten Anweisungen an eine KI und nach Tarnungen. Das ist keine Virenprüfung.',wasTun:'Was jetzt tun',ok:'OK',
+      bildT:'Anweisung an eine KI im Bildauftrag',bildP:'Der Auftrag an die Bild-KI wird aus Rezeptname, Zutaten und Schritten gebaut. Darin steht etwas, das sich an eine KI richtet:',
+      bildS:'Das kann aus einem fremden Rezept oder Scan stammen.',bildJa:'Trotzdem senden',bildAbbr:'Bild-Erzeugung abgebrochen — Anweisung an eine KI im Auftrag.'},
+  en:{haltT:'Hidden text found',haltP:'"{n}" contains text you cannot see on the page. An AI would still read it.',
+      haltS:'The safe version is sent: without this text. What was removed is noted on the recipe. The file itself stays unchanged.',
+      ja:'Send without it',nein:'Cancel',mehr:'… and more.',seite:'Page',
+      winzig:'tiny text',aussen:'outside the page',unsichtbar:'not visible on the page (same colour as the background or set invisible)',meta:'image metadata',
+      abgebr:'Sending cancelled — nothing went to the AI.',fotoKaputt:'This photo could not be read — nothing was sent.',
+      seitenMax:'Only the first {m} of {g} pages go to the AI.',pdfKaputt:'The PDF could not be drawn — nothing was sent: ',
+      vermT:'🧽 Removed before sending to an AI',vermP:'This text was in the file but not visible on the page. It was not sent.',
+      pruefBtn:'🛡 Check file',pruefT:'File check',pruefLaeuft:'Checking … (on this device, offline)',
+      warn:'⚠️ Suspicious',sauber:'✓ Nothing suspicious found',ungeprueft:'◌ Not fully checked — "unchecked" does not mean "clean".',
+      keinVirus:'This looks for hidden instructions to an AI and for disguises. It is not a virus scan.',wasTun:'What to do now',ok:'OK',
+      bildT:'Instruction to an AI in the image request',bildP:'The request to the image AI is built from the recipe name, ingredients and steps. It contains something addressed to an AI:',
+      bildS:'This may come from a foreign recipe or scan.',bildJa:'Send anyway',bildAbbr:'Image generation cancelled — instruction to an AI in the request.'}
+};
+// ⚠ Nur Deutsch und Englisch; die übrigen sechs Sprachen zeigen Englisch (benannte Grenze).
+function KT(k,v){const l=KIR_TXT[CL==='de'?'de':'en'];let s=(l&&l[k])||KIR_TXT.de[k]||k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s;}
+// pdf.js und die Texterkennung liegen EINMAL im Netz, neben Workflow PDF auf derselben Adresse (wie bei den WorkFlohs).
+// ⚠ Nicht vom CDN: pdf.js startet seinen Worker sonst von einer fremden Herkunft, und ein Worker-Abruf
+// lässt sich weder prüfen noch zwischenspeichern (gemessen 2026-10-14: in der Probe scheiterte genau er).
+const WFPDF_VENDOR='/Workflow-PDF/vendor/';
+const PDFJS_CDN=new URL(WFPDF_VENDOR+'pdfjs/',location.href).href;
+const KI_PDF_SEITEN_MAX=10, KI_PDF_KANTE=1400;
+function _kiSkript(src){return new Promise((ok,nein)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=()=>ok();s.onerror=()=>nein(new Error('lädt nicht: '+src.split('?')[0]));document.head.appendChild(s);});}
+async function reinigungLaden(){if(!(window.WFP&&WFP.Reinigung))await _kiSkript('assets/reinigung.js?v=1');if(!(window.WFP&&WFP.Reinigung))throw new Error('Reinigung fehlt');return WFP.Reinigung;}
+async function pdfjsLaden(){if(!window.pdfjsLib){await _kiSkript(PDFJS_CDN+'pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_CDN+'pdf.worker.min.js';}return window.pdfjsLib;}
+function _bytesAus(q){if(q instanceof Uint8Array)return Promise.resolve(q);if(typeof q==='string'){const b=atob(q.split(',')[1]||'');const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return Promise.resolve(u);}return q.arrayBuffer().then(a=>new Uint8Array(a));}
+// Ein PDF als Seitenbilder: gezeichnet, versteckter Text in der Kopie zugedeckt, Metadaten heraus.
+// @returns {bilder:[data:image/jpeg], liste:[{seite,text,grund}], seiten, gesamt}
+async function pdfFuersNetz(quelle){
+  const RE=await reinigungLaden();const L=await pdfjsLaden();
+  const pdf=await L.getDocument({data:await _bytesAus(quelle)}).promise;
+  const n=Math.min(pdf.numPages,KI_PDF_SEITEN_MAX),bilder=[],liste=[];
+  for(let i=1;i<=n;i++){
+    const p=await pdf.getPage(i);const v1=p.getViewport({scale:1});const vp=p.getViewport({scale:KI_PDF_KANTE/v1.width});
+    const c=document.createElement('canvas');c.width=Math.round(vp.width);c.height=Math.round(vp.height);
+    const x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+    await p.render({canvasContext:x,viewport:vp}).promise;
+    let zu=0;
+    try{const img=x.getImageData(0,0,c.width,c.height);const tc=await p.getTextContent();
+      for(const t of tc.items){if(!t.str||!t.str.trim())continue;
+        const tr=L.Util.transform(vp.transform,t.transform);
+        if(Math.abs(Math.atan2(tr[1],tr[0]))>0.05)continue;   // schräger Text: nicht beurteilt (Grenze)
+        const st={s:t.str,x:tr[4]/vp.scale,y:tr[5]/vp.scale,w:t.width,fh:Math.hypot(tr[2],tr[3])/vp.scale};
+        const g=RE.versteckt(st,img,vp.scale);
+        if(g){liste.push({seite:i,text:t.str,grund:g});RE.zudecken(img,st,vp.scale);zu++;}}
+      if(zu)x.putImageData(img,0,0);}catch(_){}
+    const m=RE.datenAdresseOhneMeta(c.toDataURL('image/jpeg',0.85));
+    m.entfernt.forEach(e=>liste.push({seite:i,text:e.art+' ('+e.bytes+' Byte)',grund:'meta'}));
+    bilder.push(m.url);c.width=c.height=0;try{p.cleanup();}catch(_){}
+  }
+  const gesamt=pdf.numPages;try{pdf.destroy();}catch(_){}
+  return {bilder,liste,seiten:n,gesamt};
+}
+// Einmal je Sendevorgang anhalten. {halt(name,liste)→true|false, st}. Abbrechen vermerkt nichts.
+function kiReiniger(){
+  const st={gefragt:false,ok:true,n:0};
+  async function halt(name,liste){
+    if(!liste.length)return st.ok;
+    if(!st.gefragt){st.gefragt=true;st.ok=await kiHaltDialog(name,liste);}
+    if(st.ok)st.n+=liste.length;
+    return st.ok;
+  }
+  return {halt,st};
+}
+function _kiOv(id,html){document.getElementById(id)?.remove();const ov=document.createElement('div');ov.id=id;
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML='<div style="background:var(--parch,#fff);color:inherit;max-width:520px;width:100%;max-height:85vh;overflow:auto;border-radius:12px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.3)">'+html+'</div>';
+  document.body.appendChild(ov);return ov;}
+function kiHaltDialog(name,liste){return new Promise(res=>{
+  const zeig=liste.slice(0,8).map(e=>'<li data-ki-entfernt-stueck style="margin:4px 0"><b>'+h(KT(e.grund))+'</b>'+(e.seite?' · '+KT('seite')+' '+h(e.seite):'')+'<br>„'+h(String(e.text).slice(0,120))+'“</li>').join('');
+  const ov=_kiOv('kiHaltOv','<div data-ki-halt><h3 style="margin:0 0 8px">'+h(KT('haltT'))+'</h3><p>'+h(KT('haltP',{n:name||'PDF'}))+'</p><ul style="padding-left:18px">'+zeig+'</ul>'
+    +(liste.length>8?'<p style="font-size:.8rem">'+h(KT('mehr'))+'</p>':'')+'<p>'+h(KT('haltS'))+'</p>'
+    +'<div style="display:flex;gap:8px;justify-content:flex-end"><button class="scan-reset-btn" data-ki-nein>'+h(KT('nein'))+'</button><button class="bigbtn teal" style="width:auto;padding:9px 14px" data-ki-ja>'+h(KT('ja'))+'</button></div></div>');
+  ov.querySelector('[data-ki-ja]').onclick=()=>{ov.remove();res(true);};
+  ov.querySelector('[data-ki-nein]').onclick=()=>{ov.remove();res(false);};});}
+// Der Vermerk am Rezept — erst NACH „Ohne ihn senden", denn ohne Senden ist nichts entfernt.
+function kiVermerken(rec,liste,weg){if(!rec||!liste||!liste.length||!(window.WFP&&WFP.Reinigung))return 0;return WFP.Reinigung.vermerken(rec,liste,weg);}
+function kiEntferntHtml(r){const l=Array.isArray(r&&r.kiEntfernt)?r.kiEntfernt:[];if(!l.length)return '';
+  return '<div class="sec" data-ki-entfernt><details><summary class="slbl" style="cursor:pointer">'+h(KT('vermT'))+' · '+l.length+'</summary><p style="font-size:.74rem;color:var(--dim)">'+h(KT('vermP'))+'</p><ul style="font-size:.76rem;padding-left:18px">'
+    +l.map(v=>'<li data-grund="'+h(v.grund)+'"><b>'+h(KT(v.grund))+'</b>'+(v.seite?' · '+KT('seite')+' '+h(v.seite):'')+' · '+h(String(v.zeit||'').slice(0,10))+'<br>„'+h(v.text)+'“</li>').join('')+'</ul></details></div>';}
+// Ein PDF für einen Sendevorgang vorbereiten: Seitenbilder + Halt. null = abgebrochen (nichts gesendet).
+async function pdfSicherSenden(quelle,name,rein){
+  let r;try{r=await pdfFuersNetz(quelle);}catch(e){throw new Error(KT('pdfKaputt')+(e&&e.message||e));}
+  if(!(await rein.halt(name,r.liste)))return null;
+  if(r.gesamt>r.seiten)toast('ℹ️ '+KT('seitenMax',{m:r.seiten,g:r.gesamt}),4000);
+  return r;
+}
+// Mistral OCR je Seitenbild statt des ganzen PDFs.
+async function ocrSeiten(bilder,mkey){const teile=[];
+  for(const b of bilder){const r=await window.SbkimOcr.recognize(b,{provider:'mistral',apiKey:mkey,mimeType:'image/jpeg'});
+    if(!r||!r.available)throw new Error((r&&r.reason)||'Mistral OCR fehlgeschlagen');teile.push(r.text||'');}
+  return teile.join('\n\n');}
+const _seitenBloecke=bilder=>bilder.map(u=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:u.split(',')[1]}}));
+
+// 🛡 Prüfung auf Knopfdruck (Klaus 2026-10-14: „Auf Knopfdruck"). Prüft die ORIGINALDATEI des Scans auf dem
+// Gerät — mit dem Prüfkern des Auslieferungsprüfers (assets/eingang.js, byte-1:1 aus Workflow PDF). Markiert, entfernt nichts.
+let scanOrigDatei=null;
+async function pruefKernRB(){if(!(window.WFP&&WFP.Eingang))await _kiSkript('assets/eingang.js?v=1');await pdfjsLaden();
+  const A=await WFP.Eingang.bereit();A.pfade({pdfjs:PDFJS_CDN,tesseract:new URL(WFPDF_VENDOR+'tesseract/',location.href).href});return WFP.Eingang;}
+async function scanDateiPruefen(){
+  const f=scanOrigDatei;if(!f)return;
+  const ov=_kiOv('kiPruefOv','<div data-pruef-dialog="laeuft"><h3 style="margin:0 0 8px">'+h(KT('pruefT'))+': '+h(f.name||'')+'</h3><p>'+h(KT('pruefLaeuft'))+'</p></div>');
+  let p;try{const E=await pruefKernRB();p=await E.pruefen(f.name||'datei',await _bytesAus(f));}
+  catch(e){p={stand:'ungeprueft',funde:[],hinweise:['Die Prüfung lief nicht: '+(e&&e.message||e)]};}
+  if(!ov.isConnected)return p;
+  const E=window.WFP&&WFP.Eingang;const box=ov.firstChild;box.innerHTML='';
+  const el=(t,txt,a)=>{const e=document.createElement(t);if(txt!=null)e.textContent=txt;if(a)e.setAttribute(a,'');box.appendChild(e);return e;};
+  box.setAttribute('data-pruef-dialog',p.stand);
+  el('h3',KT('pruefT')+': '+(f.name||'')).style.margin='0 0 8px';
+  el('p',p.stand==='warnung'?KT('warn'):p.stand==='sauber'?KT('sauber'):KT('ungeprueft'),'data-pruef-stand');
+  if((p.funde||[]).length){const ul=el('ul',null,'data-pruef-funde');p.funde.forEach(x=>{const li=document.createElement('li');li.setAttribute('data-kennung',x.kennung);const b=document.createElement('b');b.textContent=(E&&E.NAME[x.kennung])||x.kennung;li.append(b,document.createTextNode(' — '+(x.satz||'')));ul.appendChild(li);});
+    const schritte=[];p.funde.forEach(x=>((E&&E.wasTun(x.kennung))||[]).forEach(s=>{if(!schritte.includes(s))schritte.push(s);}));
+    if(schritte.length){el('b',KT('wasTun'));const ol=el('ol',null,'data-was-tun');schritte.forEach(s=>{const li=document.createElement('li');li.textContent=s;ol.appendChild(li);});}}
+  if(p.markiert){const img=el('img',null,'data-pruef-markiert');img.src=p.markiert;img.style.cssText='max-width:100%;border-radius:8px';}
+  (p.hinweise||[]).slice(0,4).forEach(t=>{const q=el('p',t);q.style.fontSize='.72rem';});
+  const kv=el('p',KT('keinVirus'));kv.style.fontSize='.74rem';
+  const b=el('button',KT('ok'),'data-pruef-ok');b.className='bigbtn teal';b.onclick=()=>ov.remove();
+  window.__rbPruefung=p;return p;
+}
+
+// Bildauftrag (Klaus 2026-10-14: „Ja, einmal anhalten"): der Auftrag an die Bild-KI wird aus Rezepttext gebaut,
+// und der kann aus einem fremden Scan stammen. Gemeldet wird nur eine Anweisung an eine KI (pruefer-mail.js).
+async function bildAuftragFreigabe(prompt){
+  try{if(!window.PrueferMail)await _kiSkript('assets/pruefer-mail.js?v=2');}catch(_){return true;}   // fail-soft: ohne Prüfer kein Halt (benannt)
+  const st=(PrueferMail.pruefeMail(String(prompt||'')).stellen||[]).filter(x=>x.kennung==='KI-ANWEISUNG');
+  if(!st.length)return true;
+  return await new Promise(res=>{
+    const ov=_kiOv('kiBildOv','<div data-bild-halt><h3 style="margin:0 0 8px">'+h(KT('bildT'))+'</h3><p>'+h(KT('bildP'))+'</p><p style="background:#f5efe8;padding:8px;border-radius:6px;font-size:.78rem" data-bild-auftrag>„'+h(String(prompt).slice(0,400))+'“</p><p>'+h(KT('bildS'))+'</p>'
+      +'<div style="display:flex;gap:8px;justify-content:flex-end"><button class="scan-reset-btn" data-ki-nein>'+h(KT('nein'))+'</button><button class="bigbtn teal" style="width:auto;padding:9px 14px" data-ki-ja>'+h(KT('bildJa'))+'</button></div></div>');
+    ov.querySelector('[data-ki-ja]').onclick=()=>{ov.remove();res(true);};
+    ov.querySelector('[data-ki-nein]').onclick=()=>{ov.remove();res(false);};});
 }
 
 // ── Undo-System (Rezept-Editor, max. 10 Schritte) ────────
@@ -5665,6 +5826,7 @@ async function _einBildVersuch(key,prompt,variante,size){
 async function _bildHolen(prompt,size){
   const key=getOpenAiImgKey()||getSavedOpenAiKey();
   if(!key)throw new Error('Kein OpenAI-Schlüssel');
+  if(!(await bildAuftragFreigabe(prompt)))throw new Error(KT('bildAbbr'));   // 🧽 einmal anhalten bei einer Anweisung an eine KI
   let ersterFehler=null;
   for(let i=0;i<_IMG_MODELLE.length;i++){
     try{
@@ -6698,6 +6860,8 @@ function initScanPane(){
 // ── SCAN: FILE HANDLING ───────────────────────────────
 async function loadScanFile(file){
   if(!file)return;
+  scanOrigDatei=file;   // 🛡 Prüfung auf Knopfdruck prüft die Originaldatei
+  {const pb=document.getElementById('scanPruefBtn');if(pb){pb.textContent=KT('pruefBtn');pb.style.display='';}}
   const isPdf=file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf');
   if(isPdf){
     if(file.size>32*1024*1024){toast('⚠️ PDF zu groß (max. 32 MB).');return;}
@@ -6782,12 +6946,14 @@ async function runBatchScan(files){
     <div class="sb-prog" style="margin-bottom:6px"><div class="sb-fill" style="width:${Math.round(done/total*100)}%"></div></div>
     <div style="font-size:.72rem;color:var(--dim)">${msg}</div>`;}
   updBar('Starte …');
+  const rein=kiReiniger();   // 🧽 einmal je Stapel anhalten; nach „Abbrechen" geht NICHTS mehr hinaus
   for(let i=0;i<files.length;i++){
+    if(!rein.st.ok)break;
     updBar(`Datei ${i+1} von ${total}: <em>${h(files[i].name)}</em> …`);
     try{
       const filePdf=files[i].type==='application/pdf'||files[i].name.toLowerCase().endsWith('.pdf');
       const origData=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.onerror=rej;fr.readAsDataURL(files[i]);});
-      let b64,mime,storeData,contentBlock,prompt;
+      let b64,mime,storeData,contentBlock,prompt,kiListe=null;
       if(provider==='mistral'){
         // OCR liest den Text; Claude sortiert ein. Bei Bildern Rezeptbild speichern.
         if(filePdf){
@@ -6802,19 +6968,25 @@ async function runBatchScan(files){
         // hinaus, während `triggerScan` die verkleinerte Fassung schickte:
         // zwei Wege, ein Dienst, zwei Nutzlasten. Ein PDF bleibt unberührt —
         // dort gibt es keine Kante zu deckeln.
-        const ocrData=fileIsPdf?origData:await bildFuersNetz(files[i],1200,0.90);
-        const r=await window.SbkimOcr.recognize(ocrData,{provider:'mistral',apiKey:mkey,mimeType:mime});
-        if(!r||!r.available)throw new Error((r&&r.reason)||'Mistral OCR fehlgeschlagen');
-        contentBlock={type:'text',text:r.text};
+        // ⚠ Hier stand `fileIsPdf` — eine Variable, die es in dieser Funktion nicht gibt (sie heißt filePdf):
+        // der Stapel-Scan über Mistral warf bei JEDER Datei einen ReferenceError (gefunden 2026-10-14).
+        // 🧽 Ein PDF geht als gereinigte Seitenbilder hinaus, ein Foto nie als Original.
+        let ocrText;
+        if(filePdf){const sp=await pdfSicherSenden(origData,files[i].name,rein);if(!sp)throw new Error(KT('abgebr'));ocrText=await ocrSeiten(sp.bilder,mkey);kiListe=sp.liste;}
+        else{const ocrData=await bildFuersNetz(files[i],1200,0.90);if(!ocrData)throw new Error(KT('fotoKaputt'));
+          const r=await window.SbkimOcr.recognize(ocrData,{provider:'mistral',apiKey:mkey,mimeType:mime});
+          if(!r||!r.available)throw new Error((r&&r.reason)||'Mistral OCR fehlgeschlagen');ocrText=r.text;}
+        contentBlock={type:'text',text:ocrText};
         prompt=_SCAN_PROMPT_INTRO_TXT+'\n'+_SCAN_PROMPT_SCHEMA;
       }else{
-        if(filePdf){
-          b64=origData.split(',')[1];
+        if(filePdf){   // 🧽 Seitenbilder statt des rohen PDFs
+          const sp=await pdfSicherSenden(origData,files[i].name,rein);if(!sp)throw new Error(KT('abgebr'));
           mime='application/pdf';
           storeData='';
-          contentBlock={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};
+          contentBlock=_seitenBloecke(sp.bilder);kiListe=sp.liste;
         }else{
           const[apiData,imgStore]=await Promise.all([bildFuersNetz(files[i],1200,0.90),resizeImage(origData,800,0.75)]);
+          if(!apiData)throw new Error(KT('fotoKaputt'));
           b64=apiData.split(',')[1];
           mime=apiData.split(';')[0].split(':')[1]||'image/jpeg';
           storeData=imgStore;
@@ -6827,10 +6999,9 @@ async function runBatchScan(files){
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
         body:JSON.stringify({model:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).id,max_tokens:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).tokens,
-          messages:[{role:'user',content:[
-            contentBlock,
+          messages:[{role:'user',content:[].concat(contentBlock,
             {type:'text',text:prompt}
-          ]}]})
+          )}]})
       });
       if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'HTTP '+resp.status);}
       const data=await resp.json();
@@ -6845,6 +7016,7 @@ async function runBatchScan(files){
         ings:(rec.ingredients||[]).map((ing,x)=>({id:x+1,amt:ing.amt||'',unit:ing.unit||'',name:ing.name||'',ck:false,note:''})),
         steps:(rec.steps||[]).map((s,x)=>({id:x+1,txt:typeof s==='string'?s:s.txt||'',note:''})),
         rating:{stars:0,comment:'',imps:[]}};
+      if(kiListe&&kiListe.length)kiVermerken(nr,kiListe,'scan');
       R.unshift(nr);sv();ok++;
     }catch(err){fail++;console.warn('Batch-Scan Fehler Bild '+(i+1),err);}
     done++;
@@ -6873,7 +7045,7 @@ function handleScanDrop(e){
 }
 
 function resetScan(){
-  scanData=null;scanDataStore=null;
+  scanData=null;scanDataStore=null;scanOrigDatei=null;
   const prev=document.getElementById('scanPrev');
   const ph=document.getElementById('scanPhotoContent');
   const pdfPrev=document.getElementById('scanPdfPrev');
@@ -6919,6 +7091,8 @@ async function triggerScan(){
   document.getElementById('scanActions').style.display='block';
   const isPdf=scanData.startsWith('data:application/pdf');
   const b64=scanData.split(',')[1];
+  window._scanKiEntfernt=null;
+  const rein=kiReiniger(),pdfName=(scanOrigDatei&&scanOrigDatei.name)||'PDF';
   const mime=isPdf?'application/pdf':(scanData.split(';')[0].split(':')[1]||'image/jpeg');
   try{
     let contentBlock,prompt;
@@ -6926,15 +7100,22 @@ async function triggerScan(){
       const mkey=getMistralKey();
       if(!mkey){setScanSt('Mistral-Schlüssel fehlt — bitte in den Einstellungen ⚙️ eintragen.','err');if(btn){btn.disabled=false;}return;}
       setScanSt('📷 Mistral OCR liest den Text …','loading');
-      const r=await window.SbkimOcr.recognize(scanData,{provider:'mistral',apiKey:mkey,mimeType:mime});
+      let r;
+      if(isPdf){   // 🧽 ein PDF geht als gereinigte Seitenbilder hinaus, nie roh
+        const sp=await pdfSicherSenden(scanData,pdfName,rein);
+        if(!sp){setScanSt(KT('abgebr'),'err');if(btn){btn.disabled=false;}return;}
+        r={available:true,text:await ocrSeiten(sp.bilder,mkey)};window._scanKiEntfernt=sp.liste;
+      }else r=await window.SbkimOcr.recognize(scanData,{provider:'mistral',apiKey:mkey,mimeType:mime});
       if(!r||!r.available){setScanSt('⚠️ '+((r&&r.reason)||'Mistral OCR fehlgeschlagen'),'err');if(btn){btn.disabled=false;}return;}
       contentBlock={type:'text',text:r.text};
       prompt=_SCAN_PROMPT_INTRO_TXT+'\n'+_SCAN_PROMPT_SCHEMA;
       setScanSt('✅ Mistral OCR '+(r.model||'')+' fertig — Claude sortiert ein …','loading');
     }else{
-      contentBlock=isPdf
-        ?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}
-        :{type:'image',source:{type:'base64',media_type:mime,data:b64}};
+      if(isPdf){   // 🧽 Seitenbilder statt des rohen PDFs (versteckter Text zugedeckt)
+        const sp=await pdfSicherSenden(scanData,pdfName,rein);
+        if(!sp){setScanSt(KT('abgebr'),'err');if(btn){btn.disabled=false;}return;}
+        contentBlock=_seitenBloecke(sp.bilder);window._scanKiEntfernt=sp.liste;
+      }else contentBlock={type:'image',source:{type:'base64',media_type:mime,data:b64}};
       prompt=`You are a recipe extraction expert. Look at this recipe ${isPdf?'document':'image'} carefully and extract ALL information.
 `+_SCAN_PROMPT_SCHEMA;
     }
@@ -6942,10 +7123,9 @@ async function triggerScan(){
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).id,max_tokens:(_SCAN_MODELS[_scanModel]||_SCAN_MODELS.schnell).tokens,
-        messages:[{role:'user',content:[
-          contentBlock,
+        messages:[{role:'user',content:[].concat(contentBlock,
           {type:'text',text:prompt}
-        ]}]})
+        )}]})
     });
     if(!resp.ok){
       const e=await resp.json();
@@ -7229,6 +7409,8 @@ function acceptScan(){
     ings:(rec.ingredients||[]).map((i,x)=>({id:x+1,amt:i.amt||'',unit:i.unit||'',name:i.name||'',ck:false,note:''})),
     steps:(rec.steps||[]).map((s,x)=>({id:x+1,txt:typeof s==='string'?s:s.txt||'',note:''})),
     rating:{stars:0,comment:'',imps:[]}};
+  if(window._scanKiEntfernt&&window._scanKiEntfernt.length)kiVermerken(nr,window._scanKiEntfernt,'scan');   // 🧽 was vor der KI herausgenommen wurde
+  window._scanKiEntfernt=null;
   if(empty)Object.assign(empty,nr);else R.unshift(nr);
   sv();CAT=catId;render();
   // Reset scan UI
@@ -9497,6 +9679,7 @@ function rndCard(r){
           <button class="saverat" id="srb-${r.id}" onclick="saveRat(${r.id})">${T('saveRat')}</button>
         </div>
       </div>
+      ${kiEntferntHtml(r)}
     </div>
     ${r.name&&!isBlank?`<button class="print-bar" onclick="event.stopPropagation();printRecipe(${r.id})">
       <span class="print-bar-txt">
@@ -11335,12 +11518,11 @@ async function extractPdfText(file) {
   const st = document.getElementById('txtStatus');
   if (st) { st.textContent = T('pdfReading'); st.className = 'scan-status loading'; st.style.display = 'block'; }
   try {
-    const b64 = await new Promise((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = ev => res(ev.target.result.split(',')[1]);
-      fr.onerror = rej;
-      fr.readAsDataURL(file);
-    });
+    // 🧽 Reinigung vor der KI (Klaus 2026-10-14): Seitenbilder statt des rohen PDFs, versteckter Text zugedeckt,
+    // einmal anhalten. ⚠ Benannte Grenze: der Vermerk erscheint hier nur im Halt — der Text landet im Eingabefeld,
+    // nicht an einem Rezept.
+    const sp = await pdfSicherSenden(file, file.name, kiReiniger());
+    if (!sp) { if (st) { st.textContent = KT('abgebr'); st.className = 'scan-status err'; } return; }
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -11348,8 +11530,8 @@ async function extractPdfText(file) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 4000,
         messages: [{role:'user', content:[
-          {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}},
-          {type:'text', text:'Extract all text content from this PDF document. Return only the plain text, preserving the structure as well as possible. No markdown formatting, no explanations — just the extracted text.'}
+          ..._seitenBloecke(sp.bilder),
+          {type:'text', text:'Extract all text content from these PDF pages. Return only the plain text, preserving the structure as well as possible. No markdown formatting, no explanations — just the extracted text.'}
         ]}]
       })
     });

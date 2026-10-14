@@ -1097,6 +1097,49 @@ NUR_ANKER=1 bash tests/gegenprobe_kamera_bild.sh     # tote Anker in Sekunden
 bash tests/gegenprobe_kamera_bild.sh                 # Wegwerf-Kopie
 ```
 
+## 🧽 REINIGUNG VOR DER KI · 🛡 PRÜFUNG AUF KNOPFDRUCK · BILDAUFTRAG (Klaus 2026-10-14)
+
+Vorbild ist Workflow PDF #112/#113 („Erst wenn etwas an eine KI geht, wird gereinigt: Bild-Metadaten und versteckter
+Text"). Klaus' drei Antworten für die Rezeptbücher: **„Seiten als Bild"** · **„Prüfen auf Knopfdruck"** ·
+**„Bildauftrag einmal anhalten"**. Beide Rezeptbücher tragen dieselbe Fassung.
+
+⚠ **BIS HIERHER GING EIN PDF ROH AN DIE KI** — als `document` an Claude (AI-Scan einzeln und im Stapel, „PDF-Text
+auslesen") und als ganze Datei an Mistral OCR. Samt Text, den man auf der Seite nicht sieht.
+
+- **Seiten als Bild:** `pdfFuersNetz` zeichnet die Seiten mit pdf.js (1400 px breit, höchstens `KI_PDF_SEITEN_MAX` = 10;
+  mehr wird beim Senden gesagt), deckt versteckten Text in der Kopie zu (`WFP.Reinigung.versteckt`/`zudecken`: weiß auf weiß,
+  unsichtbar gesetzt, blass, winzig, außerhalb der Seite) und nimmt Bild-Metadaten heraus. Claude bekommt Bild-Blöcke,
+  Mistral OCR je Seite ein Bild. `pdfSicherSenden` ist die eine Tür für alle drei Wege.
+- **Einmal anhalten** (`kiReiniger`, `[data-ki-halt]`): „Ohne ihn senden" / „Abbrechen" — einmal je Sendevorgang, beim
+  Stapel einmal für den ganzen Stapel; nach „Abbrechen" geht NICHTS mehr hinaus und nichts wird vermerkt.
+- **Der Vermerk** `kiEntfernt` steht am Rezept (AI-Scan einzeln über `acceptScan`, Stapel direkt) und auf der Rezeptkarte
+  („🧽 Vor dem Senden an eine KI entfernt", aufklappbar, `[data-ki-entfernt]`).
+- **Fotos gehen nie als Original hinaus:** `bildFuersNetz` gab bei einem Dekodier-Fehler die ORIGINALE data-URL zurück
+  (samt EXIF/Ort). Jetzt `''`, und jeder Aufrufer bricht ab und sagt es.
+- **🛡 Datei prüfen** (Knopf `#scanPruefBtn` im Scan-Bereich, erscheint nach dem Wählen einer Datei): prüft die
+  ORIGINALDATEI mit dem Prüfkern des Auslieferungsprüfers (`assets/eingang.js`, `pruefer-anhang.js`, `pruefer-mail.js`,
+  `pruefer-formate.js` — byte-1:1 aus Workflow PDF), auf dem Gerät, ohne Netz. Markiert, entfernt nichts; mit „Was jetzt tun"
+  und „keine Virenprüfung". Läuft NUR auf Knopfdruck.
+- **Bildauftrag:** `_bildHolen` fragt vorher `bildAuftragFreigabe` — steht im Auftrag (aus Rezeptname, Zutaten, Schritten)
+  eine Anweisung an eine KI (`PrueferMail`, Kennung `KI-ANWEISUNG`), hält es einmal an („Trotzdem senden" / „Abbrechen").
+- **pdf.js und die Texterkennung kommen von `/Workflow-PDF/vendor/`** (dieselbe Adresse, wie bei den WorkFlohs) — nicht vom
+  CDN: pdf.js startet seinen Worker sonst von einer fremden Herkunft (gemessen: genau daran scheiterte die Probe zuerst).
+- ⚠ **Benannte Grenzen:** nur die ersten 10 Seiten gehen an die KI · Text über einem Foto / über sichtbarer Schrift bleibt ·
+  schräger Text wird nicht beurteilt · „PDF-Text auslesen" zeigt die Stellen nur im Halt (der Text landet im Eingabefeld,
+  an keinem Rezept) · Texte nur Deutsch und Englisch (die übrigen sechs Sprachen zeigen Englisch) · ohne Netz zu
+  `/Workflow-PDF/vendor/` geht kein PDF hinaus und die Prüfung meldet „ungeprüft" · lädt `pruefer-mail.js` nicht, hält der
+  Bildauftrag nicht an (fail-soft) · der Stapel-Scan hat keinen Prüf-Knopf je Datei.
+- Proben `tests/smoke_reinigung.mjs` (identisch in beiden Rezeptbüchern; erfundene PDFs, KI gestellt; braucht den
+  Workflow-PDF-Klon, `WFPDF_KLON=…`) · `tests/gegenprobe_reinigung.mjs` (13 Fälle gegen die gebaute `index.html`,
+  `NUR_ANKER=1`, `NUR_FALL=…`).
+- ⚠ Nicht gemessen: am Tablet, mit echten Rezept-PDFs, mit echter KI.
+- ⚠ **Nebenbefund:** im Stapel-Scan über Mistral stand `fileIsPdf` — eine Variable, die es dort nicht gibt (sie heißt
+  `filePdf`). Jede Datei des Stapels warf einen ReferenceError. Mit dem Umbau behoben.
+- Gemessen 2026-10-14: `smoke_reinigung` **33 grün · 0 ROT** · Gegenprobe **13 gefangen · 0 durchgerutscht · 0 gestolpert ·
+  0 tote Anker** · Bestand grün (bildausschnitt 39, doppelte_namen 3, einstellungen_sprache 17, herkunft 37, kamera_bild 29,
+  kategorien 141, ki_bild 27, schluessel_loeschen 29, web_import 31, zugangscode 39). ⚠ `smoke_wortkarte` stürzt ab — auch
+  auf dem Stand VOR dieser Änderung (gemessen), nicht hier behoben. Cache muttisrezeptbuch-v41.
+
 ## 🏷️ Gerätename · netzweite Regeln
 
 Der Gerätename gehört **ins Verbinden-Panel**, hineingehängt vom app-eigenen Glue
