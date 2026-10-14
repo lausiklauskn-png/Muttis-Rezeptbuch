@@ -1,5 +1,5 @@
 // Service Worker for Muttis Rezeptbuch (Hauptapp)
-const CACHE = 'muttisrezeptbuch-v40';
+const CACHE = 'muttisrezeptbuch-v41';
 
 /* ⚠ NUR EIGENE VORRAETE AUFRAEUMEN — `caches` gehoert dem URSPRUNG, nicht dem
  * Pfad. Auf lausiklauskn-png.github.io liegen rund zwanzig Apps; ein Filter,
@@ -10,6 +10,8 @@ const CACHE = 'muttisrezeptbuch-v40';
  * Es muss BEIDES tun: fremde stehen lassen UND eigene alte weiter wegraeumen. */
 const VORRAT_PRAEFIX = "muttisrezeptbuch-";
 const SHELL = [
+  // 🧽 Reinigung vor der KI · 🛡 Prüfung auf Knopfdruck (2026-10-14): byte-1:1 aus Workflow PDF
+  './assets/reinigung.js?v=1', './assets/eingang.js?v=1', './assets/pruefer-mail.js?v=2', './assets/pruefer-formate.js?v=2', './assets/pruefer-anhang.js?v=4',
   './index.html',
   './app-manifest.json',
   './icons/icon-book-blue-192.png',
