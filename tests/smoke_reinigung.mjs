@@ -68,6 +68,8 @@ const testPdf = async mit => {
   }
   return Buffer.from(await d.save()).toString('base64');
 };
+// pdf.js 3.11 konnte über eine präparierte Schrift Code ausführen (CVE-2024-4367) — jedes Öffnen eines PDFs ohne eval.
+ok('pdf.js läuft ohne eval (isEvalSupported: false bei jedem getDocument)', (IDX.match(/getDocument\(\{/g) || []).length > 0 && (IDX.match(/getDocument\(\{/g) || []).length === (IDX.match(/getDocument\(\{[^}]*isEvalSupported:false/g) || []).length);
 const B = { versteckt: await testPdf(true), sauber: await testPdf(false), testdatei: readFileSync(TESTDATEI).toString('base64') };
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json' };
@@ -135,14 +137,16 @@ try {
   if (url) {
     const meta = await seite.evaluate(u => { const r = WFP.Reinigung.datenAdresseOhneMeta(u); return { g: r.geprueft, n: r.entfernt.length }; }, url);
     ok('… das Seitenbild trägt keine Bild-Metadaten', meta.g && meta.n === 0, meta);
-    const m = 1400 / 595;
+    const m = 300 / 72;   // 300 dpi nach Seitengröße (Klaus 2026-10-14: Qualität für die Texterkennung)
+    const masse = await seite.evaluate(async (u) => { const i = new Image(); i.src = u; await i.decode(); return [i.width, i.height]; }, url);
+    ok('… das Seitenbild hat 300 dpi (A4: 2480 × 3508)', Math.abs(masse[0] - 2480) <= 2 && Math.abs(masse[1] - 3508) <= 2, masse);
     const zaehle = (src, k, s) => seite.evaluate(async ({ src, k, s }) => { const img = new Image(); img.src = src; await img.decode();
       const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const x = c.getContext('2d'); x.drawImage(img, 0, 0);
       const d = x.getImageData(k[0], k[1], k[2], k[3]).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < s) n++; return n; }, { src, k: k.map(Math.round), s });
     const BLASS = [60 * m, (842 - 800 - 11) * m, 200 * m, 13 * m], SICHT = [60 * m, (842 - 600 - 11) * m, 240 * m, 13 * m];
     // Kontrolle: dieselbe Seite UNGEREINIGT gezeichnet — ist der blasse Text dort überhaupt zu messen?
     const kontrolle = await seite.evaluate(async ({ b, k }) => { const s = atob(b); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
-      const L = await pdfjsLaden(); const pdf = await L.getDocument({ data: u }).promise; const p = await pdf.getPage(1); const v1 = p.getViewport({ scale: 1 }); const vp = p.getViewport({ scale: 1400 / v1.width });
+      const L = await pdfjsLaden(); const pdf = await L.getDocument({ data: u }).promise; const p = await pdf.getPage(1); const v1 = p.getViewport({ scale: 1 }); const vp = p.getViewport({ scale: 300 / 72 });
       const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height); const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
       await p.render({ canvasContext: x, viewport: vp }).promise; const d = x.getImageData(k[0], k[1], k[2], k[3]).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < 252) n++; return n; }, { b: B.versteckt, k: BLASS.map(Math.round) });
     const gesendetBlass = await zaehle(url, BLASS, 252);

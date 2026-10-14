@@ -14,6 +14,8 @@ import { fileURLToPath } from 'node:url';
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const I = 'index.html';
 const FAELLE = [
+  { name: 'QUALITÄT: Seitenbild wieder mit 1400 px', anker: "const vp=p.getViewport({scale:Math.min(KI_PDF_DPI/72,KI_PDF_MAX_KANTE/Math.max(v1.width,v1.height))});", ersatz: "const vp=p.getViewport({scale:1400/v1.width});", trifft: /300 dpi/ },
+  { name: 'QUALITÄT: pdf.js mit eval', anker: "isEvalSupported:false}).promise;   // isEvalSupported:false: CVE-2024-4367", ersatz: "}).promise;", trifft: /ohne eval/ },
   { name: 'der Halt fragt nie', anker: "if(!st.gefragt){st.gefragt=true;st.ok=await kiHaltDialog(name,liste);}", ersatz: "if(false){st.gefragt=true;st.ok=await kiHaltDialog(name,liste);}", trifft: /Halt kommt/ },
   { name: '„Abbrechen" sendet trotzdem', anker: "ov.querySelector('[data-ki-nein]').onclick=()=>{ov.remove();res(false);};});}\n// Der Vermerk", ersatz: "ov.querySelector('[data-ki-nein]').onclick=()=>{ov.remove();res(true);};});}\n// Der Vermerk", trifft: /Abbrechen/ },
   { name: 'der blasse Text wird nicht zugedeckt', anker: "liste.push({seite:i,text:t.str,grund:g});RE.zudecken(img,st,vp.scale);zu++;", ersatz: "liste.push({seite:i,text:t.str,grund:g});zu++;", trifft: /zugedeckt/ },

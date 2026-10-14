@@ -5056,19 +5056,29 @@ function KT(k,v){const l=KIR_TXT[CL==='de'?'de':'en'];let s=(l&&l[k])||KIR_TXT.d
 // lässt sich weder prüfen noch zwischenspeichern (gemessen 2026-10-14: in der Probe scheiterte genau er).
 const WFPDF_VENDOR='/Workflow-PDF/vendor/';
 const PDFJS_CDN=new URL(WFPDF_VENDOR+'pdfjs/',location.href).href;
-const KI_PDF_SEITEN_MAX=10, KI_PDF_KANTE=1400;
+// Qualität (Klaus 2026-10-14: „Die Qualität muss 100 % stimmen"). Gemessen mit Tesseract an 20 kleinen, blassen Zeilen:
+// 1400 px · JPEG 85 % → 9 falsch gelesen · 300 dpi · JPEG 92 % → 0. Deshalb 300 dpi nach der echten Seitengröße.
+// Deckel: lange Kante 5000 px; ein Seitenbild über KI_BILD_DECKEL (base64) wird erst härter gepackt, dann kleiner.
+const KI_PDF_SEITEN_MAX=10, KI_PDF_DPI=300, KI_PDF_MAX_KANTE=5000, KI_JPEG_GUETE=0.92, KI_BILD_DECKEL=4*1024*1024;
 function _kiSkript(src){return new Promise((ok,nein)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=()=>ok();s.onerror=()=>nein(new Error('lädt nicht: '+src.split('?')[0]));document.head.appendChild(s);});}
 async function reinigungLaden(){if(!(window.WFP&&WFP.Reinigung))await _kiSkript('assets/reinigung.js?v=1');if(!(window.WFP&&WFP.Reinigung))throw new Error('Reinigung fehlt');return WFP.Reinigung;}
 async function pdfjsLaden(){if(!window.pdfjsLib){await _kiSkript(PDFJS_CDN+'pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_CDN+'pdf.worker.min.js';}return window.pdfjsLib;}
 function _bytesAus(q){if(q instanceof Uint8Array)return Promise.resolve(q);if(typeof q==='string'){const b=atob(q.split(',')[1]||'');const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return Promise.resolve(u);}return q.arrayBuffer().then(a=>new Uint8Array(a));}
+// Seitenbild als JPEG: 92 %; zu groß → 85 %; immer noch zu groß → kleiner gezeichnet (aus der schon gereinigten Leinwand).
+function _kiSeiteJpeg(c){
+  let u=c.toDataURL('image/jpeg',KI_JPEG_GUETE);if(u.length<=KI_BILD_DECKEL)return u;
+  u=c.toDataURL('image/jpeg',0.85);if(u.length<=KI_BILD_DECKEL)return u;
+  const f=Math.sqrt(KI_BILD_DECKEL/u.length)*0.95,k=document.createElement('canvas');k.width=Math.max(1,Math.round(c.width*f));k.height=Math.max(1,Math.round(c.height*f));
+  const kx=k.getContext('2d');kx.fillStyle='#fff';kx.fillRect(0,0,k.width,k.height);kx.drawImage(c,0,0,k.width,k.height);u=k.toDataURL('image/jpeg',0.85);k.width=k.height=0;return u;
+}
 // Ein PDF als Seitenbilder: gezeichnet, versteckter Text in der Kopie zugedeckt, Metadaten heraus.
 // @returns {bilder:[data:image/jpeg], liste:[{seite,text,grund}], seiten, gesamt}
 async function pdfFuersNetz(quelle){
   const RE=await reinigungLaden();const L=await pdfjsLaden();
-  const pdf=await L.getDocument({data:await _bytesAus(quelle)}).promise;
+  const pdf=await L.getDocument({data:await _bytesAus(quelle),isEvalSupported:false}).promise;   // isEvalSupported:false: CVE-2024-4367
   const n=Math.min(pdf.numPages,KI_PDF_SEITEN_MAX),bilder=[],liste=[];
   for(let i=1;i<=n;i++){
-    const p=await pdf.getPage(i);const v1=p.getViewport({scale:1});const vp=p.getViewport({scale:KI_PDF_KANTE/v1.width});
+    const p=await pdf.getPage(i);const v1=p.getViewport({scale:1});const vp=p.getViewport({scale:Math.min(KI_PDF_DPI/72,KI_PDF_MAX_KANTE/Math.max(v1.width,v1.height))});
     const c=document.createElement('canvas');c.width=Math.round(vp.width);c.height=Math.round(vp.height);
     const x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
     await p.render({canvasContext:x,viewport:vp}).promise;
@@ -5081,7 +5091,7 @@ async function pdfFuersNetz(quelle){
         const g=RE.versteckt(st,img,vp.scale);
         if(g){liste.push({seite:i,text:t.str,grund:g});RE.zudecken(img,st,vp.scale);zu++;}}
       if(zu)x.putImageData(img,0,0);}catch(_){}
-    const m=RE.datenAdresseOhneMeta(c.toDataURL('image/jpeg',0.85));
+    const m=RE.datenAdresseOhneMeta(_kiSeiteJpeg(c));
     m.entfernt.forEach(e=>liste.push({seite:i,text:e.art+' ('+e.bytes+' Byte)',grund:'meta'}));
     bilder.push(m.url);c.width=c.height=0;try{p.cleanup();}catch(_){}
   }

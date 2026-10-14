@@ -1158,3 +1158,18 @@ Datei: [`docs/archiv/CLAUDE-2026-08-22.md`](docs/archiv/CLAUDE-2026-08-22.md).
 ## 🛡 Prüfliste vor dem KI-Richter (Sage Bau 04.J, 2026-10-14)
 
 `sbkim/04_match.js` ist neu aus dem Kanon kopiert (Sage #1082). Der KI-Richter prüft vor dem Senden die Suchfrage und jede fremde Antwort mit der Prüfliste (`assets/pruefer-mail.js`). Fehlt die Liste, läuft er nicht. Eine Antwort, in der eine Anweisung an eine KI steht, geht nicht an die KI; sie bekommt das Urteil „gefahr“ und das Feld `ausgeschlossen: "ki-anweisung"`. Damit die Liste zu jedem Zeitpunkt da ist, steht sie in der SBKIM-Kette direkt nach 04, unter derselben Adresse `?v=2` wie beim Bildauftrag. Gemessen im Browser: nach dem Laden steht `SbkimMatch._meta.prueflisteGeladen === true`. In einer Kopie ohne diese Zeile steht dort `false`. Das Tablet ist nicht gemessen.
+
+### 📐 Seitenbilder mit 300 dpi (Klaus 2026-10-14: „Die Qualität muss 100 % stimmen")
+
+`pdfFuersNetz` zeichnet jede Seite jetzt mit **300 dpi**, berechnet aus der echten Seitengröße (A4 → 2480 × 3508); die lange Kante ist auf 5000 px gedeckelt. Gespeichert wird als JPEG mit 92 %.
+Bisher waren es 1400 px Breite bei 85 %. Gemessen in Sage mit Tesseract an 20 kleinen, blassen Zeilen: **9 falsch → 0**.
+Liegt ein Seitenbild über 4 MB base64, wird es zuerst härter gepackt und erst danach kleiner gezeichnet (`_kiSeiteJpeg`).
+Jedes `getDocument` läuft mit `isEvalSupported:false` (CVE-2024-4367).
+
+⚠ Die Claude-Schnittstelle verkleinert große Bilder selbst (ab etwa 1568 px lange Kante); den vollen Gewinn hat Mistral OCR.
+
+Proben:
+- `smoke_reinigung`: 300 dpi gemessen, kein eval.
+- Gegenprobe `NUR_FALL="QUALITÄT"`: 2 gefangen.
+
+Am Tablet nicht gemessen.
