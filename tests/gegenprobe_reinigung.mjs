@@ -21,13 +21,16 @@ const FAELLE = [
   { name: 'die Rezeptkarte zeigt den Vermerk nicht', anker: "      ${kiEntferntHtml(r)}\n", ersatz: "\n", trifft: /Rezeptkarte/ },
   { name: 'Claude bekommt das PDF wieder roh', anker: "contentBlock=_seitenBloecke(sp.bilder);window._scanKiEntfernt=sp.liste;", ersatz: "contentBlock={type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}};window._scanKiEntfernt=sp.liste;", trifft: /KEIN PDF|document/ },
   { name: 'Mistral bekommt das PDF wieder roh', anker: "if(isPdf){   // 🧽 ein PDF geht als gereinigte Seitenbilder hinaus, nie roh", ersatz: "if(false){", trifft: /Mistral/ },
-  { name: 'der Stapel hält je Datei an', anker: "\n          const sp=await pdfSicherSenden(origData,files[i].name,rein);if(!sp)throw new Error(KT('abgebr'));\n", ersatz: "\n          const sp=await pdfSicherSenden(origData,files[i].name,kiReiniger());if(!sp)throw new Error(KT('abgebr'));\n", trifft: /EINMAL je Stapel|Vermerk, das saubere/ },
+  { name: 'der Stapel hält je Datei an', anker: "files[i].name,rein);if(!sp)throw new Error(KT('abgebr'));\n", ersatz: "files[i].name,kiReiniger());if(!sp)throw new Error(KT('abgebr'));\n", trifft: /EINMAL je Stapel|Vermerk, das saubere/ },
   { name: 'PDF-Text auslesen schickt das PDF roh', anker: "          ..._seitenBloecke(sp.bilder),\n", ersatz: "          {type:'document', source:{type:'base64', media_type:'application/pdf', data:'eA=='}},\n", trifft: /PDF-Text|document/ },
   { name: 'ein kaputtes Foto geht als Original hinaus', anker: "  catch(e){ return ''; }", ersatz: "  catch(e){ return typeof quelle==='string'?quelle:''; }", trifft: /Original/ },
   { name: 'die Prüfung läuft von selbst', anker: "scanOrigDatei=file;   // 🛡", ersatz: "scanOrigDatei=file;setTimeout(scanDateiPruefen,0);   // 🛡", trifft: /erst auf Knopfdruck/ },
   { name: 'der Prüf-Knopf erscheint nicht', anker: "if(pb){pb.textContent=KT('pruefBtn');pb.style.display='';}", ersatz: "if(pb){pb.style.display='none';}", trifft: /Datei prüfen/ },
+  // nur wo es den Text-Import über Mistral gibt (Mein-Rezeptbuch, Mixarium); sonst entfällt der Fall
+  { name: 'der Text-Import schickt die Datei roh an Mistral', nurWenn: 'handleOcrTxtFile', anker: "var sp = await pdfSicherSenden(dataUrl, file.name, kiReiniger());\n      if (!sp) { if (typeof setTxtSt === 'function') setTxtSt(KT('abgebr'), 'err'); return; }\n      r = { available: true, text: await ocrSeiten(sp.bilder, window.__mistralOcrKey), model: '' };", ersatz: "r = await window.SbkimOcr.recognize(dataUrl, { provider: 'mistral', apiKey: window.__mistralOcrKey, mimeType: file.type });", trifft: /Text-Import|Mistral die Datei|nicht die PDF-Datei/ },
   { name: 'der Bildauftrag hält nicht an', anker: "if(!(await bildAuftragFreigabe(prompt)))throw", ersatz: "if(false)throw", trifft: /Bildauftrag hält an/ }
 ];
+{ const html = fs.readFileSync(path.join(WURZEL, I), 'utf8'); for (let i = FAELLE.length - 1; i >= 0; i--) if (FAELLE[i].nurWenn && !html.includes(FAELLE[i].nurWenn)) { console.log('  ⊘ entfällt hier: ' + FAELLE[i].name); FAELLE.splice(i, 1); } }
 if (process.env.NUR_FALL) { const n = process.env.NUR_FALL.toLowerCase(); for (let i = FAELLE.length - 1; i >= 0; i--) if (!FAELLE[i].name.toLowerCase().includes(n)) FAELLE.splice(i, 1); console.log('nur ' + FAELLE.length + ' Fall/Fälle'); }
 let gefangen = 0, durch = 0, falsch = 0, tot = 0;
 for (const f of FAELLE) { const n = fs.readFileSync(path.join(WURZEL, I), 'utf8').split(f.anker).length - 1; if (n !== 1) { tot++; console.log('  ☠ TOTER ANKER (' + n + '×): ' + f.name); } }
