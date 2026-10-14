@@ -1154,3 +1154,7 @@ Diese und die übrigen netzweiten Regeln — Selbst-Merge-Freibrief, frisch von
 20 Repos. Verträge: **[`INTERFACES.md`](https://github.com/lausiklauskn-png/Sage-Protokol/blob/main/docs/INTERFACES.md)** · die Fallen beim
 Abzweigen und Veröffentlichen: **[`LEHREN.md`](https://github.com/lausiklauskn-png/Sage-Protokol/blob/main/docs/LEHREN.md)** · alte Fassung dieser
 Datei: [`docs/archiv/CLAUDE-2026-08-22.md`](docs/archiv/CLAUDE-2026-08-22.md).
+
+## 🛡 Prüfliste vor dem KI-Richter (Sage Bau 04.J, 2026-10-14)
+
+`sbkim/04_match.js` ist neu aus dem Kanon kopiert (Sage #1082). Der KI-Richter prüft vor dem Senden die Suchfrage und jede fremde Antwort mit der Prüfliste (`assets/pruefer-mail.js`). Fehlt die Liste, läuft er nicht. Eine Antwort, in der eine Anweisung an eine KI steht, geht nicht an die KI; sie bekommt das Urteil „gefahr“ und das Feld `ausgeschlossen: "ki-anweisung"`. Damit die Liste zu jedem Zeitpunkt da ist, steht sie in der SBKIM-Kette direkt nach 04, unter derselben Adresse `?v=2` wie beim Bildauftrag. Gemessen im Browser: nach dem Laden steht `SbkimMatch._meta.prueflisteGeladen === true`. In einer Kopie ohne diese Zeile steht dort `false`. Das Tablet ist nicht gemessen.
