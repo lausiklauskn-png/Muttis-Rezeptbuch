@@ -1205,3 +1205,15 @@ Gemessen im Browser (Playwright, Seite unter `/Muttis-Rezeptbuch/`): Knopf sicht
 `display-mode: standalone`) weg · Tipp ohne Angebot zeigt die Anleitung · keine Installierbarkeits-Fehler, AppId
 `/Muttis-Rezeptbuch/index.html` · 360 px ohne Querlaufen. Gegenprobe: auf dem alten Stand blieb der Knopf als App
 sichtbar. ⚠ Am Tablet nicht gemessen.
+
+## ⬇ Installieren auch oben in der Kopfleiste (Klaus 2026-10-18)
+
+Klaus: *„da, wo der Installationsbutton in den Einstellungen zu finden ist, vermutet keiner, dass er die App
+installieren kann … setze den Installationsbutton oben in die Navi-Leiste zusätzlich."* Gleiche Fassung wie in Mein
+Rezeptbuch: `#pwaKopfBtn` als erster Knopf in `.hbtns` (bis 479 px nur ⬇, Name aus `T('pwaBtn')`), **immer** da,
+solange die App nicht installiert läuft; weg als App (CSS `display-mode` + `pwaKopfRefresh()` in `pwaRefresh`) und nach
+`appinstalled`. Tipp = `triggerPWA`; ohne Angebot steht `pwaHow`/`pwaHowIos` als `#pwaKopfHilfe` dunkel auf weiß unter
+der Kopfleiste (Kontrast 17,4). Bis 359 px weicht die Versions-Pille (nur im Browser). Cache v56.
+Gemessen (Playwright, `/Muttis-Rezeptbuch/`): sichtbar bei 320 · 360 · 412 · 1280 px ohne Angebot · kein Querlaufen,
+Kopfhöhe 30 px unverändert · standalone beide Knöpfe weg · nach `appinstalled` weg · mit Angebot `prompt()` · keine
+Installierbarkeits-Fehler. ⚠ Am Tablet nicht gemessen.
