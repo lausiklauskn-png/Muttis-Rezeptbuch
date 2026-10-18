@@ -1188,3 +1188,20 @@ Chrome rechnet `id` vom **Ursprung** aus, nicht vom Ordner der App. Chrome hielt
   gestellten Lagen; mit dem alten Wert von Hand nachgestellt: 2 ROT).
 - ⚠ Eine schon installierte Kopie behält die alte Kennung: **einmal deinstallieren und neu
   installieren.** Die Rezepte hängen an der Adresse, nicht an der App — vorher trotzdem ein Export.
+
+## 📲 Installieren in den Einstellungen — wie in Mein Rezeptbuch (Klaus 2026-10-18)
+
+Klaus: *„Den Installieren-Button überall fest einbauen … so wie bei meinem Rezeptbuch, der auch in den Einstellungen
+auftaucht … Sobald die Installation stattgefunden hat … verschwindet der Installations-Button."*
+
+Bis hierher erschien die Leiste `#pwaBar` nur, wenn Chrome `beforeinstallprompt` feuerte — also NICHT, wenn Chrome die
+App schon für installiert hält, der Hinweis weggewischt war oder der Browser die Abfrage nicht kennt (iPhone). Übernommen
+ist die Fassung aus Mein Rezeptbuch (`pwaLaeuftAlsApp`, `pwaRefresh`, `triggerPWA` mit Anleitung, fünf Sprach-Schlüssel
+`pwaDone`/`pwaHow`/`pwaHowIos`/`pwaHowBtn`/`pwaInstalled` in allen 8 Sprachen): die Leiste steht immer oben in den
+Einstellungen; läuft die App installiert, ist der Knopf weg und dort steht „✅ Läuft als installierte App". Ohne Angebot
+des Browsers heißt der Knopf „So geht's" und nennt den Weg. Cache `muttisrezeptbuch-v55`.
+⚠ Die Leiste steht OBEN in den Einstellungen wie im Vorbild, nicht als letztes Element.
+Gemessen im Browser (Playwright, Seite unter `/Muttis-Rezeptbuch/`): Knopf sichtbar · als App (gestelltes
+`display-mode: standalone`) weg · Tipp ohne Angebot zeigt die Anleitung · keine Installierbarkeits-Fehler, AppId
+`/Muttis-Rezeptbuch/index.html` · 360 px ohne Querlaufen. Gegenprobe: auf dem alten Stand blieb der Knopf als App
+sichtbar. ⚠ Am Tablet nicht gemessen.
